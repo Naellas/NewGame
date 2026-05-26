@@ -1,0 +1,11 @@
+{
+  "monster_spawn_chances": {
+    "wild": 0.12,
+    "dungeon": 0.18,
+    "dungeon_entrance": 0.4
+  },
+  "monster_group_chances": {
+    "two_monsters": 0.3,
+    "three_monsters": 0.1
+  }
+}
