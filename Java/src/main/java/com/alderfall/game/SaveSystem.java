@@ -3,19 +3,60 @@ package com.alderfall.game;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringJoiner;
 
 public final class SaveSystem {
-    private final Path savePath;
+    private final Path savesDir;
+    private final Path legacySavePath;
+
+    public record SaveSummary(String saveId, String name, String className, int level, String mapId) {
+    }
 
     public SaveSystem(Path javaRoot) {
-        this.savePath = javaRoot.resolve("saves").resolve("save.properties");
+        this.savesDir = javaRoot.resolve("saves");
+        this.legacySavePath = savesDir.resolve("save.properties");
+    }
+
+    public boolean exists() {
+        return !listSaves().isEmpty();
+    }
+
+    public List<SaveSummary> listSaves() {
+        List<SaveSummary> summaries = new ArrayList<>();
+        if (!Files.exists(savesDir)) {
+            return summaries;
+        }
+        try (var stream = Files.list(savesDir)) {
+            stream.filter(path -> path.getFileName().toString().endsWith(".properties"))
+                    .sorted(Comparator.comparing(this::lastModified).reversed())
+                    .forEach(path -> readSummary(path, summaries));
+        } catch (IOException ignored) {
+        }
+        return summaries;
+    }
+
+    public static String saveIdFor(String name) {
+        String base = name == null ? "" : name.strip().toLowerCase().replaceAll("[^a-z0-9]+", "-");
+        base = base.replaceAll("^-+|-+$", "");
+        return base.isBlank() ? "adventure" : base.substring(0, Math.min(36, base.length()));
     }
 
     public void save(GameState state) throws IOException {
-        Files.createDirectories(savePath.getParent());
+        if (state.currentSaveId == null || state.currentSaveId.isBlank()) {
+            state.currentSaveId = saveIdFor(state.player.name);
+        }
+        save(state, state.currentSaveId);
+    }
+
+    public void save(GameState state, String saveId) throws IOException {
+        Files.createDirectories(savesDir);
         Properties props = new Properties();
+        props.setProperty("saveId", saveIdFor(saveId));
+        props.setProperty("name", state.player.name);
         props.setProperty("className", state.player.className);
         props.setProperty("mapId", state.currentMapId);
         props.setProperty("zoom", Integer.toString(state.zoom));
@@ -36,20 +77,33 @@ public final class SaveSystem {
         props.setProperty("skillAllocations", writeSkillAllocations(state.player));
         props.setProperty("quests", writeQuests(state));
         props.setProperty("recruits", writeRecruits(state));
-        try (var out = Files.newOutputStream(savePath)) {
+        try (var out = Files.newOutputStream(savePath(saveId))) {
             props.store(out, "Echoes of Alderfall Java save");
         }
+        state.currentSaveId = saveIdFor(saveId);
     }
 
     public boolean load(GameState state) throws IOException {
-        if (!Files.exists(savePath)) {
+        List<SaveSummary> saves = listSaves();
+        if (saves.isEmpty()) {
+            return false;
+        }
+        return load(state, saves.get(0).saveId());
+    }
+
+    public boolean load(GameState state, String saveId) throws IOException {
+        Path path = savePath(saveId);
+        if (!Files.exists(path) && "save".equals(saveId) && Files.exists(legacySavePath)) {
+            path = legacySavePath;
+        }
+        if (!Files.exists(path)) {
             return false;
         }
         Properties props = new Properties();
-        try (var in = Files.newInputStream(savePath)) {
+        try (var in = Files.newInputStream(path)) {
             props.load(in);
         }
-        Actor player = GameData.createPlayer(props.getProperty("className", "Knight"));
+        Actor player = GameData.createPlayer(props.getProperty("className", "Knight"), props.getProperty("name", "Hero"));
         player.maxHp = readInt(props, "maxHp", player.maxHp);
         player.maxMp = readInt(props, "maxMp", player.maxMp);
         player.attack = readInt(props, "attack", player.attack);
@@ -70,6 +124,8 @@ public final class SaveSystem {
         player.mp = Math.min(player.maxMp, readInt(props, "mp", player.maxMp));
         state.player = player;
         state.syncSkillAbilities();
+        state.currentSaveId = props.getProperty("saveId", saveIdFor(player.name));
+        state.pendingPlayerName = player.name;
         state.currentMapId = props.getProperty("mapId", WorldMap.OVERWORLD_ID);
         state.setZoom(readInt(props, "zoom", state.zoom));
         if (!state.world.hasMap(state.currentMapId)) {
@@ -78,11 +134,43 @@ public final class SaveSystem {
         state.playerX = readInt(props, "x", WorldMap.START_POSITION.x());
         state.playerY = readInt(props, "y", WorldMap.START_POSITION.y());
         state.battle = null;
+        state.activeNpc = null;
+        state.activeShop = null;
+        state.dialogIndex = 0;
         state.mode = GameMode.EXPLORE;
         readQuests(props.getProperty("quests", ""), state);
         readRecruits(props.getProperty("recruits", ""), state);
         state.status = "Loaded save.";
         return true;
+    }
+
+    private Path savePath(String saveId) {
+        return savesDir.resolve(saveIdFor(saveId) + ".properties");
+    }
+
+    private long lastModified(Path path) {
+        try {
+            return Files.getLastModifiedTime(path).toMillis();
+        } catch (IOException ex) {
+            return 0L;
+        }
+    }
+
+    private void readSummary(Path path, List<SaveSummary> summaries) {
+        Properties props = new Properties();
+        try (var in = Files.newInputStream(path)) {
+            props.load(in);
+            String fileName = path.getFileName().toString();
+            String fallbackId = fileName.substring(0, fileName.length() - ".properties".length());
+            summaries.add(new SaveSummary(
+                    props.getProperty("saveId", fallbackId),
+                    props.getProperty("name", "Hero"),
+                    props.getProperty("className", "Knight"),
+                    readInt(props, "level", 1),
+                    props.getProperty("mapId", WorldMap.OVERWORLD_ID)
+            ));
+        } catch (IOException ignored) {
+        }
     }
 
     private String writeInventory(Actor player) {

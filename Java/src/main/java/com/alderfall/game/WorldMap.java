@@ -222,6 +222,7 @@ public final class WorldMap {
     }
 
     private void addVillage(String id, String label, int ox, int oy, String variant) {
+        cityBuildings.put(id, villageBuildingTemplates());
         MapArea area = new MapArea(id, label, "village", villageTiles(variant));
         addVillageProps(area, variant);
         maps.put(id, area);
@@ -418,6 +419,17 @@ public final class WorldMap {
         return new CityBuilding(key, x1, y1, x2, y2, style, palette);
     }
 
+    private List<CityBuilding> villageBuildingTemplates() {
+        return List.of(
+                building("west_cottage", 4, 4, 7, 6, "house", 0),
+                building("north_cottage", 9, 3, 12, 5, "shop", 1),
+                building("east_cottage", 16, 4, 20, 6, "house", 2),
+                building("southwest_cottage", 5, 12, 9, 14, "row", 0),
+                building("south_cottage", 12, 13, 15, 15, "house", 1),
+                building("southeast_cottage", 18, 11, 22, 14, "inn", 2)
+        );
+    }
+
     private char[][] villageTiles(String variant) {
         char base = switch (variant) {
             case "snow" -> 'n';
@@ -507,20 +519,13 @@ public final class WorldMap {
                     continue;
                 }
                 int roll = Math.abs(hash(x, y, salt + area.id.hashCode())) % 1000;
-                int chance = switch (tile) {
-                    case 'f' -> 42;
-                    case 'g' -> 26;
-                    case 's', 'n', 'v', 'b', 'q' -> 24;
-                    case 'r' -> 10;
-                    default -> 3;
-                };
                 int cluster = naturalNeighborCount(area, x, y, tile);
-                chance += Math.min(18, cluster * 3);
+                int chance = decorationChance(tile, cluster);
                 if (roll < chance) {
-                    int size = tile == 'f' ? 62 : tile == 'r' ? 34 : 42 + (roll % 9);
+                    int size = decorationSize(tile, roll);
                     int patchSeed = hash(x / 5, y / 5, salt + tile * 97 + area.id.hashCode());
                     area.props.add(new WorldProp(x, y, decorationFor(tile, roll, patchSeed), size));
-                    if ((tile == 'f' || tile == 'v' || tile == 's') && roll < chance / 3) {
+                    if (shouldPairDecoration(tile, roll, chance)) {
                         int ox = roll % 2 == 0 ? 1 : -1;
                         int oy = (roll / 2) % 2 == 0 ? 1 : -1;
                         if (area.tileAt(x + ox, y + oy) == tile) {
@@ -530,6 +535,46 @@ public final class WorldMap {
                 }
             }
         }
+    }
+
+    private int decorationChance(char tile, int cluster) {
+        int clusteredBonus = switch (tile) {
+            case 'f' -> Math.min(64, cluster * 4);
+            case 'm', 'q' -> Math.min(42, cluster * 3);
+            case 'v', 's', 'n', 'b' -> Math.min(28, cluster * 3);
+            case 'g' -> Math.min(18, cluster * 3);
+            default -> Math.min(12, cluster * 2);
+        };
+        int base = switch (tile) {
+            case 'f' -> 118;
+            case 'm' -> 72;
+            case 'q' -> 54;
+            case 'v' -> 38;
+            case 's', 'n', 'b' -> 30;
+            case 'g' -> 22;
+            case 'r' -> 8;
+            default -> 3;
+        };
+        return base + clusteredBonus;
+    }
+
+    private int decorationSize(char tile, int roll) {
+        return switch (tile) {
+            case 'f' -> 58 + roll % 18;
+            case 'm', 'q' -> 40 + roll % 16;
+            case 'r' -> 34;
+            case 'v' -> 42 + roll % 12;
+            default -> 40 + roll % 10;
+        };
+    }
+
+    private boolean shouldPairDecoration(char tile, int roll, int chance) {
+        return switch (tile) {
+            case 'f' -> roll < chance / 2;
+            case 'm', 'q' -> roll < chance / 4;
+            case 'v', 's' -> roll < chance / 3;
+            default -> false;
+        };
     }
 
     private int naturalNeighborCount(MapArea area, int x, int y, char tile) {
@@ -552,12 +597,32 @@ public final class WorldMap {
             for (int x = 2; x < area.width() - 2; x++) {
                 char tile = area.tileAt(x, y);
                 int roll = Math.abs(hash(x, y, area.id.hashCode())) % 100;
-                if (tile == 'p' && roll < 6) {
-                    area.props.add(new WorldProp(x, y, roll < 2 ? "city_prop_fountain_small" : roll < 4 ? "city_prop_crate" : "city_prop_barrel", 42));
-                } else if (tile == 'a' && roll < 18) {
-                    area.props.add(new WorldProp(x, y, roll < 9 ? "city_prop_market_red" : "city_prop_market_yellow", 46));
-                } else if (tile == 'y' && roll < 12) {
-                    area.props.add(new WorldProp(x, y, "city_prop_flower_pot", 34));
+                if (tile == 'p' && roll < 10) {
+                    String[] options = {
+                            "city_prop_fountain_small", "city_prop_crate", "city_prop_barrel",
+                            "city_prop_cart", "city_prop_planter_stone"
+                    };
+                    area.props.add(new WorldProp(x, y, pick(options, roll + area.id.hashCode()), roll < 2 ? 48 : 38 + roll % 12));
+                } else if (tile == 'a' && roll < 30) {
+                    String[] options = {
+                            "city_prop_market_red", "city_prop_market_yellow", "city_prop_market_green",
+                            "city_prop_cart", "city_prop_barrel_stack", "city_prop_banner_red"
+                    };
+                    area.props.add(new WorldProp(x, y, pick(options, roll + area.id.hashCode()), 42 + roll % 12));
+                } else if (tile == 'y' && roll < 24) {
+                    String[] options = {
+                            "city_prop_flower_pot", "city_prop_plant_box", "city_prop_planter_stone",
+                            "city_prop_street_lamp"
+                    };
+                    area.props.add(new WorldProp(x, y, pick(options, roll + area.id.hashCode()), 34 + roll % 10));
+                } else if ((tile == 'j' || tile == 'l') && roll < 9) {
+                    String[] options = {
+                            "city_prop_crate", "city_prop_barrel", "city_prop_source_crate_low",
+                            "city_prop_source_barrel_open", "city_prop_street_lamp"
+                    };
+                    area.props.add(new WorldProp(x, y, pick(options, roll + area.id.hashCode()), 30 + roll % 10));
+                } else if (tile == 'r' && roll < 5) {
+                    area.props.add(new WorldProp(x, y, roll < 2 ? "city_prop_street_lamp" : "city_prop_banner_blue", 34 + roll % 8));
                 }
             }
         }
@@ -705,9 +770,12 @@ public final class WorldMap {
                     "deco_grass_herb_patch", "deco_grass_stone_stack", "deco_imagen_meadow_blooms"
             }, clusteredRoll(roll, patchSeed));
             case 'f' -> pick(new String[]{
-                    "deco_tree_pine", "deco_tree_blue_pine", "deco_tree_oak", "deco_tree_round",
-                    "deco_forest_mushrooms", "deco_forest_log", "deco_forest_moss_rock",
-                    "deco_forest_blue_mushroom_ring"
+                    "deco_forest_cluster", "deco_forest_pine_cluster", "deco_forest_broadleaf_cluster",
+                    "deco_forest_mixed_cluster", "deco_tree_oak", "deco_tree_round",
+                    "deco_tree_pine", "deco_tree_blue_pine", "deco_forest_fern",
+                    "deco_forest_ancient_roots", "deco_forest_log", "deco_forest_moss_rock",
+                    "deco_forest_mushrooms", "deco_forest_blue_mushroom_ring",
+                    "deco_forest_shrine_stone", "deco_forest_fairy_pool"
             }, clusteredRoll(roll, patchSeed));
             case 's' -> pick(new String[]{
                     "deco_cactus", "deco_dry_grass", "deco_desert_rocks", "deco_desert_blooming_cactus",
@@ -727,7 +795,8 @@ public final class WorldMap {
             }, clusteredRoll(roll, patchSeed));
             case 'q', 'm' -> pick(new String[]{
                     "deco_mountain_rocks", "deco_mountain_cairn", "deco_mountain_scrub_pine",
-                    "deco_mountain_crystal_cluster", "deco_mountain_pass_way_cairn"
+                    "deco_mountain_crystal_cluster", "deco_mountain_pass_way_cairn",
+                    "deco_mountain_spring_pool", "deco_mountain_pass_snowmelt_pool", "deco_rocks"
             }, clusteredRoll(roll, patchSeed));
             case 'r' -> pick(new String[]{
                     "deco_road_signpost", "deco_road_milestone", "deco_imagen_signpost",

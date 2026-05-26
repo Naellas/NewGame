@@ -40,7 +40,7 @@ The current port is intentionally dependency-free Java 21/Swing so it can compil
 - Recruitable quest allies and hireable village companions with party battle turns.
 - Consumable inventory, equipment slots, quick item use, shops, and shop purchases.
 - Migrated common/class skill trees with skill points, stat bonuses, ability unlocks, and respec.
-- Java-side save/load under `Java/saves/save.properties`.
+- Java-side named adventure save/load slots under `Java/saves/`.
 
 ## Migration Direction
 
@@ -67,7 +67,10 @@ This is not a one-file translation of the Python `app.py`. The Java port is spli
 - Dialog: click `Continue`/`Open Shop`, or press `Enter`/`E`
 - Shop: click `Buy`, `Hire`, or `Leave Shop`; number keys still buy matching items
 - Inventory: click item rows or use number keys
-- Save/load: `F5` / `F9`
+- Main menu: `Enter` new adventure, `L` load adventure, `S` settings
+- Pause menu: `Esc` or `P` from gameplay, then use Save / Load, Settings, Main Menu, or Resume
+- Save/load: `F5` / `F9`, or use the Save / Load menu
+- Fullscreen: click `Fullscreen`, press `F11`, or press `Alt+Enter`
 - Close overlay: `Esc`
 - Enter settlement/dungeon/interior transition: move onto the entrance, or press `E` while standing on one
 

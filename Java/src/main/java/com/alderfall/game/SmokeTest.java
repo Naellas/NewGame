@@ -1,6 +1,8 @@
 package com.alderfall.game;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Random;
 
 public final class SmokeTest {
     private SmokeTest() {
@@ -37,6 +39,41 @@ public final class SmokeTest {
                 .anyMatch(stack -> stack.effect.key().equals("weak"));
         if (!weakApplied) {
             throw new IllegalStateException("Ability status effect did not apply.");
+        }
+        Actor targetTester = GameData.createPlayer("Knight");
+        targetTester.attack = 100;
+        Battle targetBattle = new Battle(
+                targetTester,
+                List.of(),
+                List.of(GameData.MONSTERS.get("slime"), GameData.MONSTERS.get("bat")),
+                new Random(2),
+                'g',
+                "overworld"
+        );
+        targetBattle.enemies().get(0).hp = 20;
+        targetBattle.enemies().get(1).hp = 1;
+        targetBattle.selectEnemy(1);
+        targetBattle.playerAttack();
+        if (targetBattle.enemies().get(0).hp != 20 || targetBattle.enemies().get(1).alive()) {
+            throw new IllegalStateException("Selected enemy target was not used.");
+        }
+        Actor groupTester = GameData.createPlayer("Knight");
+        groupTester.attack = 100;
+        Battle groupBattle = new Battle(
+                groupTester,
+                List.of(),
+                List.of(GameData.MONSTERS.get("slime"), GameData.MONSTERS.get("bat")),
+                new Random(1),
+                'g',
+                "overworld"
+        );
+        for (Actor foe : groupBattle.enemies()) {
+            foe.hp = 1;
+        }
+        groupBattle.playerAttack();
+        groupBattle.playerAttack();
+        if (!groupBattle.finished || !groupBattle.victory || groupBattle.defeatedMonsterNames().size() != 2) {
+            throw new IllegalStateException("Multi-opponent battle did not resolve all enemies.");
         }
         if (!state.world.isPassable(WorldMap.START_POSITION.x(), WorldMap.START_POSITION.y())) {
             throw new IllegalStateException("Start position is not passable.");

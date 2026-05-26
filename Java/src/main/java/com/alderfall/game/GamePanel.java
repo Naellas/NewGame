@@ -9,6 +9,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GradientPaint;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -17,19 +18,60 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.IntConsumer;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 public final class GamePanel extends JPanel {
+    private static final Map<Character, String> MUSIC_BY_TERRAIN = Map.ofEntries(
+            Map.entry('g', "zone_grasslands"),
+            Map.entry('r', "zone_grasslands"),
+            Map.entry('f', "zone_forest"),
+            Map.entry('s', "zone_desert"),
+            Map.entry('n', "zone_tundra"),
+            Map.entry('v', "zone_marsh"),
+            Map.entry('b', "zone_badlands"),
+            Map.entry('m', "zone_mountains"),
+            Map.entry('q', "zone_mountains"),
+            Map.entry('w', "zone_water"),
+            Map.entry('c', "town_village"),
+            Map.entry('u', "town_village"),
+            Map.entry('d', "dungeon_crypt")
+    );
+    private static final Set<GameMode> WORLD_MUSIC_MODES = Set.of(
+            GameMode.EXPLORE,
+            GameMode.DIALOG,
+            GameMode.QUEST_LOG,
+            GameMode.SKILLS,
+            GameMode.INVENTORY,
+            GameMode.SHOP,
+            GameMode.WORLD_MAP
+    );
+    private static final Set<String> BOSS_MUSIC_KEYS = new HashSet<>(Set.of(
+            "acid_broodmother",
+            "bone_knight",
+            "crypt_revenant",
+            "elder_wraith",
+            "goblin_king",
+            "goblin_warlord",
+            "ice_golem",
+            "orc_champion"
+    ));
+    private static final int PLAYER_MOVE_FRAMES = 10;
     private final GameState state;
     private final AssetStore assets;
     private final SaveSystem saves;
+    private final MusicManager music;
+    private final Path javaRoot;
     private final Timer timer;
     private final List<UiButton> buttons = new ArrayList<>();
     private int frame;
@@ -37,87 +79,290 @@ public final class GamePanel extends JPanel {
     private int lastCamY;
     private int lastVisibleCols;
     private int lastVisibleRows;
+    private BufferedImage backBuffer;
+    private double renderScale = 1.0;
+    private int renderOffsetX;
+    private int renderOffsetY;
+    private String playerMoveMapId = WorldMap.OVERWORLD_ID;
+    private int playerMoveStartFrame = -PLAYER_MOVE_FRAMES;
+    private int playerMoveFromX = WorldMap.START_POSITION.x();
+    private int playerMoveFromY = WorldMap.START_POSITION.y();
+    private int playerFacingDx;
+    private int playerFacingDy = 1;
+    private Runnable fullscreenToggle = () -> {
+    };
 
     public GamePanel(Path javaRoot, Path pythonRoot) {
-        this.state = new GameState(GameConfig.load(pythonRoot));
+        this.javaRoot = javaRoot;
+        this.state = new GameState(GameConfig.load(pythonRoot, javaRoot));
         this.assets = new AssetStore(javaRoot.resolve("assets"));
         this.saves = new SaveSystem(javaRoot);
+        this.music = new MusicManager(javaRoot.resolve("assets").resolve("music"));
         setPreferredSize(new Dimension(GameConfig.WIDTH, GameConfig.HEIGHT));
         setBackground(new Color(15, 17, 24));
         setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
         addKeyListener(new Keys());
         Mouse mouse = new Mouse();
         addMouseListener(mouse);
         addMouseWheelListener(mouse);
         timer = new Timer(GameConfig.FPS_MS, event -> {
             frame++;
+            state.tickWorld();
             if (state.mode == GameMode.BATTLE && state.battle != null) {
                 state.battle.tick();
             }
+            updateMusic();
             repaint();
         });
         timer.start();
     }
 
+    public void setFullscreenToggle(Runnable fullscreenToggle) {
+        this.fullscreenToggle = fullscreenToggle == null ? () -> {
+        } : fullscreenToggle;
+    }
+
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
-        buttons.clear();
-        Graphics2D g = (Graphics2D) graphics.create();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        if (state.mode == GameMode.CLASS_SELECT) {
-            drawClassSelect(g);
-        } else {
-            drawWorld(g);
-            drawSidebar(g);
-            if (state.mode == GameMode.BATTLE) {
-                drawBattle(g);
-            } else if (state.mode == GameMode.DIALOG) {
-                drawDialog(g);
-            } else if (state.mode == GameMode.QUEST_LOG) {
-                drawQuestLog(g);
-            } else if (state.mode == GameMode.SKILLS) {
-                drawSkillTree(g);
-            } else if (state.mode == GameMode.INVENTORY) {
-                drawInventory(g);
-            } else if (state.mode == GameMode.SHOP) {
-                drawShop(g);
-            } else if (state.mode == GameMode.WORLD_MAP) {
-                drawWorldMap(g);
-            }
+        updateViewportTransform();
+        if (backBuffer == null) {
+            backBuffer = new BufferedImage(GameConfig.WIDTH, GameConfig.HEIGHT, BufferedImage.TYPE_INT_ARGB);
         }
+
+        buttons.clear();
+        Graphics2D bufferGraphics = backBuffer.createGraphics();
+        bufferGraphics.setColor(getBackground());
+        bufferGraphics.fillRect(0, 0, GameConfig.WIDTH, GameConfig.HEIGHT);
+        renderGame(bufferGraphics);
+        bufferGraphics.dispose();
+
+        Graphics2D g = (Graphics2D) graphics.create();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setColor(getBackground());
+        g.fillRect(0, 0, getWidth(), getHeight());
+        int scaledWidth = (int) Math.round(GameConfig.WIDTH * renderScale);
+        int scaledHeight = (int) Math.round(GameConfig.HEIGHT * renderScale);
+        g.drawImage(backBuffer, renderOffsetX, renderOffsetY, scaledWidth, scaledHeight, null);
         g.dispose();
     }
 
+    private void renderGame(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        if (state.mode == GameMode.MAIN_MENU) {
+            drawMainMenu(g);
+        } else if (state.mode == GameMode.CLASS_SELECT) {
+            drawClassSelect(g);
+        } else if (state.mode == GameMode.SETTINGS && state.settingsReturnMode == GameMode.MAIN_MENU) {
+            drawTitleBackground(g);
+            drawSettingsMenu(g, false);
+        } else if (state.mode == GameMode.SAVE_MENU && state.saveMenuReturnMode == GameMode.MAIN_MENU) {
+            drawTitleBackground(g);
+            drawSaveMenu(g, false);
+        } else {
+            drawWorld(g);
+            drawSidebar(g);
+            GameMode visibleMode = visibleGameplayMode();
+            if (visibleMode == GameMode.BATTLE) {
+                drawBattle(g);
+            } else if (visibleMode == GameMode.DIALOG) {
+                drawDialog(g);
+            } else if (visibleMode == GameMode.QUEST_LOG) {
+                drawQuestLog(g);
+            } else if (visibleMode == GameMode.SKILLS) {
+                drawSkillTree(g);
+            } else if (visibleMode == GameMode.INVENTORY) {
+                drawInventory(g);
+            } else if (visibleMode == GameMode.SHOP) {
+                drawShop(g);
+            } else if (visibleMode == GameMode.WORLD_MAP) {
+                drawWorldMap(g);
+            }
+            if (state.mode == GameMode.PAUSE_MENU) {
+                drawPauseMenu(g);
+            } else if (state.mode == GameMode.SETTINGS) {
+                drawSettingsMenu(g, true);
+            } else if (state.mode == GameMode.SAVE_MENU) {
+                drawSaveMenu(g, true);
+            }
+        }
+    }
+
+    private GameMode visibleGameplayMode() {
+        if (state.mode == GameMode.PAUSE_MENU) {
+            return state.pauseReturnMode;
+        }
+        if (state.mode == GameMode.SETTINGS) {
+            return state.settingsReturnMode == GameMode.PAUSE_MENU ? state.pauseReturnMode : state.settingsReturnMode;
+        }
+        if (state.mode == GameMode.SAVE_MENU) {
+            return state.saveMenuReturnMode == GameMode.PAUSE_MENU ? state.pauseReturnMode : state.saveMenuReturnMode;
+        }
+        return state.mode;
+    }
+
+    private void updateMusic() {
+        music.setVolume(effectiveMusicVolume());
+        String track = desiredMusicTrack();
+        if (track == null) {
+            music.stop();
+        } else {
+            music.play(track);
+        }
+    }
+
+    private String desiredMusicTrack() {
+        if (state.mode == GameMode.MAIN_MENU || state.mode == GameMode.CLASS_SELECT) {
+            return null;
+        }
+        if (state.mode == GameMode.PAUSE_MENU) {
+            return trackForMode(state.pauseReturnMode);
+        }
+        if (state.mode == GameMode.SETTINGS) {
+            return trackForMode(state.settingsReturnMode == GameMode.PAUSE_MENU ? state.pauseReturnMode : state.settingsReturnMode);
+        }
+        if (state.mode == GameMode.SAVE_MENU) {
+            return trackForMode(state.saveMenuReturnMode == GameMode.PAUSE_MENU ? state.pauseReturnMode : state.saveMenuReturnMode);
+        }
+        if (state.mode == GameMode.BATTLE && state.battle != null) {
+            return battleMusicTrack();
+        }
+        if (WORLD_MUSIC_MODES.contains(state.mode)) {
+            return worldMusicTrack();
+        }
+        return null;
+    }
+
+    private String trackForMode(GameMode mode) {
+        if (mode == GameMode.BATTLE && state.battle != null) {
+            return battleMusicTrack();
+        }
+        if (mode == GameMode.MAIN_MENU || mode == GameMode.CLASS_SELECT) {
+            return null;
+        }
+        return worldMusicTrack();
+    }
+
+    private float effectiveMusicVolume() {
+        return (state.config.masterVolume / 100.0f) * (state.config.musicVolume / 100.0f);
+    }
+
+    private String worldMusicTrack() {
+        String kind = state.world.kind(state.currentMapId);
+        if ("city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
+            return "town_village";
+        }
+        if ("dungeon".equals(kind)) {
+            return "dungeon_crypt";
+        }
+        char tile = state.world.tileAt(state.currentMapId, state.playerX, state.playerY);
+        return MUSIC_BY_TERRAIN.getOrDefault(tile, "zone_grasslands");
+    }
+
+    private String battleMusicTrack() {
+        if (state.battle.monsterSpecs.size() >= 3) {
+            return "battle_boss";
+        }
+        for (GameData.MonsterSpec spec : state.battle.monsterSpecs) {
+            if (BOSS_MUSIC_KEYS.contains(spec.key())) {
+                return "battle_boss";
+            }
+        }
+        return "battle_standard";
+    }
+
+    private void drawTitleBackground(Graphics2D g) {
+        g.drawImage(assets.cover("battle_forest_backdrop", viewWidth(), viewHeight()), 0, 0, null);
+        g.setPaint(new GradientPaint(0, 0, new Color(8, 10, 16, 150), 0, viewHeight(), new Color(8, 10, 16, 238)));
+        g.fillRect(0, 0, viewWidth(), viewHeight());
+        g.setPaint(null);
+        g.setColor(new Color(68, 83, 104, 105));
+        for (int i = 0; i < 18; i++) {
+            int x = (i * 89 + frame * 2) % (viewWidth() + 160) - 80;
+            int y = 82 + (i * 37) % 600;
+            g.drawLine(x, y, x + 48, y - 5);
+        }
+        g.drawImage(assets.spriteFit("class_knight_model", 120, 152), 116, 540, null);
+        g.drawImage(assets.spriteFit("class_mage_model", 120, 152), viewWidth() - 238, 534, null);
+        g.drawImage(assets.spriteFit("class_ranger_model", 110, 146), viewWidth() - 370, 560, null);
+    }
+
+    private void drawMainMenu(Graphics2D g) {
+        drawTitleBackground(g);
+        g.setFont(new Font("Serif", Font.BOLD, 46));
+        g.setColor(new Color(244, 213, 141));
+        drawCentered(g, "Echoes of Alderfall", 116);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        g.setColor(new Color(215, 228, 239));
+        drawCentered(g, "Alderfall remembers every name.", 158);
+
+        int x = 430;
+        int y = 252;
+        int w = 300;
+        actionButton(g, x, y, w, 52, "New Adventure", state::openClassSelect, new Color(66, 93, 49), new Color(126, 176, 95), true);
+        boolean hasSave = saves.exists();
+        actionButton(g, x, y + 72, w, 52, "Load Adventure", () -> state.openSaveMenu(false), new Color(57, 71, 102), new Color(110, 127, 160), hasSave);
+        if (!hasSave) {
+            g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+            g.setColor(new Color(165, 174, 193));
+            drawCenteredIn(g, "No saved adventures yet.", x, y + 146, w);
+        }
+        actionButton(g, x, y + 164, w, 46, "Settings", state::openSettings, new Color(74, 66, 93), new Color(124, 107, 155), true);
+        actionButton(g, x, y + 230, 144, 46, "Fullscreen", fullscreenToggle, new Color(74, 67, 80), new Color(117, 107, 128), true);
+        actionButton(g, x + 156, y + 230, 144, 46, "Exit", this::exitGame, new Color(91, 60, 60), new Color(165, 111, 98), true);
+
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(new Color(126, 137, 159));
+        drawCentered(g, "Enter starts a new adventure. L loads. S opens settings. F11 toggles fullscreen.", viewHeight() - 70);
+    }
+
     private void drawClassSelect(Graphics2D g) {
-        g.setColor(new Color(15, 17, 24));
-        g.fillRect(0, 0, getWidth(), getHeight());
+        drawTitleBackground(g);
         g.setFont(new Font("SansSerif", Font.BOLD, 44));
         g.setColor(new Color(238, 232, 210));
         drawCentered(g, "Echoes of Alderfall", 130);
         g.setFont(new Font("SansSerif", Font.PLAIN, 20));
-        drawCentered(g, "Java migration build", 168);
+        drawCentered(g, "New Adventure", 168);
+
+        int nameX = 520;
+        int nameY = 198;
+        g.setFont(new Font("SansSerif", Font.BOLD, 15));
+        g.setColor(new Color(215, 228, 239));
+        drawCentered(g, "Character Name", nameY - 14);
+        g.setColor(new Color(22, 27, 38, 230));
+        g.fillRoundRect(nameX, nameY, 400, 50, 8, 8);
+        g.setColor(new Color(95, 107, 132));
+        g.drawRoundRect(nameX, nameY, 400, 50, 8, 8);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 24));
+        String displayName = state.pendingPlayerName.isBlank() ? "Arin" : state.pendingPlayerName;
+        g.setColor(state.pendingPlayerName.isBlank() ? new Color(142, 151, 168) : new Color(244, 239, 220));
+        drawCenteredIn(g, displayName + (frame % 24 < 12 ? "_" : ""), nameX, nameY + 33, 400);
 
         drawClassCard(g, 230, 260, "1", "Knight", "Durable front-line fighter", new Color(115, 138, 184));
         drawClassCard(g, 560, 260, "2", "Mage", "High MP and ranged spells", new Color(154, 117, 190));
         drawClassCard(g, 890, 260, "3", "Ranger", "Balanced damage and field healing", new Color(111, 165, 119));
         buttons.add(new UiButton(new java.awt.Rectangle(230, 260, 250, 230), "class:Knight", () -> {
             state.chooseClass("Knight");
+            syncPlayerAnimationToState();
             repaint();
         }));
         buttons.add(new UiButton(new java.awt.Rectangle(560, 260, 250, 230), "class:Mage", () -> {
             state.chooseClass("Mage");
+            syncPlayerAnimationToState();
             repaint();
         }));
         buttons.add(new UiButton(new java.awt.Rectangle(890, 260, 250, 230), "class:Ranger", () -> {
             state.chooseClass("Ranger");
+            syncPlayerAnimationToState();
             repaint();
         }));
 
         g.setFont(new Font("SansSerif", Font.PLAIN, 18));
         g.setColor(new Color(196, 198, 205));
-        drawCentered(g, "Press 1, 2, or 3 to start. F9 loads a Java save.", 610);
+        drawCentered(g, "Press 1, 2, or 3 to start. Esc returns to the main menu.", 610);
+        actionButton(g, 32, 32, 110, 34, "Back", state::openMainMenu, new Color(48, 55, 70), new Color(89, 102, 125), true);
     }
 
     private void drawClassCard(Graphics2D g, int x, int y, String key, String title, String subtitle, Color color) {
@@ -173,45 +418,124 @@ public final class GamePanel extends JPanel {
             }
         }
 
+        drawGroundPropOverlays(g, camX, camY);
         drawRoadConnectors(g, camX, camY);
         drawCityBuildingEntities(g, camX, camY);
         drawSettlementOverlays(g, camX, camY);
         drawCloudLayer(g, camX, camY);
 
+        List<WorldProp> visibleProps = new ArrayList<>();
         for (WorldProp prop : state.world.props(state.currentMapId)) {
             if (prop.x() < camX || prop.y() < camY || prop.x() >= camX + visibleCols || prop.y() >= camY + visibleRows) {
                 continue;
             }
+            if (!isGroundProp(prop.asset())) {
+                visibleProps.add(prop);
+            }
+        }
+        visibleProps.sort((a, b) -> {
+            int byY = Integer.compare(a.y(), b.y());
+            return byY != 0 ? byY : Integer.compare(a.x(), b.x());
+        });
+        for (WorldProp prop : visibleProps) {
             int size = scaled(prop.size());
             int px = (prop.x() - camX) * tileSize + (tileSize - size) / 2;
             int py = (prop.y() - camY) * tileSize + tileSize - size;
-            g.drawImage(assets.sprite(prop.asset(), size), px, py, null);
+            if (castsPropShadow(prop.asset())) {
+                drawShadow(g, px + size / 6, py + size - scaled(8), size * 2 / 3, scaled(8));
+            }
+            g.drawImage(assets.spriteFit(prop.asset(), size, size), px, py, null);
         }
 
-        for (Npc npc : GameData.NPCS) {
-            if (!npc.mapId().equals(state.currentMapId)) {
+        for (GameState.NpcMotion motion : state.npcMotionsForMap(state.currentMapId)) {
+            Npc npc = motion.npc();
+            double nx = renderNpcX(motion);
+            double ny = renderNpcY(motion);
+            if (nx < camX - 1 || ny < camY - 1 || nx >= camX + visibleCols + 1 || ny >= camY + visibleRows + 1) {
                 continue;
             }
-            if (npc.x() < camX || npc.y() < camY || npc.x() >= camX + visibleCols || npc.y() >= camY + visibleRows) {
-                continue;
-            }
-            int px = (npc.x() - camX) * tileSize;
-            int py = (npc.y() - camY) * tileSize;
+            int px = (int) Math.round((nx - camX) * tileSize);
+            int py = (int) Math.round((ny - camY) * tileSize);
+            int step = npcMoving(motion) ? (state.worldTick / 4) % 4 + 1 : 0;
             drawShadow(g, px + scaled(8), py + scaled(36), scaled(32), scaled(8));
-            g.drawImage(assets.spriteFit(npc.sprite() + "_model", scaled(34), scaled(46)), px + scaled(7), py - scaled(2), null);
+            drawCharacterSprite(g, npc.sprite() + "_model", px + scaled(7), py - scaled(2), scaled(34), scaled(46), motion.facingDx(), motion.facingDy(), step);
             g.setColor(new Color(255, 245, 174));
-            g.fillOval(px + scaled(31), py + scaled(2), scaled(7), scaled(7));
+            g.fillOval(px + scaled(31), py + scaled(2) - (step > 0 ? scaled(2) : 0), scaled(7), scaled(7));
         }
 
-        int playerPx = (state.playerX - camX) * tileSize;
-        int playerPy = (state.playerY - camY) * tileSize;
-        int bob = (int) Math.round(Math.sin(frame * 0.25) * 2.0);
+        double playerX = renderPlayerX();
+        double playerY = renderPlayerY();
+        int playerPx = (int) Math.round((playerX - camX) * tileSize);
+        int playerPy = (int) Math.round((playerY - camY) * tileSize);
+        int step = playerMoving() ? (frame / 3) % 4 + 1 : 0;
+        int bob = step > 0 ? 0 : (int) Math.round(Math.sin(frame * 0.12) * 1.2);
         drawShadow(g, playerPx + scaled(8), playerPy + scaled(39), scaled(34), scaled(9));
-        g.drawImage(assets.spriteFit(state.player.worldSprite, scaled(36), scaled(50)), playerPx + scaled(6), playerPy - scaled(5) + bob, null);
+        drawCharacterSprite(g, state.player.worldSprite, playerPx + scaled(6), playerPy - scaled(5) + bob, scaled(36), scaled(50), playerFacingDx, playerFacingDy, step);
+    }
+
+    private void drawCharacterSprite(Graphics2D g, String sprite, int x, int y, int width, int height, int facingDx, int facingDy, int step) {
+        BufferedImage image = assets.spriteFit(sprite, width, height);
+        int bob = step > 0 ? (step % 2 == 0 ? -scaled(2) : 0) : 0;
+        int lean = facingDx == 0 ? 0 : facingDx * scaled(2);
+        int lift = facingDy < 0 && step > 0 ? -scaled(1) : 0;
+        if (facingDx < 0) {
+            g.drawImage(image, x + width + lean, y + bob + lift, -width, height, null);
+        } else {
+            g.drawImage(image, x + lean, y + bob + lift, width, height, null);
+        }
+    }
+
+    private boolean npcMoving(GameState.NpcMotion motion) {
+        return state.worldTick - motion.moveStartTick() < GameState.NpcMotion.MOVE_TICKS
+                && (motion.x() != motion.fromX() || motion.y() != motion.fromY());
+    }
+
+    private double renderNpcX(GameState.NpcMotion motion) {
+        if (!npcMoving(motion)) {
+            return motion.x();
+        }
+        double t = smoothStep((state.worldTick - motion.moveStartTick()) / (double) GameState.NpcMotion.MOVE_TICKS);
+        return motion.fromX() + (motion.x() - motion.fromX()) * t;
+    }
+
+    private double renderNpcY(GameState.NpcMotion motion) {
+        if (!npcMoving(motion)) {
+            return motion.y();
+        }
+        double t = smoothStep((state.worldTick - motion.moveStartTick()) / (double) GameState.NpcMotion.MOVE_TICKS);
+        return motion.fromY() + (motion.y() - motion.fromY()) * t;
+    }
+
+    private boolean playerMoving() {
+        return state.currentMapId.equals(playerMoveMapId)
+                && frame - playerMoveStartFrame < PLAYER_MOVE_FRAMES
+                && (state.playerX != playerMoveFromX || state.playerY != playerMoveFromY);
+    }
+
+    private double renderPlayerX() {
+        if (!playerMoving()) {
+            return state.playerX;
+        }
+        double t = smoothStep((frame - playerMoveStartFrame) / (double) PLAYER_MOVE_FRAMES);
+        return playerMoveFromX + (state.playerX - playerMoveFromX) * t;
+    }
+
+    private double renderPlayerY() {
+        if (!playerMoving()) {
+            return state.playerY;
+        }
+        double t = smoothStep((frame - playerMoveStartFrame) / (double) PLAYER_MOVE_FRAMES);
+        return playerMoveFromY + (state.playerY - playerMoveFromY) * t;
+    }
+
+    private double smoothStep(double value) {
+        double t = Math.max(0.0, Math.min(1.0, value));
+        return t * t * (3.0 - 2.0 * t);
     }
 
     private void drawCityBuildingEntities(Graphics2D g, int camX, int camY) {
-        if (!"city".equals(state.world.kind(state.currentMapId))) {
+        String kind = state.world.kind(state.currentMapId);
+        if (!"city".equals(kind) && !"village".equals(kind)) {
             return;
         }
         int ts = tileSize();
@@ -447,6 +771,7 @@ public final class GamePanel extends JPanel {
 
     private void drawRoadConnectors(Graphics2D g, int camX, int camY) {
         int ts = tileSize();
+        String mapKind = state.world.kind(state.currentMapId);
         for (int sy = 0; sy < lastVisibleRows; sy++) {
             for (int sx = 0; sx < lastVisibleCols; sx++) {
                 int wx = camX + sx;
@@ -457,7 +782,15 @@ public final class GamePanel extends JPanel {
                 }
                 int px = sx * ts;
                 int py = sy * ts;
-                Color road = state.world.kind(state.currentMapId).equals("dungeon")
+                if ("overworld".equals(mapKind) || "village".equals(mapKind)) {
+                    int bits = roadBits(wx, wy);
+                    String suffix = "0" + Integer.toHexString(bits);
+                    String asset = "road_overlay_" + suffix.substring(suffix.length() - 2);
+                    int inset = scaled(1);
+                    g.drawImage(assets.image(asset, ts + inset * 2, ts + inset * 2), px - inset, py - inset, null);
+                    continue;
+                }
+                Color road = mapKind.equals("dungeon")
                         ? new Color(93, 82, 115)
                         : new Color(176, 130, 76);
                 g.setColor(new Color(52, 38, 22, 150));
@@ -472,6 +805,23 @@ public final class GamePanel extends JPanel {
                 }
             }
         }
+    }
+
+    private int roadBits(int wx, int wy) {
+        int bits = 0;
+        if (connectsRoad(wx, wy - 1)) {
+            bits |= 1;
+        }
+        if (connectsRoad(wx, wy + 1)) {
+            bits |= 2;
+        }
+        if (connectsRoad(wx - 1, wy)) {
+            bits |= 4;
+        }
+        if (connectsRoad(wx + 1, wy)) {
+            bits |= 8;
+        }
+        return bits;
     }
 
     private void drawRoadShape(Graphics2D g, int px, int py, int wx, int wy, int half) {
@@ -500,15 +850,15 @@ public final class GamePanel extends JPanel {
         if (!WorldMap.OVERWORLD_ID.equals(state.currentMapId)) {
             return;
         }
-        drawSettlement(g, camX, camY, 82, 105, "city_overworld_cluster_large", 150);
-        drawSettlement(g, camX, camY, 152, 145, "city_overworld_cluster_large", 150);
-        drawSettlement(g, camX, camY, 205, 78, "city_overworld_cluster_large", 150);
-        drawSettlement(g, camX, camY, 228, 185, "city_overworld_cluster_large", 150);
-        drawSettlement(g, camX, camY, 150, 230, "city_overworld_cluster_large", 150);
-        drawSettlement(g, camX, camY, 112, 158, "city_overworld_village_green", 112);
-        drawSettlement(g, camX, camY, 83, 62, "city_overworld_village_snow", 112);
-        drawSettlement(g, camX, camY, 102, 245, "city_overworld_village_desert", 112);
-        drawSettlement(g, camX, camY, 240, 153, "city_overworld_village_marsh", 112);
+        drawSettlement(g, camX, camY, 82, 105, "city_overworld_cluster_large", 230);
+        drawSettlement(g, camX, camY, 152, 145, "city_overworld_cluster_large", 230);
+        drawSettlement(g, camX, camY, 205, 78, "city_overworld_cluster_large", 230);
+        drawSettlement(g, camX, camY, 228, 185, "city_overworld_cluster_large", 230);
+        drawSettlement(g, camX, camY, 150, 230, "city_overworld_cluster_large", 230);
+        drawSettlement(g, camX, camY, 112, 158, "city_overworld_village_green", 176);
+        drawSettlement(g, camX, camY, 83, 62, "city_overworld_village_snow", 176);
+        drawSettlement(g, camX, camY, 102, 245, "city_overworld_village_desert", 176);
+        drawSettlement(g, camX, camY, 240, 153, "city_overworld_village_marsh", 176);
     }
 
     private void drawSettlement(Graphics2D g, int camX, int camY, int wx, int wy, String asset, int size) {
@@ -526,6 +876,35 @@ public final class GamePanel extends JPanel {
     private void drawShadow(Graphics2D g, int x, int y, int w, int h) {
         g.setColor(new Color(0, 0, 0, 85));
         g.fillOval(x, y, w, h);
+    }
+
+    private void drawGroundPropOverlays(Graphics2D g, int camX, int camY) {
+        int ts = tileSize();
+        int inset = scaled(2);
+        for (WorldProp prop : state.world.props(state.currentMapId)) {
+            if (!isGroundProp(prop.asset())) {
+                continue;
+            }
+            if (prop.x() < camX || prop.y() < camY || prop.x() >= camX + lastVisibleCols || prop.y() >= camY + lastVisibleRows) {
+                continue;
+            }
+            int px = (prop.x() - camX) * ts - inset;
+            int py = (prop.y() - camY) * ts - inset;
+            g.drawImage(assets.image(prop.asset(), ts + inset * 2, ts + inset * 2), px, py, null);
+        }
+    }
+
+    private boolean isGroundProp(String asset) {
+        return asset.equals("location_farmland_tilled")
+                || asset.equals("location_graveyard_dirt")
+                || asset.equals("location_graveyard_path");
+    }
+
+    private boolean castsPropShadow(String asset) {
+        return !asset.equals("location_farmland_tilled")
+                && !asset.equals("location_farmland_wheat")
+                && !asset.equals("location_graveyard_dirt")
+                && !asset.equals("location_graveyard_path");
     }
 
     private void drawCloudLayer(Graphics2D g, int camX, int camY) {
@@ -551,6 +930,9 @@ public final class GamePanel extends JPanel {
 
     private String terrainImageName(char tile, int wx, int wy) {
         String base = Terrain.assetName(tile);
+        if (WorldMap.OVERWORLD_ID.equals(state.currentMapId) && (tile == 'c' || tile == 'u')) {
+            base = "grass";
+        }
         int count = switch (base) {
             case "grass", "forest", "tundra" -> 8;
             case "water", "road", "desert", "marsh", "badlands", "mountain", "mountain_massif_tile" -> 4;
@@ -569,9 +951,9 @@ public final class GamePanel extends JPanel {
     private void drawSidebar(Graphics2D g) {
         int left = GameConfig.MAP_COLS * GameConfig.TILE;
         g.setColor(new Color(18, 20, 29));
-        g.fillRect(left, 0, GameConfig.SIDEBAR_WIDTH, getHeight());
+        g.fillRect(left, 0, GameConfig.SIDEBAR_WIDTH, viewHeight());
         g.setColor(new Color(59, 64, 82));
-        g.drawLine(left, 0, left, getHeight());
+        g.drawLine(left, 0, left, viewHeight());
 
         Actor p = state.player;
         int x = left + 28;
@@ -604,10 +986,10 @@ public final class GamePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.BOLD, 16));
         g.setColor(new Color(230, 225, 206));
         g.drawString("Move", x, moveY);
-        sidebarButton(g, left + 78, moveY + 14, 78, 28, "Up", () -> state.move(0, -1));
-        sidebarButton(g, left + 28, moveY + 48, 78, 28, "Left", () -> state.move(-1, 0));
-        sidebarButton(g, left + 112, moveY + 48, 78, 28, "Down", () -> state.move(0, 1));
-        sidebarButton(g, left + 196, moveY + 48, 78, 28, "Right", () -> state.move(1, 0));
+        sidebarButton(g, left + 78, moveY + 14, 78, 28, "Up", () -> startPlayerMove(0, -1));
+        sidebarButton(g, left + 28, moveY + 48, 78, 28, "Left", () -> startPlayerMove(-1, 0));
+        sidebarButton(g, left + 112, moveY + 48, 78, 28, "Down", () -> startPlayerMove(0, 1));
+        sidebarButton(g, left + 196, moveY + 48, 78, 28, "Right", () -> startPlayerMove(1, 0));
 
         int actionY = moveY + 100;
         sidebarButton(g, left + 28, actionY, 246, 30, "Talk / Enter", state::interact);
@@ -631,8 +1013,9 @@ public final class GamePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.PLAIN, 12));
         g.setColor(new Color(198, 202, 211));
         g.drawString(state.zoom + "%", left + 158, miniY + 66);
+        sidebarButton(g, left + 158, miniY + 78, 116, 28, "Fullscreen", fullscreenToggle);
 
-        int controlsY = getHeight() - 96;
+        int controlsY = viewHeight() - 96;
         g.setFont(new Font("SansSerif", Font.BOLD, 16));
         g.setColor(new Color(230, 225, 206));
         g.drawString("Log", x, controlsY);
@@ -704,64 +1087,86 @@ public final class GamePanel extends JPanel {
         if (battle == null) {
             return;
         }
-        int x = 130;
-        int y = 90;
-        int w = 890;
-        int h = 620;
-        drawBattleBackdrop(g, x, y, w, h);
+        int x = 0;
+        int y = 0;
+        int w = GameConfig.MAP_COLS * GameConfig.TILE;
+        int h = GameConfig.MAP_ROWS * GameConfig.TILE;
+        drawBattleBackdrop(g, battle, x, y, w, h);
         g.setColor(new Color(124, 112, 83));
         g.setStroke(new BasicStroke(2f));
-        g.drawRoundRect(x, y, w, h, 8, 8);
+        g.drawRect(x, y, w - 1, h - 1);
 
         g.setFont(new Font("SansSerif", Font.BOLD, 28));
         g.setColor(new Color(244, 239, 220));
         g.drawString("Battle", x + 34, y + 52);
         Actor active = battle.activeActor();
-        g.setFont(new Font("SansSerif", Font.BOLD, 22));
-        g.drawString(battle.enemy.name, x + 590, y + 96);
-        g.drawImage(assets.sprite(battle.enemy.sprite, 144), x + 610, y + 130, null);
-        bar(g, x + 560, y + 300, battle.enemy.hp, battle.enemy.maxHp, new Color(190, 76, 82), "Enemy HP");
-        drawStatusIcons(g, battle, battle.enemy, x + 560, y + 328);
 
         List<Actor> party = battle.partyMembers();
         int visibleParty = Math.min(4, party.size());
         for (int i = 0; i < visibleParty; i++) {
-            drawBattlePartyMember(g, party.get(i), party.get(i) == active, x + 64 + i * 120, y + 108);
+            drawBattlePartyMember(g, battle, party.get(i), party.get(i) == active, x, y, w, h);
         }
         if (party.size() > visibleParty) {
             g.setFont(new Font("SansSerif", Font.PLAIN, 13));
             g.setColor(new Color(196, 198, 205));
-            g.drawString("+" + (party.size() - visibleParty) + " waiting", x + 66, y + 346);
+            g.drawString("+" + (party.size() - visibleParty) + " waiting", x + 52, y + h - 322);
         }
+
+        for (Actor foe : battle.enemies()) {
+            drawBattleEnemy(g, battle, foe, x, y, w, h);
+        }
+
+        drawBattleEffect(g, battle, x, y, w, h);
+        drawBattleFloaters(g, battle, x, y);
+        if (battle.flashTimer > 0) {
+            Graphics2D flash = (Graphics2D) g.create();
+            flash.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(0.18f, battle.flashTimer / 24.0f)));
+            flash.setColor(Color.WHITE);
+            flash.fillRect(x, y, w, h);
+            flash.dispose();
+        }
+
         if (active != null) {
             g.setFont(new Font("SansSerif", Font.BOLD, 16));
             g.setColor(new Color(246, 224, 151));
-            g.drawString(active.name + "'s turn", x + 66, y + 374);
+            g.drawString(active.name + "'s turn", x + 42, y + h - 278);
             g.setFont(new Font("SansSerif", Font.PLAIN, 14));
             g.setColor(new Color(218, 220, 226));
             String abilityText = active.abilities.isEmpty()
                     ? "No abilities"
                     : "1-" + active.abilities.size() + " " + active.abilities.stream().map(Ability::name).toList();
-            wrap(g, abilityText, x + 66, y + 398, 380, 18);
+            wrap(g, abilityText, x + 42, y + h - 254, 520, 18);
         }
+        Actor selectedEnemy = battle.selectedEnemy();
+        Actor selectedAlly = battle.selectedPartyMember();
+        g.setFont(new Font("SansSerif", Font.BOLD, 14));
+        g.setColor(new Color(226, 229, 236));
+        g.drawString("Enemy target: " + (selectedEnemy == null ? "none" : selectedEnemy.name), x + w - 356, y + 44);
+        g.drawString("Ally target: " + (selectedAlly == null ? "none" : selectedAlly.name), x + w - 356, y + 68);
 
+        g.setColor(new Color(12, 14, 22, 178));
+        g.fillRoundRect(x + 34, y + h - 230, 620, 104, 8, 8);
+        g.setColor(new Color(85, 92, 118));
+        g.drawRoundRect(x + 34, y + h - 230, 620, 104, 8, 8);
         g.setFont(new Font("SansSerif", Font.PLAIN, 16));
         g.setColor(new Color(218, 220, 226));
-        int logY = y + 450;
-        for (String message : battle.log) {
-            g.drawString(message, x + 54, logY);
+        int logY = y + h - 200;
+        List<String> messages = new ArrayList<>(battle.log);
+        int start = Math.max(0, messages.size() - 4);
+        for (int i = start; i < messages.size(); i++) {
+            g.drawString(messages.get(i), x + 54, logY);
             logY += 24;
         }
-        drawBattleActionBar(g, battle, x + 38, y + h - 124, w - 76, 92);
+        drawBattleActionBar(g, battle, x + 34, y + h - 112, w - 68, 88);
     }
 
-    private void drawBattleBackdrop(Graphics2D g, int x, int y, int w, int h) {
-        g.drawImage(assets.cover(battleBackdropName(), w, h), x, y, null);
+    private void drawBattleBackdrop(Graphics2D g, Battle battle, int x, int y, int w, int h) {
+        g.drawImage(assets.cover(battle.backdrop, w, h), x, y, null);
         g.setPaint(new GradientPaint(x, y, new Color(8, 10, 16, 70), x, y + h, new Color(8, 10, 16, 218)));
-        g.fillRoundRect(x, y, w, h, 8, 8);
+        g.fillRect(x, y, w, h);
         g.setPaint(null);
         g.setColor(new Color(20, 18, 18, 92));
-        g.fillRoundRect(x + 22, y + h - 170, w - 44, 138, 8, 8);
+        g.fillRect(x, y + h - 300, w, 300);
     }
 
     private String battleBackdropName() {
@@ -816,32 +1221,93 @@ public final class GamePanel extends JPanel {
         }
         g.setFont(new Font("SansSerif", Font.PLAIN, 13));
         g.setColor(new Color(186, 190, 202));
-        g.drawString("Keyboard: A/Space attack, 1-3 abilities, H potion, J ether.", x + 20, y + 72);
+        g.drawString("Keyboard: A/Space attack, 1-3 abilities, E/Tab enemy target, Q ally target, H potion, J ether.", x + 20, y + 72);
     }
 
-    private void drawBattlePartyMember(Graphics2D g, Actor actor, boolean active, int x, int y) {
-        g.setColor(active ? new Color(78, 88, 116) : new Color(30, 34, 45));
-        g.fillRoundRect(x - 8, y - 10, 104, 220, 8, 8);
-        g.setColor(active ? new Color(246, 224, 151) : new Color(86, 98, 128));
-        g.drawRoundRect(x - 8, y - 10, 104, 220, 8, 8);
-        g.drawImage(assets.sprite(actor.sprite, 72), x + 8, y + 10, null);
+    private void drawBattlePartyMember(Graphics2D g, Battle battle, Actor actor, boolean active, int panelX, int panelY, int panelW, int panelH) {
+        int[] slot = battlePartyPosition(battle, actor, panelX, panelY, panelW, panelH);
+        boolean selected = actor == battle.selectedPartyMember();
+        int lunge = active ? battle.playerLunge : 0;
+        int shake = active ? battle.playerOffset : 0;
+        int bob = actor.alive() ? (int) Math.round(Math.sin((frame + battle.partyMembers().indexOf(actor) * 8) * 0.18) * 3.0) : 0;
+        int drawX = slot[0] + lunge + shake;
+        int drawY = slot[1] + bob;
+        if (actor.alive()) {
+            buttons.add(new UiButton(new Rectangle(drawX - 10, drawY - 8, 148, 234), "party-target:" + actor.name, () -> state.selectBattlePartyMember(battle.partyMembers().indexOf(actor))));
+        }
+        drawShadow(g, drawX + 18, drawY + 126, 86, 16);
+        g.drawImage(assets.spriteFit(actor.worldSprite, 118, 148), drawX, drawY, null);
+        if (selected && actor.alive()) {
+            g.setColor(new Color(132, 190, 255, 190));
+            g.setStroke(new BasicStroke(3f));
+            g.drawOval(drawX + 4, drawY + 118, 110, 30);
+        }
+        if (active && actor.alive()) {
+            g.setColor(new Color(246, 224, 151, 170));
+            g.setStroke(new BasicStroke(2f));
+            g.drawOval(drawX + 10, drawY + 122, 98, 24);
+        }
+        int cardX = drawX - 8;
+        int cardY = drawY + 148;
+        g.setColor(new Color(12, 14, 22, 205));
+        g.fillRoundRect(cardX, cardY, 136, 78, 8, 8);
+        g.setColor(selected ? new Color(132, 190, 255) : active ? new Color(246, 224, 151) : new Color(86, 98, 128));
+        g.drawRoundRect(cardX, cardY, 136, 78, 8, 8);
         g.setFont(new Font("SansSerif", Font.BOLD, 13));
         g.setColor(new Color(238, 239, 244));
-        drawCenteredIn(g, actor.name, x - 8, y + 105, 104);
+        drawCenteredIn(g, actor.name, cardX, cardY + 20, 136);
         g.setFont(new Font("SansSerif", Font.PLAIN, 12));
         g.setColor(new Color(198, 202, 211));
-        drawCenteredIn(g, actor.className, x - 8, y + 124, 104);
-        smallBar(g, x, y + 142, actor.hp, actor.maxHp, new Color(190, 76, 82), "HP");
-        smallBar(g, x, y + 166, actor.mp, actor.maxMp, new Color(84, 129, 205), "MP");
-        if (state.battle != null) {
-            drawStatusIcons(g, state.battle, actor, x, y + 190);
-        }
+        drawCenteredIn(g, actor.className, cardX, cardY + 38, 136);
+        smallBar(g, cardX + 12, cardY + 46, actor.hp, actor.maxHp, new Color(190, 76, 82), "HP");
+        smallBar(g, cardX + 12, cardY + 62, actor.mp, actor.maxMp, new Color(84, 129, 205), "MP");
+        drawStatusIcons(g, battle, actor, cardX + 142, cardY + 8);
         if (!actor.alive()) {
             g.setColor(new Color(9, 10, 16, 150));
-            g.fillRoundRect(x - 8, y - 10, 104, 220, 8, 8);
+            g.fillRoundRect(drawX, drawY, 118, 148, 8, 8);
             g.setColor(new Color(238, 239, 244));
-            drawCenteredIn(g, "Down", x - 8, y + 92, 104);
+            drawCenteredIn(g, "Down", drawX, drawY + 86, 118);
         }
+    }
+
+    private void drawBattleEnemy(Graphics2D g, Battle battle, Actor foe, int panelX, int panelY, int panelW, int panelH) {
+        int[] slot = battleEnemyPosition(battle, foe, panelX, panelY, panelW, panelH);
+        int index = Math.max(0, battle.enemies().indexOf(foe));
+        boolean selected = foe == battle.selectedEnemy();
+        int lunge = battle.enemyLunge(foe);
+        int shake = foe.alive() ? battle.monsterOffset : 0;
+        int bob = foe.alive() ? (int) Math.round(Math.sin((frame + index * 10) * 0.16) * 3.0) : 0;
+        int drawX = slot[0] + shake - lunge;
+        int drawY = slot[1] + bob;
+        if (foe.alive()) {
+            buttons.add(new UiButton(new Rectangle(drawX - 12, drawY - 8, 180, 226), "enemy-target:" + foe.name, () -> state.selectBattleEnemy(index)));
+        }
+        float fade = Math.max(0.0f, Math.min(1.0f, battle.enemyFade(foe) / 255.0f));
+        Graphics2D enemyG = (Graphics2D) g.create();
+        enemyG.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fade));
+        drawShadow(enemyG, drawX + 18, drawY + 132, 112, 18);
+        enemyG.drawImage(assets.spriteFit(foe.sprite, 152, 156), drawX, drawY, null);
+        enemyG.dispose();
+        if (selected && foe.alive()) {
+            g.setColor(new Color(255, 220, 150, 210));
+            g.setStroke(new BasicStroke(3f));
+            g.drawOval(drawX + 8, drawY + 126, 134, 30);
+        } else if (foe.alive() && foe == battle.livingEnemies().stream().findFirst().orElse(null)) {
+            g.setColor(new Color(255, 220, 150, 180));
+            g.setStroke(new BasicStroke(2f));
+            g.drawOval(drawX + 12, drawY + 128, 126, 26);
+        }
+        int cardX = drawX - 10;
+        int cardY = drawY + 156;
+        g.setColor(new Color(12, 14, 22, 205));
+        g.fillRoundRect(cardX, cardY, 174, 62, 8, 8);
+        g.setColor(selected ? new Color(255, 220, 150) : new Color(100, 76, 76));
+        g.drawRoundRect(cardX, cardY, 174, 62, 8, 8);
+        g.setFont(new Font("SansSerif", Font.BOLD, 14));
+        g.setColor(new Color(238, 239, 244));
+        drawCenteredIn(g, foe.name, cardX, cardY + 20, 174);
+        smallBar(g, cardX + 12, cardY + 34, foe.hp, foe.maxHp, new Color(190, 76, 82), "HP");
+        drawStatusIcons(g, battle, foe, cardX + 104, cardY + 34);
     }
 
     private void drawStatusIcons(Graphics2D g, Battle battle, Actor actor, int x, int y) {
@@ -857,6 +1323,133 @@ public final class GamePanel extends JPanel {
                 break;
             }
         }
+    }
+
+    private void drawBattleFloaters(Graphics2D g, Battle battle, int panelX, int panelY) {
+        g.setFont(new Font("SansSerif", Font.BOLD, 18));
+        for (FloatingText floater : battle.floaters) {
+            Graphics2D textG = (Graphics2D) g.create();
+            textG.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0.05f, Math.min(1.0f, floater.life / 34.0f))));
+            textG.setColor(new Color(0, 0, 0, 120));
+            textG.drawString(floater.text, panelX + floater.x + 1, panelY + floater.y + 1);
+            textG.setColor(floater.color);
+            textG.drawString(floater.text, panelX + floater.x, panelY + floater.y);
+            textG.dispose();
+        }
+    }
+
+    private void drawBattleEffect(Graphics2D g, Battle battle, int panelX, int panelY, int panelW, int panelH) {
+        if (battle.effectTimer <= 0 || battle.effectTarget == null) {
+            return;
+        }
+        int[] source = battleActorCenter(battle, battle.effectSource, panelX, panelY, panelW, panelH);
+        int[] target = battleActorCenter(battle, battle.effectTarget, panelX, panelY, panelW, panelH);
+        float alpha = Math.max(0.08f, Math.min(0.85f, battle.effectTimer / 20.0f));
+        Graphics2D fx = (Graphics2D) g.create();
+        fx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+        fx.setStroke(new BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        String kind = battle.effectKind == null ? "strike" : battle.effectKind;
+        switch (kind) {
+            case "heal", "regeneration" -> {
+                fx.setColor(new Color(126, 232, 154));
+                fx.drawOval(target[0] - 34, target[1] - 42, 68, 68);
+                fx.drawOval(target[0] - 22, target[1] - 30, 44, 44);
+            }
+            case "shield", "ward" -> {
+                fx.setColor(new Color(142, 191, 255));
+                fx.drawArc(target[0] - 42, target[1] - 50, 84, 94, 205, 130);
+                fx.drawArc(target[0] - 32, target[1] - 40, 64, 74, 210, 120);
+            }
+            case "fire", "burn" -> {
+                fx.setColor(new Color(255, 132, 65));
+                fx.drawLine(source[0], source[1], target[0], target[1]);
+                fx.setColor(new Color(255, 206, 91));
+                fx.fillOval(target[0] - 22, target[1] - 22, 44, 44);
+            }
+            case "frost" -> {
+                fx.setColor(new Color(150, 222, 255));
+                fx.drawLine(source[0], source[1], target[0], target[1]);
+                fx.drawLine(target[0] - 26, target[1], target[0] + 26, target[1]);
+                fx.drawLine(target[0], target[1] - 26, target[0], target[1] + 26);
+            }
+            case "poison", "acid", "web", "thorn" -> {
+                fx.setColor(new Color(130, 220, 108));
+                fx.drawLine(source[0], source[1], target[0], target[1]);
+                fx.drawOval(target[0] - 28, target[1] - 20, 22, 22);
+                fx.drawOval(target[0] + 6, target[1] - 32, 28, 28);
+            }
+            case "volley", "pierce" -> {
+                fx.setColor(new Color(246, 224, 151));
+                for (int i = -1; i <= 1; i++) {
+                    fx.drawLine(source[0], source[1] + i * 10, target[0], target[1] + i * 8);
+                }
+            }
+            case "slash", "cleave", "fang" -> {
+                fx.setColor(new Color(255, 240, 206));
+                fx.drawArc(target[0] - 48, target[1] - 38, 96, 70, 25, 120);
+                fx.drawArc(target[0] - 34, target[1] - 28, 68, 52, 25, 120);
+            }
+            case "shadow", "sonic", "bone", "dust", "howl" -> {
+                fx.setColor(new Color(180, 154, 220));
+                fx.drawOval(target[0] - 36, target[1] - 30, 72, 60);
+                fx.drawLine(source[0], source[1], target[0], target[1]);
+            }
+            default -> {
+                fx.setColor(new Color(255, 240, 206));
+                fx.drawLine(source[0], source[1], target[0], target[1]);
+                fx.drawArc(target[0] - 38, target[1] - 28, 76, 52, 25, 120);
+            }
+        }
+        fx.dispose();
+    }
+
+    private int[] battleActorCenter(Battle battle, Actor actor, int panelX, int panelY, int panelW, int panelH) {
+        if (battle.enemies().contains(actor)) {
+            int[] slot = battleEnemyPosition(battle, actor, panelX, panelY, panelW, panelH);
+            return new int[]{slot[0] + 76 + battle.monsterOffset - battle.enemyLunge(actor), slot[1] + 74};
+        }
+        int[] slot = battlePartyPosition(battle, actor, panelX, panelY, panelW, panelH);
+        int x = slot[0] + 59;
+        int y = slot[1] + 74;
+        if (actor == battle.activeActor()) {
+            x += battle.playerLunge + battle.playerOffset;
+        }
+        return new int[]{x, y};
+    }
+
+    private int[] battlePartyPosition(Battle battle, Actor actor, int panelX, int panelY, int panelW, int panelH) {
+        int index = Math.max(0, battle.partyMembers().indexOf(actor));
+        index = Math.min(3, index);
+        int count = Math.max(1, Math.min(4, battle.partyMembers().size()));
+        int[][] one = {{panelX + 176, panelY + 260}};
+        int[][] two = {{panelX + 222, panelY + 190}, {panelX + 92, panelY + 356}};
+        int[][] three = {{panelX + 236, panelY + 170}, {panelX + 82, panelY + 290}, {panelX + 236, panelY + 410}};
+        int[][] four = {{panelX + 236, panelY + 154}, {panelX + 82, panelY + 154}, {panelX + 82, panelY + 394}, {panelX + 236, panelY + 394}};
+        int[][] positions = switch (count) {
+            case 1 -> one;
+            case 2 -> two;
+            case 3 -> three;
+            default -> four;
+        };
+        return positions[index];
+    }
+
+    private int[] battleEnemyPosition(Battle battle, Actor actor, int panelX, int panelY, int panelW, int panelH) {
+        int index = Math.max(0, battle.enemies().indexOf(actor));
+        index = Math.min(3, index);
+        int count = Math.max(1, Math.min(4, battle.enemies().size()));
+        int right = panelX + panelW;
+        int[][] one = {{right - 300, panelY + 250}};
+        int[][] two = {{right - 374, panelY + 180}, {right - 238, panelY + 356}};
+        int[][] three = {{right - 386, panelY + 158}, {right - 226, panelY + 286}, {right - 386, panelY + 414}};
+        int[][] four = {{right - 386, panelY + 150}, {right - 226, panelY + 150}, {right - 386, panelY + 390}, {right - 226, panelY + 390}};
+        int[][] positions = switch (count) {
+            case 1 -> one;
+            case 2 -> two;
+            case 3 -> three;
+            default -> four;
+        };
+        return positions[index];
     }
 
     private void drawDialog(Graphics2D g) {
@@ -1194,6 +1787,142 @@ public final class GamePanel extends JPanel {
         g.drawString(label, px + 6, py + 4);
     }
 
+    private void drawPauseMenu(Graphics2D g) {
+        g.setColor(new Color(8, 11, 16, 170));
+        g.fillRect(0, 0, viewWidth(), viewHeight());
+        int x = 456;
+        int y = 188;
+        int w = 528;
+        int h = 416;
+        drawOverlayBase(g, x, y, w, h);
+        g.setFont(new Font("Serif", Font.BOLD, 34));
+        g.setColor(new Color(244, 213, 141));
+        drawCenteredIn(g, "Paused", x, y + 58, w);
+
+        int buttonX = x + 138;
+        int buttonW = w - 276;
+        actionButton(g, buttonX, y + 96, buttonW, 42, "Resume", state::resumeGame, new Color(66, 93, 49), new Color(126, 176, 95), true);
+        actionButton(g, buttonX, y + 150, buttonW, 42, "Save / Load", () -> state.openSaveMenu(true), new Color(57, 71, 102), new Color(110, 127, 160), true);
+        actionButton(g, buttonX, y + 204, buttonW, 42, "Settings", state::openSettings, new Color(74, 66, 93), new Color(124, 107, 155), true);
+        actionButton(g, buttonX, y + 258, buttonW, 42, "New Adventure", state::openClassSelect, new Color(74, 67, 80), new Color(117, 107, 128), true);
+        actionButton(g, buttonX, y + 312, buttonW, 42, "Main Menu", state::openMainMenu, new Color(91, 60, 60), new Color(165, 111, 98), true);
+        actionButton(g, buttonX, y + 366, 120, 38, "Fullscreen", fullscreenToggle, new Color(48, 55, 70), new Color(89, 102, 125), true);
+        actionButton(g, buttonX + buttonW - 120, y + 366, 120, 38, "Exit", this::exitGame, new Color(91, 60, 60), new Color(165, 111, 98), true);
+    }
+
+    private void drawSettingsMenu(Graphics2D g, boolean overlay) {
+        if (overlay) {
+            g.setColor(new Color(8, 11, 16, 170));
+            g.fillRect(0, 0, viewWidth(), viewHeight());
+        }
+        int x = 314;
+        int y = 82;
+        int w = 812;
+        int h = 704;
+        drawOverlayBase(g, x, y, w, h);
+        g.setFont(new Font("Serif", Font.BOLD, 32));
+        g.setColor(new Color(244, 213, 141));
+        drawCenteredIn(g, "Settings", x, y + 46, w);
+
+        g.setFont(new Font("SansSerif", Font.BOLD, 18));
+        g.setColor(new Color(230, 225, 206));
+        g.drawString("Monster Spawn Ratios", x + 52, y + 96);
+        drawChanceRow(g, x + 52, y + 132, "Wild", state.config.wildEncounterChance, "wild");
+        drawChanceRow(g, x + 52, y + 184, "Dungeon", state.config.dungeonEncounterChance, "dungeon");
+        drawChanceRow(g, x + 52, y + 236, "Dungeon Entrance", state.config.dungeonEntranceEncounterChance, "dungeon_entrance");
+
+        g.drawString("Monster Group Ratios", x + 52, y + 316);
+        drawChanceRow(g, x + 52, y + 352, "Two Monsters", state.config.twoMonsterChance, "two_monsters");
+        drawChanceRow(g, x + 52, y + 404, "Three Monsters", state.config.threeMonsterChance, "three_monsters");
+
+        g.drawString("Audio", x + 470, y + 96);
+        drawVolumeRow(g, x + 470, y + 132, "Master", state.config.masterVolume, "master");
+        drawVolumeRow(g, x + 470, y + 184, "Music", state.config.musicVolume, "music");
+        drawVolumeRow(g, x + 470, y + 236, "SFX", state.config.sfxVolume, "sfx");
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(new Color(165, 174, 193));
+        wrap(g, "Music follows the current biome, town, dungeon, or battle and uses the master and music volume settings.", x + 470, y + 294, 260, 18);
+
+        actionButton(g, x + w - 170, y + h - 58, 120, 34, "Back", state::closeSettings, new Color(48, 55, 70), new Color(89, 102, 125), true);
+    }
+
+    private void drawChanceRow(Graphics2D g, int x, int y, String label, double value, String key) {
+        drawSettingRow(g, x, y, label, Math.round(value * 100) + "%", () -> adjustChanceSetting(key, -0.01), () -> adjustChanceSetting(key, 0.01), value);
+    }
+
+    private void drawVolumeRow(Graphics2D g, int x, int y, String label, int value, String key) {
+        drawSettingRow(g, x, y, label, value + "%", () -> adjustVolumeSetting(key, -5), () -> adjustVolumeSetting(key, 5), value / 100.0);
+    }
+
+    private void drawSettingRow(Graphics2D g, int x, int y, String label, String value, Runnable decrease, Runnable increase, double fraction) {
+        g.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        g.setColor(new Color(220, 224, 232));
+        g.drawString(label, x, y + 22);
+        g.setColor(new Color(42, 47, 62));
+        g.fillRoundRect(x + 150, y + 8, 150, 10, 5, 5);
+        g.setColor(new Color(235, 211, 132));
+        g.fillRoundRect(x + 150, y + 8, (int) Math.round(150 * Math.max(0.0, Math.min(1.0, fraction))), 10, 5, 5);
+        g.setColor(new Color(220, 224, 232));
+        g.drawString(value, x + 314, y + 22);
+        actionButton(g, x + 366, y, 34, 28, "-", decrease, new Color(35, 39, 54), new Color(86, 98, 128), true);
+        actionButton(g, x + 408, y, 34, 28, "+", increase, new Color(35, 39, 54), new Color(86, 98, 128), true);
+    }
+
+    private void drawSaveMenu(Graphics2D g, boolean overlay) {
+        if (overlay) {
+            g.setColor(new Color(8, 11, 16, 170));
+            g.fillRect(0, 0, viewWidth(), viewHeight());
+        }
+        int x = 342;
+        int y = 112;
+        int w = 756;
+        int h = 650;
+        drawOverlayBase(g, x, y, w, h);
+        g.setFont(new Font("Serif", Font.BOLD, 32));
+        g.setColor(new Color(244, 213, 141));
+        drawCenteredIn(g, state.saveMenuCanSave ? "Save / Load Adventure" : "Load Adventure", x, y + 48, w);
+
+        int rowY = y + 92;
+        if (state.saveMenuCanSave) {
+            actionButton(g, x + 52, rowY, 260, 38, "Save Current Adventure", this::saveGame, new Color(66, 93, 49), new Color(126, 176, 95), true);
+            g.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            g.setColor(new Color(198, 202, 211));
+            g.drawString("Slot: " + state.player.name + " (" + state.player.className + ")", x + 332, rowY + 25);
+            rowY += 66;
+        }
+
+        List<SaveSystem.SaveSummary> summaries = saves.listSaves();
+        if (summaries.isEmpty()) {
+            g.setFont(new Font("SansSerif", Font.PLAIN, 17));
+            g.setColor(new Color(198, 202, 211));
+            drawCenteredIn(g, "No saved adventures yet.", x, rowY + 60, w);
+        } else {
+            g.setFont(new Font("SansSerif", Font.BOLD, 17));
+            g.setColor(new Color(230, 225, 206));
+            g.drawString("Existing Adventures", x + 52, rowY + 18);
+            rowY += 34;
+            int index = 1;
+            for (SaveSystem.SaveSummary summary : summaries.stream().limit(7).toList()) {
+                int buttonIndex = index;
+                String saveId = summary.saveId();
+                g.setColor(new Color(28, 32, 43, 238));
+                g.fillRoundRect(x + 52, rowY, w - 104, 58, 8, 8);
+                g.setColor(new Color(82, 92, 116));
+                g.drawRoundRect(x + 52, rowY, w - 104, 58, 8, 8);
+                g.setFont(new Font("SansSerif", Font.BOLD, 16));
+                g.setColor(new Color(235, 236, 240));
+                g.drawString(buttonIndex + ". " + summary.name(), x + 70, rowY + 24);
+                g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                g.setColor(new Color(176, 182, 196));
+                g.drawString(summary.className() + "  Level " + summary.level() + "  " + state.world.label(summary.mapId()), x + 70, rowY + 43);
+                actionButton(g, x + w - 172, rowY + 13, 104, 32, "Load", () -> loadGame(saveId), new Color(57, 71, 102), new Color(110, 127, 160), true);
+                rowY += 70;
+                index++;
+            }
+        }
+        actionButton(g, x + w - 170, y + h - 58, 120, 34, "Back", state::closeSaveMenu, new Color(48, 55, 70), new Color(89, 102, 125), true);
+    }
+
     private void drawOverlayBase(Graphics2D g, int x, int y, int w, int h) {
         g.setColor(new Color(9, 10, 16, 226));
         g.fillRoundRect(x, y, w, h, 8, 8);
@@ -1252,7 +1981,7 @@ public final class GamePanel extends JPanel {
 
     private void drawCentered(Graphics2D g, String text, int y) {
         FontMetrics metrics = g.getFontMetrics();
-        g.drawString(text, (getWidth() - metrics.stringWidth(text)) / 2, y);
+        g.drawString(text, (viewWidth() - metrics.stringWidth(text)) / 2, y);
     }
 
     private void drawCenteredIn(Graphics2D g, String text, int x, int y, int width) {
@@ -1272,34 +2001,234 @@ public final class GamePanel extends JPanel {
         return Math.max(1, value * state.zoom / 100);
     }
 
+    private int viewWidth() {
+        return GameConfig.WIDTH;
+    }
+
+    private int viewHeight() {
+        return GameConfig.HEIGHT;
+    }
+
+    private void updateViewportTransform() {
+        double scaleX = getWidth() / (double) GameConfig.WIDTH;
+        double scaleY = getHeight() / (double) GameConfig.HEIGHT;
+        renderScale = Math.min(scaleX, scaleY);
+        if (!Double.isFinite(renderScale) || renderScale <= 0.0) {
+            renderScale = 1.0;
+        }
+        int scaledWidth = (int) Math.round(GameConfig.WIDTH * renderScale);
+        int scaledHeight = (int) Math.round(GameConfig.HEIGHT * renderScale);
+        renderOffsetX = (getWidth() - scaledWidth) / 2;
+        renderOffsetY = (getHeight() - scaledHeight) / 2;
+    }
+
+    private Point logicalPoint(MouseEvent event) {
+        updateViewportTransform();
+        int scaledWidth = (int) Math.round(GameConfig.WIDTH * renderScale);
+        int scaledHeight = (int) Math.round(GameConfig.HEIGHT * renderScale);
+        if (event.getX() < renderOffsetX || event.getY() < renderOffsetY
+                || event.getX() >= renderOffsetX + scaledWidth || event.getY() >= renderOffsetY + scaledHeight) {
+            return null;
+        }
+        int x = clamp((int) Math.floor((event.getX() - renderOffsetX) / renderScale), 0, GameConfig.WIDTH - 1);
+        int y = clamp((int) Math.floor((event.getY() - renderOffsetY) / renderScale), 0, GameConfig.HEIGHT - 1);
+        return new Point(x, y);
+    }
+
+    private void startPlayerMove(int dx, int dy) {
+        if (playerMoving()) {
+            return;
+        }
+        String mapBefore = state.currentMapId;
+        int fromX = state.playerX;
+        int fromY = state.playerY;
+        playerFacingDx = dx;
+        playerFacingDy = dy;
+        boolean moved = state.move(dx, dy);
+        if (moved && state.currentMapId.equals(mapBefore)
+                && Math.abs(state.playerX - fromX) + Math.abs(state.playerY - fromY) == 1) {
+            playerMoveMapId = mapBefore;
+            playerMoveFromX = fromX;
+            playerMoveFromY = fromY;
+            playerMoveStartFrame = frame;
+        } else {
+            syncPlayerAnimationToState();
+        }
+    }
+
+    private void syncPlayerAnimationToState() {
+        playerMoveMapId = state.currentMapId;
+        playerMoveFromX = state.playerX;
+        playerMoveFromY = state.playerY;
+        playerMoveStartFrame = frame - PLAYER_MOVE_FRAMES;
+    }
+
+    private void saveGame() {
+        try {
+            saves.save(state);
+            state.status = "Saved " + state.player.name + ".";
+        } catch (IOException ex) {
+            state.status = "Save failed: " + ex.getMessage();
+        }
+    }
+
+    private void loadGame() {
+        try {
+            if (!saves.load(state)) {
+                state.status = "No Java save found.";
+            } else {
+                state.resetNpcRuntime();
+                syncPlayerAnimationToState();
+            }
+        } catch (IOException ex) {
+            state.status = "Load failed: " + ex.getMessage();
+        }
+    }
+
+    private void loadGame(String saveId) {
+        try {
+            if (!saves.load(state, saveId)) {
+                state.status = "No Java save found.";
+            } else {
+                state.resetNpcRuntime();
+                syncPlayerAnimationToState();
+            }
+        } catch (IOException ex) {
+            state.status = "Load failed: " + ex.getMessage();
+        }
+    }
+
+    private void adjustChanceSetting(String key, double delta) {
+        state.adjustChanceSetting(key, delta);
+        saveSettings();
+    }
+
+    private void adjustVolumeSetting(String key, int delta) {
+        state.adjustVolumeSetting(key, delta);
+        saveSettings();
+    }
+
+    private void saveSettings() {
+        try {
+            state.config.save(javaRoot);
+        } catch (IOException ex) {
+            state.status = "Settings save failed: " + ex.getMessage();
+        }
+    }
+
+    private void exitGame() {
+        music.shutdown();
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window != null) {
+            window.dispose();
+        }
+        System.exit(0);
+    }
+
+    public void shutdown() {
+        music.shutdown();
+    }
+
     private final class Keys extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent event) {
             int code = event.getKeyCode();
+            if (state.mode == GameMode.MAIN_MENU) {
+                if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_N) {
+                    state.openClassSelect();
+                } else if ((code == KeyEvent.VK_L || code == KeyEvent.VK_F9) && saves.exists()) {
+                    state.openSaveMenu(false);
+                } else if (code == KeyEvent.VK_S) {
+                    state.openSettings();
+                } else if (code == KeyEvent.VK_ESCAPE) {
+                    exitGame();
+                }
+                repaint();
+                return;
+            }
             if (state.mode == GameMode.CLASS_SELECT) {
                 if (code == KeyEvent.VK_1) {
                     state.chooseClass("Knight");
+                    syncPlayerAnimationToState();
                 } else if (code == KeyEvent.VK_2) {
                     state.chooseClass("Mage");
+                    syncPlayerAnimationToState();
                 } else if (code == KeyEvent.VK_3) {
                     state.chooseClass("Ranger");
+                    syncPlayerAnimationToState();
                 } else if (code == KeyEvent.VK_F9) {
-                    load();
+                    loadGame();
+                } else if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
+                    if (state.pendingPlayerName.length() > 0 && code == KeyEvent.VK_BACK_SPACE) {
+                        state.setPendingPlayerName(state.pendingPlayerName.substring(0, state.pendingPlayerName.length() - 1));
+                    } else {
+                        state.openMainMenu();
+                    }
+                } else if (code == KeyEvent.VK_L && saves.exists()) {
+                    state.openSaveMenu(false);
+                } else {
+                    char ch = event.getKeyChar();
+                    if ((Character.isLetterOrDigit(ch) || ch == ' ' || ch == '-' || ch == '_') && state.pendingPlayerName.length() < 24) {
+                        state.setPendingPlayerName(state.pendingPlayerName + ch);
+                    }
+                }
+                repaint();
+                return;
+            }
+            if (state.mode == GameMode.PAUSE_MENU) {
+                if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_ENTER) {
+                    state.resumeGame();
+                } else if (code == KeyEvent.VK_F5 || code == KeyEvent.VK_S) {
+                    state.openSaveMenu(true);
+                } else if ((code == KeyEvent.VK_F9 || code == KeyEvent.VK_L) && saves.exists()) {
+                    state.openSaveMenu(true);
+                } else if (code == KeyEvent.VK_T) {
+                    state.openSettings();
+                } else if (code == KeyEvent.VK_N) {
+                    state.openClassSelect();
+                } else if (code == KeyEvent.VK_M) {
+                    state.openMainMenu();
+                }
+                repaint();
+                return;
+            }
+            if (state.mode == GameMode.SETTINGS) {
+                if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
+                    state.closeSettings();
+                }
+                repaint();
+                return;
+            }
+            if (state.mode == GameMode.SAVE_MENU) {
+                if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
+                    state.closeSaveMenu();
+                } else if ((code == KeyEvent.VK_S || code == KeyEvent.VK_F5) && state.saveMenuCanSave) {
+                    saveGame();
+                } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_7) {
+                    int index = code - KeyEvent.VK_1;
+                    List<SaveSystem.SaveSummary> summaries = saves.listSaves();
+                    if (index < summaries.size()) {
+                        loadGame(summaries.get(index).saveId());
+                    }
                 }
                 repaint();
                 return;
             }
 
             if (code == KeyEvent.VK_F5) {
-                save();
+                saveGame();
             } else if (code == KeyEvent.VK_F9) {
-                load();
+                loadGame();
             } else if (code == KeyEvent.VK_ESCAPE) {
-                if (state.mode != GameMode.EXPLORE && state.mode != GameMode.BATTLE) {
+                if (state.mode == GameMode.EXPLORE || state.mode == GameMode.BATTLE || state.mode == GameMode.DIALOG) {
+                    state.openPauseMenu();
+                } else if (state.mode != GameMode.EXPLORE && state.mode != GameMode.BATTLE) {
                     state.closeOverlay();
                 }
+            } else if (code == KeyEvent.VK_P) {
+                state.openPauseMenu();
             } else if (state.mode == GameMode.BATTLE) {
-                handleBattleKey(code);
+                handleBattleKey(event);
             } else if (state.mode == GameMode.DIALOG) {
                 if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_E) {
                     state.advanceDialog();
@@ -1331,13 +2260,13 @@ public final class GamePanel extends JPanel {
                     state.hireActiveRecruit();
                 }
             } else if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
-                state.move(0, -1);
+                startPlayerMove(0, -1);
             } else if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
-                state.move(0, 1);
+                startPlayerMove(0, 1);
             } else if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
-                state.move(-1, 0);
+                startPlayerMove(-1, 0);
             } else if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
-                state.move(1, 0);
+                startPlayerMove(1, 0);
             } else if (code == KeyEvent.VK_E) {
                 state.interact();
             } else if (code == KeyEvent.VK_Q) {
@@ -1356,11 +2285,22 @@ public final class GamePanel extends JPanel {
             repaint();
         }
 
-        private void handleBattleKey(int code) {
+        private void handleBattleKey(KeyEvent event) {
+            int code = event.getKeyCode();
             if (code == KeyEvent.VK_A || code == KeyEvent.VK_SPACE) {
                 state.battleAttack();
             } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_3) {
                 state.battleAbility(code - KeyEvent.VK_1);
+            } else if (code == KeyEvent.VK_TAB) {
+                if (event.isShiftDown()) {
+                    state.cycleBattlePartyTarget(1);
+                } else {
+                    state.cycleBattleEnemyTarget(1);
+                }
+            } else if (code == KeyEvent.VK_E) {
+                state.cycleBattleEnemyTarget(1);
+            } else if (code == KeyEvent.VK_Q) {
+                state.cycleBattlePartyTarget(1);
             } else if (code == KeyEvent.VK_ENTER) {
                 state.leaveFinishedBattle();
             } else if (code == KeyEvent.VK_R && state.battle != null && state.battle.finished && !state.battle.victory) {
@@ -1372,46 +2312,34 @@ public final class GamePanel extends JPanel {
             }
         }
 
-        private void save() {
-            try {
-                saves.save(state);
-                state.status = "Saved Java game.";
-            } catch (IOException ex) {
-                state.status = "Save failed: " + ex.getMessage();
-            }
-        }
-
-        private void load() {
-            try {
-                if (!saves.load(state)) {
-                    state.status = "No Java save found.";
-                }
-            } catch (IOException ex) {
-                state.status = "Load failed: " + ex.getMessage();
-            }
-        }
     }
 
     private final class Mouse extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent event) {
             requestFocusInWindow();
+            Point point = logicalPoint(event);
+            if (point == null) {
+                return;
+            }
             for (int i = buttons.size() - 1; i >= 0; i--) {
                 UiButton button = buttons.get(i);
-                if (button.contains(event.getX(), event.getY())) {
+                if (button.contains(point.x, point.y)) {
                     button.action().run();
                     return;
                 }
             }
-            if (state.mode == GameMode.EXPLORE && event.getX() < GameConfig.MAP_COLS * GameConfig.TILE && event.getY() < GameConfig.MAP_ROWS * GameConfig.TILE) {
-                clickWorld(event.getX(), event.getY());
+            if (state.mode == GameMode.EXPLORE && point.x < GameConfig.MAP_COLS * GameConfig.TILE && point.y < GameConfig.MAP_ROWS * GameConfig.TILE) {
+                clickWorld(point.x, point.y);
             }
         }
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent event) {
-            state.adjustZoom(event.getWheelRotation() < 0 ? 10 : -10);
-            repaint();
+            if (state.mode != GameMode.MAIN_MENU && state.mode != GameMode.CLASS_SELECT && state.mode != GameMode.PAUSE_MENU) {
+                state.adjustZoom(event.getWheelRotation() < 0 ? 10 : -10);
+                repaint();
+            }
         }
 
         private void clickWorld(int x, int y) {
@@ -1423,7 +2351,7 @@ public final class GamePanel extends JPanel {
             if (dx == 0 && dy == 0) {
                 state.interact();
             } else if (Math.abs(dx) + Math.abs(dy) == 1) {
-                state.move(Integer.signum(dx), Integer.signum(dy));
+                startPlayerMove(Integer.signum(dx), Integer.signum(dy));
             } else {
                 state.status = "Click an adjacent tile to move.";
             }

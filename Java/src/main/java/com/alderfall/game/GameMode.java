@@ -1,6 +1,7 @@
 package com.alderfall.game;
 
 public enum GameMode {
+    MAIN_MENU,
     CLASS_SELECT,
     EXPLORE,
     BATTLE,
@@ -9,5 +10,8 @@ public enum GameMode {
     SKILLS,
     INVENTORY,
     SHOP,
-    WORLD_MAP
+    WORLD_MAP,
+    PAUSE_MENU,
+    SETTINGS,
+    SAVE_MENU
 }

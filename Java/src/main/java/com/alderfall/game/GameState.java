@@ -13,8 +13,14 @@ public final class GameState {
     public final Map<String, Quest> quests = new LinkedHashMap<>();
     public final List<Actor> allies = new ArrayList<>();
     public final List<String> recruitedIds = new ArrayList<>();
-    public GameMode mode = GameMode.CLASS_SELECT;
+    public GameMode mode = GameMode.MAIN_MENU;
+    public GameMode pauseReturnMode = GameMode.EXPLORE;
+    public GameMode settingsReturnMode = GameMode.MAIN_MENU;
+    public GameMode saveMenuReturnMode = GameMode.MAIN_MENU;
+    public boolean saveMenuCanSave;
     public Actor player = GameData.createPlayer("Knight");
+    public String pendingPlayerName = "Arin";
+    public String currentSaveId = "";
     public String currentMapId = WorldMap.OVERWORLD_ID;
     public int playerX = WorldMap.START_POSITION.x();
     public int playerY = WorldMap.START_POSITION.y();
@@ -23,7 +29,9 @@ public final class GameState {
     public Shop activeShop;
     public int dialogIndex;
     public int zoom = 100;
-    public String status = "Choose a class.";
+    public int worldTick;
+    public String status = "Choose New Adventure or load an existing save.";
+    private final Map<Npc, NpcRuntime> npcRuntime = new LinkedHashMap<>();
 
     public GameState(GameConfig config) {
         this.config = config;
@@ -33,12 +41,41 @@ public final class GameState {
         }
     }
 
+    public void openMainMenu() {
+        activeNpc = null;
+        activeShop = null;
+        battle = null;
+        dialogIndex = 0;
+        mode = GameMode.MAIN_MENU;
+        status = "Choose New Adventure or load an existing save.";
+    }
+
+    public void openClassSelect() {
+        activeNpc = null;
+        activeShop = null;
+        battle = null;
+        dialogIndex = 0;
+        mode = GameMode.CLASS_SELECT;
+        status = "Choose a class.";
+    }
+
+    public void setPendingPlayerName(String name) {
+        pendingPlayerName = cleanName(name);
+    }
+
     public void chooseClass(String className) {
-        player = GameData.createPlayer(className);
+        setPendingPlayerName(pendingPlayerName);
+        if (pendingPlayerName.isBlank()) {
+            pendingPlayerName = "Arin";
+        }
+        player = GameData.createPlayer(className, pendingPlayerName);
         syncSkillAbilities();
+        currentSaveId = SaveSystem.saveIdFor(player.name);
         currentMapId = WorldMap.OVERWORLD_ID;
         playerX = WorldMap.START_POSITION.x();
         playerY = WorldMap.START_POSITION.y();
+        worldTick = 0;
+        resetNpcRuntime();
         allies.clear();
         recruitedIds.clear();
         battle = null;
@@ -46,9 +83,59 @@ public final class GameState {
         status = className + " begins in Oakhaven.";
     }
 
+    public void openPauseMenu() {
+        if (mode == GameMode.MAIN_MENU || mode == GameMode.CLASS_SELECT || mode == GameMode.PAUSE_MENU) {
+            return;
+        }
+        pauseReturnMode = mode;
+        mode = GameMode.PAUSE_MENU;
+        status = "Paused.";
+    }
+
+    public void resumeGame() {
+        mode = pauseReturnMode == GameMode.PAUSE_MENU ? GameMode.EXPLORE : pauseReturnMode;
+        if (mode == GameMode.BATTLE) {
+            status = "Battle!";
+        } else if (mode == GameMode.DIALOG && activeNpc != null) {
+            status = "Talking to " + activeNpc.name() + ".";
+        } else {
+            status = world.describe(currentMapId, playerX, playerY);
+        }
+    }
+
+    public void openSettings() {
+        settingsReturnMode = mode == GameMode.SETTINGS ? GameMode.MAIN_MENU : mode;
+        mode = GameMode.SETTINGS;
+    }
+
+    public void closeSettings() {
+        mode = settingsReturnMode == GameMode.SETTINGS ? GameMode.MAIN_MENU : settingsReturnMode;
+    }
+
+    public void openSaveMenu(boolean canSave) {
+        saveMenuReturnMode = mode == GameMode.SAVE_MENU ? GameMode.MAIN_MENU : mode;
+        saveMenuCanSave = canSave;
+        mode = GameMode.SAVE_MENU;
+    }
+
+    public void closeSaveMenu() {
+        mode = saveMenuReturnMode == GameMode.SAVE_MENU ? GameMode.MAIN_MENU : saveMenuReturnMode;
+    }
+
+    public void adjustChanceSetting(String key, double delta) {
+        config.adjustChance(key, delta);
+        status = "Settings updated.";
+    }
+
+    public void adjustVolumeSetting(String key, int delta) {
+        config.adjustVolume(key, delta);
+        status = "Audio settings updated.";
+    }
+
     public Npc npcAtPlayer() {
         for (Npc npc : GameData.NPCS) {
-            if (npc.mapId().equals(currentMapId) && Math.abs(npc.x() - playerX) + Math.abs(npc.y() - playerY) <= 1) {
+            TilePoint position = npcPosition(npc);
+            if (npc.mapId().equals(currentMapId) && Math.abs(position.x() - playerX) + Math.abs(position.y() - playerY) <= 1) {
                 return npc;
             }
         }
@@ -263,10 +350,6 @@ public final class GameState {
             status = "No usable " + GameData.itemName(itemKey) + ".";
             return;
         }
-        if (player.hp >= player.maxHp && player.mp >= player.maxMp) {
-            status = "You are already refreshed.";
-            return;
-        }
         int heal = item.heal();
         int mp = item.mp();
         if (heal > 0) {
@@ -286,6 +369,10 @@ public final class GameState {
             player.consumeItem(itemKey);
             updateAfterBattleAction();
         } else {
+            if (player.hp >= player.maxHp && player.mp >= player.maxMp) {
+                status = "You are already refreshed.";
+                return;
+            }
             player.consumeItem(itemKey);
             player.hp = Math.min(player.maxHp, player.hp + heal);
             player.mp = Math.min(player.maxMp, player.mp + mp);
@@ -359,25 +446,73 @@ public final class GameState {
         status = "Skills reset for " + cost + " gold.";
     }
 
-    public void move(int dx, int dy) {
+    public boolean move(int dx, int dy) {
         if (mode != GameMode.EXPLORE) {
-            return;
+            return false;
         }
         int nx = playerX + dx;
         int ny = playerY + dy;
         if (!world.isPassable(currentMapId, nx, ny)) {
             status = "Blocked by " + Terrain.name(world.tileAt(currentMapId, nx, ny)) + ".";
-            return;
+            return false;
+        }
+        Npc npc = npcAt(currentMapId, nx, ny);
+        if (npc != null) {
+            status = npc.name() + " is there. Press E to talk.";
+            return false;
         }
         playerX = nx;
         playerY = ny;
         WorldTransition transition = world.transitionAt(currentMapId, playerX, playerY);
         if (transition != null) {
             applyTransition(transition);
-            return;
+            return true;
         }
         status = world.describe(currentMapId, playerX, playerY);
         maybeStartEncounter();
+        return true;
+    }
+
+    public void tickWorld() {
+        worldTick++;
+        if (mode != GameMode.EXPLORE) {
+            return;
+        }
+        updateNpcMovement();
+    }
+
+    public void resetNpcRuntime() {
+        npcRuntime.clear();
+    }
+
+    public TilePoint npcPosition(Npc npc) {
+        NpcRuntime runtime = runtimeFor(npc);
+        return new TilePoint(runtime.x, runtime.y);
+    }
+
+    public List<NpcMotion> npcMotionsForMap(String mapId) {
+        List<NpcMotion> motions = new ArrayList<>();
+        for (Npc npc : GameData.NPCS) {
+            if (!npc.mapId().equals(mapId)) {
+                continue;
+            }
+            NpcRuntime runtime = runtimeFor(npc);
+            motions.add(new NpcMotion(npc, runtime.x, runtime.y, runtime.fromX, runtime.fromY, runtime.moveStartTick, runtime.facingDx, runtime.facingDy));
+        }
+        return motions;
+    }
+
+    public Npc npcAt(String mapId, int x, int y) {
+        for (Npc npc : GameData.NPCS) {
+            if (!npc.mapId().equals(mapId)) {
+                continue;
+            }
+            TilePoint position = npcPosition(npc);
+            if (position.x() == x && position.y() == y) {
+                return npc;
+            }
+        }
+        return null;
     }
 
     public void maybeStartEncounter() {
@@ -390,9 +525,10 @@ public final class GameState {
         if (random.nextDouble() >= chance) {
             return;
         }
-        String key = chooseMonster(tile);
-        GameData.MonsterSpec spec = GameData.MONSTERS.getOrDefault(key, GameData.MONSTERS.get("slime"));
-        battle = new Battle(player, allies, spec, random, tile, kind);
+        List<GameData.MonsterSpec> specs = chooseMonsterGroup(tile).stream()
+                .map(key -> GameData.MONSTERS.getOrDefault(key, GameData.MONSTERS.get("slime")))
+                .toList();
+        battle = new Battle(player, allies, specs, random, tile, kind);
         mode = GameMode.BATTLE;
         status = "Battle!";
     }
@@ -411,6 +547,42 @@ public final class GameState {
         }
         battle.useAbility(index);
         updateAfterBattleAction();
+    }
+
+    public void selectBattleEnemy(int index) {
+        if (battle == null || battle.finished) {
+            return;
+        }
+        battle.selectEnemy(index);
+        Actor target = battle.selectedEnemy();
+        status = target == null ? "No enemy target." : "Targeting " + target.name + ".";
+    }
+
+    public void selectBattlePartyMember(int index) {
+        if (battle == null || battle.finished) {
+            return;
+        }
+        battle.selectPartyMember(index);
+        Actor target = battle.selectedPartyMember();
+        status = target == null ? "No ally target." : "Ally target: " + target.name + ".";
+    }
+
+    public void cycleBattleEnemyTarget(int direction) {
+        if (battle == null || battle.finished) {
+            return;
+        }
+        battle.cycleEnemyTarget(direction);
+        Actor target = battle.selectedEnemy();
+        status = target == null ? "No enemy target." : "Targeting " + target.name + ".";
+    }
+
+    public void cycleBattlePartyTarget(int direction) {
+        if (battle == null || battle.finished) {
+            return;
+        }
+        battle.cyclePartyTarget(direction);
+        Actor target = battle.selectedPartyMember();
+        status = target == null ? "No ally target." : "Ally target: " + target.name + ".";
     }
 
     public void revive() {
@@ -465,7 +637,9 @@ public final class GameState {
     private void updateAfterBattleAction() {
         if (battle != null && battle.finished && battle.victory) {
             if (!battle.questRecorded) {
-                recordQuestProgress(battle.enemy.name);
+                for (String defeatedName : battle.defeatedMonsterNames()) {
+                    recordQuestProgress(defeatedName);
+                }
                 battle.questRecorded = true;
             }
             status = "Victory. Press Enter to continue.";
@@ -516,6 +690,74 @@ public final class GameState {
         }
     }
 
+    private void updateNpcMovement() {
+        for (Npc npc : GameData.NPCS) {
+            if (!npc.mapId().equals(currentMapId)) {
+                continue;
+            }
+            NpcRuntime runtime = runtimeFor(npc);
+            if (worldTick - runtime.moveStartTick < NpcMotion.MOVE_TICKS || worldTick < runtime.nextThinkTick) {
+                continue;
+            }
+            runtime.nextThinkTick = worldTick + 70 + random.nextInt(100);
+            if (random.nextDouble() < 0.45) {
+                continue;
+            }
+            int[][] directions = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+            int start = random.nextInt(directions.length);
+            for (int i = 0; i < directions.length; i++) {
+                int[] direction = directions[(start + i) % directions.length];
+                int nx = runtime.x + direction[0];
+                int ny = runtime.y + direction[1];
+                if (!canNpcMoveTo(npc, runtime, nx, ny)) {
+                    continue;
+                }
+                runtime.fromX = runtime.x;
+                runtime.fromY = runtime.y;
+                runtime.x = nx;
+                runtime.y = ny;
+                runtime.facingDx = direction[0];
+                runtime.facingDy = direction[1];
+                runtime.moveStartTick = worldTick;
+                break;
+            }
+        }
+    }
+
+    private boolean canNpcMoveTo(Npc npc, NpcRuntime runtime, int x, int y) {
+        if (!world.isPassable(npc.mapId(), x, y)) {
+            return false;
+        }
+        if (Math.abs(x - runtime.homeX) + Math.abs(y - runtime.homeY) > 3) {
+            return false;
+        }
+        if (npc.mapId().equals(currentMapId) && x == playerX && y == playerY) {
+            return false;
+        }
+        for (Npc otherNpc : GameData.NPCS) {
+            if (otherNpc.equals(npc) || !otherNpc.mapId().equals(npc.mapId())) {
+                continue;
+            }
+            TilePoint otherPosition = npcPosition(otherNpc);
+            if (otherPosition.x() == x && otherPosition.y() == y) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private NpcRuntime runtimeFor(Npc npc) {
+        return npcRuntime.computeIfAbsent(npc, ignored -> new NpcRuntime(npc.x(), npc.y(), Math.max(0, random.nextInt(90))));
+    }
+
+    private String cleanName(String name) {
+        if (name == null) {
+            return "";
+        }
+        String cleaned = String.join(" ", name.strip().split("\\s+"));
+        return cleaned.substring(0, Math.min(24, cleaned.length()));
+    }
+
     private String chooseMonster(char tile) {
         List<String> early = switch (tile) {
             case 'f' -> List.of("wolf", "goblin", "spider", "thornling");
@@ -529,5 +771,47 @@ public final class GameState {
         };
         int cap = Math.min(early.size(), player.level < 4 ? 2 : player.level < 7 ? 3 : early.size());
         return early.get(random.nextInt(cap));
+    }
+
+    private List<String> chooseMonsterGroup(char tile) {
+        int count = 1;
+        double roll = random.nextDouble();
+        if (roll < config.threeMonsterChance && player.level >= 3) {
+            count = 3;
+        } else if (roll < config.threeMonsterChance + config.twoMonsterChance) {
+            count = 2;
+        }
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            keys.add(chooseMonster(tile));
+        }
+        return keys;
+    }
+
+    public record NpcMotion(Npc npc, int x, int y, int fromX, int fromY, int moveStartTick, int facingDx, int facingDy) {
+        public static final int MOVE_TICKS = 14;
+    }
+
+    private static final class NpcRuntime {
+        final int homeX;
+        final int homeY;
+        int x;
+        int y;
+        int fromX;
+        int fromY;
+        int moveStartTick = -NpcMotion.MOVE_TICKS;
+        int facingDx;
+        int facingDy = 1;
+        int nextThinkTick;
+
+        NpcRuntime(int x, int y, int nextThinkTick) {
+            this.homeX = x;
+            this.homeY = y;
+            this.x = x;
+            this.y = y;
+            this.fromX = x;
+            this.fromY = y;
+            this.nextThinkTick = nextThinkTick;
+        }
     }
 }

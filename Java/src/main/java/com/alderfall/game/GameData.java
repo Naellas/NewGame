@@ -8,10 +8,15 @@ public final class GameData {
     }
 
     public static Actor createPlayer(String className) {
+        return createPlayer(className, "Hero");
+    }
+
+    public static Actor createPlayer(String className, String playerName) {
+        String name = playerName == null || playerName.isBlank() ? "Hero" : playerName.strip();
         Actor actor = switch (className) {
-            case "Mage" -> new Actor("Hero", "class_mage", "Mage", 42, 34, 8, 2);
-            case "Ranger" -> new Actor("Hero", "class_ranger", "Ranger", 48, 22, 11, 3);
-            default -> new Actor("Hero", "class_knight", "Knight", 58, 16, 12, 4);
+            case "Mage" -> new Actor(name, "class_mage", "Mage", 42, 34, 8, 2);
+            case "Ranger" -> new Actor(name, "class_ranger", "Ranger", 48, 22, 11, 3);
+            default -> new Actor(name, "class_knight", "Knight", 58, 16, 12, 4);
         };
         actor.abilities.addAll(classAbilities(actor.className));
         actor.gold = 25;
