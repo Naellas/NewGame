@@ -175,6 +175,46 @@ public final class WorldMap {
         return landmarkAt(OVERWORLD_ID, x, y);
     }
 
+    public List<LocationSite> locationSites(String kind) {
+        List<LocationSite> sites = new ArrayList<>();
+        for (LocationPatch patch : locationPatches) {
+            if (patch.kind.equals(kind)) {
+                sites.add(new LocationSite(patch.kind, patch.label(), patch.cx, patch.cy));
+            }
+        }
+        return sites;
+    }
+
+    public TilePoint objectivePoint(String locationKind, int locationIndex, int variant) {
+        List<LocationPatch> matches = new ArrayList<>();
+        for (LocationPatch patch : locationPatches) {
+            if (patch.kind.equals(locationKind)) {
+                matches.add(patch);
+            }
+        }
+        if (matches.isEmpty()) {
+            return START_POSITION;
+        }
+        LocationPatch patch = matches.get(Math.floorMod(locationIndex, matches.size()));
+        int[][] offsets = {
+                {0, 0}, {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                {1, 1}, {-1, 1}, {1, -1}, {-1, -1},
+                {2, 0}, {-2, 0}, {0, 2}, {0, -2},
+                {2, 1}, {-2, 1}, {2, -1}, {-2, -1},
+                {1, 2}, {-1, 2}, {1, -2}, {-1, -2}
+        };
+        int start = Math.floorMod(variant * 5 + patch.salt, offsets.length);
+        for (int i = 0; i < offsets.length; i++) {
+            int[] offset = offsets[(start + i) % offsets.length];
+            int x = patch.cx + offset[0];
+            int y = patch.cy + offset[1];
+            if (patch.contains(x, y) && isPassable(OVERWORLD_ID, x, y)) {
+                return new TilePoint(x, y);
+            }
+        }
+        return new TilePoint(patch.cx, patch.cy);
+    }
+
     private void registerMaps() {
         MapArea overworld = new MapArea(OVERWORLD_ID, "Alderfall Overworld", "overworld", tiles);
         overworld.landmarks.putAll(landmarks);
@@ -212,12 +252,19 @@ public final class WorldMap {
         for (int dy = -2; dy <= 2; dy++) {
             for (int dx = -2; dx <= 2; dx++) {
                 if (Math.abs(dx) + Math.abs(dy) <= 3) {
-                    addTransition(OVERWORLD_ID, ox + dx, oy + dy, id, 17, 21, "You enter " + label + ".");
+                    TilePoint entry = cityEntryPoint(dx, dy);
+                    addTransition(OVERWORLD_ID, ox + dx, oy + dy, id, entry.x(), entry.y(), "You enter " + label + ".");
                 }
             }
         }
-        addTransition(id, 16, 23, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
-        addTransition(id, 17, 23, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
+        addTransition(id, 16, 0, OVERWORLD_ID, ox, oy - 3, "You leave " + label + ".");
+        addTransition(id, 17, 0, OVERWORLD_ID, ox, oy - 3, "You leave " + label + ".");
+        addTransition(id, 16, 27, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
+        addTransition(id, 17, 27, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
+        addTransition(id, 0, 11, OVERWORLD_ID, ox - 3, oy, "You leave " + label + ".");
+        addTransition(id, 0, 12, OVERWORLD_ID, ox - 3, oy, "You leave " + label + ".");
+        addTransition(id, 35, 11, OVERWORLD_ID, ox + 3, oy, "You leave " + label + ".");
+        addTransition(id, 35, 12, OVERWORLD_ID, ox + 3, oy, "You leave " + label + ".");
         area.landmarks.put(new TilePoint(17, 11), label);
     }
 
@@ -229,13 +276,46 @@ public final class WorldMap {
         for (int dy = -2; dy <= 2; dy++) {
             for (int dx = -2; dx <= 2; dx++) {
                 if (Math.abs(dx) + Math.abs(dy) <= 3) {
-                    addTransition(OVERWORLD_ID, ox + dx, oy + dy, id, 14, 17, "You enter " + label + ".");
+                    TilePoint entry = villageEntryPoint(dx, dy);
+                    addTransition(OVERWORLD_ID, ox + dx, oy + dy, id, entry.x(), entry.y(), "You enter " + label + ".");
                 }
             }
         }
-        addTransition(id, 13, 19, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
-        addTransition(id, 14, 19, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
+        addTransition(id, 13, 0, OVERWORLD_ID, ox, oy - 3, "You leave " + label + ".");
+        addTransition(id, 14, 0, OVERWORLD_ID, ox, oy - 3, "You leave " + label + ".");
+        addTransition(id, 13, 27, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
+        addTransition(id, 14, 27, OVERWORLD_ID, ox, oy + 3, "You leave " + label + ".");
+        addTransition(id, 0, 9, OVERWORLD_ID, ox - 3, oy, "You leave " + label + ".");
+        addTransition(id, 0, 10, OVERWORLD_ID, ox - 3, oy, "You leave " + label + ".");
+        addTransition(id, 35, 9, OVERWORLD_ID, ox + 3, oy, "You leave " + label + ".");
+        addTransition(id, 35, 10, OVERWORLD_ID, ox + 3, oy, "You leave " + label + ".");
         area.landmarks.put(new TilePoint(14, 9), label);
+    }
+
+    private TilePoint cityEntryPoint(int dx, int dy) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+            return dx < 0 ? new TilePoint(1, 12) : new TilePoint(34, 12);
+        }
+        if (dy < 0) {
+            return new TilePoint(17, 1);
+        }
+        if (dy > 0) {
+            return new TilePoint(17, 26);
+        }
+        return new TilePoint(17, 21);
+    }
+
+    private TilePoint villageEntryPoint(int dx, int dy) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+            return dx < 0 ? new TilePoint(1, 10) : new TilePoint(34, 10);
+        }
+        if (dy < 0) {
+            return new TilePoint(14, 1);
+        }
+        if (dy > 0) {
+            return new TilePoint(14, 26);
+        }
+        return new TilePoint(14, 17);
     }
 
     private void addDungeon(String id, String label, int ox, int oy, int depth) {
@@ -256,10 +336,10 @@ public final class WorldMap {
     }
 
     private char[][] cityTiles(String variant) {
-        char[][] grid = filled(34, 24, 'p');
+        char[][] grid = filled(36, 28, 'p');
         border(grid, 'x');
-        rect(grid, 16, 0, 17, 23, 'r');
-        rect(grid, 0, 11, 33, 12, 'r');
+        rect(grid, 16, 0, 17, 27, 'r');
+        rect(grid, 0, 11, 35, 12, 'r');
         rect(grid, 2, 6, 31, 6, 'r');
         rect(grid, 2, 18, 31, 18, 'r');
         rect(grid, 6, 21, 27, 21, 'r');
@@ -295,14 +375,14 @@ public final class WorldMap {
         for (CityBuilding building : cityBuildingTemplates(variant)) {
             rect(grid, building.x1(), building.y1(), building.x2(), building.y2(), 'h');
         }
-        grid[23][16] = 'r';
-        grid[23][17] = 'r';
+        grid[27][16] = 'r';
+        grid[27][17] = 'r';
         grid[0][16] = 'r';
         grid[0][17] = 'r';
         grid[11][0] = 'r';
         grid[12][0] = 'r';
-        grid[11][33] = 'r';
-        grid[12][33] = 'r';
+        grid[11][35] = 'r';
+        grid[12][35] = 'r';
         return grid;
     }
 
@@ -437,16 +517,39 @@ public final class WorldMap {
             case "marsh" -> 'v';
             default -> 'f';
         };
-        char[][] grid = filled(28, 20, base);
-        organicFill(grid, 14, 10, 11, 7, 'g', 200 + variant.length());
-        rect(grid, 13, 0, 14, 19, 'r');
-        rect(grid, 0, 9, 27, 10, 'r');
-        rect(grid, 2, 16, 25, 16, 'r');
+        char[][] grid = filled(36, 28, base);
+        if ("green".equals(variant)) {
+            organicFill(grid, 14, 10, 11, 7, 'g', 200 + variant.length());
+            organicFill(grid, 5, 5, 4, 3, 'f', 271);
+            organicFill(grid, 22, 14, 4, 3, 'f', 277);
+        } else if ("snow".equals(variant)) {
+            organicFill(grid, 14, 10, 10, 7, 'n', 241);
+            organicFill(grid, 4, 4, 4, 3, 'q', 251);
+            organicFill(grid, 23, 15, 4, 3, 'q', 257);
+        } else if ("desert".equals(variant)) {
+            organicFill(grid, 14, 10, 11, 7, 's', 263);
+            organicFill(grid, 3, 4, 5, 3, 'b', 269);
+            organicFill(grid, 24, 15, 5, 3, 'b', 281);
+        } else if ("marsh".equals(variant)) {
+            organicFill(grid, 14, 10, 11, 7, 'f', 293);
+            organicFill(grid, 5, 7, 5, 4, 'v', 307);
+            organicFill(grid, 22, 12, 5, 4, 'v', 311);
+        }
+        rect(grid, 13, 0, 14, 27, 'r');
+        rect(grid, 0, 9, 35, 10, 'r');
+        rect(grid, 2, 16, 33, 16, 'r');
         int[][] cottages = {{4, 4, 7, 6}, {9, 3, 12, 5}, {16, 4, 20, 6}, {5, 12, 9, 14}, {12, 13, 15, 15}, {18, 11, 22, 14}};
         for (int[] cottage : cottages) {
             rect(grid, cottage[0], cottage[1], cottage[2], cottage[3], 'h');
         }
         rect(grid, 13, 8, 15, 10, 'p');
+        if ("snow".equals(variant)) {
+            rect(grid, 2, 2, 5, 2, 'n');
+            rect(grid, 22, 17, 25, 17, 'n');
+        } else if ("desert".equals(variant)) {
+            rect(grid, 2, 13, 4, 14, 'b');
+            rect(grid, 23, 4, 25, 5, 'b');
+        }
         if ("marsh".equals(variant)) {
             rect(grid, 2, 6, 5, 12, 'v');
             rect(grid, 22, 8, 25, 14, 'v');
@@ -512,24 +615,39 @@ public final class WorldMap {
     }
 
     private void addBiomeProps(MapArea area, int salt) {
+        boolean[][] occupiedProps = new boolean[area.height()][area.width()];
+        boolean[][] tallProps = new boolean[area.height()][area.width()];
         for (int y = 2; y < area.height() - 2; y++) {
             for (int x = 2; x < area.width() - 2; x++) {
                 char tile = area.tileAt(x, y);
                 if (tile == 'w' || tile == 'c' || tile == 'u' || tile == 'h' || tile == 'x') {
                     continue;
                 }
+                if (occupiedProps[y][x]) {
+                    continue;
+                }
                 int roll = Math.abs(hash(x, y, salt + area.id.hashCode())) % 1000;
                 int cluster = naturalNeighborCount(area, x, y, tile);
                 int chance = decorationChance(tile, cluster);
                 if (roll < chance) {
-                    int size = decorationSize(tile, roll);
                     int patchSeed = hash(x / 5, y / 5, salt + tile * 97 + area.id.hashCode());
-                    area.props.add(new WorldProp(x, y, decorationFor(tile, roll, patchSeed), size));
-                    if (shouldPairDecoration(tile, roll, chance)) {
+                    String asset = decorationFor(tile, roll, patchSeed);
+                    if (isTallProp(asset) && shouldThinTallProp(tile, asset, tallProps, x, y, roll)) {
+                        asset = lowDecorationFor(tile, roll + 31, patchSeed);
+                    }
+                    int size = decorationSize(tile, roll, asset);
+                    area.props.add(new WorldProp(x, y, asset, size));
+                    occupiedProps[y][x] = true;
+                    if (isTallProp(asset)) {
+                        tallProps[y][x] = true;
+                    }
+                    if (shouldPairDecoration(tile, roll, chance, asset)) {
                         int ox = roll % 2 == 0 ? 1 : -1;
                         int oy = (roll / 2) % 2 == 0 ? 1 : -1;
-                        if (area.tileAt(x + ox, y + oy) == tile) {
-                            area.props.add(new WorldProp(x + ox, y + oy, decorationFor(tile, roll + 17, patchSeed), Math.max(30, size - 8)));
+                        if (area.tileAt(x + ox, y + oy) == tile && !occupiedProps[y + oy][x + ox]) {
+                            String pairedAsset = lowDecorationFor(tile, roll + 17, patchSeed);
+                            area.props.add(new WorldProp(x + ox, y + oy, pairedAsset, decorationSize(tile, roll + 17, pairedAsset)));
+                            occupiedProps[y + oy][x + ox] = true;
                         }
                     }
                 }
@@ -539,42 +657,116 @@ public final class WorldMap {
 
     private int decorationChance(char tile, int cluster) {
         int clusteredBonus = switch (tile) {
-            case 'f' -> Math.min(64, cluster * 4);
-            case 'm', 'q' -> Math.min(42, cluster * 3);
-            case 'v', 's', 'n', 'b' -> Math.min(28, cluster * 3);
-            case 'g' -> Math.min(18, cluster * 3);
+            case 'f' -> Math.min(108, cluster * 5);
+            case 'm', 'q' -> Math.min(38, cluster * 2);
+            case 'v' -> Math.min(52, cluster * 3);
+            case 's', 'n', 'b' -> Math.min(34, cluster * 2);
+            case 'g' -> Math.min(46, cluster * 3);
             default -> Math.min(12, cluster * 2);
         };
         int base = switch (tile) {
-            case 'f' -> 118;
-            case 'm' -> 72;
-            case 'q' -> 54;
-            case 'v' -> 38;
-            case 's', 'n', 'b' -> 30;
-            case 'g' -> 22;
+            case 'f' -> 198;
+            case 'm' -> 66;
+            case 'q' -> 52;
+            case 'v' -> 74;
+            case 's', 'n', 'b' -> 42;
+            case 'g' -> 58;
             case 'r' -> 8;
             default -> 3;
         };
         return base + clusteredBonus;
     }
 
-    private int decorationSize(char tile, int roll) {
-        return switch (tile) {
-            case 'f' -> 58 + roll % 18;
-            case 'm', 'q' -> 40 + roll % 16;
-            case 'r' -> 34;
-            case 'v' -> 42 + roll % 12;
-            default -> 40 + roll % 10;
+    private int decorationSize(char tile, int roll, String asset) {
+        int jitter = Math.floorMod(roll / 11 + asset.hashCode(), 5);
+        if (isForestTree(asset)) {
+            int base = switch (asset) {
+                case "deco_tree_young" -> 58;
+                case "deco_tree_blue_pine" -> 74;
+                case "deco_tree_pine" -> 78;
+                default -> 82;
+            };
+            return base + jitter * 6;
+        }
+        return switch (asset) {
+            case "deco_flowers", "deco_grass_clump", "deco_grass_wildflowers", "deco_grass_herb_patch",
+                    "deco_imagen_meadow_blooms", "deco_forest_fern", "deco_forest_mushrooms",
+                    "deco_forest_blue_mushroom_ring", "deco_bog_grass", "deco_reeds", "deco_mushrooms",
+                    "deco_dry_grass", "deco_badlands_dry_grass" -> 28 + jitter * 2;
+            case "deco_bush", "deco_tundra_frost_bush" -> 32 + jitter * 2;
+            case "deco_forest_log", "deco_forest_moss_rock", "deco_rocks", "deco_desert_rocks",
+                    "deco_tundra_rocks", "deco_badlands_rocks", "deco_mountain_rocks",
+                    "deco_mountain_cairn", "deco_mountain_pass_way_cairn" -> 36 + jitter * 4;
+            case "deco_forest_ancient_roots", "deco_forest_shrine_stone", "deco_forest_fairy_pool",
+                    "deco_imagen_grass_pond", "deco_marsh_lily_pool", "deco_marsh_bubble_pool",
+                    "deco_mountain_spring_pool", "deco_mountain_pass_snowmelt_pool" -> 58 + jitter * 6;
+            case "deco_grass_stone_stack",
+                    "deco_desert_sun_bleached_bones", "deco_desert_jar_cache", "deco_tundra_rune_stone",
+                    "deco_badlands_skull_marker", "deco_badlands_totem_stones",
+                    "deco_mountain_crystal_cluster" -> 42 + jitter * 4;
+            case "deco_cactus", "deco_desert_blooming_cactus" -> 46 + jitter * 4;
+            case "deco_snow_pine", "deco_mountain_scrub_pine", "deco_badlands_red_spire" -> 54 + jitter * 5;
+            case "deco_marsh_firefly_reeds", "deco_marsh_twisted_roots" -> 40 + jitter * 4;
+            case "deco_road_signpost", "deco_road_milestone", "deco_imagen_signpost",
+                    "deco_imagen_milestone" -> 34 + jitter * 2;
+            case "deco_imagen_road_camp" -> 44 + jitter * 3;
+            default -> switch (tile) {
+                case 'm', 'q' -> 40 + roll % 14;
+                case 'r' -> 34;
+                case 'v' -> 38 + roll % 12;
+                default -> 38 + roll % 10;
+            };
         };
     }
 
-    private boolean shouldPairDecoration(char tile, int roll, int chance) {
+    private boolean shouldPairDecoration(char tile, int roll, int chance, String asset) {
         return switch (tile) {
-            case 'f' -> roll < chance / 2;
-            case 'm', 'q' -> roll < chance / 4;
-            case 'v', 's' -> roll < chance / 3;
+            case 'f' -> isForestFlora(asset) && roll < chance / 7;
+            case 'g' -> isGrassFlora(asset) && roll < chance / 5;
+            case 'v' -> isMarshFlora(asset) && roll < chance / 4;
+            case 's', 'n', 'b' -> isSmallNatural(asset) && roll < chance / 8;
             default -> false;
         };
+    }
+
+    private boolean shouldThinTallProp(char tile, String asset, boolean[][] tallProps, int x, int y, int roll) {
+        if (tile == 'f' && isForestTree(asset)) {
+            return nearbyTallPropCount(tallProps, x, y, 1) >= 3 || (nearbyTallPropCount(tallProps, x, y, 2) >= 7 && roll % 3 == 0);
+        }
+        return nearbyTallProp(tallProps, x, y);
+    }
+
+    private boolean nearbyTallProp(boolean[][] tallProps, int x, int y) {
+        for (int oy = -1; oy <= 1; oy++) {
+            for (int ox = -1; ox <= 1; ox++) {
+                if (ox == 0 && oy == 0) {
+                    continue;
+                }
+                int nx = x + ox;
+                int ny = y + oy;
+                if (ny >= 0 && ny < tallProps.length && nx >= 0 && nx < tallProps[ny].length && tallProps[ny][nx]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private int nearbyTallPropCount(boolean[][] tallProps, int x, int y, int radius) {
+        int count = 0;
+        for (int oy = -radius; oy <= radius; oy++) {
+            for (int ox = -radius; ox <= radius; ox++) {
+                if (ox == 0 && oy == 0) {
+                    continue;
+                }
+                int nx = x + ox;
+                int ny = y + oy;
+                if (ny >= 0 && ny < tallProps.length && nx >= 0 && nx < tallProps[ny].length && tallProps[ny][nx]) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     private int naturalNeighborCount(MapArea area, int x, int y, char tile) {
@@ -632,6 +824,22 @@ public final class WorldMap {
         addBiomeProps(area, variant.hashCode());
         area.props.add(new WorldProp(14, 9, "city_prop_fountain_small", 42));
         area.props.add(new WorldProp(12, 15, "deco_road_signpost", 36));
+        if ("snow".equals(variant)) {
+            area.props.add(new WorldProp(4, 3, "city_prop_source_snow_bush", 34));
+            area.props.add(new WorldProp(23, 16, "city_prop_source_snow_stump", 32));
+            area.props.add(new WorldProp(8, 15, "deco_snow_mound", 30));
+        } else if ("desert".equals(variant)) {
+            area.props.add(new WorldProp(4, 13, "deco_cactus", 42));
+            area.props.add(new WorldProp(23, 5, "deco_desert_jar_cache", 36));
+            area.props.add(new WorldProp(21, 15, "deco_dry_grass", 30));
+        } else if ("marsh".equals(variant)) {
+            area.props.add(new WorldProp(3, 8, "city_prop_source_reeds", 34));
+            area.props.add(new WorldProp(24, 13, "deco_marsh_lily_pool", 38));
+            area.props.add(new WorldProp(20, 6, "deco_bog_grass", 30));
+        } else {
+            area.props.add(new WorldProp(5, 15, "deco_flowers", 30));
+            area.props.add(new WorldProp(21, 5, "deco_bush", 32));
+        }
     }
 
     private void addDungeonProps(MapArea area) {
@@ -765,45 +973,169 @@ public final class WorldMap {
 
     private String decorationFor(char tile, int roll, int patchSeed) {
         return switch (tile) {
-            case 'g' -> pick(new String[]{
-                    "deco_bush", "deco_flowers", "deco_grass_clump", "deco_grass_wildflowers",
-                    "deco_grass_herb_patch", "deco_grass_stone_stack", "deco_imagen_meadow_blooms"
-            }, clusteredRoll(roll, patchSeed));
-            case 'f' -> pick(new String[]{
-                    "deco_forest_cluster", "deco_forest_pine_cluster", "deco_forest_broadleaf_cluster",
-                    "deco_forest_mixed_cluster", "deco_tree_oak", "deco_tree_round",
-                    "deco_tree_pine", "deco_tree_blue_pine", "deco_forest_fern",
-                    "deco_forest_ancient_roots", "deco_forest_log", "deco_forest_moss_rock",
-                    "deco_forest_mushrooms", "deco_forest_blue_mushroom_ring",
-                    "deco_forest_shrine_stone", "deco_forest_fairy_pool"
-            }, clusteredRoll(roll, patchSeed));
-            case 's' -> pick(new String[]{
-                    "deco_cactus", "deco_dry_grass", "deco_desert_rocks", "deco_desert_blooming_cactus",
-                    "deco_desert_sun_bleached_bones", "deco_desert_jar_cache"
-            }, clusteredRoll(roll, patchSeed));
-            case 'n' -> pick(new String[]{
-                    "deco_snow_pine", "deco_snow_mound", "deco_tundra_rocks",
-                    "deco_tundra_ice_crystals", "deco_tundra_frost_bush", "deco_tundra_rune_stone"
-            }, clusteredRoll(roll, patchSeed));
-            case 'v' -> pick(new String[]{
-                    "deco_reeds", "deco_bog_grass", "deco_mushrooms", "deco_marsh_lily_pool",
-                    "deco_marsh_twisted_roots", "deco_marsh_bubble_pool", "deco_marsh_firefly_reeds"
-            }, clusteredRoll(roll, patchSeed));
-            case 'b' -> pick(new String[]{
-                    "deco_badlands_rocks", "deco_badlands_dry_grass", "deco_badlands_red_spire",
-                    "deco_badlands_skull_marker", "deco_badlands_totem_stones"
-            }, clusteredRoll(roll, patchSeed));
-            case 'q', 'm' -> pick(new String[]{
-                    "deco_mountain_rocks", "deco_mountain_cairn", "deco_mountain_scrub_pine",
-                    "deco_mountain_crystal_cluster", "deco_mountain_pass_way_cairn",
-                    "deco_mountain_spring_pool", "deco_mountain_pass_snowmelt_pool", "deco_rocks"
-            }, clusteredRoll(roll, patchSeed));
+            case 'g' -> grassDecorationFor(roll, patchSeed);
+            case 'f' -> forestDecorationFor(roll, patchSeed);
+            case 's' -> desertDecorationFor(roll, patchSeed);
+            case 'n' -> tundraDecorationFor(roll, patchSeed);
+            case 'v' -> marshDecorationFor(roll, patchSeed);
+            case 'b' -> badlandsDecorationFor(roll, patchSeed);
+            case 'q', 'm' -> mountainDecorationFor(roll, patchSeed);
             case 'r' -> pick(new String[]{
                     "deco_road_signpost", "deco_road_milestone", "deco_imagen_signpost",
                     "deco_imagen_milestone", "deco_imagen_road_camp"
             }, clusteredRoll(roll, patchSeed));
             default -> pick(new String[]{"deco_bush", "deco_flowers"}, roll);
         };
+    }
+
+    private String grassDecorationFor(int roll, int patchSeed) {
+        int group = balancedGroup(roll, patchSeed);
+        if (group < 66) {
+            return pick(new String[]{"deco_flowers", "deco_grass_clump", "deco_grass_wildflowers",
+                    "deco_grass_herb_patch", "deco_imagen_meadow_blooms"}, roll + patchSeed);
+        }
+        if (group < 88) {
+            return "deco_bush";
+        }
+        return pick(new String[]{"deco_grass_stone_stack", "deco_imagen_grass_pond"}, roll + patchSeed);
+    }
+
+    private String forestDecorationFor(int roll, int patchSeed) {
+        int group = balancedGroup(roll, patchSeed);
+        if (group < 78) {
+            return pick(new String[]{"deco_tree_pine", "deco_tree_blue_pine", "deco_tree_oak",
+                    "deco_tree_round", "deco_tree_young", "deco_tree_oak", "deco_tree_round"}, roll + patchSeed);
+        }
+        if (group < 96) {
+            return pick(new String[]{"deco_forest_fern", "deco_forest_mushrooms",
+                    "deco_forest_blue_mushroom_ring", "deco_forest_moss_rock", "deco_forest_log",
+                    "deco_forest_ancient_roots"}, roll + patchSeed);
+        }
+        return pick(new String[]{"deco_forest_shrine_stone", "deco_forest_fairy_pool"}, roll + patchSeed);
+    }
+
+    private String desertDecorationFor(int roll, int patchSeed) {
+        int group = balancedGroup(roll, patchSeed);
+        if (group < 58) {
+            return pick(new String[]{"deco_cactus", "deco_dry_grass", "deco_desert_blooming_cactus"}, roll + patchSeed);
+        }
+        if (group < 82) {
+            return "deco_desert_rocks";
+        }
+        return pick(new String[]{"deco_desert_sun_bleached_bones", "deco_desert_jar_cache"}, roll + patchSeed);
+    }
+
+    private String tundraDecorationFor(int roll, int patchSeed) {
+        int group = balancedGroup(roll, patchSeed);
+        if (group < 48) {
+            return pick(new String[]{"deco_snow_pine", "deco_tundra_frost_bush"}, roll + patchSeed);
+        }
+        if (group < 78) {
+            return pick(new String[]{"deco_snow_mound", "deco_tundra_rocks", "deco_tundra_ice_crystals"}, roll + patchSeed);
+        }
+        return "deco_tundra_rune_stone";
+    }
+
+    private String marshDecorationFor(int roll, int patchSeed) {
+        int group = balancedGroup(roll, patchSeed);
+        if (group < 62) {
+            return pick(new String[]{"deco_reeds", "deco_bog_grass", "deco_mushrooms"}, roll + patchSeed);
+        }
+        if (group < 88) {
+            return pick(new String[]{"deco_marsh_lily_pool", "deco_marsh_bubble_pool",
+                    "deco_marsh_firefly_reeds"}, roll + patchSeed);
+        }
+        return "deco_marsh_twisted_roots";
+    }
+
+    private String badlandsDecorationFor(int roll, int patchSeed) {
+        int group = balancedGroup(roll, patchSeed);
+        if (group < 52) {
+            return pick(new String[]{"deco_badlands_rocks", "deco_badlands_dry_grass"}, roll + patchSeed);
+        }
+        if (group < 78) {
+            return "deco_badlands_red_spire";
+        }
+        return pick(new String[]{"deco_badlands_skull_marker", "deco_badlands_totem_stones"}, roll + patchSeed);
+    }
+
+    private String mountainDecorationFor(int roll, int patchSeed) {
+        int group = balancedGroup(roll, patchSeed);
+        if (group < 58) {
+            return pick(new String[]{"deco_mountain_rocks", "deco_mountain_cairn",
+                    "deco_mountain_pass_way_cairn", "deco_rocks"}, roll + patchSeed);
+        }
+        if (group < 78) {
+            return "deco_mountain_scrub_pine";
+        }
+        return pick(new String[]{"deco_mountain_crystal_cluster", "deco_mountain_spring_pool",
+                "deco_mountain_pass_snowmelt_pool"}, roll + patchSeed);
+    }
+
+    private int balancedGroup(int roll, int patchSeed) {
+        int local = Math.floorMod(roll * 31 + patchSeed / 7, 100);
+        int patch = Math.floorMod(patchSeed, 100);
+        return roll % 100 < 36 ? (local * 2 + patch) / 3 : local;
+    }
+
+    private String lowDecorationFor(char tile, int roll, int patchSeed) {
+        return switch (tile) {
+            case 'f' -> pick(new String[]{"deco_forest_mushrooms", "deco_forest_blue_mushroom_ring",
+                    "deco_forest_moss_rock", "deco_forest_log", "deco_forest_ancient_roots"}, roll + patchSeed);
+            case 'g' -> pick(new String[]{"deco_flowers", "deco_grass_clump", "deco_grass_wildflowers",
+                    "deco_grass_herb_patch", "deco_imagen_meadow_blooms"}, roll + patchSeed);
+            case 'v' -> pick(new String[]{"deco_reeds", "deco_bog_grass", "deco_mushrooms",
+                    "deco_marsh_lily_pool", "deco_marsh_bubble_pool"}, roll + patchSeed);
+            case 's' -> pick(new String[]{"deco_dry_grass", "deco_desert_rocks", "deco_desert_sun_bleached_bones"}, roll + patchSeed);
+            case 'n' -> pick(new String[]{"deco_snow_mound", "deco_tundra_rocks", "deco_tundra_frost_bush"}, roll + patchSeed);
+            case 'b' -> pick(new String[]{"deco_badlands_rocks", "deco_badlands_dry_grass"}, roll + patchSeed);
+            case 'm', 'q' -> pick(new String[]{"deco_mountain_rocks", "deco_mountain_cairn", "deco_rocks"}, roll + patchSeed);
+            default -> "deco_grass_clump";
+        };
+    }
+
+    private boolean isForestTree(String asset) {
+        return asset.equals("deco_tree_pine")
+                || asset.equals("deco_tree_blue_pine")
+                || asset.equals("deco_tree_oak")
+                || asset.equals("deco_tree_round")
+                || asset.equals("deco_tree_young");
+    }
+
+    private boolean isForestFlora(String asset) {
+        return asset.equals("deco_forest_fern")
+                || asset.equals("deco_forest_mushrooms")
+                || asset.equals("deco_forest_blue_mushroom_ring");
+    }
+
+    private boolean isGrassFlora(String asset) {
+        return asset.equals("deco_flowers")
+                || asset.equals("deco_grass_clump")
+                || asset.equals("deco_grass_wildflowers")
+                || asset.equals("deco_grass_herb_patch")
+                || asset.equals("deco_imagen_meadow_blooms");
+    }
+
+    private boolean isMarshFlora(String asset) {
+        return asset.equals("deco_reeds")
+                || asset.equals("deco_bog_grass")
+                || asset.equals("deco_mushrooms");
+    }
+
+    private boolean isSmallNatural(String asset) {
+        return asset.equals("deco_dry_grass")
+                || asset.equals("deco_badlands_dry_grass")
+                || asset.equals("deco_tundra_frost_bush");
+    }
+
+    private boolean isTallProp(String asset) {
+        return isForestTree(asset)
+                || asset.equals("deco_snow_pine")
+                || asset.equals("deco_mountain_scrub_pine")
+                || asset.equals("deco_cactus")
+                || asset.equals("deco_desert_blooming_cactus")
+                || asset.equals("deco_badlands_red_spire")
+                || asset.equals("deco_forest_fern");
     }
 
     private int clusteredRoll(int roll, int patchSeed) {
@@ -904,23 +1236,24 @@ public final class WorldMap {
             }
         }
 
-        paintBiome(82, 63, 45, 33, 'n', 'm', seedSalt + 101, land);
-        paintBiome(109, 244, 58, 34, 's', 'b', seedSalt + 107, land);
-        paintBiome(235, 169, 53, 42, 'v', 'f', seedSalt + 113, land);
-        paintBiome(203, 99, 48, 38, 'f', 'g', seedSalt + 127, land);
-        paintBiome(197, 67, 35, 24, 'm', 'f', seedSalt + 131, land);
-        paintBiome(74, 217, 37, 30, 'm', 's', seedSalt + 137, land);
-        paintBiome(169, 161, 43, 38, 'm', 'f', seedSalt + 139, land);
-        paintBiome(236, 83, 28, 24, 'b', 'm', seedSalt + 149, land);
-        paintBiome(186, 242, 34, 24, 'b', 's', seedSalt + 151, land);
-        paintBiome(121, 142, 50, 36, 'f', 'g', seedSalt + 157, land);
+        paintBiome(shifted(82, 6, 101, seedSalt), shifted(63, 4, 102, seedSalt), biomeRadius(45), biomeRadius(33), 'n', 'm', seedSalt + 101, land);
+        paintBiome(shifted(109, 7, 107, seedSalt), shifted(244, 5, 108, seedSalt), biomeRadius(58), biomeRadius(34), 's', 'b', seedSalt + 107, land);
+        paintBiome(shifted(235, 6, 113, seedSalt), shifted(169, 5, 114, seedSalt), biomeRadius(53), biomeRadius(42), 'v', 'f', seedSalt + 113, land);
+        paintBiome(shifted(203, 6, 127, seedSalt), shifted(99, 5, 128, seedSalt), biomeRadius(48), biomeRadius(38), 'f', 'g', seedSalt + 127, land);
+        paintBiome(shifted(197, 4, 131, seedSalt), shifted(67, 3, 132, seedSalt), biomeRadius(35), biomeRadius(24), 'm', 'f', seedSalt + 131, land);
+        paintBiome(shifted(74, 5, 137, seedSalt), shifted(217, 4, 138, seedSalt), biomeRadius(37), biomeRadius(30), 'm', 's', seedSalt + 137, land);
+        paintBiome(shifted(169, 6, 139, seedSalt), shifted(161, 5, 140, seedSalt), biomeRadius(43), biomeRadius(38), 'm', 'f', seedSalt + 139, land);
+        paintBiome(shifted(236, 4, 149, seedSalt), shifted(83, 3, 150, seedSalt), biomeRadius(28), biomeRadius(24), 'b', 'm', seedSalt + 149, land);
+        paintBiome(shifted(186, 5, 151, seedSalt), shifted(242, 4, 152, seedSalt), biomeRadius(34), biomeRadius(24), 'b', 's', seedSalt + 151, land);
+        paintBiome(shifted(121, 6, 157, seedSalt), shifted(142, 5, 158, seedSalt), biomeRadius(50), biomeRadius(36), 'f', 'g', seedSalt + 157, land);
+        seedBiomeGranules(seedSalt, land);
 
-        paintWaterBody(48, 139, 18, 38, land);
-        paintWaterBody(137, 91, 19, 17, land);
-        paintWaterBody(270, 163, 26, 37, land);
-        paintWaterBody(228, 261, 24, 30, land);
-        paintWaterBody(69, 273, 27, 18, land);
-        paintWaterBody(178, 34, 23, 15, land);
+        paintWaterBody(shifted(48, 3, 201, seedSalt), shifted(139, 6, 202, seedSalt), 18, 38, seedSalt + 201, land);
+        paintWaterBody(shifted(137, 4, 203, seedSalt), shifted(91, 3, 204, seedSalt), 19, 17, seedSalt + 203, land);
+        paintWaterBody(shifted(270, 3, 205, seedSalt), shifted(163, 5, 206, seedSalt), 26, 37, seedSalt + 205, land);
+        paintWaterBody(shifted(228, 4, 207, seedSalt), shifted(261, 4, 208, seedSalt), 24, 30, seedSalt + 207, land);
+        paintWaterBody(shifted(69, 4, 209, seedSalt), shifted(273, 3, 210, seedSalt), 27, 18, seedSalt + 209, land);
+        paintWaterBody(shifted(178, 4, 211, seedSalt), shifted(34, 3, 212, seedSalt), 23, 15, seedSalt + 211, land);
 
         raiseLandOval(83, 62, 11, 8, 'n', land);
         raiseLandPath(List.of(new TilePoint(83, 62), new TilePoint(78, 83), new TilePoint(82, 105)), 2, 'n', land);
@@ -1096,6 +1429,9 @@ public final class WorldMap {
         }
     }
 
+    public record LocationSite(String kind, String label, int x, int y) {
+    }
+
     private double islandScore(int x, int y, int seedSalt) {
         double phaseA = (seedSalt % 997) * 0.001;
         double phaseB = ((seedSalt >> 10) % 997) * 0.001;
@@ -1125,8 +1461,16 @@ public final class WorldMap {
         return x >= 0 && y >= 0 && x < COLS && y < ROWS && land[y][x];
     }
 
+    private int shifted(int value, int span, int salt, int seedSalt) {
+        return value + hash(value + seedSalt, salt, 909) % (span * 2 + 1) - span;
+    }
+
+    private int biomeRadius(int value) {
+        return Math.max(4, (int) Math.round(value * 0.90));
+    }
+
     private void paintBiome(int cx, int cy, int rx, int ry, char core, char edge, int salt, boolean[][] land) {
-        int margin = Math.max(8, Math.max(rx, ry) / 4);
+        int margin = Math.max(8, (int) Math.round(Math.max(rx, ry) * 0.32));
         for (int y = Math.max(0, cy - ry - margin); y <= Math.min(ROWS - 1, cy + ry + margin); y++) {
             for (int x = Math.max(0, cx - rx - margin); x <= Math.min(COLS - 1, cx + rx + margin); x++) {
                 if (!land[y][x]) {
@@ -1135,23 +1479,90 @@ public final class WorldMap {
                 double dist = organicMetric(x, y, cx, cy, rx, ry, salt);
                 if (dist <= 0.80) {
                     tiles[y][x] = core;
-                } else if (dist <= 1.10 && hash(x, y, salt) % 100 < 45) {
-                    tiles[y][x] = edge;
+                } else if (dist <= 1.10) {
+                    int chance = (int) ((1.10 - dist) * 720.0);
+                    if ((hash(x, y, salt + 53) & 255) < chance) {
+                        tiles[y][x] = edge;
+                    }
                 }
             }
         }
     }
 
-    private double organicMetric(int x, int y, int cx, int cy, int rx, int ry, int salt) {
-        double nx = (x - cx + (noise(x, y, salt) - 0.5) * rx * 0.28) / Math.max(1.0, rx);
-        double ny = (y - cy + (noise(y, x, salt + 17) - 0.5) * ry * 0.28) / Math.max(1.0, ry);
-        double angle = Math.atan2(ny, nx);
-        double radial = Math.hypot(nx, ny);
-        return radial - Math.sin(angle * 3.0 + salt * 0.17) * 0.10 - Math.cos(angle * 5.0 - salt * 0.11) * 0.07;
+    private void seedBiomeGranules(int seedSalt, boolean[][] land) {
+        int[][] patchSpecs = {
+                {'f', 118, 128, 118, 80, 32, 9, 4},
+                {'f', 176, 111, 76, 62, 27, 7, 5},
+                {'v', 212, 145, 75, 61, 23, 6, 6},
+                {'s', 87, 226, 65, 58, 27, 7, 7},
+                {'b', 178, 225, 55, 53, 17, 5, 8},
+                {'n', 68, 67, 65, 49, 22, 6, 9},
+                {'m', 143, 176, 78, 68, 22, 5, 10}
+        };
+        for (int[] spec : patchSpecs) {
+            char tile = (char) spec[0];
+            int baseX = spec[1];
+            int baseY = spec[2];
+            int spreadX = spec[3];
+            int spreadY = spec[4];
+            int count = spec[5];
+            int maxRadius = spec[6];
+            int salt = spec[7] + seedSalt;
+            for (int i = 0; i < count; i++) {
+                int cx = baseX + hash(i, salt, 3) % (spreadX * 2 + 1) - spreadX;
+                int cy = baseY + hash(i, salt, 5) % (spreadY * 2 + 1) - spreadY;
+                int rx = 2 + hash(i, salt, 7) % Math.max(1, maxRadius);
+                int ry = 2 + hash(i, salt, 11) % Math.max(3, maxRadius - 1);
+                paintBiomePatch(cx, cy, rx, ry, tile, salt * 101 + i, land);
+            }
+        }
     }
 
-    private double noise(int x, int y, int salt) {
-        return (hash(x / 8, y / 8, salt) & 1023) / 1023.0;
+    private void paintBiomePatch(int cx, int cy, int rx, int ry, char tile, int salt, boolean[][] land) {
+        for (int y = Math.max(0, cy - ry - 4); y <= Math.min(ROWS - 1, cy + ry + 4); y++) {
+            for (int x = Math.max(0, cx - rx - 4); x <= Math.min(COLS - 1, cx + rx + 4); x++) {
+                if (!land[y][x] || isProtectedOverworldTile(tiles[y][x])) {
+                    continue;
+                }
+                if (organicMetric(x, y, cx, cy, rx, ry, salt) <= 0.92) {
+                    tiles[y][x] = tile;
+                }
+            }
+        }
+    }
+
+    private boolean isProtectedOverworldTile(char tile) {
+        return tile == 'w' || tile == 'r' || tile == 'c' || tile == 'u' || tile == 'd';
+    }
+
+    private double organicMetric(int x, int y, int cx, int cy, int rx, int ry, int salt) {
+        double warpX = (terrainNoise(x, y, 19, salt + 11) - 0.5) * rx * 0.34;
+        double warpY = (terrainNoise(x, y, 17, salt + 23) - 0.5) * ry * 0.34;
+        double nx = (x - cx + warpX) / Math.max(1.0, rx);
+        double ny = (y - cy + warpY) / Math.max(1.0, ry);
+        double angle = Math.atan2(ny, nx);
+        double radial = Math.hypot(nx, ny);
+        double scallop = Math.sin(angle * 3.0 + salt * 0.17) * 0.12 + Math.cos(angle * 5.0 - salt * 0.11) * 0.08;
+        double grain = (terrainNoise(x, y, 11, salt + 37) - 0.5) * 0.28;
+        double fine = (terrainNoise(x, y, 5, salt + 41) - 0.5) * 0.12;
+        return radial - scallop - grain - fine;
+    }
+
+    private double terrainNoise(double x, double y, int scale, int salt) {
+        int gx = (int) Math.floor(x / scale);
+        int gy = (int) Math.floor(y / scale);
+        double tx = x / scale - gx;
+        double ty = y / scale - gy;
+        tx = tx * tx * (3.0 - 2.0 * tx);
+        ty = ty * ty * (3.0 - 2.0 * ty);
+
+        double top = noiseCorner(gx, gy, salt) * (1.0 - tx) + noiseCorner(gx + 1, gy, salt) * tx;
+        double bottom = noiseCorner(gx, gy + 1, salt) * (1.0 - tx) + noiseCorner(gx + 1, gy + 1, salt) * tx;
+        return top * (1.0 - ty) + bottom * ty;
+    }
+
+    private double noiseCorner(int x, int y, int salt) {
+        return (hash(x, y, salt) & 1023) / 1023.0;
     }
 
     private int hash(int x, int y, int salt) {
@@ -1160,12 +1571,10 @@ public final class WorldMap {
         return (int) ((value ^ (value >> 16)) & 0x7fff_ffff);
     }
 
-    private void paintWaterBody(int cx, int cy, int rx, int ry, boolean[][] land) {
+    private void paintWaterBody(int cx, int cy, int rx, int ry, int salt, boolean[][] land) {
         for (int y = Math.max(0, cy - ry - 6); y <= Math.min(ROWS - 1, cy + ry + 6); y++) {
             for (int x = Math.max(0, cx - rx - 6); x <= Math.min(COLS - 1, cx + rx + 6); x++) {
-                double nx = (x - cx) / Math.max(1.0, rx);
-                double ny = (y - cy) / Math.max(1.0, ry);
-                if (nx * nx + ny * ny <= 1.0 && land[y][x]) {
+                if (organicMetric(x, y, cx, cy, rx, ry, salt) <= 0.92 && land[y][x]) {
                     tiles[y][x] = 'w';
                 }
             }

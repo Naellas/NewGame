@@ -7,5 +7,4 @@ if (-not (Test-Path out)) {
     & "$PSScriptRoot\build.ps1"
 }
 
-$pythonRoot = Join-Path (Split-Path -Parent $root) "Python"
-java -cp out com.alderfall.game.Main $pythonRoot
+java -cp out com.alderfall.game.Main

@@ -55,6 +55,12 @@ public final class GameData {
             entry("goblin", "Goblin Raider", "goblin", 36, 11, 2, 15, 10),
             entry("goblin_scout", "Goblin Scout", "goblin_scout", 30, 10, 1, 13, 8),
             entry("goblin_archer", "Goblin Archer", "goblin_archer", 34, 13, 1, 17, 12),
+            entry("goblin_trapper", "Goblin Trapper", "goblin_trapper", 38, 13, 2, 20, 15),
+            entry("goblin_skirmisher", "Goblin Skirmisher", "goblin_skirmisher", 44, 15, 3, 25, 18),
+            entry("goblin_shaman", "Goblin Shaman", "goblin_shaman", 48, 16, 3, 34, 26),
+            entry("hobgoblin_guard", "Hobgoblin Guard", "hobgoblin_guard", 62, 18, 6, 44, 34),
+            entry("goblin_warlord", "Goblin Warlord", "goblin_warlord", 82, 22, 7, 70, 58),
+            entry("goblin_king", "Goblin King", "goblin_king", 116, 27, 9, 120, 95),
             entry("spider", "Cave Spider", "spider", 52, 14, 4, 23, 16),
             entry("wraith", "Ash Wraith", "wraith", 58, 17, 4, 30, 21),
             entry("orc", "Orc Brute", "orc", 66, 18, 5, 34, 28),
@@ -72,7 +78,25 @@ public final class GameData {
             quest("shadow_swarm", "Swarm in the Rafters", "Defeat three Cave Bats from the old dungeon roof.", "Cave Bat", 3, 75, 58),
             quest("wraith_hunt", "Wraith Hunt", "Defeat one Elder Wraith and restore the crypt ward.", "Elder Wraith", 1, 140, 110),
             quest("broodmother", "The Broodmother Below", "Hunt the Acid Broodmother deep in the lower vault.", "Acid Broodmother", 1, 210, 160),
-            quest("winter_fangs", "Winter Fangs", "Cull two Frost Wolves stalking the northern pass.", "Frost Wolf", 2, 135, 105)
+            quest("winter_fangs", "Winter Fangs", "Cull two Frost Wolves stalking the northern pass.", "Frost Wolf", 2, 135, 105),
+            quest("bread_for_road", "Bread for the Road", "Gather four wheat sheaves from the marked farm outside Oakhaven.", "Wheat Sheaf", 4, 30, 20,
+                    Quest.ObjectiveKind.GATHER, "farmland", 0, "location_farmland_wheat", null,
+                    "Edda: We can mend cloaks and wheels, but not empty bellies. The farm west of town still has standing wheat.",
+                    "Edda: Bring what you can carry. Four good sheaves should keep the roadwatch fed.",
+                    "Edda: That is enough grain for bread and barter both. Come warm your hands.",
+                    "Edda: Fresh bread has a way of making frightened folk brave again."),
+            quest("stolen_supplies", "Crates in the Smoke", "Recover two stolen supply crates from the marked raider camp.", "Supply Crate", 2, 55, 38,
+                    Quest.ObjectiveKind.GATHER, "goblin_camp", 0, "location_camp_crates", null,
+                    "Mira: Raiders dragged our medical crates into a camp by the road. They left wheel ruts and bad singing behind.",
+                    "Mira: Two marked crates will do. Do not sort the labels while arrows are flying.",
+                    "Mira: Those are ours. Bring them here before someone mistakes bandages for kindling.",
+                    "Mira: Splints, salves, clean cloth. You just saved more lives than a sword usually does."),
+            quest("goblin_crown", "Crown in the Camp", "Hunt the Goblin King in the marked raider camp and break the camp's command.", "Goblin King", 1, 150, 120,
+                    Quest.ObjectiveKind.DEFEAT, "goblin_camp", 1, "goblin_king", "goblin_king",
+                    "Rook: The camp has a crowned brute giving orders now. Leave him alive and every ambush gets smarter.",
+                    "Rook: The king keeps to the center of the marked camp. When you see the crown, make him answer for it.",
+                    "Rook: If the crown is gone, Highwall's road can breathe again. Report in.",
+                    "Rook: Good. A camp without a king argues with itself long enough for people to get home.")
     );
 
     public static final Map<String, Item> ITEMS = Map.ofEntries(
@@ -192,6 +216,10 @@ public final class GameData {
                     "Their brute leads every raid. Break him and the road opens again.",
                     "Do that, and Highwall owes you my shield arm."
             ), "orc_siege", null, "torin", 0),
+            new Npc("city_highwall", "Scout Rook", "npc_ren", 21, 12, List.of(
+                    "Highwall scouts found a crown nailed together from coins, bones, and stolen buckles.",
+                    "The one wearing it has turned scattered raiders into a camp with orders. That cannot stand."
+            ), "goblin_crown", null),
             new Npc("city_belltower", "Bellkeeper Ilya", "npc_marla", 17, 9, List.of(
                     "The bell tower used to keep ships and spirits honest.",
                     "Quiet those wings and the city can sleep again."
@@ -209,9 +237,13 @@ public final class GameData {
                     "Bring me two pelts and I will guide your party through any whiteout."
             ), "winter_fangs", null, "eira", 0),
             new Npc("village_oakhaven", "Edda", "npc_marla", 13, 8, List.of(
-                    "Oakhaven keeps the old road fed.",
-                    "Traders bring rumors before coin, and every rumor lately has teeth."
-            ), null, "riverside"),
+                    "Oakhaven keeps the old road fed, even when the road bites back.",
+                    "The near farm still has wheat standing. Bring me sheaves and I will open the market stores."
+            ), "bread_for_road", "riverside"),
+            new Npc("village_oakhaven", "Mira", "npc_marla", 10, 10, List.of(
+                    "I mark every crate that leaves this village. Raiders took two with my blue cord still tied on.",
+                    "Their camp is marked on your map. Bring the crates back before the sick have to make do with prayers."
+            ), "stolen_supplies", null),
             new Npc("village_oakhaven", "Bran", "npc_torin", 16, 9, List.of(
                     "I kept the roadwatch until my company scattered at Stonegate.",
                     "Pay my contract and I will keep your camp standing when the night gets loud."
@@ -253,6 +285,29 @@ public final class GameData {
             int rewardXp
     ) {
         return Map.entry(id, new Quest(id, title, description, target, needed, rewardGold, rewardXp));
+    }
+
+    private static Map.Entry<String, Quest> quest(
+            String id,
+            String title,
+            String description,
+            String target,
+            int needed,
+            int rewardGold,
+            int rewardXp,
+            Quest.ObjectiveKind objectiveKind,
+            String objectiveLocationKind,
+            int objectiveLocationIndex,
+            String objectiveAsset,
+            String monsterKey,
+            String startDialog,
+            String progressDialog,
+            String readyDialog,
+            String completeDialog
+    ) {
+        return Map.entry(id, new Quest(id, title, description, target, needed, rewardGold, rewardXp,
+                objectiveKind, WorldMap.OVERWORLD_ID, objectiveLocationKind, objectiveLocationIndex,
+                objectiveAsset, monsterKey, startDialog, progressDialog, readyDialog, completeDialog));
     }
 
     private static Map.Entry<String, RecruitSpec> recruit(

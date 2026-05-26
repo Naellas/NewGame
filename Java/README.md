@@ -2,7 +2,7 @@
 
 This folder is the staged Java migration of the Python prototype.
 
-The current port is intentionally dependency-free Java 21/Swing so it can compile on this machine without Maven, Gradle, or network downloads. PNG assets are migrated into `assets/` inside this Java project.
+The current port is intentionally dependency-free Java 21/Swing so it can compile on this machine without Maven, Gradle, or network downloads. PNG assets, gameplay config, and legacy asset pipeline tools are staged inside this Java project, so the game no longer needs a sibling `Python/` folder at runtime.
 
 ## Run
 
@@ -41,6 +41,7 @@ The current port is intentionally dependency-free Java 21/Swing so it can compil
 - Consumable inventory, equipment slots, quick item use, shops, and shop purchases.
 - Migrated common/class skill trees with skill points, stat bonuses, ability unlocks, and respec.
 - Java-side named adventure save/load slots under `Java/saves/`.
+- Gameplay tuning loaded from `Java/config/gameplay.json`.
 
 ## Migration Direction
 
@@ -56,7 +57,7 @@ This is not a one-file translation of the Python `app.py`. The Java port is spli
 
 ## Controls
 
-- Move: click an adjacent map tile, use sidebar movement buttons, or use `WASD`/arrow keys
+- Move: click a visible map tile to path toward it, or use `WASD`/arrow keys
 - Talk/interact: click `Talk / Enter`, click your tile, or press `E`
 - Quest log: click `Quest Log` or press `Q`
 - World map: click `World Map` or press `M`
@@ -75,3 +76,7 @@ This is not a one-file translation of the Python `app.py`. The Java port is spli
 - Enter settlement/dungeon/interior transition: move onto the entrance, or press `E` while standing on one
 
 For a long-term 2D Java game, the recommended next engine step is libGDX once the gameplay systems are stable. Swing is useful here because it avoids setup friction while the port is young.
+
+## Legacy Asset Tools
+
+The former Python asset scripts are retained under `Java/tools/` for regeneration and extraction work. Run them from the `Java` folder so their relative `assets/...` paths resolve against `Java/assets`.

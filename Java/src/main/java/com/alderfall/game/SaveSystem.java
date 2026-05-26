@@ -55,13 +55,15 @@ public final class SaveSystem {
     public void save(GameState state, String saveId) throws IOException {
         Files.createDirectories(savesDir);
         Properties props = new Properties();
+        SavePosition position = normalizedSavePosition(state);
         props.setProperty("saveId", saveIdFor(saveId));
         props.setProperty("name", state.player.name);
         props.setProperty("className", state.player.className);
-        props.setProperty("mapId", state.currentMapId);
+        props.setProperty("mapId", position.mapId());
         props.setProperty("zoom", Integer.toString(state.zoom));
-        props.setProperty("x", Integer.toString(state.playerX));
-        props.setProperty("y", Integer.toString(state.playerY));
+        props.setProperty("worldTick", Integer.toString(state.worldTick));
+        props.setProperty("x", Integer.toString(position.x()));
+        props.setProperty("y", Integer.toString(position.y()));
         props.setProperty("hp", Integer.toString(state.player.hp));
         props.setProperty("mp", Integer.toString(state.player.mp));
         props.setProperty("maxHp", Integer.toString(state.player.maxHp));
@@ -77,6 +79,11 @@ public final class SaveSystem {
         props.setProperty("skillAllocations", writeSkillAllocations(state.player));
         props.setProperty("quests", writeQuests(state));
         props.setProperty("recruits", writeRecruits(state));
+        writeActor(props, "player.", state.player);
+        props.setProperty("allyCount", Integer.toString(state.allies.size()));
+        for (int i = 0; i < state.allies.size(); i++) {
+            writeActor(props, "ally." + i + ".", state.allies.get(i));
+        }
         try (var out = Files.newOutputStream(savePath(saveId))) {
             props.store(out, "Echoes of Alderfall Java save");
         }
@@ -103,45 +110,80 @@ public final class SaveSystem {
         try (var in = Files.newInputStream(path)) {
             props.load(in);
         }
-        Actor player = GameData.createPlayer(props.getProperty("className", "Knight"), props.getProperty("name", "Hero"));
-        player.maxHp = readInt(props, "maxHp", player.maxHp);
-        player.maxMp = readInt(props, "maxMp", player.maxMp);
-        player.attack = readInt(props, "attack", player.attack);
-        player.defense = readInt(props, "defense", player.defense);
-        player.level = readInt(props, "level", player.level);
-        player.xp = readInt(props, "xp", player.xp);
-        player.gold = readInt(props, "gold", player.gold);
-        player.inventory.clear();
-        readInventory(props.getProperty("inventory", ""), player);
-        if (props.containsKey("equipment")) {
-            player.equipment.clear();
-            readEquipment(props.getProperty("equipment", ""), player);
-        }
-        player.skillPoints = readInt(props, "skillPoints", Math.max(0, player.level - 1));
-        player.skillAllocations.clear();
-        readSkillAllocations(props.getProperty("skillAllocations", ""), player);
-        player.hp = Math.min(player.maxHp, readInt(props, "hp", player.maxHp));
-        player.mp = Math.min(player.maxMp, readInt(props, "mp", player.maxMp));
+        Actor player = readPlayer(props);
         state.player = player;
         state.syncSkillAbilities();
-        state.currentSaveId = props.getProperty("saveId", saveIdFor(player.name));
+        state.currentSaveId = props.getProperty("saveId", saveIdFor(saveId));
         state.pendingPlayerName = player.name;
-        state.currentMapId = props.getProperty("mapId", WorldMap.OVERWORLD_ID);
+        String mapId = props.getProperty("mapId", WorldMap.OVERWORLD_ID);
         state.setZoom(readInt(props, "zoom", state.zoom));
-        if (!state.world.hasMap(state.currentMapId)) {
-            state.currentMapId = WorldMap.OVERWORLD_ID;
+        state.worldTick = readInt(props, "worldTick", 0);
+        int x = readInt(props, "x", WorldMap.START_POSITION.x());
+        int y = readInt(props, "y", WorldMap.START_POSITION.y());
+        if (!state.world.hasMap(mapId)) {
+            mapId = WorldMap.OVERWORLD_ID;
+            x = WorldMap.START_POSITION.x();
+            y = WorldMap.START_POSITION.y();
         }
-        state.playerX = readInt(props, "x", WorldMap.START_POSITION.x());
-        state.playerY = readInt(props, "y", WorldMap.START_POSITION.y());
+        TilePoint safePosition = safePosition(state.world, mapId, x, y);
+        state.currentMapId = mapId;
+        state.playerX = safePosition.x();
+        state.playerY = safePosition.y();
         state.battle = null;
         state.activeNpc = null;
         state.activeShop = null;
         state.dialogIndex = 0;
         state.mode = GameMode.EXPLORE;
         readQuests(props.getProperty("quests", ""), state);
-        readRecruits(props.getProperty("recruits", ""), state);
+        readParty(props, state);
+        state.resetNpcRuntime();
         state.status = "Loaded save.";
         return true;
+    }
+
+    private SavePosition normalizedSavePosition(GameState state) {
+        String mapId = state.currentMapId;
+        int x = state.playerX;
+        int y = state.playerY;
+        if ("interior".equals(state.world.kind(mapId))) {
+            for (int exitX : List.of(11, 12)) {
+                WorldTransition exit = state.world.transitionAt(mapId, exitX, 15);
+                if (exit != null && state.world.hasMap(exit.targetMapId())) {
+                    return new SavePosition(exit.targetMapId(), exit.targetX(), exit.targetY());
+                }
+            }
+        }
+        return new SavePosition(mapId, x, y);
+    }
+
+    private TilePoint safePosition(WorldMap world, String mapId, int x, int y) {
+        int width = world.width(mapId);
+        int height = world.height(mapId);
+        x = clamp(x, 0, Math.max(0, width - 1));
+        y = clamp(y, 0, Math.max(0, height - 1));
+        if (world.isPassable(mapId, x, y)) {
+            return new TilePoint(x, y);
+        }
+        int limit = Math.max(width, height);
+        for (int radius = 1; radius <= limit; radius++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dx = -radius; dx <= radius; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) != radius) {
+                        continue;
+                    }
+                    int nx = x + dx;
+                    int ny = y + dy;
+                    if (nx >= 0 && ny >= 0 && nx < width && ny < height && world.isPassable(mapId, nx, ny)) {
+                        return new TilePoint(nx, ny);
+                    }
+                }
+            }
+        }
+        return WorldMap.OVERWORLD_ID.equals(mapId) ? WorldMap.START_POSITION : new TilePoint(0, 0);
+    }
+
+    private int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     private Path savePath(String saveId) {
@@ -186,12 +228,15 @@ public final class SaveSystem {
             return;
         }
         for (String part : value.split(",")) {
-            String[] pair = part.split(":");
+            String[] pair = part.split(":", 2);
             if (pair.length != 2) {
                 continue;
             }
             try {
-                player.addItem(pair[0], Integer.parseInt(pair[1]));
+                int amount = Integer.parseInt(pair[1]);
+                if (amount > 0) {
+                    player.addItem(pair[0], amount);
+                }
             } catch (NumberFormatException ignored) {
             }
         }
@@ -210,7 +255,7 @@ public final class SaveSystem {
             return;
         }
         for (String part : value.split(",")) {
-            String[] pair = part.split(":");
+            String[] pair = part.split(":", 2);
             if (pair.length == 2 && GameData.EQUIPMENT.containsKey(pair[1])) {
                 player.equipment.put(pair[0], pair[1]);
             }
@@ -230,7 +275,7 @@ public final class SaveSystem {
             return;
         }
         for (String part : value.split(",")) {
-            String[] pair = part.split(":");
+            String[] pair = part.split(":", 2);
             if (pair.length != 2 || !SkillTrees.SKILL_TREE.containsKey(pair[0])) {
                 continue;
             }
@@ -273,6 +318,11 @@ public final class SaveSystem {
     }
 
     private void readQuests(String value, GameState state) {
+        for (Quest quest : state.quests.values()) {
+            quest.accepted = false;
+            quest.completed = false;
+            quest.progress = 0;
+        }
         if (value.isBlank()) {
             return;
         }
@@ -295,11 +345,156 @@ public final class SaveSystem {
         }
     }
 
+    private void writeActor(Properties props, String prefix, Actor actor) {
+        props.setProperty(prefix + "name", actor.name);
+        props.setProperty(prefix + "sprite", actor.sprite);
+        props.setProperty(prefix + "className", actor.className);
+        props.setProperty(prefix + "hp", Integer.toString(actor.hp));
+        props.setProperty(prefix + "mp", Integer.toString(actor.mp));
+        props.setProperty(prefix + "maxHp", Integer.toString(actor.maxHp));
+        props.setProperty(prefix + "maxMp", Integer.toString(actor.maxMp));
+        props.setProperty(prefix + "attack", Integer.toString(actor.attack));
+        props.setProperty(prefix + "defense", Integer.toString(actor.defense));
+        props.setProperty(prefix + "level", Integer.toString(actor.level));
+        props.setProperty(prefix + "xp", Integer.toString(actor.xp));
+        props.setProperty(prefix + "gold", Integer.toString(actor.gold));
+        props.setProperty(prefix + "inventory", writeInventory(actor));
+        props.setProperty(prefix + "equipment", writeEquipment(actor));
+        props.setProperty(prefix + "skillPoints", Integer.toString(actor.skillPoints));
+        props.setProperty(prefix + "skillAllocations", writeSkillAllocations(actor));
+        props.setProperty(prefix + "abilityCount", Integer.toString(actor.abilities.size()));
+        for (int i = 0; i < actor.abilities.size(); i++) {
+            Ability ability = actor.abilities.get(i);
+            String abilityPrefix = prefix + "ability." + i + ".";
+            props.setProperty(abilityPrefix + "name", ability.name());
+            props.setProperty(abilityPrefix + "power", Integer.toString(ability.power()));
+            props.setProperty(abilityPrefix + "cost", Integer.toString(ability.cost()));
+            props.setProperty(abilityPrefix + "kind", ability.kind().name());
+            props.setProperty(abilityPrefix + "target", ability.target());
+        }
+    }
+
+    private Actor readPlayer(Properties props) {
+        Actor fallback = GameData.createPlayer(props.getProperty("className", "Knight"), props.getProperty("name", "Hero"));
+        if (props.containsKey("player.name")) {
+            return readActor(props, "player.", fallback);
+        }
+        fallback.maxHp = readInt(props, "maxHp", fallback.maxHp);
+        fallback.maxMp = readInt(props, "maxMp", fallback.maxMp);
+        fallback.attack = readInt(props, "attack", fallback.attack);
+        fallback.defense = readInt(props, "defense", fallback.defense);
+        fallback.level = readInt(props, "level", fallback.level);
+        fallback.xp = readInt(props, "xp", fallback.xp);
+        fallback.gold = readInt(props, "gold", fallback.gold);
+        fallback.inventory.clear();
+        readInventory(props.getProperty("inventory", ""), fallback);
+        if (props.containsKey("equipment")) {
+            fallback.equipment.clear();
+            readEquipment(props.getProperty("equipment", ""), fallback);
+        }
+        fallback.skillPoints = readInt(props, "skillPoints", Math.max(0, fallback.level - 1));
+        fallback.skillAllocations.clear();
+        readSkillAllocations(props.getProperty("skillAllocations", ""), fallback);
+        fallback.hp = clamp(readInt(props, "hp", fallback.maxHp), 0, fallback.maxHp);
+        fallback.mp = clamp(readInt(props, "mp", fallback.maxMp), 0, fallback.maxMp);
+        return fallback;
+    }
+
+    private Actor readActor(Properties props, String prefix, Actor fallback) {
+        String name = props.getProperty(prefix + "name", fallback.name);
+        String sprite = props.getProperty(prefix + "sprite", fallback.sprite);
+        String className = props.getProperty(prefix + "className", fallback.className);
+        int maxHp = readInt(props, prefix + "maxHp", fallback.maxHp);
+        int maxMp = readInt(props, prefix + "maxMp", fallback.maxMp);
+        int attack = readInt(props, prefix + "attack", fallback.attack);
+        int defense = readInt(props, prefix + "defense", fallback.defense);
+        Actor actor = new Actor(name, sprite, className, Math.max(1, maxHp), Math.max(0, maxMp), Math.max(1, attack), Math.max(0, defense));
+        actor.level = readInt(props, prefix + "level", fallback.level);
+        actor.xp = readInt(props, prefix + "xp", fallback.xp);
+        actor.gold = readInt(props, prefix + "gold", fallback.gold);
+        actor.inventory.clear();
+        readInventory(props.getProperty(prefix + "inventory", ""), actor);
+        actor.equipment.clear();
+        readEquipment(props.getProperty(prefix + "equipment", ""), actor);
+        actor.skillPoints = readInt(props, prefix + "skillPoints", fallback.skillPoints);
+        actor.skillAllocations.clear();
+        readSkillAllocations(props.getProperty(prefix + "skillAllocations", ""), actor);
+        actor.abilities.clear();
+        int abilityCount = readInt(props, prefix + "abilityCount", -1);
+        if (abilityCount >= 0) {
+            for (int i = 0; i < abilityCount; i++) {
+                Ability ability = readAbility(props, prefix + "ability." + i + ".");
+                if (ability != null) {
+                    actor.abilities.add(ability);
+                }
+            }
+        } else {
+            actor.abilities.addAll(fallback.abilities);
+        }
+        actor.hp = clamp(readInt(props, prefix + "hp", actor.maxHp), 0, actor.maxHp);
+        actor.mp = clamp(readInt(props, prefix + "mp", actor.maxMp), 0, actor.maxMp);
+        return actor;
+    }
+
+    private Ability readAbility(Properties props, String prefix) {
+        String name = props.getProperty(prefix + "name", "");
+        if (name.isBlank()) {
+            return null;
+        }
+        Ability.AbilityKind kind;
+        try {
+            kind = Ability.AbilityKind.valueOf(props.getProperty(prefix + "kind", Ability.AbilityKind.DAMAGE.name()));
+        } catch (IllegalArgumentException ex) {
+            kind = Ability.AbilityKind.DAMAGE;
+        }
+        return new Ability(
+                name,
+                readInt(props, prefix + "power", 8),
+                readInt(props, prefix + "cost", 0),
+                kind,
+                props.getProperty(prefix + "target", "enemy")
+        );
+    }
+
+    private void readParty(Properties props, GameState state) {
+        state.allies.clear();
+        state.recruitedIds.clear();
+        String recruits = props.getProperty("recruits", "");
+        if (!recruits.isBlank()) {
+            for (String recruitId : recruits.split(",")) {
+                if (!recruitId.isBlank() && GameData.RECRUITS.containsKey(recruitId) && !state.recruitedIds.contains(recruitId)) {
+                    state.recruitedIds.add(recruitId);
+                }
+            }
+        }
+        int allyCount = readInt(props, "allyCount", -1);
+        if (allyCount >= 0) {
+            for (int i = 0; i < allyCount; i++) {
+                String prefix = "ally." + i + ".";
+                String recruitId = i < state.recruitedIds.size() ? state.recruitedIds.get(i) : "";
+                Actor fallback = GameData.RECRUITS.containsKey(recruitId)
+                        ? GameData.RECRUITS.get(recruitId).createActor()
+                        : new Actor("Companion", "npc_marla", "Companion", 40, 12, 8, 2);
+                state.allies.add(readActor(props, prefix, fallback));
+            }
+            return;
+        }
+        for (String recruitId : List.copyOf(state.recruitedIds)) {
+            GameData.RecruitSpec spec = GameData.RECRUITS.get(recruitId);
+            if (spec != null) {
+                state.allies.add(spec.createActor());
+            }
+        }
+    }
+
     private int readInt(Properties props, String key, int fallback) {
         try {
             return Integer.parseInt(props.getProperty(key, Integer.toString(fallback)));
         } catch (NumberFormatException ex) {
             return fallback;
         }
+    }
+
+    private record SavePosition(String mapId, int x, int y) {
     }
 }

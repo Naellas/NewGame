@@ -1,7 +1,6 @@
 package com.alderfall.game;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -75,9 +74,13 @@ public final class AssetStore {
     }
 
     private Path findAsset(String name) {
+        Path preferred = preferredAsset(name);
+        if (preferred != null) {
+            return preferred;
+        }
         String[] folders = {
-                "terrain", "player", "monsters", "npcs", "items", "city", "deco", "road", "battle", "weather",
-                "grass", "forest", "desert", "marsh", "mountain", "tundra", "badlands", "water", "locations"
+                "terrain", "player", "monsters", "npcs", "items", "city", "road", "battle", "weather",
+                "grass", "forest", "desert", "marsh", "mountain", "tundra", "badlands", "water", "locations", "deco"
         };
         for (String folder : folders) {
             Path path = assetsRoot.resolve(folder).resolve(name + ".png");
@@ -89,13 +92,21 @@ public final class AssetStore {
         return Files.exists(rootPath) ? rootPath : null;
     }
 
+    private Path preferredAsset(String name) {
+        if ("mountain_massif".equals(name)) {
+            Path path = assetsRoot.resolve("mountain").resolve(name + ".png");
+            if (Files.exists(path)) {
+                return path;
+            }
+        }
+        return null;
+    }
+
     private BufferedImage scale(BufferedImage source, int width, int height) {
         BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = out.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        Image scaled = source.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        g.drawImage(scaled, 0, 0, null);
+        configureHighQualityScaling(g);
+        g.drawImage(source, 0, 0, width, height, null);
         g.dispose();
         return out;
     }
@@ -108,9 +119,8 @@ public final class AssetStore {
         int x = (width - drawWidth) / 2;
         int y = height - drawHeight;
         Graphics2D g = out.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.drawImage(source.getScaledInstance(drawWidth, drawHeight, Image.SCALE_SMOOTH), x, y, null);
+        configureHighQualityScaling(g);
+        g.drawImage(source, x, y, drawWidth, drawHeight, null);
         g.dispose();
         return out;
     }
@@ -123,11 +133,17 @@ public final class AssetStore {
         int x = (width - drawWidth) / 2;
         int y = (height - drawHeight) / 2;
         Graphics2D g = out.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.drawImage(source.getScaledInstance(drawWidth, drawHeight, Image.SCALE_SMOOTH), x, y, null);
+        configureHighQualityScaling(g);
+        g.drawImage(source, x, y, drawWidth, drawHeight, null);
         g.dispose();
         return out;
+    }
+
+    private void configureHighQualityScaling(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
     }
 
     private BufferedImage cropTransparent(BufferedImage source) {

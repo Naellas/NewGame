@@ -39,8 +39,8 @@ public final class GameConfig {
         this.threeMonsterChance = threeMonsterChance;
     }
 
-    public static GameConfig load(Path pythonRoot) {
-        Path configPath = pythonRoot.resolve("config").resolve("gameplay.json");
+    public static GameConfig load(Path javaRoot) {
+        Path configPath = javaRoot.resolve("config").resolve("gameplay.json");
         String text = "";
         try {
             if (Files.exists(configPath)) {
@@ -58,8 +58,8 @@ public final class GameConfig {
         );
     }
 
-    public static GameConfig load(Path pythonRoot, Path javaRoot) {
-        GameConfig config = load(pythonRoot);
+    public static GameConfig loadWithSettings(Path javaRoot) {
+        GameConfig config = load(javaRoot);
         Path settingsPath = javaRoot.resolve("config").resolve("settings.properties");
         if (!Files.exists(settingsPath)) {
             return config;

@@ -10,11 +10,8 @@ public final class SmokeTest {
 
     public static void main(String[] args) throws Exception {
         Path javaRoot = Path.of("").toAbsolutePath().normalize();
-        Path pythonRoot = args.length > 0
-                ? Path.of(args[0]).toAbsolutePath().normalize()
-                : javaRoot.getParent().resolve("Python").normalize();
 
-        GameConfig config = GameConfig.load(pythonRoot);
+        GameConfig config = GameConfig.load(javaRoot);
         GameState state = new GameState(config);
         state.chooseClass("Mage");
         if (state.player.equippedItem("weapon") == null) {
@@ -132,6 +129,9 @@ public final class SmokeTest {
         if (!state.currentMapId.equals("city_riverside")) {
             throw new IllegalStateException("Expected transition into Riverside.");
         }
+        assertSettlementExits(state, "village_oakhaven", 112, 158, 14, 26, 10);
+        assertSettlementExits(state, "city_riverside", 82, 105, 17, 26, 12);
+        state.currentMapId = "city_riverside";
         state.playerX = 8;
         state.playerY = 5;
         state.interact();
@@ -140,10 +140,23 @@ public final class SmokeTest {
         }
         state.playerX = 5;
         state.playerY = 6;
+        state.move(0, -1);
+        if (!state.currentMapId.startsWith("house_city_riverside")) {
+            throw new IllegalStateException("Expected movement through a visible door to enter a house interior.");
+        }
+        state.currentMapId = "city_riverside";
+        state.playerX = 5;
+        state.playerY = 6;
         state.interact();
         if (!state.currentMapId.startsWith("house_city_riverside")) {
             throw new IllegalStateException("Expected generated house interior.");
         }
+        state.allies.get(0).hp = 7;
+        state.player.level = 6;
+        state.player.xp = 11;
+        state.player.gold = 123;
+        state.player.attack = 17;
+        state.player.defense = 5;
         SaveSystem saves = new SaveSystem(javaRoot);
         saves.save(state);
         GameState loaded = new GameState(config);
@@ -159,12 +172,103 @@ public final class SmokeTest {
         if (!"iron_sword".equals(loaded.player.equipment.get("weapon"))) {
             throw new IllegalStateException("Equipment did not round-trip.");
         }
+        if (loaded.player.level != 6 || loaded.player.xp != 11 || loaded.player.gold != 123) {
+            throw new IllegalStateException("Player level, XP, or gold did not round-trip.");
+        }
+        if (loaded.player.attack != 17 || loaded.player.defense != 5) {
+            throw new IllegalStateException("Player combat stats did not round-trip.");
+        }
         if (loaded.allies.isEmpty() || !loaded.recruitedIds.contains("bran")) {
             throw new IllegalStateException("Recruit state did not round-trip.");
+        }
+        if (loaded.allies.get(0).hp != 7) {
+            throw new IllegalStateException("Ally actor state did not round-trip.");
         }
         if (loaded.player.skillRank("channeling") != 1 || loaded.player.maxMp <= mpBeforeSkill) {
             throw new IllegalStateException("Skills did not round-trip.");
         }
+        if (!loaded.currentMapId.equals("city_riverside") || loaded.playerX != 5 || loaded.playerY != 6) {
+            throw new IllegalStateException("House save did not restore to the exterior entry.");
+        }
+        if (!loaded.world.isPassable(loaded.currentMapId, loaded.playerX, loaded.playerY)) {
+            throw new IllegalStateException("Loaded position is not passable.");
+        }
+
+        GameState objectiveState = new GameState(config);
+        objectiveState.chooseClass("Knight");
+        Quest bread = objectiveState.quests.get("bread_for_road");
+        bread.accepted = true;
+        GameState.QuestObjective wheat = objectiveState.activeQuestObjectives().stream()
+                .filter(objective -> objective.questId().equals("bread_for_road"))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Expected active wheat objective."));
+        objectiveState.currentMapId = wheat.mapId();
+        objectiveState.playerX = wheat.x();
+        objectiveState.playerY = wheat.y();
+        objectiveState.interact();
+        if (bread.progress != 1) {
+            throw new IllegalStateException("Gather objective did not advance.");
+        }
+
+        Quest crown = objectiveState.quests.get("goblin_crown");
+        crown.accepted = true;
+        GameState.QuestObjective king = objectiveState.activeQuestObjectives().stream()
+                .filter(objective -> objective.questId().equals("goblin_crown"))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Expected active Goblin King objective."));
+        objectiveState.currentMapId = king.mapId();
+        objectiveState.playerX = king.x() + 1;
+        objectiveState.playerY = king.y();
+        objectiveState.player.attack = 999;
+        objectiveState.interact();
+        if (objectiveState.mode != GameMode.BATTLE || objectiveState.battle == null
+                || !objectiveState.battle.monsterSpecs.get(0).key().equals("goblin_king")) {
+            throw new IllegalStateException("Goblin King objective did not start the boss battle.");
+        }
+        objectiveState.battleAttack();
+        if (!crown.ready()) {
+            throw new IllegalStateException("Goblin King battle did not advance quest progress.");
+        }
         System.out.println("Smoke test passed. " + loaded.player.className + " at " + loaded.playerX + "," + loaded.playerY);
+    }
+
+    private static void assertSettlementExits(
+            GameState state,
+            String mapId,
+            int overworldX,
+            int overworldY,
+            int verticalGateX,
+            int southStartY,
+            int horizontalGateY
+    ) {
+        assertExit(state, mapId, verticalGateX, 1, 0, -1, overworldX, overworldY - 3);
+        assertExit(state, mapId, verticalGateX, southStartY, 0, 1, overworldX, overworldY + 3);
+        assertExit(state, mapId, 1, horizontalGateY, -1, 0, overworldX - 3, overworldY);
+        assertExit(state, mapId, 34, horizontalGateY, 1, 0, overworldX + 3, overworldY);
+    }
+
+    private static void assertExit(
+            GameState state,
+            String mapId,
+            int startX,
+            int startY,
+            int dx,
+            int dy,
+            int expectedX,
+            int expectedY
+    ) {
+        state.currentMapId = mapId;
+        state.playerX = startX;
+        state.playerY = startY;
+        state.mode = GameMode.EXPLORE;
+        if (!state.move(dx, dy)) {
+            throw new IllegalStateException("Expected " + mapId + " exit movement from " + startX + "," + startY + ".");
+        }
+        if (!WorldMap.OVERWORLD_ID.equals(state.currentMapId) || state.playerX != expectedX || state.playerY != expectedY) {
+            throw new IllegalStateException(
+                    "Expected " + mapId + " exit to " + expectedX + "," + expectedY
+                            + " but got " + state.currentMapId + " " + state.playerX + "," + state.playerY + "."
+            );
+        }
     }
 }

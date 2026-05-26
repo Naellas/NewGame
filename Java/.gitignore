@@ -1,3 +1,4 @@
 out/
 saves/
+config/settings.properties
 *.class

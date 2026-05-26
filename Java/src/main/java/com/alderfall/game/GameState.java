@@ -152,12 +152,13 @@ public final class GameState {
             return;
         }
         TilePoint buildingEntry = adjacentBuildingEntry();
-        if (buildingEntry != null && ("city".equals(world.kind(currentMapId)) || "village".equals(world.kind(currentMapId)))) {
-            String houseMapId = world.ensureHouseInterior(currentMapId, buildingEntry.x(), buildingEntry.y(), playerX, playerY);
-            currentMapId = houseMapId;
-            playerX = 11;
-            playerY = 14;
-            status = "You step inside.";
+        if (buildingEntry != null && isSettlementMap(currentMapId)) {
+            enterBuildingAt(buildingEntry.x(), buildingEntry.y());
+            return;
+        }
+        QuestObjective objective = questObjectiveNearPlayer();
+        if (objective != null) {
+            interactQuestObjective(objective);
             return;
         }
         Npc npc = npcAtPlayer();
@@ -203,12 +204,12 @@ public final class GameState {
         }
         if (!quest.accepted) {
             quest.accepted = true;
-            status = "Quest accepted: " + quest.title + ".";
+            status = "Quest accepted: " + quest.title + ". " + quest.startDialog;
         } else if (quest.ready()) {
             quest.completed = true;
             player.gold += quest.rewardGold;
             List<String> notes = player.gainXp(quest.rewardXp);
-            status = "Quest complete: " + quest.title + ".";
+            status = "Quest complete: " + quest.title + ". " + quest.completeDialog;
             String recruitNote = recruitAlly(activeNpc.recruitId());
             if (recruitNote != null) {
                 status += " " + recruitNote;
@@ -217,7 +218,7 @@ public final class GameState {
                 status += " " + notes.get(notes.size() - 1);
             }
         } else if (!quest.completed) {
-            status = quest.title + ": " + quest.progress + "/" + quest.needed + ".";
+            status = quest.title + ": " + quest.progress + "/" + quest.needed + ". " + quest.progressDialog;
         } else {
             status = quest.title + " is already complete.";
         }
@@ -453,12 +454,22 @@ public final class GameState {
         int nx = playerX + dx;
         int ny = playerY + dy;
         if (!world.isPassable(currentMapId, nx, ny)) {
+            CityBuilding building = world.cityBuildingEntryAt(currentMapId, nx, ny, playerX, playerY);
+            if (building != null && isSettlementMap(currentMapId)) {
+                enterBuildingAt(nx, ny);
+                return true;
+            }
             status = "Blocked by " + Terrain.name(world.tileAt(currentMapId, nx, ny)) + ".";
             return false;
         }
         Npc npc = npcAt(currentMapId, nx, ny);
         if (npc != null) {
             status = npc.name() + " is there. Press E to talk.";
+            return false;
+        }
+        QuestObjective blockingObjective = blockingQuestObjectiveAt(currentMapId, nx, ny);
+        if (blockingObjective != null) {
+            status = blockingObjective.target() + " is there. Press E to engage.";
             return false;
         }
         playerX = nx;
@@ -531,6 +542,50 @@ public final class GameState {
         battle = new Battle(player, allies, specs, random, tile, kind);
         mode = GameMode.BATTLE;
         status = "Battle!";
+    }
+
+    public List<QuestObjective> activeQuestObjectives() {
+        List<QuestObjective> objectives = new ArrayList<>();
+        for (Quest quest : quests.values()) {
+            if (!quest.hasWorldObjective()) {
+                continue;
+            }
+            int count = quest.objectiveKind == Quest.ObjectiveKind.GATHER ? quest.needed - quest.progress : 1;
+            for (int i = 0; i < count; i++) {
+                int variant = quest.objectiveKind == Quest.ObjectiveKind.GATHER ? quest.progress + i : 0;
+                TilePoint point = world.objectivePoint(quest.objectiveLocationKind, quest.objectiveLocationIndex, variant);
+                String asset = quest.objectiveAsset != null && !quest.objectiveAsset.isBlank()
+                        ? quest.objectiveAsset
+                        : quest.monsterKey != null ? quest.monsterKey : "icon_chest";
+                objectives.add(new QuestObjective(
+                        quest.id,
+                        quest.title,
+                        quest.target,
+                        quest.objectiveMapId,
+                        point.x(),
+                        point.y(),
+                        asset,
+                        quest.objectiveKind,
+                        quest.monsterKey,
+                        quest.objectiveKind == Quest.ObjectiveKind.DEFEAT
+                ));
+            }
+        }
+        return objectives;
+    }
+
+    public QuestObjective questObjectiveAt(String mapId, int x, int y) {
+        for (QuestObjective objective : activeQuestObjectives()) {
+            if (objective.mapId().equals(mapId) && objective.x() == x && objective.y() == y) {
+                return objective;
+            }
+        }
+        return null;
+    }
+
+    public QuestObjective blockingQuestObjectiveAt(String mapId, int x, int y) {
+        QuestObjective objective = questObjectiveAt(mapId, x, y);
+        return objective != null && objective.blocking() ? objective : null;
     }
 
     public void battleAttack() {
@@ -614,24 +669,68 @@ public final class GameState {
         status = transition.message();
     }
 
+    private boolean isSettlementMap(String mapId) {
+        String kind = world.kind(mapId);
+        return "city".equals(kind) || "village".equals(kind);
+    }
+
     private TilePoint adjacentBuildingEntry() {
-        if ("city".equals(world.kind(currentMapId))) {
+        if (isSettlementMap(currentMapId)) {
             CityBuilding building = world.cityBuildingEntryAt(currentMapId, playerX, playerY - 1, playerX, playerY);
             if (building != null) {
                 return new TilePoint(playerX, playerY - 1);
             }
             return null;
         }
-        int[][] directions = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-        for (int[] direction : directions) {
-            int x = playerX + direction[0];
-            int y = playerY + direction[1];
-            char tile = world.tileAt(currentMapId, x, y);
-            if (tile == 'h') {
-                return new TilePoint(x, y);
+        return null;
+    }
+
+    private void enterBuildingAt(int wx, int wy) {
+        String houseMapId = world.ensureHouseInterior(currentMapId, wx, wy, playerX, playerY);
+        currentMapId = houseMapId;
+        playerX = 11;
+        playerY = 14;
+        status = "You step inside.";
+    }
+
+    private QuestObjective questObjectiveNearPlayer() {
+        QuestObjective best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (QuestObjective objective : activeQuestObjectives()) {
+            if (!objective.mapId().equals(currentMapId)) {
+                continue;
+            }
+            int distance = Math.abs(objective.x() - playerX) + Math.abs(objective.y() - playerY);
+            int reach = objective.blocking() ? 1 : 0;
+            if (distance <= reach && distance < bestDistance) {
+                best = objective;
+                bestDistance = distance;
             }
         }
-        return null;
+        return best;
+    }
+
+    private void interactQuestObjective(QuestObjective objective) {
+        Quest quest = quests.get(objective.questId());
+        if (quest == null || quest.completed) {
+            return;
+        }
+        if (objective.kind() == Quest.ObjectiveKind.GATHER) {
+            int oldProgress = quest.progress;
+            quest.recordGather(objective.target());
+            if (quest.progress > oldProgress) {
+                status = "Gathered " + objective.target() + ". " + quest.title + ": " + quest.progress + "/" + quest.needed + ".";
+                if (quest.ready()) {
+                    status += " " + quest.readyDialog;
+                }
+            }
+            return;
+        }
+        String monsterKey = objective.monsterKey() == null || objective.monsterKey().isBlank() ? "goblin" : objective.monsterKey();
+        GameData.MonsterSpec spec = GameData.MONSTERS.getOrDefault(monsterKey, GameData.MONSTERS.get("goblin"));
+        battle = new Battle(player, allies, List.of(spec), random, world.tileAt(currentMapId, objective.x(), objective.y()), world.kind(currentMapId));
+        mode = GameMode.BATTLE;
+        status = objective.target() + " answers the challenge.";
     }
 
     private void updateAfterBattleAction() {
@@ -686,6 +785,9 @@ public final class GameState {
             quest.record(defeatedTarget);
             if (quest.progress > oldProgress) {
                 status = quest.title + ": " + quest.progress + "/" + quest.needed + ".";
+                if (quest.ready()) {
+                    status += " " + quest.readyDialog;
+                }
             }
         }
     }
@@ -790,6 +892,20 @@ public final class GameState {
 
     public record NpcMotion(Npc npc, int x, int y, int fromX, int fromY, int moveStartTick, int facingDx, int facingDy) {
         public static final int MOVE_TICKS = 14;
+    }
+
+    public record QuestObjective(
+            String questId,
+            String title,
+            String target,
+            String mapId,
+            int x,
+            int y,
+            String asset,
+            Quest.ObjectiveKind kind,
+            String monsterKey,
+            boolean blocking
+    ) {
     }
 
     private static final class NpcRuntime {

@@ -24,14 +24,14 @@ public final class GameWindow {
     private boolean windowedResizable;
     private boolean fullscreen;
 
-    private GameWindow(Path javaRoot, Path pythonRoot) {
+    private GameWindow(Path javaRoot) {
         this.frame = new JFrame("Echoes of Alderfall - Java");
-        this.panel = new GamePanel(javaRoot, pythonRoot);
+        this.panel = new GamePanel(javaRoot);
         this.device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     }
 
-    public static void launch(Path javaRoot, Path pythonRoot) {
-        SwingUtilities.invokeLater(() -> new GameWindow(javaRoot, pythonRoot).show());
+    public static void launch(Path javaRoot) {
+        SwingUtilities.invokeLater(() -> new GameWindow(javaRoot).show());
     }
 
     private void show() {

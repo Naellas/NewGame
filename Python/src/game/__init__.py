@@ -1,2 +1,0 @@
-"""Tiny modular fantasy RPG."""
-
