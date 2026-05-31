@@ -80,17 +80,11 @@ public final class GameWindow {
             frame.dispose();
             frame.setResizable(false);
             frame.setUndecorated(true);
+            frame.setExtendedState(JFrame.NORMAL);
+            frame.setBounds(device.getDefaultConfiguration().getBounds());
             frame.setVisible(true);
-            if (device.isFullScreenSupported()) {
-                device.setFullScreenWindow(frame);
-            } else {
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            }
             fullscreen = true;
         } else {
-            if (device.getFullScreenWindow() == frame) {
-                device.setFullScreenWindow(null);
-            }
             frame.dispose();
             frame.setUndecorated(false);
             frame.setResizable(windowedResizable);

@@ -11,6 +11,18 @@ public final class SkillTrees {
     public static final Map<String, SkillNode> KNIGHT_SKILL_TREE = new LinkedHashMap<>();
     public static final Map<String, SkillNode> MAGE_SKILL_TREE = new LinkedHashMap<>();
     public static final Map<String, SkillNode> RANGER_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> CLERIC_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> ROGUE_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> BATTLE_MEDIC_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> IRONWALL_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> BLADEDANCER_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> VEILRUNNER_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> WILDSPEAKER_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> SUNWARDEN_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> THORNBINDER_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> STONEBREAKER_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> NIGHTBLADE_SKILL_TREE = new LinkedHashMap<>();
+    public static final Map<String, SkillNode> GROVEKEEPER_SKILL_TREE = new LinkedHashMap<>();
     public static final Map<String, SkillNode> SKILL_TREE = new LinkedHashMap<>();
     public static final Set<String> SKILL_ABILITY_NAMES;
 
@@ -24,6 +36,10 @@ public final class SkillTrees {
         add(COMMON_SKILL_TREE, node("shared_training", "Road Songs", "Allies deal +1 damage per rank.", 3, 3, 1, List.of("campfire_music"), Map.of(), null, COMMON_TREE_NAME));
         add(COMMON_SKILL_TREE, node("pathfinder", "Pathfinder", "+1 attack and +1 defense per rank.", 2, 4, 1, List.of("campfire_music"), Map.of("attack", 1, "defense", 1), null, COMMON_TREE_NAME));
         add(COMMON_SKILL_TREE, node("settlement_lore", "Settlement Lore", "+5 max MP and +1 defense per rank.", 2, 2, 2, List.of("scavenger", "battle_medic"), Map.of("max_mp", 5, "defense", 1), null, COMMON_TREE_NAME));
+        add(COMMON_SKILL_TREE, node("hard_won_lessons", "Hard-Won Lessons", "+8% XP from battles and quests per rank.", 2, 0, 3, List.of("scavenger"), Map.of(), null, COMMON_TREE_NAME));
+        add(COMMON_SKILL_TREE, node("evasive_footwork", "Evasive Footwork", "+1 defense and +4 max MP per rank.", 2, 1, 3, List.of("pathfinder"), Map.of("defense", 1, "max_mp", 4), null, COMMON_TREE_NAME));
+        add(COMMON_SKILL_TREE, node("rallying_tune", "Rallying Tune", "Learn Rallying Tune, a party heal.", 1, 2, 3, List.of("campfire_music", "shared_training"), Map.of(), new Ability("Rallying Tune", 18, 10, Ability.AbilityKind.HEAL, "party"), COMMON_TREE_NAME));
+        add(COMMON_SKILL_TREE, node("seasoned_adventurer", "Seasoned Adventurer", "+10 HP, +6 MP, +1 attack, and +1 defense.", 1, 3, 4, List.of("settlement_lore", "hard_won_lessons", "evasive_footwork"), Map.of("max_hp", 10, "max_mp", 6, "attack", 1, "defense", 1), null, COMMON_TREE_NAME));
 
         add(KNIGHT_SKILL_TREE, node("iron_body", "Iron Body", "+9 max HP per rank.", 3, 0, 0, List.of(), Map.of("max_hp", 9), null, "Knight"));
         add(KNIGHT_SKILL_TREE, node("weapon_training", "Weapon Training", "+2 attack per rank.", 3, 2, 0, List.of(), Map.of("attack", 2), null, "Knight"));
@@ -34,6 +50,11 @@ public final class SkillTrees {
         add(KNIGHT_SKILL_TREE, node("second_wind", "Second Wind", "Learn Second Wind, a self-heal for long fights.", 1, 1, 2, List.of("iron_body", "power_strike"), Map.of(), new Ability("Second Wind", 32, 9, Ability.AbilityKind.HEAL, "self"), "Knight"));
         add(KNIGHT_SKILL_TREE, node("blade_flurry", "Blade Flurry", "Basic attacks gain +3 damage per rank.", 2, 2, 2, List.of("power_strike", "guard_mastery"), Map.of(), null, "Knight"));
         add(KNIGHT_SKILL_TREE, node("heroic_resolve", "Heroic Resolve", "+20 max HP, +2 attack, and +2 defense.", 1, 3, 3, List.of("second_wind", "blade_flurry", "stalwart_guard"), Map.of("max_hp", 20, "attack", 2, "defense", 2), null, "Knight"));
+        add(KNIGHT_SKILL_TREE, node("shieldbreaker", "Shieldbreaker", "Learn Shieldbreaker, a strike that exposes foes.", 1, 0, 3, List.of("power_strike", "guard_mastery"), Map.of(), new Ability("Shieldbreaker", 34, 9), "Knight"));
+        add(KNIGHT_SKILL_TREE, node("unyielding", "Unyielding", "Below half HP, take 2 less damage per rank.", 3, 1, 3, List.of("iron_body", "guard_mastery"), Map.of(), null, "Knight"));
+        add(KNIGHT_SKILL_TREE, node("war_cry", "War Cry", "Learn War Cry, a guarding stance that hastes you.", 1, 2, 3, List.of("blade_flurry"), Map.of(), new Ability("War Cry", 0, 8, Ability.AbilityKind.DEFEND, "self"), "Knight"));
+        add(KNIGHT_SKILL_TREE, node("aegis_mend", "Aegis Mend", "Learn Aegis Mend, a shielded ally heal.", 1, 3, 4, List.of("second_wind", "stalwart_guard"), Map.of(), new Ability("Aegis Mend", 28, 10, Ability.AbilityKind.HEAL, "ally"), "Knight"));
+        add(KNIGHT_SKILL_TREE, node("vanguard_legend", "Vanguard Legend", "+18 HP, +3 attack, and +3 defense.", 1, 4, 4, List.of("heroic_resolve", "shieldbreaker", "war_cry"), Map.of("max_hp", 18, "attack", 3, "defense", 3), null, "Knight"));
 
         add(MAGE_SKILL_TREE, node("battle_focus", "Battle Focus", "+6 max MP per rank.", 3, 0, 0, List.of(), Map.of("max_mp", 6), null, "Mage"));
         add(MAGE_SKILL_TREE, node("channeling", "Channeling", "Healing abilities restore +4 HP per rank.", 3, 2, 0, List.of("battle_focus"), Map.of(), null, "Mage"));
@@ -44,6 +65,11 @@ public final class SkillTrees {
         add(MAGE_SKILL_TREE, node("arcane_burst", "Arcane Burst", "Learn Arcane Burst, a heavy magical attack.", 1, 2, 2, List.of("ether_flow", "elemental_precision"), Map.of(), new Ability("Arcane Burst", 46, 14), "Mage"));
         add(MAGE_SKILL_TREE, node("renewing_ward", "Renewing Ward", "Learn Renewing Ward, a strong heal.", 1, 3, 2, List.of("channeling", "ether_flow"), Map.of(), new Ability("Renewing Ward", 34, 12, Ability.AbilityKind.HEAL, "ally"), "Mage"));
         add(MAGE_SKILL_TREE, node("archmage_resolve", "Archmage Resolve", "+18 max MP, +2 attack, and +1 defense.", 1, 3, 3, List.of("arcane_burst", "renewing_ward"), Map.of("max_mp", 18, "attack", 2, "defense", 1), null, "Mage"));
+        add(MAGE_SKILL_TREE, node("overchannel", "Overchannel", "Damaging abilities gain +3 power per rank.", 2, 0, 3, List.of("spellcraft", "elemental_precision"), Map.of(), null, "Mage"));
+        add(MAGE_SKILL_TREE, node("chain_spark", "Chain Spark", "Learn Chain Spark, hitting every enemy.", 1, 1, 3, List.of("arcane_burst"), Map.of(), new Ability("Chain Spark", 30, 15, Ability.AbilityKind.DAMAGE, "all_enemies"), "Mage"));
+        add(MAGE_SKILL_TREE, node("mana_bloom", "Mana Bloom", "Learn Mana Bloom, a party-wide restorative spell.", 1, 2, 3, List.of("renewing_ward"), Map.of(), new Ability("Mana Bloom", 20, 13, Ability.AbilityKind.HEAL, "party"), "Mage"));
+        add(MAGE_SKILL_TREE, node("frostbite", "Frostbite", "Weak foes take +5% damage per rank.", 2, 3, 4, List.of("chain_spark", "elemental_precision"), Map.of(), null, "Mage"));
+        add(MAGE_SKILL_TREE, node("star_savant", "Star Savant", "+20 MP, +3 attack, and +2 defense.", 1, 4, 4, List.of("archmage_resolve", "overchannel", "mana_bloom"), Map.of("max_mp", 20, "attack", 3, "defense", 2), null, "Mage"));
 
         add(RANGER_SKILL_TREE, node("trail_sense", "Trail Sense", "+1 attack and +1 defense per rank.", 2, 0, 0, List.of(), Map.of("attack", 1, "defense", 1), null, "Ranger"));
         add(RANGER_SKILL_TREE, node("quickdraw_drills", "Quickdraw Drills", "+2 attack per rank.", 3, 2, 0, List.of(), Map.of("attack", 2), null, "Ranger"));
@@ -54,11 +80,116 @@ public final class SkillTrees {
         add(RANGER_SKILL_TREE, node("twin_fang", "Twin Fang", "Learn Twin Fang, a heavy ranger strike.", 1, 2, 2, List.of("marked_shot", "keen_edge"), Map.of(), new Ability("Twin Fang", 40, 12), "Ranger"));
         add(RANGER_SKILL_TREE, node("pack_coordination", "Pack Coordination", "Allies deal +1 more damage per rank.", 2, 3, 2, List.of("keen_edge", "field_salve"), Map.of(), null, "Ranger"));
         add(RANGER_SKILL_TREE, node("warden_resolve", "Warden Resolve", "+12 max HP, +8 max MP, +2 attack, and +1 defense.", 1, 3, 3, List.of("twin_fang", "pack_coordination"), Map.of("max_hp", 12, "max_mp", 8, "attack", 2, "defense", 1), null, "Ranger"));
+        add(RANGER_SKILL_TREE, node("poison_arrow", "Poison Arrow", "Learn Poison Arrow, a venomous shot.", 1, 0, 3, List.of("marked_shot"), Map.of(), new Ability("Poison Arrow", 27, 8), "Ranger"));
+        add(RANGER_SKILL_TREE, node("volley_mastery", "Volley Mastery", "Multi-target attacks gain +2 damage per rank.", 3, 1, 3, List.of("quickdraw_drills", "keen_edge"), Map.of(), null, "Ranger"));
+        add(RANGER_SKILL_TREE, node("hawk_eye", "Hawk Eye", "Basic attack crit chance and crit damage improve per rank.", 2, 2, 3, List.of("keen_edge"), Map.of(), null, "Ranger"));
+        add(RANGER_SKILL_TREE, node("smoke_screen", "Smoke Screen", "Learn Smoke Screen, a defensive vanish.", 1, 3, 4, List.of("field_salve", "pack_coordination"), Map.of(), new Ability("Smoke Screen", 0, 8, Ability.AbilityKind.DEFEND, "self"), "Ranger"));
+        add(RANGER_SKILL_TREE, node("wildwarden", "Wildwarden", "+16 HP, +10 MP, +3 attack, and +2 defense.", 1, 4, 4, List.of("warden_resolve", "poison_arrow", "hawk_eye"), Map.of("max_hp", 16, "max_mp", 10, "attack", 3, "defense", 2), null, "Ranger"));
+
+        add(CLERIC_SKILL_TREE, node("steady_hands", "Steady Hands", "+5 max MP and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("max_mp", 5, "defense", 1), null, "Cleric"));
+        add(CLERIC_SKILL_TREE, node("sanctuary_vow", "Sanctuary Vow", "+8 max HP per rank.", 3, 2, 0, List.of(), Map.of("max_hp", 8), null, "Cleric"));
+        add(CLERIC_SKILL_TREE, node("radiant_bolt", "Radiant Bolt", "Learn Radiant Bolt, a searing holy strike.", 1, 4, 0, List.of("steady_hands"), Map.of(), new Ability("Radiant Bolt", 27, 7), "Cleric"));
+        add(CLERIC_SKILL_TREE, node("ward_prayer", "Ward Prayer", "Learn Ward Prayer, a protective heal.", 1, 1, 1, List.of("steady_hands", "sanctuary_vow"), Map.of(), new Ability("Ward Prayer", 30, 10, Ability.AbilityKind.HEAL, "ally"), "Cleric"));
+        add(CLERIC_SKILL_TREE, node("grace_flow", "Grace Flow", "Recover +1 MP per rank after using an ability.", 2, 3, 1, List.of("ward_prayer"), Map.of(), null, "Cleric"));
+        add(CLERIC_SKILL_TREE, node("sunlit_aegis", "Sunlit Aegis", "Learn Sunlit Aegis, a group-turn defensive stance.", 1, 4, 1, List.of("radiant_bolt"), Map.of(), new Ability("Sunlit Aegis", 0, 8, Ability.AbilityKind.DEFEND, "self"), "Cleric"));
+        add(CLERIC_SKILL_TREE, node("reviving_chorus", "Reviving Chorus", "Learn Reviving Chorus, a strong restorative hymn.", 1, 2, 2, List.of("ward_prayer", "grace_flow"), Map.of(), new Ability("Reviving Chorus", 42, 14, Ability.AbilityKind.HEAL, "ally"), "Cleric"));
+        add(CLERIC_SKILL_TREE, node("dawn_resolve", "Dawn Resolve", "+14 max HP, +12 max MP, and +2 defense.", 1, 3, 3, List.of("reviving_chorus", "sunlit_aegis"), Map.of("max_hp", 14, "max_mp", 12, "defense", 2), null, "Cleric"));
+
+        add(ROGUE_SKILL_TREE, node("footwork", "Footwork", "+1 attack and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("attack", 1, "defense", 1), null, "Rogue"));
+        add(ROGUE_SKILL_TREE, node("knife_work", "Knife Work", "+2 attack per rank.", 3, 2, 0, List.of(), Map.of("attack", 2), null, "Rogue"));
+        add(ROGUE_SKILL_TREE, node("smoke_pockets", "Smoke Pockets", "+4 max MP per rank.", 2, 4, 0, List.of("footwork"), Map.of("max_mp", 4), null, "Rogue"));
+        add(ROGUE_SKILL_TREE, node("shadowstep_cut", "Shadowstep Cut", "Learn Shadowstep Cut, a fast shadow strike.", 1, 1, 1, List.of("footwork", "knife_work"), Map.of(), new Ability("Shadowstep Cut", 31, 8), "Rogue"));
+        add(ROGUE_SKILL_TREE, node("venom_edge", "Venom Edge", "Learn Venom Edge, a poison-laced attack.", 1, 3, 1, List.of("knife_work"), Map.of(), new Ability("Venom Edge", 24, 7), "Rogue"));
+        add(ROGUE_SKILL_TREE, node("smoke_veil", "Smoke Veil", "Learn Smoke Veil, a guarded evasive stance.", 1, 4, 1, List.of("smoke_pockets"), Map.of(), new Ability("Smoke Veil", 0, 6, Ability.AbilityKind.DEFEND, "self"), "Rogue"));
+        add(ROGUE_SKILL_TREE, node("knife_storm", "Knife Storm", "Learn Knife Storm, a sharp burst attack.", 1, 2, 2, List.of("shadowstep_cut", "venom_edge"), Map.of(), new Ability("Knife Storm", 42, 13), "Rogue"));
+        add(ROGUE_SKILL_TREE, node("night_resolve", "Night Resolve", "+10 max HP, +6 max MP, +3 attack, and +1 defense.", 1, 3, 3, List.of("knife_storm", "smoke_veil"), Map.of("max_hp", 10, "max_mp", 6, "attack", 3, "defense", 1), null, "Rogue"));
+
+        add(BATTLE_MEDIC_SKILL_TREE, node("medic_triage", "Triage", "+6 max MP and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("max_mp", 6, "defense", 1), null, "Battle Medic"));
+        add(BATTLE_MEDIC_SKILL_TREE, node("medic_pack", "Medic Pack", "+7 max HP per rank.", 3, 2, 0, List.of(), Map.of("max_hp", 7), null, "Battle Medic"));
+        add(BATTLE_MEDIC_SKILL_TREE, node("field_suture", "Field Suture", "Learn Field Suture, a strong ally heal.", 1, 1, 1, List.of("medic_triage"), Map.of(), new Ability("Field Suture", 34, 10, Ability.AbilityKind.HEAL, "ally"), "Battle Medic"));
+        add(BATTLE_MEDIC_SKILL_TREE, node("antidote_drill", "Antidote Drill", "+4 max MP and +1 attack per rank.", 2, 3, 1, List.of("medic_pack"), Map.of("max_mp", 4, "attack", 1), null, "Battle Medic"));
+        add(BATTLE_MEDIC_SKILL_TREE, node("stabilize_party", "Stabilize Party", "Learn Stabilize Party, a party-wide heal.", 1, 2, 2, List.of("field_suture", "antidote_drill"), Map.of(), new Ability("Stabilize Party", 19, 12, Ability.AbilityKind.HEAL, "party"), "Battle Medic"));
+        add(BATTLE_MEDIC_SKILL_TREE, node("combat_surgeon", "Combat Surgeon", "+12 HP, +10 MP, and +2 defense.", 1, 2, 3, List.of("stabilize_party"), Map.of("max_hp", 12, "max_mp", 10, "defense", 2), null, "Battle Medic"));
+
+        add(IRONWALL_SKILL_TREE, node("ironwall_frame", "Ironwall Frame", "+10 max HP per rank.", 3, 0, 0, List.of(), Map.of("max_hp", 10), null, "Ironwall"));
+        add(IRONWALL_SKILL_TREE, node("tower_shield", "Tower Shield", "+2 defense per rank.", 3, 2, 0, List.of(), Map.of("defense", 2), null, "Ironwall"));
+        add(IRONWALL_SKILL_TREE, node("shield_anchor", "Shield Anchor", "Learn Shield Anchor, a fortified stance.", 1, 1, 1, List.of("tower_shield"), Map.of(), new Ability("Shield Anchor", 0, 6, Ability.AbilityKind.DEFEND, "self"), "Ironwall"));
+        add(IRONWALL_SKILL_TREE, node("line_crusher", "Line Crusher", "+2 attack per rank.", 2, 3, 1, List.of("ironwall_frame"), Map.of("attack", 2), null, "Ironwall"));
+        add(IRONWALL_SKILL_TREE, node("wallbreaker_slam", "Wallbreaker Slam", "Learn Wallbreaker Slam, a punishing tank strike.", 1, 2, 2, List.of("shield_anchor", "line_crusher"), Map.of(), new Ability("Wallbreaker Slam", 38, 11), "Ironwall"));
+        add(IRONWALL_SKILL_TREE, node("unmoving_bastion", "Unmoving Bastion", "+18 HP, +3 defense, and +1 attack.", 1, 2, 3, List.of("wallbreaker_slam"), Map.of("max_hp", 18, "defense", 3, "attack", 1), null, "Ironwall"));
+
+        add(BLADEDANCER_SKILL_TREE, node("dancer_balance", "Dancer Balance", "+1 attack and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("attack", 1, "defense", 1), null, "Bladedancer"));
+        add(BLADEDANCER_SKILL_TREE, node("twin_forms", "Twin Forms", "+2 attack per rank.", 3, 2, 0, List.of(), Map.of("attack", 2), null, "Bladedancer"));
+        add(BLADEDANCER_SKILL_TREE, node("crescent_cut", "Crescent Cut", "Learn Crescent Cut, a precise fighter attack.", 1, 1, 1, List.of("twin_forms"), Map.of(), new Ability("Crescent Cut", 32, 8), "Bladedancer"));
+        add(BLADEDANCER_SKILL_TREE, node("flowing_guard", "Flowing Guard", "+5 max HP and +4 max MP per rank.", 2, 3, 1, List.of("dancer_balance"), Map.of("max_hp", 5, "max_mp", 4), null, "Bladedancer"));
+        add(BLADEDANCER_SKILL_TREE, node("silver_arc", "Silver Arc", "Learn Silver Arc, hitting every enemy.", 1, 2, 2, List.of("crescent_cut", "flowing_guard"), Map.of(), new Ability("Silver Arc", 24, 12, Ability.AbilityKind.DAMAGE, "all_enemies"), "Bladedancer"));
+        add(BLADEDANCER_SKILL_TREE, node("duelist_grace", "Duelist Grace", "+8 HP, +8 MP, +3 attack, and +1 defense.", 1, 2, 3, List.of("silver_arc"), Map.of("max_hp", 8, "max_mp", 8, "attack", 3, "defense", 1), null, "Bladedancer"));
+
+        add(VEILRUNNER_SKILL_TREE, node("veil_footwork", "Veil Footwork", "+1 attack and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("attack", 1, "defense", 1), null, "Veilrunner"));
+        add(VEILRUNNER_SKILL_TREE, node("smoke_cache", "Smoke Cache", "+5 max MP per rank.", 3, 2, 0, List.of(), Map.of("max_mp", 5), null, "Veilrunner"));
+        add(VEILRUNNER_SKILL_TREE, node("blindside", "Blindside", "Learn Blindside, a fast rogue strike.", 1, 1, 1, List.of("veil_footwork"), Map.of(), new Ability("Blindside", 30, 8), "Veilrunner"));
+        add(VEILRUNNER_SKILL_TREE, node("vanish_trick", "Vanish Trick", "Learn Vanish Trick, an evasive stance.", 1, 3, 1, List.of("smoke_cache"), Map.of(), new Ability("Vanish Trick", 0, 6, Ability.AbilityKind.DEFEND, "self"), "Veilrunner"));
+        add(VEILRUNNER_SKILL_TREE, node("smoke_bomb", "Smoke Bomb", "Learn Smoke Bomb, striking every enemy.", 1, 2, 2, List.of("blindside", "vanish_trick"), Map.of(), new Ability("Smoke Bomb", 22, 11, Ability.AbilityKind.DAMAGE, "all_enemies"), "Veilrunner"));
+        add(VEILRUNNER_SKILL_TREE, node("silent_route", "Silent Route", "+10 MP, +3 attack, and +2 defense.", 1, 2, 3, List.of("smoke_bomb"), Map.of("max_mp", 10, "attack", 3, "defense", 2), null, "Veilrunner"));
+
+        add(WILDSPEAKER_SKILL_TREE, node("root_lore", "Root Lore", "+6 max MP and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("max_mp", 6, "defense", 1), null, "Wildspeaker"));
+        add(WILDSPEAKER_SKILL_TREE, node("beast_courage", "Beast Courage", "+7 max HP per rank.", 3, 2, 0, List.of(), Map.of("max_hp", 7), null, "Wildspeaker"));
+        add(WILDSPEAKER_SKILL_TREE, node("briar_call", "Briar Call", "Learn Briar Call, a druidic attack.", 1, 1, 1, List.of("root_lore"), Map.of(), new Ability("Briar Call", 28, 8), "Wildspeaker"));
+        add(WILDSPEAKER_SKILL_TREE, node("green_mend", "Green Mend", "Learn Green Mend, a restorative ally spell.", 1, 3, 1, List.of("beast_courage"), Map.of(), new Ability("Green Mend", 28, 9, Ability.AbilityKind.HEAL, "ally"), "Wildspeaker"));
+        add(WILDSPEAKER_SKILL_TREE, node("grove_chorus", "Grove Chorus", "Learn Grove Chorus, a party heal.", 1, 2, 2, List.of("briar_call", "green_mend"), Map.of(), new Ability("Grove Chorus", 18, 12, Ability.AbilityKind.HEAL, "party"), "Wildspeaker"));
+        add(WILDSPEAKER_SKILL_TREE, node("elder_bark", "Elder Bark", "+12 HP, +12 MP, and +2 defense.", 1, 2, 3, List.of("grove_chorus"), Map.of("max_hp", 12, "max_mp", 12, "defense", 2), null, "Wildspeaker"));
+
+        add(SUNWARDEN_SKILL_TREE, node("sun_vow", "Sun Vow", "+8 max HP and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("max_hp", 8, "defense", 1), null, "Sunwarden"));
+        add(SUNWARDEN_SKILL_TREE, node("lantern_prayer", "Lantern Prayer", "+5 max MP per rank.", 3, 2, 0, List.of(), Map.of("max_mp", 5), null, "Sunwarden"));
+        add(SUNWARDEN_SKILL_TREE, node("dawn_mace", "Dawn Mace", "Learn Dawn Mace, a radiant strike.", 1, 1, 1, List.of("sun_vow"), Map.of(), new Ability("Dawn Mace", 30, 8), "Sunwarden"));
+        add(SUNWARDEN_SKILL_TREE, node("lantern_aegis", "Lantern Aegis", "Learn Lantern Aegis, a guarded stance.", 1, 3, 1, List.of("lantern_prayer"), Map.of(), new Ability("Lantern Aegis", 0, 7, Ability.AbilityKind.DEFEND, "self"), "Sunwarden"));
+        add(SUNWARDEN_SKILL_TREE, node("sunlit_mend", "Sunlit Mend", "Learn Sunlit Mend, a shielded ally heal.", 1, 2, 2, List.of("dawn_mace", "lantern_aegis"), Map.of(), new Ability("Sunlit Mend", 32, 11, Ability.AbilityKind.HEAL, "ally"), "Sunwarden"));
+        add(SUNWARDEN_SKILL_TREE, node("solar_oath", "Solar Oath", "+16 HP, +8 MP, +1 attack, and +2 defense.", 1, 2, 3, List.of("sunlit_mend"), Map.of("max_hp", 16, "max_mp", 8, "attack", 1, "defense", 2), null, "Sunwarden"));
+
+        add(THORNBINDER_SKILL_TREE, node("thorn_lattice", "Thorn Lattice", "+1 attack and +5 max MP per rank.", 3, 0, 0, List.of(), Map.of("attack", 1, "max_mp", 5), null, "Thornbinder"));
+        add(THORNBINDER_SKILL_TREE, node("bark_skin", "Bark Skin", "+1 defense and +6 max HP per rank.", 3, 2, 0, List.of(), Map.of("defense", 1, "max_hp", 6), null, "Thornbinder"));
+        add(THORNBINDER_SKILL_TREE, node("thorn_snare", "Thorn Snare", "Learn Thorn Snare, a weakening druid strike.", 1, 1, 1, List.of("thorn_lattice"), Map.of(), new Ability("Thorn Snare", 30, 9), "Thornbinder"));
+        add(THORNBINDER_SKILL_TREE, node("barbed_bloom", "Barbed Bloom", "Learn Barbed Bloom, hitting every enemy.", 1, 3, 1, List.of("bark_skin"), Map.of(), new Ability("Barbed Bloom", 24, 12, Ability.AbilityKind.DAMAGE, "all_enemies"), "Thornbinder"));
+        add(THORNBINDER_SKILL_TREE, node("root_cage", "Root Cage", "+6 max MP and +2 defense.", 2, 2, 2, List.of("thorn_snare", "barbed_bloom"), Map.of("max_mp", 6, "defense", 2), null, "Thornbinder"));
+        add(THORNBINDER_SKILL_TREE, node("wild_judgment", "Wild Judgment", "+12 HP, +12 MP, and +3 attack.", 1, 2, 3, List.of("root_cage"), Map.of("max_hp", 12, "max_mp", 12, "attack", 3), null, "Thornbinder"));
+
+        add(STONEBREAKER_SKILL_TREE, node("stone_sinew", "Stone Sinew", "+9 max HP per rank.", 3, 0, 0, List.of(), Map.of("max_hp", 9), null, "Stonebreaker"));
+        add(STONEBREAKER_SKILL_TREE, node("hammer_drills", "Hammer Drills", "+2 attack per rank.", 3, 2, 0, List.of(), Map.of("attack", 2), null, "Stonebreaker"));
+        add(STONEBREAKER_SKILL_TREE, node("faultline_swing", "Faultline Swing", "Learn Faultline Swing, a bruising fighter attack.", 1, 1, 1, List.of("hammer_drills"), Map.of(), new Ability("Faultline Swing", 38, 10), "Stonebreaker"));
+        add(STONEBREAKER_SKILL_TREE, node("braced_shoulders", "Braced Shoulders", "+2 defense per rank.", 2, 3, 1, List.of("stone_sinew"), Map.of("defense", 2), null, "Stonebreaker"));
+        add(STONEBREAKER_SKILL_TREE, node("quake_blow", "Quake Blow", "Learn Quake Blow, hitting every enemy.", 1, 2, 2, List.of("faultline_swing", "braced_shoulders"), Map.of(), new Ability("Quake Blow", 26, 13, Ability.AbilityKind.DAMAGE, "all_enemies"), "Stonebreaker"));
+        add(STONEBREAKER_SKILL_TREE, node("mountain_heart", "Mountain Heart", "+18 HP, +3 attack, and +2 defense.", 1, 2, 3, List.of("quake_blow"), Map.of("max_hp", 18, "attack", 3, "defense", 2), null, "Stonebreaker"));
+
+        add(NIGHTBLADE_SKILL_TREE, node("night_training", "Night Training", "+2 attack per rank.", 3, 0, 0, List.of(), Map.of("attack", 2), null, "Nightblade"));
+        add(NIGHTBLADE_SKILL_TREE, node("black_cloak", "Black Cloak", "+1 defense and +4 max MP per rank.", 3, 2, 0, List.of(), Map.of("defense", 1, "max_mp", 4), null, "Nightblade"));
+        add(NIGHTBLADE_SKILL_TREE, node("garrote_cut", "Garrote Cut", "Learn Garrote Cut, a lethal rogue strike.", 1, 1, 1, List.of("night_training"), Map.of(), new Ability("Garrote Cut", 35, 9), "Nightblade"));
+        add(NIGHTBLADE_SKILL_TREE, node("poison_cache", "Poison Cache", "+5 max MP and +1 attack per rank.", 2, 3, 1, List.of("black_cloak"), Map.of("max_mp", 5, "attack", 1), null, "Nightblade"));
+        add(NIGHTBLADE_SKILL_TREE, node("midnight_knife", "Midnight Knife", "Learn Midnight Knife, a shadowy burst attack.", 1, 2, 2, List.of("garrote_cut", "poison_cache"), Map.of(), new Ability("Midnight Knife", 44, 13), "Nightblade"));
+        add(NIGHTBLADE_SKILL_TREE, node("perfect_silence", "Perfect Silence", "+10 MP, +4 attack, and +1 defense.", 1, 2, 3, List.of("midnight_knife"), Map.of("max_mp", 10, "attack", 4, "defense", 1), null, "Nightblade"));
+
+        add(GROVEKEEPER_SKILL_TREE, node("gentle_roots", "Gentle Roots", "+6 max MP and +1 defense per rank.", 3, 0, 0, List.of(), Map.of("max_mp", 6, "defense", 1), null, "Grovekeeper"));
+        add(GROVEKEEPER_SKILL_TREE, node("spring_satchel", "Spring Satchel", "+7 max HP per rank.", 3, 2, 0, List.of(), Map.of("max_hp", 7), null, "Grovekeeper"));
+        add(GROVEKEEPER_SKILL_TREE, node("petal_mend", "Petal Mend", "Learn Petal Mend, an efficient ally heal.", 1, 1, 1, List.of("gentle_roots"), Map.of(), new Ability("Petal Mend", 30, 9, Ability.AbilityKind.HEAL, "ally"), "Grovekeeper"));
+        add(GROVEKEEPER_SKILL_TREE, node("thorn_whisper", "Thorn Whisper", "Learn Thorn Whisper, a light druid attack.", 1, 3, 1, List.of("spring_satchel"), Map.of(), new Ability("Thorn Whisper", 26, 8), "Grovekeeper"));
+        add(GROVEKEEPER_SKILL_TREE, node("renewing_grove", "Renewing Grove", "Learn Renewing Grove, a party-wide heal.", 1, 2, 2, List.of("petal_mend", "thorn_whisper"), Map.of(), new Ability("Renewing Grove", 21, 13, Ability.AbilityKind.HEAL, "party"), "Grovekeeper"));
+        add(GROVEKEEPER_SKILL_TREE, node("heartwood_keeper", "Heartwood Keeper", "+14 HP, +14 MP, and +2 defense.", 1, 2, 3, List.of("renewing_grove"), Map.of("max_hp", 14, "max_mp", 14, "defense", 2), null, "Grovekeeper"));
 
         SKILL_TREE.putAll(COMMON_SKILL_TREE);
         SKILL_TREE.putAll(KNIGHT_SKILL_TREE);
         SKILL_TREE.putAll(MAGE_SKILL_TREE);
         SKILL_TREE.putAll(RANGER_SKILL_TREE);
+        SKILL_TREE.putAll(CLERIC_SKILL_TREE);
+        SKILL_TREE.putAll(ROGUE_SKILL_TREE);
+        SKILL_TREE.putAll(BATTLE_MEDIC_SKILL_TREE);
+        SKILL_TREE.putAll(IRONWALL_SKILL_TREE);
+        SKILL_TREE.putAll(BLADEDANCER_SKILL_TREE);
+        SKILL_TREE.putAll(VEILRUNNER_SKILL_TREE);
+        SKILL_TREE.putAll(WILDSPEAKER_SKILL_TREE);
+        SKILL_TREE.putAll(SUNWARDEN_SKILL_TREE);
+        SKILL_TREE.putAll(THORNBINDER_SKILL_TREE);
+        SKILL_TREE.putAll(STONEBREAKER_SKILL_TREE);
+        SKILL_TREE.putAll(NIGHTBLADE_SKILL_TREE);
+        SKILL_TREE.putAll(GROVEKEEPER_SKILL_TREE);
         SKILL_ABILITY_NAMES = SKILL_TREE.values().stream()
                 .filter(node -> node.ability() != null)
                 .map(node -> node.ability().name())
@@ -73,6 +204,22 @@ public final class SkillTrees {
             case "Mage" -> MAGE_SKILL_TREE;
             case "Ranger" -> RANGER_SKILL_TREE;
             case "Knight" -> KNIGHT_SKILL_TREE;
+            case "Cleric" -> CLERIC_SKILL_TREE;
+            case "Rogue" -> ROGUE_SKILL_TREE;
+            case "Battle Medic" -> BATTLE_MEDIC_SKILL_TREE;
+            case "Ironwall" -> IRONWALL_SKILL_TREE;
+            case "Bladedancer" -> BLADEDANCER_SKILL_TREE;
+            case "Veilrunner" -> VEILRUNNER_SKILL_TREE;
+            case "Wildspeaker" -> WILDSPEAKER_SKILL_TREE;
+            case "Sunwarden" -> SUNWARDEN_SKILL_TREE;
+            case "Thornbinder" -> THORNBINDER_SKILL_TREE;
+            case "Stonebreaker" -> STONEBREAKER_SKILL_TREE;
+            case "Nightblade" -> NIGHTBLADE_SKILL_TREE;
+            case "Grovekeeper" -> GROVEKEEPER_SKILL_TREE;
+            case "Medic" -> CLERIC_SKILL_TREE;
+            case "Archivist", "Snow Seer", "Marsh Witch" -> MAGE_SKILL_TREE;
+            case "Captain", "Roadwarden" -> KNIGHT_SKILL_TREE;
+            case "Frost Scout", "Dune Guide" -> RANGER_SKILL_TREE;
             default -> Map.of();
         };
     }

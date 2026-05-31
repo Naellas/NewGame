@@ -25,6 +25,11 @@ public final class Battle {
     private int activePartyIndex;
     private int selectedEnemyIndex;
     private int selectedPartyIndex;
+    private int enemyTurnIndex;
+    private boolean enemyPhase;
+    private BattleActionAnimation actionAnimation;
+    private Runnable animationImpact;
+    private Runnable animationComplete;
 
     public final Actor player;
     public final Actor enemy;
@@ -37,6 +42,7 @@ public final class Battle {
     public boolean finished;
     public boolean victory;
     public boolean questRecorded;
+    public boolean lootGranted;
     public int shake;
     public int monsterOffset;
     public int playerOffset;
@@ -222,6 +228,47 @@ public final class Battle {
         return guards.containsKey(actor);
     }
 
+    public boolean canAcceptInput() {
+        return !finished && actionAnimation == null && !enemyPhase;
+    }
+
+    public boolean isAnimating() {
+        return actionAnimation != null;
+    }
+
+    public BattleActionAnimation activeAnimation() {
+        return actionAnimation;
+    }
+
+    public boolean effectReleased() {
+        return actionAnimation == null || actionAnimation.released();
+    }
+
+    public boolean isCasting(Actor actor) {
+        return actionAnimation != null
+                && actionAnimation.source == actor
+                && actionAnimation.stage() == BattleActionAnimation.Stage.CAST;
+    }
+
+    public int castOffset(Actor actor) {
+        if (!isCasting(actor)) {
+            return 0;
+        }
+        return (int) Math.round(Math.sin(actionAnimation.castProgress() * Math.PI) * 12.0);
+    }
+
+    public String animationStatus() {
+        if (actionAnimation == null) {
+            return "";
+        }
+        return switch (actionAnimation.stage()) {
+            case CAST -> actionAnimation.source.name + " is casting.";
+            case TRAVEL -> actionAnimation.effectKind + " flies toward " + actionAnimation.target.name + ".";
+            case IMPACT -> actionAnimation.target.name + " is hit.";
+            case DONE -> "";
+        };
+    }
+
     public void tick() {
         shake = Math.max(0, shake - 1);
         monsterOffset = shake * (shake % 2 == 0 ? 1 : -1);
@@ -232,7 +279,9 @@ public final class Battle {
             enemyLunges.put(foe, Math.max(0, enemyLunges.getOrDefault(foe, 0) - 2));
         }
         flashTimer = Math.max(0, flashTimer - 1);
-        effectTimer = Math.max(0, effectTimer - 1);
+        if (actionAnimation == null) {
+            effectTimer = Math.max(0, effectTimer - 1);
+        }
         for (Actor foe : enemies) {
             if (!foe.alive()) {
                 int nextFade = Math.max(0, enemyFades.getOrDefault(foe, 255) - 16);
@@ -250,6 +299,7 @@ public final class Battle {
                 floaters.remove(i);
             }
         }
+        tickActionAnimation();
     }
 
     public void playerAttack() {
@@ -263,20 +313,16 @@ public final class Battle {
             return;
         }
         setGuard(actor, false);
-        int raw = modifyOutgoingDamage(actor, actor.basicDamage(random));
-        int damage = dealDamage(actor, target, raw);
-        floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 221, 221)));
-        addLog(actor == player ? "You hit " + target.name + " for " + damage + "." : actor.name + " hits " + target.name + " for " + damage + ".");
-        shake = 10;
-        playerLunge = 18;
-        flashTimer = 4;
-        playEffect("strike", actor, target, 12);
-        if (!target.alive()) {
-            addLog(target.name + " falls.");
-            clearStatuses(target);
-            rememberDefeated(target);
-        }
-        afterPartyAction(actor);
+        beginAnimatedAction(
+                "strike",
+                actor,
+                target,
+                5,
+                8,
+                8,
+                () -> resolvePartyAttack(actor, target),
+                () -> afterPartyAction(actor)
+        );
     }
 
     public void useAbility(int index) {
@@ -289,16 +335,74 @@ public final class Battle {
             addLog(actor.name + " does not have enough MP.");
             return;
         }
+        Actor enemyTarget = selectedEnemy();
+        List<Actor> healTargets = List.of();
+        List<Actor> damageTargets = List.of();
+        Actor effectTarget = actor;
+        String effectKind = "shield";
+        if (ability.kind() == Ability.AbilityKind.HEAL) {
+            healTargets = healTargetsFor(actor, ability);
+            if (healTargets.isEmpty()) {
+                return;
+            }
+            effectTarget = healTargets.get(0);
+            effectKind = "heal";
+        } else if (ability.kind() == Ability.AbilityKind.DAMAGE) {
+            damageTargets = damageTargetsFor(ability);
+            if (damageTargets.isEmpty()) {
+                return;
+            }
+            effectTarget = damageTargets.get(0);
+            effectKind = effectForAbility(ability.name());
+        }
+        List<Actor> finalHealTargets = healTargets;
+        List<Actor> finalDamageTargets = damageTargets;
+        Actor finalEnemyTarget = enemyTarget;
+        Actor finalEffectTarget = effectTarget;
+        String finalEffectKind = effectKind;
         actor.mp -= ability.cost();
         switch (ability.kind()) {
-            case HEAL -> useHealAbility(actor, ability);
-            case DEFEND -> defend(actor, ability.name(), 4 + (actor == player ? player.skillRank("stalwart_guard") : 0));
-            case DAMAGE -> useDamageAbility(actor, ability);
+            case HEAL -> beginAnimatedAction(
+                    finalEffectKind,
+                    actor,
+                    finalEffectTarget,
+                    10,
+                    8,
+                    12,
+                    () -> {
+                        resolveHealAbility(actor, ability, finalHealTargets, finalEnemyTarget);
+                        applyMpFlow(actor);
+                    },
+                    () -> afterPartyAction(actor)
+            );
+            case DEFEND -> beginAnimatedAction(
+                    finalEffectKind,
+                    actor,
+                    actor,
+                    8,
+                    1,
+                    12,
+                    () -> {
+                        defend(actor, ability.name(), 4 + actor.skillRank("stalwart_guard"));
+                        applyAbilityStatuses(actor, ability, actor, finalEnemyTarget);
+                        applyMpFlow(actor);
+                    },
+                    () -> afterPartyAction(actor)
+            );
+            case DAMAGE -> beginAnimatedAction(
+                    finalEffectKind,
+                    actor,
+                    finalEffectTarget,
+                    10,
+                    12,
+                    10,
+                    () -> {
+                        resolveDamageAbility(actor, ability, finalDamageTargets);
+                        applyMpFlow(actor);
+                    },
+                    () -> afterPartyAction(actor)
+            );
         }
-        if (actor == player && player.skillRank("ether_flow") > 0) {
-            player.mp = Math.min(player.maxMp, player.mp + player.skillRank("ether_flow"));
-        }
-        afterPartyAction(actor);
     }
 
     public boolean playerUseItem(Item item) {
@@ -319,6 +423,281 @@ public final class Battle {
             return false;
         }
         setGuard(actor, false);
+        beginAnimatedAction(
+                "item",
+                actor,
+                target,
+                7,
+                8,
+                10,
+                () -> resolveItemUse(actor, target, itemName, heal, mp),
+                () -> afterPartyAction(actor)
+        );
+        return true;
+    }
+
+    private boolean canPartyAct(Actor actor) {
+        return canAcceptInput() && actor != null && actor.alive() && !enemies.contains(actor);
+    }
+
+    private List<Actor> healTargetsFor(Actor actor, Ability ability) {
+        setGuard(actor, false);
+        if ("self".equals(ability.target())) {
+            return List.of(actor);
+        }
+        if ("party".equals(ability.target())) {
+            return new ArrayList<>(livingParty());
+        }
+        Actor target = selectedPartyMember();
+        if (target == null) {
+            target = lowestPartyMember();
+        }
+        return target == null ? List.of() : List.of(target);
+    }
+
+    private void resolveHealAbility(Actor actor, Ability ability, List<Actor> targets, Actor enemyTarget) {
+        int bonus = actor.skillRank("channeling") * 4;
+        int totalHealed = 0;
+        Actor effectTarget = targets.isEmpty() ? actor : targets.get(0);
+        for (Actor target : targets) {
+            int amount = Math.max(1, ability.power() + actor.level * 2 + bonus + random.nextInt(5) - 2);
+            if ("party".equals(ability.target())) {
+                amount = Math.max(1, (int) Math.round(amount * 0.70));
+            }
+            int before = target.hp;
+            target.hp = Math.min(target.maxHp, target.hp + amount);
+            int healed = target.hp - before;
+            totalHealed += healed;
+            applyAbilityStatuses(actor, ability, target, enemyTarget);
+            floaters.add(new FloatingText("+" + healed, floaterX(target), floaterY(target), 34, new Color(185, 247, 195)));
+        }
+        String detail = "party recovers " + totalHealed + " total.";
+        if (targets.size() == 1) {
+            detail = effectTarget.name + " recovers " + totalHealed + ".";
+        }
+        addLog(castMessage(actor, ability.name(), detail));
+    }
+
+    private List<Actor> damageTargetsFor(Ability ability) {
+        if ("all_enemies".equals(ability.target())) {
+            return new ArrayList<>(livingEnemies());
+        }
+        Actor selected = selectedEnemy();
+        return selected == null || !selected.alive() ? List.of() : List.of(selected);
+    }
+
+    private void resolveDamageAbility(Actor actor, Ability ability, List<Actor> targets) {
+        setGuard(actor, false);
+        targets = targets.stream().filter(Actor::alive).toList();
+        if (targets.isEmpty()) {
+            return;
+        }
+        int bonus = actor.skillRank("spellcraft") * 2 + actor.skillRank("overchannel") * 3;
+        if ("all_enemies".equals(ability.target())) {
+            bonus += actor.skillRank("volley_mastery") * 2;
+        }
+        int totalDamage = 0;
+        Actor effectTarget = targets.get(0);
+        for (Actor target : targets) {
+            int raw = ability.power() + bonus + actor.attack / 2 + random.nextInt(6);
+            if (targets.size() > 1) {
+                raw = Math.max(1, (int) Math.round(raw * 0.78));
+            }
+            raw = modifyOutgoingDamage(actor, raw);
+            int damage = dealDamage(actor, target, raw);
+            totalDamage += damage;
+            floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 224, 166)));
+            applyAbilityStatuses(actor, ability, actor, target);
+            if (!target.alive()) {
+                addLog(target.name + " falls.");
+                clearStatuses(target);
+                rememberDefeated(target);
+            }
+        }
+        String detail = targets.size() == 1
+                ? "deals " + totalDamage + " to " + effectTarget.name + "."
+                : "hits " + targets.size() + " enemies for " + totalDamage + " total.";
+        addLog(castMessage(actor, ability.name(), detail));
+        shake = 14;
+        playerLunge = 22;
+        flashTimer = 5;
+    }
+
+    private void defend(Actor actor, String label, int mpGain) {
+        setGuard(actor, true);
+        actor.mp = Math.min(actor.maxMp, actor.mp + mpGain);
+        applyStatus(actor, "shield", null);
+        applyStatus(actor, "fortified", null);
+        floaters.add(new FloatingText("Guard", floaterX(actor), floaterY(actor), 32, new Color(214, 232, 255)));
+        addLog(actor.name + " uses " + label + ": guard stance up, +" + mpGain + " MP.");
+    }
+
+    private void afterPartyAction(Actor actor) {
+        advanceStatusTurn(actor);
+        if (checkFinished()) {
+            return;
+        }
+        if (advanceToNextPartyActor()) {
+            beginActivePartyTurn();
+            return;
+        }
+        beginEnemyPhase();
+    }
+
+    private void enemyTurn() {
+        beginEnemyPhase();
+    }
+
+    private void beginEnemyPhase() {
+        if (finished || livingEnemies().isEmpty()) {
+            return;
+        }
+        enemyPhase = true;
+        enemyTurnIndex = 0;
+        continueEnemyPhase();
+    }
+
+    private void continueEnemyPhase() {
+        if (finished) {
+            enemyPhase = false;
+            return;
+        }
+        while (enemyTurnIndex < enemies.size()) {
+            Actor foe = enemies.get(enemyTurnIndex++);
+            if (!foe.alive()) {
+                continue;
+            }
+            triggerTurnStatuses(foe);
+            if (!foe.alive()) {
+                addLog(foe.name + " falls.");
+                clearStatuses(foe);
+                rememberDefeated(foe);
+            }
+            if (checkFinished()) {
+                enemyPhase = false;
+                return;
+            }
+            if (!foe.alive()) {
+                continue;
+            }
+            addLog(foe.name + "'s turn.");
+            tickMonsterCooldowns(foe);
+            MonsterAbility ability = chooseMonsterAbility(foe);
+            if (ability != null) {
+                scheduleMonsterAbility(foe, ability);
+            } else {
+                scheduleMonsterAttack(foe);
+            }
+            return;
+        }
+        enemyPhase = false;
+        if (!finished) {
+            activePartyIndex = firstLivingPartyIndex();
+            beginActivePartyTurn();
+        }
+    }
+
+    private void afterEnemyAction(Actor foe) {
+        advanceStatusTurn(foe);
+        if (checkFinished()) {
+            enemyPhase = false;
+            return;
+        }
+        continueEnemyPhase();
+    }
+
+    private void scheduleMonsterAttack(Actor foe) {
+        Actor target = randomLivingPartyMember();
+        beginAnimatedAction(
+                "strike",
+                foe,
+                target,
+                6,
+                8,
+                8,
+                () -> resolveMonsterAttack(foe, target),
+                () -> afterEnemyAction(foe)
+        );
+    }
+
+    private void scheduleMonsterAbility(Actor foe, MonsterAbility ability) {
+        cooldownsFor(foe).put(ability.name(), Math.max(1, ability.cooldown()));
+        Actor target = ability.kind() == MonsterAbility.Kind.BUFF ? foe : randomLivingPartyMember();
+        beginAnimatedAction(
+                ability.effect(),
+                foe,
+                target,
+                8,
+                ability.kind() == MonsterAbility.Kind.BUFF ? 1 : 11,
+                10,
+                () -> resolveMonsterAbility(foe, ability, target),
+                () -> afterEnemyAction(foe)
+        );
+    }
+
+    private void resolvePartyAttack(Actor actor, Actor target) {
+        if (!target.alive()) {
+            return;
+        }
+        int raw = modifyOutgoingDamage(actor, actor.basicDamage(random));
+        int damage = dealDamage(actor, target, raw);
+        floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 221, 221)));
+        addLog(actor == player ? "You hit " + target.name + " for " + damage + "." : actor.name + " hits " + target.name + " for " + damage + ".");
+        shake = 10;
+        playerLunge = 18;
+        flashTimer = 4;
+        if (!target.alive()) {
+            addLog(target.name + " falls.");
+            clearStatuses(target);
+            rememberDefeated(target);
+        }
+    }
+
+    private void resolveMonsterAttack(Actor foe, Actor target) {
+        if (!foe.alive() || !target.alive()) {
+            return;
+        }
+        int raw = guardReducedRaw(target, modifyOutgoingDamage(foe, foe.basicDamage(random)));
+        int damage = applyGuardMastery(target, dealDamage(foe, target, raw));
+        floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 187, 187)));
+        addLog(foe.name + " strikes " + target.name + " for " + damage + ".");
+        shake = Math.max(shake, 8);
+        setEnemyLunge(foe, 20);
+        if (!target.alive()) {
+            addLog(target.name + " falls.");
+            clearStatuses(target);
+        }
+    }
+
+    private void resolveMonsterAbility(Actor foe, MonsterAbility ability, Actor target) {
+        if (!foe.alive() || target == null || !target.alive()) {
+            return;
+        }
+        setEnemyLunge(foe, ability.kind() == MonsterAbility.Kind.DAMAGE ? 16 : 8);
+        if (ability.kind() == MonsterAbility.Kind.BUFF) {
+            boolean applied = applyMonsterAbilityStatuses(foe, ability, target);
+            floaters.add(new FloatingText("Focus", floaterX(foe), floaterY(foe), 30, new Color(215, 230, 255)));
+            addLog(foe.name + " uses " + ability.name() + "; " + (applied ? "power gathers." : "draws inward."));
+            return;
+        }
+        int raw = randomBetween(Math.max(1, ability.power() - 3), ability.power() + 5);
+        raw = guardReducedRaw(target, modifyOutgoingDamage(foe, raw));
+        int damage = applyGuardMastery(target, dealDamage(foe, target, raw));
+        floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 187, 187)));
+        addLog(foe.name + " uses " + ability.name() + "; " + target.name + " takes " + damage + ".");
+        shake = Math.max(shake, 10);
+        flashTimer = Math.max(flashTimer, 2);
+        applyMonsterAbilityStatuses(foe, ability, target);
+        if (!target.alive()) {
+            addLog(target.name + " falls.");
+            clearStatuses(target);
+        }
+    }
+
+    private void resolveItemUse(Actor actor, Actor target, String itemName, int heal, int mp) {
+        if (!target.alive()) {
+            return;
+        }
         if (heal > 0) {
             int before = target.hp;
             target.hp = Math.min(target.maxHp, target.hp + heal);
@@ -336,144 +715,12 @@ public final class Battle {
             }
         }
         addLog(actor.name + " used " + itemName + " on " + target.name + ".");
-        playEffect("item", actor, target, 14);
-        afterPartyAction(actor);
-        return true;
     }
 
-    private boolean canPartyAct(Actor actor) {
-        return !finished && actor != null && actor.alive() && !enemies.contains(actor);
-    }
-
-    private void useHealAbility(Actor actor, Ability ability) {
-        setGuard(actor, false);
-        Actor enemyTarget = selectedEnemy();
-        int bonus = actor == player ? player.skillRank("channeling") * 4 : 0;
-        int amount = Math.max(1, ability.power() + actor.level * 2 + bonus + random.nextInt(5) - 2);
-        Actor target = selectedPartyMember();
-        if (target == null) {
-            target = lowestPartyMember();
-        }
-        int before = target.hp;
-        target.hp = Math.min(target.maxHp, target.hp + amount);
-        int healed = target.hp - before;
-        applyAbilityStatuses(actor, ability, target, enemyTarget);
-        floaters.add(new FloatingText("+" + healed, floaterX(target), floaterY(target), 34, new Color(185, 247, 195)));
-        addLog(castMessage(actor, ability.name(), target.name + " recovers " + healed + "."));
-        playEffect("heal", actor, target, 18);
-    }
-
-    private void useDamageAbility(Actor actor, Ability ability) {
-        setGuard(actor, false);
-        Actor target = selectedEnemy();
-        if (target == null) {
-            return;
-        }
-        int bonus = actor == player ? player.skillRank("spellcraft") * 2 : 0;
-        int raw = ability.power() + bonus + actor.attack / 2 + random.nextInt(6);
-        raw = modifyOutgoingDamage(actor, raw);
-        int damage = dealDamage(actor, target, raw);
-        floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 224, 166)));
-        addLog(castMessage(actor, ability.name(), "deals " + damage + " to " + target.name + "."));
-        shake = 14;
-        playerLunge = 22;
-        flashTimer = 5;
-        playEffect(effectForAbility(ability.name()), actor, target, 18);
-        applyAbilityStatuses(actor, ability, actor, target);
-        if (!target.alive()) {
-            addLog(target.name + " falls.");
-            clearStatuses(target);
-            rememberDefeated(target);
-        }
-    }
-
-    private void defend(Actor actor, String label, int mpGain) {
-        setGuard(actor, true);
-        actor.mp = Math.min(actor.maxMp, actor.mp + mpGain);
-        applyStatus(actor, "shield", null);
-        applyStatus(actor, "fortified", null);
-        floaters.add(new FloatingText("Guard", floaterX(actor), floaterY(actor), 32, new Color(214, 232, 255)));
-        addLog(actor.name + " uses " + label + ": guard stance up, +" + mpGain + " MP.");
-        playEffect("shield", actor, actor, 16);
-    }
-
-    private void afterPartyAction(Actor actor) {
-        advanceStatusTurn(actor);
-        if (checkFinished()) {
-            return;
-        }
-        if (advanceToNextPartyActor()) {
-            beginActivePartyTurn();
-            return;
-        }
-        enemyTurn();
-        if (!finished) {
-            activePartyIndex = firstLivingPartyIndex();
-            beginActivePartyTurn();
-        }
-    }
-
-    private void enemyTurn() {
-        if (finished || livingEnemies().isEmpty()) {
-            return;
-        }
-        for (Actor foe : new ArrayList<>(livingEnemies())) {
-            if (finished || !foe.alive()) {
-                continue;
-            }
-            triggerTurnStatuses(foe);
-            if (checkFinished() || !foe.alive()) {
-                continue;
-            }
-            addLog(foe.name + "'s turn.");
-            tickMonsterCooldowns(foe);
-            MonsterAbility ability = chooseMonsterAbility(foe);
-            if (ability != null) {
-                useMonsterAbility(foe, ability);
-            } else {
-                Actor target = randomLivingPartyMember();
-                int raw = guardReducedRaw(target, modifyOutgoingDamage(foe, foe.basicDamage(random)));
-                int damage = applyGuardMastery(target, dealDamage(foe, target, raw));
-                floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 187, 187)));
-                addLog(foe.name + " strikes " + target.name + " for " + damage + ".");
-                shake = Math.max(shake, 8);
-                setEnemyLunge(foe, 20);
-                playEffect("strike", foe, target, 12);
-                if (!target.alive()) {
-                    addLog(target.name + " falls.");
-                    clearStatuses(target);
-                }
-            }
-            advanceStatusTurn(foe);
-            if (checkFinished()) {
-                return;
-            }
-        }
-    }
-
-    private void useMonsterAbility(Actor foe, MonsterAbility ability) {
-        cooldownsFor(foe).put(ability.name(), Math.max(1, ability.cooldown()));
-        Actor target = ability.kind() == MonsterAbility.Kind.BUFF ? foe : randomLivingPartyMember();
-        setEnemyLunge(foe, ability.kind() == MonsterAbility.Kind.DAMAGE ? 16 : 8);
-        playEffect(ability.effect(), foe, target, 20);
-        if (ability.kind() == MonsterAbility.Kind.BUFF) {
-            boolean applied = applyMonsterAbilityStatuses(foe, ability, target);
-            floaters.add(new FloatingText("Focus", floaterX(foe), floaterY(foe), 30, new Color(215, 230, 255)));
-            addLog(foe.name + " uses " + ability.name() + "; " + (applied ? "power gathers." : "draws inward."));
-            return;
-        }
-
-        int raw = randomBetween(Math.max(1, ability.power() - 3), ability.power() + 5);
-        raw = guardReducedRaw(target, modifyOutgoingDamage(foe, raw));
-        int damage = applyGuardMastery(target, dealDamage(foe, target, raw));
-        floaters.add(new FloatingText("-" + damage, floaterX(target), floaterY(target), 34, new Color(255, 187, 187)));
-        addLog(foe.name + " uses " + ability.name() + "; " + target.name + " takes " + damage + ".");
-        shake = Math.max(shake, 10);
-        flashTimer = Math.max(flashTimer, 2);
-        applyMonsterAbilityStatuses(foe, ability, target);
-        if (!target.alive()) {
-            addLog(target.name + " falls.");
-            clearStatuses(target);
+    private void applyMpFlow(Actor actor) {
+        int mpFlow = actor.skillRank("ether_flow") + actor.skillRank("grace_flow");
+        if (mpFlow > 0) {
+            actor.mp = Math.min(actor.maxMp, actor.mp + mpFlow);
         }
     }
 
@@ -612,6 +859,9 @@ public final class Battle {
     private int modifyOutgoingDamage(Actor actor, int raw) {
         Map<String, EffectStack> bucket = statusBucket(actor);
         int modified = raw;
+        if (actor != player && partyMembers.contains(actor)) {
+            modified += player.skillRank("shared_training") + player.skillRank("pack_coordination");
+        }
         if (bucket.containsKey("weak")) {
             modified = (int) (modified * 0.70);
         }
@@ -627,11 +877,17 @@ public final class Battle {
         if (bucket.containsKey("vulnerable")) {
             modified = (int) (modified * 1.25);
         }
+        if (bucket.containsKey("weak") && attacker.skillRank("frostbite") > 0) {
+            modified = (int) (modified * (1.0 + attacker.skillRank("frostbite") * 0.05));
+        }
         if (bucket.containsKey("fortified")) {
             modified = (int) (modified * 0.75);
         }
         if (bucket.containsKey("shield")) {
             modified = Math.max(1, modified - bucket.get("shield").power);
+        }
+        if (target.skillRank("unyielding") > 0 && target.hp * 2 <= target.maxHp) {
+            modified = Math.max(1, modified - target.skillRank("unyielding") * 2);
         }
         return target.takeDamage(modified);
     }
@@ -646,14 +902,11 @@ public final class Battle {
     }
 
     private int applyGuardMastery(Actor target, int damage) {
-        if (target != player) {
-            return damage;
-        }
-        int reduction = Math.min(Math.max(0, damage - 1), player.skillRank("guard_mastery"));
+        int reduction = Math.min(Math.max(0, damage - 1), target.skillRank("guard_mastery"));
         if (reduction <= 0) {
             return damage;
         }
-        player.hp = Math.min(player.maxHp, player.hp + reduction);
+        target.hp = Math.min(target.maxHp, target.hp + reduction);
         return damage - reduction;
     }
 
@@ -702,7 +955,8 @@ public final class Battle {
             rememberDefeated(foe);
         }
         int rawGold = monsterSpecs.stream().mapToInt(GameData.MonsterSpec::gold).sum();
-        int xp = monsterSpecs.stream().mapToInt(GameData.MonsterSpec::xp).sum();
+        int rawXp = monsterSpecs.stream().mapToInt(GameData.MonsterSpec::xp).sum();
+        int xp = (int) Math.round(rawXp * (1.0 + player.skillRank("hard_won_lessons") * 0.08));
         int gold = (int) Math.round(rawGold * (1.0 + player.skillRank("scavenger") * 0.10));
         player.gold += gold;
         List<String> recovered = partyMembers.stream().filter(actor -> !actor.alive()).map(actor -> actor.name).toList();
@@ -711,13 +965,18 @@ public final class Battle {
                 actor.hp = Math.max(1, actor.maxHp / 4);
             }
         }
-        List<String> notes = new ArrayList<>(player.gainXp(xp));
+        List<String> notes = new ArrayList<>();
+        for (Actor actor : partyMembers) {
+            for (String note : actor.gainXp(xp)) {
+                notes.add(actor.name + ": " + note);
+            }
+        }
         addLog("Victory! +" + xp + " XP, +" + gold + " gold.");
         if (!recovered.isEmpty()) {
             addLog(String.join(", ", recovered) + " recover after the fight.");
         }
         for (String note : notes) {
-            addLog(note.startsWith("Level ") ? "Level up! " + note : note);
+            addLog(note.contains("Level ") ? "Level up! " + note : note);
         }
     }
 
@@ -792,6 +1051,62 @@ public final class Battle {
         }
     }
 
+    private void tickActionAnimation() {
+        if (actionAnimation == null) {
+            return;
+        }
+        actionAnimation.tick();
+        effectTimer = actionAnimation.releaseRemainingFrames();
+        if (actionAnimation.shouldTriggerImpact()) {
+            actionAnimation.markImpactTriggered();
+            if (animationImpact != null) {
+                animationImpact.run();
+            }
+        }
+        if (actionAnimation.stage() == BattleActionAnimation.Stage.DONE) {
+            Runnable complete = animationComplete;
+            clearActionAnimation();
+            if (complete != null) {
+                complete.run();
+            }
+        }
+    }
+
+    private boolean beginAnimatedAction(
+            String kind,
+            Actor source,
+            Actor target,
+            int castFrames,
+            int travelFrames,
+            int impactFrames,
+            Runnable onImpact,
+            Runnable onComplete
+    ) {
+        if (finished || actionAnimation != null || source == null || target == null) {
+            return false;
+        }
+        actionAnimation = new BattleActionAnimation(source, target, kind, castFrames, travelFrames, impactFrames);
+        animationImpact = onImpact;
+        animationComplete = onComplete;
+        effectKind = actionAnimation.effectKind;
+        effectSource = source;
+        effectTarget = target;
+        effectTimer = 0;
+        if (enemies.contains(source)) {
+            setEnemyLunge(source, 8);
+        } else {
+            playerLunge = Math.max(playerLunge, 8);
+        }
+        return true;
+    }
+
+    private void clearActionAnimation() {
+        actionAnimation = null;
+        animationImpact = null;
+        animationComplete = null;
+        effectTimer = 0;
+    }
+
     private void playEffect(String kind, Actor source, Actor target, int timer) {
         effectKind = kind == null || kind.isBlank() ? "strike" : kind;
         effectSource = source;
@@ -809,19 +1124,19 @@ public final class Battle {
     private int floaterX(Actor actor) {
         int enemyIndex = enemies.indexOf(actor);
         if (enemyIndex >= 0) {
-            return GameConfig.MAP_COLS * GameConfig.TILE - 310 - (enemyIndex % 2) * 72;
+            return GameConfig.MAP_COLS * GameConfig.TILE - 440 - (enemyIndex % 2) * 220;
         }
         int partyIndex = Math.max(0, partyMembers.indexOf(actor));
-        return 165 + (partyIndex % 2) * 46;
+        return 215 + (partyIndex % 2) * 260;
     }
 
     private int floaterY(Actor actor) {
         int enemyIndex = enemies.indexOf(actor);
         if (enemyIndex >= 0) {
-            return 210 + enemyIndex * 116;
+            return 220 + (enemyIndex / 2) * 300 + (enemyIndex % 2) * 120;
         }
         int partyIndex = Math.max(0, partyMembers.indexOf(actor));
-        return 252 + partyIndex * 86;
+        return 230 + (partyIndex / 2) * 320 + (partyIndex % 2) * 108;
     }
 
     private void setEnemyLunge(Actor foe, int amount) {
@@ -878,8 +1193,20 @@ public final class Battle {
 
     private String effectForAbility(String abilityName) {
         String lowered = abilityName.toLowerCase();
-        if (lowered.contains("fire") || lowered.contains("arc")) {
+        if (lowered.contains("arcane") || lowered.contains("rune") || lowered.contains("chain spark")) {
+            return "arcane";
+        }
+        if (lowered.contains("fire") || lowered.contains("candle")) {
+            return "ember";
+        }
+        if (lowered.contains("radiant") && lowered.contains("bolt")) {
+            return "radiant";
+        }
+        if (lowered.contains("arc")) {
             return "fire";
+        }
+        if (lowered.contains("radiant") || lowered.contains("blessing") || lowered.contains("sunlit") || lowered.contains("chorus")) {
+            return abilityName.toLowerCase().contains("bolt") ? "sonic" : "heal";
         }
         if (lowered.contains("frost") || lowered.contains("ice")) {
             return "frost";
@@ -890,7 +1217,16 @@ public final class Battle {
         if (lowered.contains("volley") || lowered.contains("shot") || lowered.contains("arrow")) {
             return "volley";
         }
-        if (lowered.contains("slash") || lowered.contains("rush") || lowered.contains("bash")) {
+        if (lowered.contains("shadow")) {
+            return "void";
+        }
+        if (lowered.contains("smoke")) {
+            return "dust";
+        }
+        if (lowered.contains("storm")) {
+            return "sonic";
+        }
+        if (lowered.contains("slash") || lowered.contains("rush") || lowered.contains("bash") || lowered.contains("cut") || lowered.contains("knife")) {
             return "slash";
         }
         return "strike";

@@ -61,11 +61,12 @@ This is not a one-file translation of the Python `app.py`. The Java port is spli
 - Talk/interact: click `Talk / Enter`, click your tile, or press `E`
 - Quest log: click `Quest Log` or press `Q`
 - World map: click `World Map` or press `M`
+- Village: click `Village` or press `V` while in Oathstead Camp or one of its managed interiors
 - Skills: click `Skills` or press `K`
 - Inventory: click `Inventory` or press `I`
 - Zoom: click `-`/`+` or use mouse wheel
 - Battle: click the action bar, or use `A`/`Space` attack, `1`-`3` abilities, `H` potion, `J` ether
-- Dialog: click `Continue`/`Open Shop`, or press `Enter`/`E`
+- Dialog: click numbered conversation options, press `1`-`9`, or press `Enter`/`E` to advance
 - Shop: click `Buy`, `Hire`, or `Leave Shop`; number keys still buy matching items
 - Inventory: click item rows or use number keys
 - Main menu: `Enter` new adventure, `L` load adventure, `S` settings

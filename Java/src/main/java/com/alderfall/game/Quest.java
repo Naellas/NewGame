@@ -3,7 +3,8 @@ package com.alderfall.game;
 public final class Quest {
     public enum ObjectiveKind {
         DEFEAT,
-        GATHER
+        GATHER,
+        VISIT
     }
 
     public final String id;
@@ -96,6 +97,12 @@ public final class Quest {
         }
     }
 
+    public void recordVisit(String visitedTarget) {
+        if (accepted && !completed && objectiveKind == ObjectiveKind.VISIT && target.equals(visitedTarget)) {
+            progress = Math.min(needed, progress + 1);
+        }
+    }
+
     public boolean ready() {
         return accepted && !completed && progress >= needed;
     }
@@ -105,6 +112,10 @@ public final class Quest {
     }
 
     public String objectiveAction() {
-        return objectiveKind == ObjectiveKind.GATHER ? "Gather" : "Hunt";
+        return switch (objectiveKind) {
+            case GATHER -> "Gather";
+            case VISIT -> "Inspect";
+            case DEFEAT -> "Hunt";
+        };
     }
 }

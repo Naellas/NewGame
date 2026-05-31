@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from collections import deque
 from pathlib import Path
 
 from PIL import Image
+
+from chroma_cutout import chroma_cutout, fit
+
 
 SRC = Path("assets/source/imagegen-player-model-sheet.png")
 OUT = Path("assets/player")
@@ -12,65 +14,67 @@ NAMES = (
     "player_model",
     "class_knight_model",
     "class_mage_model",
+    "class_cleric_model",
     "class_ranger_model",
 )
 
-Pixel = tuple[int, int, int, int]
+
+def recolor_preserving_value(image: Image.Image, target: tuple[int, int, int], predicate) -> Image.Image:
+    out = image.convert("RGBA")
+    px = out.load()
+    target_value = max(target)
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if a == 0 or not predicate(r, g, b):
+                continue
+            value = max(r, g, b)
+            factor = value / max(1, target_value)
+            px[x, y] = (
+                min(255, max(0, int(target[0] * factor))),
+                min(255, max(0, int(target[1] * factor))),
+                min(255, max(0, int(target[2] * factor))),
+                a,
+            )
+    return out
 
 
-def is_chroma(rgb: tuple[int, int, int]) -> bool:
-    r, g, b = rgb
-    if r > 145 and b > 135 and g < 132 and abs(r - b) < 135:
-        return True
-    if r > 110 and b > 95 and g < 80 and r >= g + 45 and b >= g + 35:
-        return True
-    return False
+def make_cleric(mage: Image.Image) -> Image.Image:
+    def robe(r: int, g: int, b: int) -> bool:
+        return b > 95 and b >= r + 18 and b >= g + 22
+
+    cleric = recolor_preserving_value(mage, (226, 211, 172), robe)
+
+    def trim(r: int, g: int, b: int) -> bool:
+        return b > 120 and r > 70 and g > 45 and abs(r - g) < 80
+
+    return recolor_preserving_value(cleric, (183, 147, 72), trim)
 
 
-def cut_connected_chroma(crop: Image.Image) -> Image.Image:
-    img = crop.convert("RGBA")
-    px = img.load()
-    width, height = img.size
-    seen = [[False for _ in range(width)] for _ in range(height)]
-    q: deque[tuple[int, int]] = deque()
-    for x in range(width):
-        q.append((x, 0))
-        q.append((x, height - 1))
-    for y in range(height):
-        q.append((0, y))
-        q.append((width - 1, y))
+def make_rogue(ranger: Image.Image) -> Image.Image:
+    def cloak(r: int, g: int, b: int) -> bool:
+        return g > 80 and g >= r + 14 and g >= b + 10
 
-    while q:
-        x, y = q.popleft()
-        if not (0 <= x < width and 0 <= y < height) or seen[y][x]:
-            continue
-        seen[y][x] = True
-        r, g, b, _ = px[x, y]
-        if not is_chroma((r, g, b)):
-            continue
-        px[x, y] = (r, g, b, 0)
-        q.append((x + 1, y))
-        q.append((x - 1, y))
-        q.append((x, y + 1))
-        q.append((x, y - 1))
-    return img
+    rogue = recolor_preserving_value(ranger, (63, 76, 70), cloak)
+
+    def leather(r: int, g: int, b: int) -> bool:
+        return r > 80 and g > 45 and b < 80 and r >= g + 12
+
+    return recolor_preserving_value(rogue, (96, 62, 45), leather)
 
 
-def trim_alpha(img: Image.Image, padding: int = 8) -> Image.Image:
-    alpha = img.getchannel("A")
-    bbox = alpha.getbbox()
-    if bbox is None:
-        return img
-    left, top, right, bottom = bbox
-    left = max(0, left - padding)
-    top = max(0, top - padding)
-    right = min(img.width, right + padding)
-    bottom = min(img.height, bottom + padding)
-    return img.crop((left, top, right, bottom))
-
-
-def extract_box(source: Image.Image, box: tuple[int, int, int, int]) -> Image.Image:
-    return trim_alpha(cut_connected_chroma(source.crop(box)))
+def write_world_sprites(models: dict[str, Image.Image]) -> None:
+    specs = {
+        "player": ("player_model", 144, 172),
+        "player_battle": ("player_model", 144, 172),
+        "class_knight": ("class_knight_model", 144, 160),
+        "class_mage": ("class_mage_model", 144, 160),
+        "class_ranger": ("class_ranger_model", 144, 160),
+        "class_cleric": ("class_cleric_model", 144, 160),
+        "class_rogue": ("class_rogue_model", 144, 160),
+    }
+    for name, (model_name, width, height) in specs.items():
+        fit(models[model_name], width, height, bottom_align=True, margin=4).save(OUT / f"{name}.png")
 
 
 def main() -> None:
@@ -79,13 +83,22 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     source = Image.open(SRC).convert("RGBA")
     cell_w = source.width // len(NAMES)
-    boxes = []
-    for index in range(len(NAMES)):
+    models: dict[str, Image.Image] = {}
+    for index, name in enumerate(NAMES):
         left = index * cell_w
         right = source.width if index == len(NAMES) - 1 else (index + 1) * cell_w
-        boxes.append((left, 0, right, source.height))
-    for name, box in zip(NAMES, boxes):
-        extract_box(source, box).save(OUT / f"{name}.png")
+        models[name] = chroma_cutout(
+            source.crop((left, 0, right, source.height)),
+            "magenta",
+            padding=8,
+            keep_largest_only=True,
+        )
+
+    models["class_rogue_model"] = make_rogue(models["class_ranger_model"])
+
+    for name, image in models.items():
+        image.save(OUT / f"{name}.png")
+    write_world_sprites(models)
 
 
 if __name__ == "__main__":

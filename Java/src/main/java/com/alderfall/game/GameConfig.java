@@ -8,11 +8,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class GameConfig {
-    public static final int WIDTH = 1440;
-    public static final int HEIGHT = 900;
+    public static final int WIDTH = 1920;
+    public static final int HEIGHT = 1080;
     public static final int TILE = 48;
-    public static final int MAP_COLS = 24;
-    public static final int MAP_ROWS = 17;
+    public static final int MAP_COLS = 32;
+    public static final int MAP_ROWS = 22;
     public static final int SIDEBAR_WIDTH = WIDTH - MAP_COLS * TILE;
     public static final int FPS_MS = 50;
 

@@ -12,10 +12,15 @@ import javax.imageio.ImageIO;
 
 public final class AssetStore {
     private final Path assetsRoot;
+    private final AssetCatalog catalog;
     private final Map<String, BufferedImage> cache = new HashMap<>();
+    private final Map<String, BufferedImage> sourceCache = new HashMap<>();
+    private final Map<String, BufferedImage> croppedSourceCache = new HashMap<>();
+    private final Map<String, Integer> animationMetadataCache = new HashMap<>();
 
     public AssetStore(Path assetsRoot) {
         this.assetsRoot = assetsRoot;
+        this.catalog = new AssetCatalog(assetsRoot);
     }
 
     public BufferedImage tile(char tile, int size) {
@@ -27,15 +32,101 @@ public final class AssetStore {
     }
 
     public BufferedImage spriteFit(String name, int width, int height) {
-        String key = "fit:" + name + ":" + width + "x" + height;
+        return spriteFit(name, width, height, pixelated(name));
+    }
+
+    public BufferedImage spriteFitSmooth(String name, int width, int height) {
+        return spriteFit(name, width, height, false);
+    }
+
+    private BufferedImage spriteFit(String name, int width, int height, boolean pixelated) {
+        String key = "fit:" + (pixelated ? "pixel:" : "smooth:") + name + ":" + width + "x" + height;
         BufferedImage cached = cache.get(key);
         if (cached != null) {
             return cached;
         }
-        BufferedImage source = cropTransparent(loadSource(name));
-        BufferedImage fitted = fit(source, width, height);
+        BufferedImage source = croppedSource(name);
+        BufferedImage fitted = fit(source, width, height, pixelated);
         cache.put(key, fitted);
         return fitted;
+    }
+
+    public boolean hasSprite(String name) {
+        return catalog.findAsset(name) != null;
+    }
+
+    public BufferedImage effectSprite(String name, int width, int height, int frame) {
+        String sheetName = name + "_anim";
+        if (catalog.findAsset(sheetName) == null) {
+            return spriteFit(name, width, height);
+        }
+        BufferedImage sheet = loadSource(sheetName);
+        int frameWidth = sheet.getHeight();
+        int frames = Math.max(1, sheet.getWidth() / Math.max(1, frameWidth));
+        int selectedFrame = Math.floorMod(frame, frames);
+        String key = "effect:" + sheetName + ":" + width + "x" + height + ":" + selectedFrame;
+        BufferedImage cached = cache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        int x = selectedFrame * frameWidth;
+        int sourceWidth = Math.min(frameWidth, sheet.getWidth() - x);
+        BufferedImage source = cropTransparent(sheet.getSubimage(x, 0, sourceWidth, sheet.getHeight()));
+        BufferedImage fitted = fit(source, width, height, false);
+        cache.put(key, fitted);
+        return fitted;
+    }
+
+    public BufferedImage animatedSpriteFit(String name, String action, int width, int height, int frame) {
+        return animatedSpriteFit(name, action, width, height, frame, pixelated(name));
+    }
+
+    public BufferedImage animatedSpriteFitSmooth(String name, String action, int width, int height, int frame) {
+        return animatedSpriteFit(name, action, width, height, frame, false);
+    }
+
+    private BufferedImage animatedSpriteFit(String name, String action, int width, int height, int frame, boolean pixelated) {
+        if (action == null || action.isBlank()) {
+            return spriteFit(name, width, height, pixelated);
+        }
+        String sheetName = name + "_" + action + "_anim";
+        if (catalog.findAsset(sheetName) == null) {
+            return spriteFit(name, width, height, pixelated);
+        }
+        BufferedImage sheet = loadSource(sheetName);
+        int frames = animationFrameCount(sheetName, sheet, width, height);
+        int frameWidth = Math.max(1, sheet.getWidth() / frames);
+        int selectedFrame = Math.floorMod(frame, frames);
+        String key = "anim:" + (pixelated ? "pixel:" : "smooth:") + sheetName + ":" + width + "x" + height + ":" + selectedFrame;
+        BufferedImage cached = cache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        int x = selectedFrame * frameWidth;
+        int sourceWidth = Math.min(frameWidth, sheet.getWidth() - x);
+        BufferedImage source = sheet.getSubimage(x, 0, sourceWidth, sheet.getHeight());
+        BufferedImage fitted = fit(source, width, height, pixelated);
+        cache.put(key, fitted);
+        return fitted;
+    }
+
+    public int animatedSpriteFrameCount(String name, String action, int width, int height) {
+        if (action == null || action.isBlank()) {
+            return 1;
+        }
+        String sheetName = name + "_" + action + "_anim";
+        if (catalog.findAsset(sheetName) == null) {
+            return 1;
+        }
+        BufferedImage sheet = loadSource(sheetName);
+        return animationFrameCount(sheetName, sheet, width, height);
+    }
+
+    public boolean hasAnimatedSprite(String name, String action) {
+        if (action == null || action.isBlank()) {
+            return false;
+        }
+        return catalog.findAsset(name + "_" + action + "_anim") != null;
     }
 
     public BufferedImage image(String name, int width, int height) {
@@ -45,7 +136,7 @@ public final class AssetStore {
             return cached;
         }
         BufferedImage source = loadSource(name);
-        BufferedImage scaled = scale(source, width, height);
+        BufferedImage scaled = scale(source, width, height, pixelated(name));
         cache.put(key, scaled);
         return scaled;
     }
@@ -63,55 +154,67 @@ public final class AssetStore {
     }
 
     private BufferedImage loadSource(String name) {
-        Path path = findAsset(name);
+        BufferedImage cached = sourceCache.get(name);
+        if (cached != null) {
+            return cached;
+        }
+        Path path = catalog.findAsset(name);
         if (path != null) {
             try {
-                return ImageIO.read(path.toFile());
+                BufferedImage image = ImageIO.read(path.toFile());
+                if (image != null) {
+                    sourceCache.put(name, image);
+                    return image;
+                }
             } catch (IOException ignored) {
             }
         }
-        return fallback(name);
+        BufferedImage image = fallback(name);
+        sourceCache.put(name, image);
+        return image;
     }
 
-    private Path findAsset(String name) {
-        Path preferred = preferredAsset(name);
-        if (preferred != null) {
-            return preferred;
+    private BufferedImage croppedSource(String name) {
+        BufferedImage cached = croppedSourceCache.get(name);
+        if (cached != null) {
+            return cached;
         }
-        String[] folders = {
-                "terrain", "player", "monsters", "npcs", "items", "city", "road", "battle", "weather",
-                "grass", "forest", "desert", "marsh", "mountain", "tundra", "badlands", "water", "locations", "deco"
+        BufferedImage cropped = cropTransparent(loadSource(name));
+        croppedSourceCache.put(name, cropped);
+        return cropped;
+    }
+
+    private boolean pixelated(String name) {
+        return name.startsWith("interior_")
+                || name.startsWith("npc_")
+                || name.startsWith("class_")
+                || name.startsWith("player")
+                || isMonsterSprite(name);
+    }
+
+    private boolean isMonsterSprite(String name) {
+        return switch (name) {
+            case "slime", "wolf", "bat", "skeleton", "goblin", "spider", "orc", "wraith",
+                    "thornling", "sand_stalker", "ice_golem", "bog_beast", "ember_imp",
+                    "sheep", "mountain_goat", "doe", "stag",
+                    "frost_wolf", "reed_serpent", "glass_scorpion", "stoneback_goat",
+                    "moss_stag", "river_eel", "ash_scorpion", "crypt_bat",
+                    "goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher",
+                    "goblin_shaman", "hobgoblin_guard", "goblin_warlord", "goblin_king" -> true;
+            default -> false;
         };
-        for (String folder : folders) {
-            Path path = assetsRoot.resolve(folder).resolve(name + ".png");
-            if (Files.exists(path)) {
-                return path;
-            }
-        }
-        Path rootPath = assetsRoot.resolve(name + ".png");
-        return Files.exists(rootPath) ? rootPath : null;
     }
 
-    private Path preferredAsset(String name) {
-        if ("mountain_massif".equals(name)) {
-            Path path = assetsRoot.resolve("mountain").resolve(name + ".png");
-            if (Files.exists(path)) {
-                return path;
-            }
-        }
-        return null;
-    }
-
-    private BufferedImage scale(BufferedImage source, int width, int height) {
+    private BufferedImage scale(BufferedImage source, int width, int height, boolean pixelated) {
         BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = out.createGraphics();
-        configureHighQualityScaling(g);
+        configureScaling(g, pixelated);
         g.drawImage(source, 0, 0, width, height, null);
         g.dispose();
         return out;
     }
 
-    private BufferedImage fit(BufferedImage source, int width, int height) {
+    private BufferedImage fit(BufferedImage source, int width, int height, boolean pixelated) {
         BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         double scale = Math.min(width / (double) source.getWidth(), height / (double) source.getHeight());
         int drawWidth = Math.max(1, (int) Math.round(source.getWidth() * scale));
@@ -119,7 +222,7 @@ public final class AssetStore {
         int x = (width - drawWidth) / 2;
         int y = height - drawHeight;
         Graphics2D g = out.createGraphics();
-        configureHighQualityScaling(g);
+        configureScaling(g, pixelated);
         g.drawImage(source, x, y, drawWidth, drawHeight, null);
         g.dispose();
         return out;
@@ -133,14 +236,16 @@ public final class AssetStore {
         int x = (width - drawWidth) / 2;
         int y = (height - drawHeight) / 2;
         Graphics2D g = out.createGraphics();
-        configureHighQualityScaling(g);
+        configureScaling(g, false);
         g.drawImage(source, x, y, drawWidth, drawHeight, null);
         g.dispose();
         return out;
     }
 
-    private void configureHighQualityScaling(Graphics2D g) {
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    private void configureScaling(Graphics2D g, boolean pixelated) {
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, pixelated
+                ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR
+                : RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
@@ -165,6 +270,56 @@ public final class AssetStore {
             return source;
         }
         return source.getSubimage(minX, minY, maxX - minX + 1, maxY - minY + 1);
+    }
+
+    private int inferHorizontalFrameCount(BufferedImage sheet, double targetAspect) {
+        int best = 1;
+        double bestScore = Double.MAX_VALUE;
+        int[] candidates = {12, 10, 8, 6, 5, 4, 3, 2, 1};
+        for (int frames : candidates) {
+            if (sheet.getWidth() % frames != 0) {
+                continue;
+            }
+            int frameWidth = sheet.getWidth() / frames;
+            double frameAspect = frameWidth / (double) Math.max(1, sheet.getHeight());
+            double score = Math.abs(frameAspect - targetAspect);
+            if (frames > 1) {
+                score *= 0.92;
+            }
+            if (score < bestScore) {
+                best = frames;
+                bestScore = score;
+            }
+        }
+        return Math.max(1, best);
+    }
+
+    private int animationFrameCount(String sheetName, BufferedImage sheet, int width, int height) {
+        Integer metadataCount = animationFrameCountFromMetadata(sheetName);
+        if (metadataCount != null) {
+            return metadataCount;
+        }
+        return inferHorizontalFrameCount(sheet, width / (double) Math.max(1, height));
+    }
+
+    private Integer animationFrameCountFromMetadata(String sheetName) {
+        Integer cached = animationMetadataCache.get(sheetName);
+        if (cached != null) {
+            return cached > 0 ? cached : null;
+        }
+        Path path = assetsRoot.resolve("animations").resolve(sheetName + ".frames");
+        if (!Files.exists(path)) {
+            animationMetadataCache.put(sheetName, -1);
+            return null;
+        }
+        try {
+            int frames = Integer.parseInt(Files.readString(path).strip());
+            animationMetadataCache.put(sheetName, frames > 0 ? frames : -1);
+            return frames > 0 ? frames : null;
+        } catch (IOException | NumberFormatException ignored) {
+            animationMetadataCache.put(sheetName, -1);
+            return null;
+        }
     }
 
     private BufferedImage fallback(String name) {

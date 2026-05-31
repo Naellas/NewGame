@@ -12,6 +12,8 @@ public record Equipment(
         int defenseBonus,
         int hpBonus,
         int mpBonus,
+        int minLevel,
+        int maxLevel,
         int cost,
         String description
 ) {
@@ -30,5 +32,17 @@ public record Equipment(
             lines.add("MP +" + mpBonus);
         }
         return lines;
+    }
+
+    public boolean canEquipAt(int level) {
+        return level >= minLevel;
+    }
+
+    public boolean isAvailableAt(int level) {
+        return level >= minLevel && level <= maxLevel;
+    }
+
+    public String levelRangeLine() {
+        return maxLevel >= 99 ? "Lv " + minLevel + "+" : "Lv " + minLevel + "-" + maxLevel;
     }
 }

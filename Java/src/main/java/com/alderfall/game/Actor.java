@@ -23,6 +23,7 @@ public final class Actor {
     public final List<Ability> abilities = new ArrayList<>();
     public final Map<String, Integer> inventory = new LinkedHashMap<>();
     public final Map<String, Integer> skillAllocations = new LinkedHashMap<>();
+    public final Map<String, Integer> professionXp = new LinkedHashMap<>();
     public final Map<String, String> equipment = new LinkedHashMap<>();
     public int skillPoints = 0;
 
@@ -37,6 +38,7 @@ public final class Actor {
         this.mp = maxMp;
         this.attack = attack;
         this.defense = defense;
+        professionXp.putAll(Profession.seedXp(name, sprite, className));
     }
 
     public boolean alive() {
@@ -58,8 +60,9 @@ public final class Actor {
         int min = Math.max(1, attack - 2);
         int raw = min + random.nextInt(attack + 4 - min + 1);
         raw += skillRank("blade_flurry") * 3;
-        if (skillRank("keen_edge") > 0 && random.nextDouble() < skillRank("keen_edge") * 0.08) {
-            raw += 8;
+        double critChance = skillRank("keen_edge") * 0.08 + skillRank("hawk_eye") * 0.05;
+        if (critChance > 0.0 && random.nextDouble() < critChance) {
+            raw += 8 + skillRank("hawk_eye") * 4;
         }
         return raw;
     }
@@ -123,6 +126,25 @@ public final class Actor {
         return Math.max(0, skillAllocations.getOrDefault(skillKey, 0));
     }
 
+    public int professionLevel(String professionId) {
+        return Profession.levelForXp(professionXp.getOrDefault(professionId, 0));
+    }
+
+    public List<String> gainProfessionXp(String professionId, int amount) {
+        List<String> notes = new ArrayList<>();
+        Profession profession = Profession.byId(professionId);
+        if (profession == null || amount <= 0) {
+            return notes;
+        }
+        int before = professionLevel(professionId);
+        professionXp.merge(professionId, amount, Integer::sum);
+        int after = professionLevel(professionId);
+        if (after > before) {
+            notes.add(profession.label() + " " + after);
+        }
+        return notes;
+    }
+
     public Equipment equippedItem(String slot) {
         String key = equipment.get(slot);
         return key == null ? null : GameData.EQUIPMENT.get(key);
@@ -135,6 +157,9 @@ public final class Actor {
         }
         if (!hasItem(itemKey)) {
             return "You do not have " + item.name() + ".";
+        }
+        if (!item.canEquipAt(level)) {
+            return item.name() + " requires level " + item.minLevel() + ".";
         }
         String oldKey = equipment.get(item.slot());
         if (oldKey != null) {

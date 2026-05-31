@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 ROOT = Path(__file__).resolve().parents[1]
 CITY_DIR = ROOT / "assets" / "city"
 VILLAGE_SHEET = ROOT / "assets" / "source" / "imagegen-village-tilesheet-nosnow.png"
+HIFI_BIOME_SHEET = ROOT / "assets" / "source" / "imagegen-overworld-village-biomes-hifi.png"
 
 SIZE = 240
 
@@ -166,6 +167,102 @@ def fit_width(img: Image.Image, width: int) -> Image.Image:
     scale = width / max(1, img.width)
     height = max(1, int(img.height * scale))
     return img.resize((width, height), Image.Resampling.LANCZOS)
+
+
+def remove_magenta_background(img: Image.Image) -> Image.Image:
+    out = img.convert("RGBA")
+    width, height = out.size
+    px = out.load()
+
+    def key_like(x: int, y: int) -> bool:
+        r, g, b, _a = px[x, y]
+        return r >= 118 and b >= 118 and g <= 150 and abs(r - b) <= 105 and r + b >= 2 * g + 130
+
+    q: deque[tuple[int, int]] = deque()
+    seen = [[False for _ in range(width)] for _ in range(height)]
+    neighbors = (
+        (1, 0),
+        (-1, 0),
+        (0, 1),
+        (0, -1),
+        (1, 1),
+        (-1, 1),
+        (1, -1),
+        (-1, -1),
+    )
+    for x in range(width):
+        if key_like(x, 0):
+            q.append((x, 0))
+        if key_like(x, height - 1):
+            q.append((x, height - 1))
+    for y in range(height):
+        if key_like(0, y):
+            q.append((0, y))
+        if key_like(width - 1, y):
+            q.append((width - 1, y))
+    for y in range(height):
+        for x in range(width):
+            if px[x, y][3] != 0:
+                continue
+            for dx, dy in neighbors:
+                nx = x + dx
+                ny = y + dy
+                if 0 <= nx < width and 0 <= ny < height and key_like(nx, ny):
+                    q.append((nx, ny))
+
+    while q:
+        x, y = q.popleft()
+        if seen[y][x] or not key_like(x, y):
+            continue
+        seen[y][x] = True
+        px[x, y] = (0, 0, 0, 0)
+        for dx, dy in neighbors:
+            nx = x + dx
+            ny = y + dy
+            if 0 <= nx < width and 0 <= ny < height and not seen[ny][nx]:
+                q.append((nx, ny))
+
+    for y in range(height):
+        for x in range(width):
+            r, g, b, a = px[x, y]
+            if not a:
+                continue
+            touches_alpha = any(
+                px[nx, ny][3] == 0
+                for nx, ny in ((x + dx, y + dy) for dx, dy in neighbors)
+                if 0 <= nx < width and 0 <= ny < height
+            )
+            if touches_alpha and r >= g + 34 and b >= g + 34 and abs(r - b) <= 110:
+                px[x, y] = (min(r, g + 56), g, min(b, g + 56), a)
+    for y in range(height):
+        for x in range(width):
+            if px[x, y][3] == 0:
+                px[x, y] = (0, 0, 0, 0)
+    return out
+
+
+def crop_hifi_biome_sheet(sheet: Image.Image, col: int, row: int) -> Image.Image:
+    x1 = round(col * sheet.width / 2)
+    y1 = round(row * sheet.height / 2)
+    x2 = round((col + 1) * sheet.width / 2)
+    y2 = round((row + 1) * sheet.height / 2)
+    crop = remove_magenta_background(sheet.crop((x1, y1, x2, y2)))
+    resized = crop.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
+    return remove_magenta_background(resized)
+
+
+def write_hifi_biome_villages() -> None:
+    sheet = Image.open(HIFI_BIOME_SHEET).convert("RGBA")
+    variants = {
+        "green": (0, 0),
+        "snow": (1, 0),
+        "desert": (0, 1),
+        "marsh": (1, 1),
+    }
+    CITY_DIR.mkdir(parents=True, exist_ok=True)
+    for variant, (col, row) in variants.items():
+        crop_hifi_biome_sheet(sheet, col, row).save(CITY_DIR / f"city_overworld_village_{variant}.png")
+    crop_hifi_biome_sheet(sheet, 0, 0).save(CITY_DIR / "city_overworld_village.png")
 
 
 def paste_anchor(base: Image.Image, sprite: Image.Image, center_x: int, foot_y: int) -> None:
@@ -354,6 +451,10 @@ def make_cluster(assets: dict[str, list[Image.Image]], variant: str) -> Image.Im
 
 
 def main() -> None:
+    if HIFI_BIOME_SHEET.exists():
+        write_hifi_biome_villages()
+        return
+
     if not VILLAGE_SHEET.exists():
         raise FileNotFoundError(f"Missing source sheet: {VILLAGE_SHEET}")
     sheet = Image.open(VILLAGE_SHEET).convert("RGBA")

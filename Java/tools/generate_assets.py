@@ -607,6 +607,12 @@ def main():
     except Exception as exc:
         print(f"Skipped NPC sheet extraction: {exc}")
     try:
+        from extract_npc_variation_assets import main as extract_npc_variation_assets
+
+        extract_npc_variation_assets()
+    except Exception as exc:
+        print(f"Skipped NPC variation extraction: {exc}")
+    try:
         from generate_player_model_assets import main as generate_player_model_assets
 
         generate_player_model_assets()
