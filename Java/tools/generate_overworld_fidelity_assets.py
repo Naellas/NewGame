@@ -206,73 +206,9 @@ def scaled(points: list[tuple[int, int]]) -> list[tuple[int, int]]:
 
 
 def road_overlay(bits: int) -> Image.Image:
-    up = bool(bits & 1)
-    down = bool(bits & 2)
-    left = bool(bits & 4)
-    right = bool(bits & 8)
-    endpoints: list[tuple[int, int]] = []
-    if up:
-        endpoints.append((TILE // 2, -2))
-    if down:
-        endpoints.append((TILE // 2, TILE + 2))
-    if left:
-        endpoints.append((-2, TILE // 2))
-    if right:
-        endpoints.append((TILE + 2, TILE // 2))
-    center = (TILE // 2, TILE // 2)
-    if not endpoints:
-        endpoints = [center]
+    from generate_road_autotiles import road_overlay as autotile_road_overlay
 
-    size = TILE * SCALE
-    mask = Image.new("L", (size, size), 0)
-    shadow_mask = Image.new("L", (size, size), 0)
-    highlight_mask = Image.new("L", (size, size), 0)
-    draw = ImageDraw.Draw(mask)
-    shadow_draw = ImageDraw.Draw(shadow_mask)
-    highlight_draw = ImageDraw.Draw(highlight_mask)
-
-    def draw_path(path: list[tuple[int, int]]) -> None:
-        pts = scaled(path)
-        shadow_draw.line(pts, fill=150, width=25 * SCALE, joint="curve")
-        draw.line(pts, fill=232, width=17 * SCALE, joint="curve")
-        highlight_draw.line(pts, fill=95, width=3 * SCALE, joint="curve")
-
-    if len(endpoints) == 1:
-        draw_path(bezier([center, endpoints[0]]))
-    elif len(endpoints) == 2 and ((up and down and not left and not right) or (left and right and not up and not down)):
-        draw_path(bezier([endpoints[0], center, endpoints[1]]))
-    else:
-        for end in endpoints:
-            mx = (center[0] + end[0]) // 2
-            my = (center[1] + end[1]) // 2
-            draw_path(bezier([center, (mx, my), end]))
-        r = 10 * SCALE
-        cx = center[0] * SCALE
-        cy = center[1] * SCALE
-        draw.ellipse((cx - r, cy - r, cx + r, cy + r), fill=232)
-
-    shadow_mask = shadow_mask.filter(ImageFilter.GaussianBlur(1.1 * SCALE))
-    mask = mask.filter(ImageFilter.GaussianBlur(0.35 * SCALE))
-    texture = road_texture(bits).resize((size, size), Image.Resampling.BICUBIC)
-    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    shadow = Image.new("RGBA", (size, size), (92, 67, 42, 125))
-    img.alpha_composite(Image.composite(shadow, Image.new("RGBA", (size, size), (0, 0, 0, 0)), shadow_mask))
-    img.alpha_composite(Image.composite(texture, Image.new("RGBA", (size, size), (0, 0, 0, 0)), mask))
-    highlight = Image.new("RGBA", (size, size), (232, 202, 132, 70))
-    img.alpha_composite(Image.composite(highlight, Image.new("RGBA", (size, size), (0, 0, 0, 0)), highlight_mask))
-
-    draw = ImageDraw.Draw(img, "RGBA")
-
-    rng = random.Random(bits * 73 + 41)
-    for _ in range(18):
-        x = rng.randrange(5 * SCALE, (TILE - 5) * SCALE)
-        y = rng.randrange(5 * SCALE, (TILE - 5) * SCALE)
-        color = rng.choice(((230, 196, 130, 95), (128, 91, 58, 100), (169, 123, 75, 120)))
-        rr = rng.choice((1, 2, 2)) * SCALE
-        draw.ellipse((x - rr, y - rr // 2, x + rr, y + rr // 2), fill=color)
-
-    img = img.filter(ImageFilter.GaussianBlur(0.18 * SCALE))
-    return img.resize((TILE, TILE), Image.Resampling.LANCZOS)
+    return autotile_road_overlay(bits)
 
 
 def road_texture(bits: int) -> Image.Image:

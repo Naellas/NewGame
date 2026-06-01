@@ -1,0 +1,112 @@
+[
+  {
+    "path": "Java/assets/cutout_tests/end_results/cli_auto/cell_00.png",
+    "mode": "alpha",
+    "source_size": [
+      101,
+      114
+    ],
+    "output_size": [
+      101,
+      114
+    ],
+    "visible_bbox": [
+      8,
+      8,
+      93,
+      106
+    ],
+    "visible_pixels": 4344,
+    "edge_background_pixels": 0,
+    "components": 3,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/cutout_tests/end_results/cli_auto/cell_01.png",
+    "mode": "alpha",
+    "source_size": [
+      101,
+      114
+    ],
+    "output_size": [
+      101,
+      114
+    ],
+    "visible_bbox": [
+      8,
+      8,
+      93,
+      106
+    ],
+    "visible_pixels": 4344,
+    "edge_background_pixels": 0,
+    "components": 3,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/cutout_tests/end_results/cli_auto/cell_02.png",
+    "mode": "alpha",
+    "source_size": [
+      101,
+      114
+    ],
+    "output_size": [
+      101,
+      114
+    ],
+    "visible_bbox": [
+      8,
+      8,
+      93,
+      106
+    ],
+    "visible_pixels": 4344,
+    "edge_background_pixels": 0,
+    "components": 3,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/cutout_tests/end_results/cli_auto/cell_03.png",
+    "mode": "alpha",
+    "source_size": [
+      101,
+      114
+    ],
+    "output_size": [
+      101,
+      114
+    ],
+    "visible_bbox": [
+      8,
+      8,
+      93,
+      106
+    ],
+    "visible_pixels": 4344,
+    "edge_background_pixels": 0,
+    "components": 3,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/cutout_tests/end_results/cli_auto/cell_04.png",
+    "mode": "alpha",
+    "source_size": [
+      101,
+      114
+    ],
+    "output_size": [
+      101,
+      114
+    ],
+    "visible_bbox": [
+      8,
+      8,
+      93,
+      106
+    ],
+    "visible_pixels": 4344,
+    "edge_background_pixels": 0,
+    "components": 3,
+    "passed": true
+  }
+]

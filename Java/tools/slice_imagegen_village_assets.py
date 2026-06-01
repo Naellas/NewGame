@@ -4,98 +4,23 @@ from pathlib import Path
 
 from PIL import Image
 
+from universal_cutout import CutoutSettings, universal_cutout
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "assets" / "source"
 CITY_DIR = ROOT / "assets" / "city"
 
 
 def transparent_light_checker(img: Image.Image) -> Image.Image:
-    out = img.convert("RGBA")
-    pixels = out.load()
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = pixels[x, y]
-            if r > 212 and g > 212 and b > 212 and max(r, g, b) - min(r, g, b) < 12:
-                pixels[x, y] = (r, g, b, 0)
-    return trim(out)
+    return universal_cutout(img, CutoutSettings(mode="light", padding=26, global_key=False))
 
 
 def transparent_dark_sheet(img: Image.Image) -> Image.Image:
-    out = img.convert("RGBA")
-    pixels = out.load()
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = pixels[x, y]
-            if r < 18 and g < 34 and b < 48:
-                pixels[x, y] = (r, g, b, 0)
-    return trim(out)
+    return universal_cutout(img, CutoutSettings(mode="dark", padding=26, global_key=False))
 
 
 def transparent_green_key(img: Image.Image) -> Image.Image:
-    out = img.convert("RGBA")
-    pixels = out.load()
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = pixels[x, y]
-            if g > 150 and r < 95 and b < 95 and g - max(r, b) > 70:
-                pixels[x, y] = (r, g, b, 0)
-    return trim(keep_largest_alpha_component(out))
-
-
-def keep_largest_alpha_component(img: Image.Image) -> Image.Image:
-    alpha = img.getchannel("A")
-    pixels = alpha.load()
-    width, height = img.size
-    visited = bytearray(width * height)
-    best: list[tuple[int, int]] = []
-    for y in range(height):
-        for x in range(width):
-            index = y * width + x
-            if visited[index] or pixels[x, y] == 0:
-                continue
-            stack = [(x, y)]
-            visited[index] = 1
-            component: list[tuple[int, int]] = []
-            while stack:
-                cx, cy = stack.pop()
-                component.append((cx, cy))
-                for ny in range(max(0, cy - 1), min(height, cy + 2)):
-                    for nx in range(max(0, cx - 1), min(width, cx + 2)):
-                        next_index = ny * width + nx
-                        if not visited[next_index] and pixels[nx, ny] > 0:
-                            visited[next_index] = 1
-                            stack.append((nx, ny))
-            if len(component) > len(best):
-                best = component
-    if not best:
-        return img
-    keep = {point for point in best}
-    out = img.copy()
-    out_pixels = out.load()
-    for y in range(height):
-        for x in range(width):
-            if pixels[x, y] > 0 and (x, y) not in keep:
-                r, g, b, a = out_pixels[x, y]
-                out_pixels[x, y] = (r, g, b, 0)
-    return out
-
-
-def trim(img: Image.Image, pad: int = 8) -> Image.Image:
-    alpha = img.getchannel("A")
-    box = alpha.getbbox()
-    if box is None:
-        return img
-    left = max(0, box[0] - pad)
-    top = max(0, box[1] - pad)
-    right = min(img.width, box[2] + pad)
-    bottom = min(img.height, box[3] + pad)
-    return canvas_pad(img.crop((left, top, right, bottom)), 18)
-
-
-def canvas_pad(img: Image.Image, pad: int) -> Image.Image:
-    out = Image.new("RGBA", (img.width + pad * 2, img.height + pad * 2), (0, 0, 0, 0))
-    out.alpha_composite(img, (pad, pad))
-    return out
+    return universal_cutout(img, CutoutSettings(mode="green", padding=26, keep_largest_only=True))
 
 
 def crop_cell(sheet: Image.Image, col: int, row: int, cols: int, rows: int) -> Image.Image:

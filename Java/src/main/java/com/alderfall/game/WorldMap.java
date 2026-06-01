@@ -859,7 +859,9 @@ public final class WorldMap {
         List<Integer> centers = new ArrayList<>();
         if (building.key() != null && building.key().startsWith("player_")) {
             centers.add(building.x1() + building.width() / 2);
-        } else if (building.width() <= 3 || List.of("hall", "guild", "barracks", "warehouse").contains(building.style())) {
+        } else if (building.width() <= 3 || List.of(
+                "hall", "guild", "barracks", "warehouse", "arena", "mage_tower", "bell_tower", "sun_shrine", "river_hall"
+        ).contains(building.style())) {
             centers.add(building.x1() + building.width() / 2);
         } else {
             int count = building.width() <= 6 ? 2 : 3;
@@ -1042,12 +1044,17 @@ public final class WorldMap {
     }
 
     private void addCity(String id, String label, int ox, int oy, String variant) {
-        cityBuildings.put(id, cityBuildingTemplates(variant));
         boolean town = label.contains("Town");
         MapArea area = new MapArea(id, label, "city", town ? townTiles(variant) : cityTiles(variant));
+        List<CityBuilding> buildings = new ArrayList<>(cityBuildingTemplates(variant));
+        addCityInfillBuildings(buildings, area, variant);
+        if (town) {
+            addTownLandmarkBuildings(buildings, area, variant);
+        }
+        cityBuildings.put(id, buildings);
         addCityProps(area);
         if (town) {
-            addTownProps(area);
+            addTownProps(area, variant);
         }
         maps.put(id, area);
         for (int dy = -2; dy <= 2; dy++) {
@@ -1241,6 +1248,10 @@ public final class WorldMap {
         rectIf(grid, 10, 8, 24, 15, 'C', 'p');
         rectIf(grid, 15, 10, 19, 13, 'G', 'p', 'C');
         rectIf(grid, 2, 20, 31, 20, 'G', 'l', 'p', 'C');
+        rectIf(grid, 3, 4, 32, 4, 'l', 'p', 'C');
+        rectIf(grid, 3, 22, 32, 22, 'y', 'p', 'C', 'G');
+        rectIf(grid, 4, 23, 9, 25, 'y', 'p', 'C', 'G');
+        rectIf(grid, 25, 23, 31, 25, 'y', 'p', 'C', 'G');
         return grid;
     }
 
@@ -1355,6 +1366,72 @@ public final class WorldMap {
 
     private CityBuilding building(String key, int x1, int y1, int x2, int y2, String style, int palette) {
         return new CityBuilding(key, x1, y1, x2, y2, style, palette);
+    }
+
+    private void addCityInfillBuildings(List<CityBuilding> buildings, MapArea area, String variant) {
+        CityBuilding[] candidates = switch (variant) {
+            case "highwall" -> new CityBuilding[]{
+                    building("infill_gate_tower", 31, 8, 32, 10, "barracks", 2),
+                    building("infill_drill_hall", 14, 19, 15, 20, "guild", 1),
+                    building("infill_lane_house", 1, 14, 2, 16, "house", 0)
+            };
+            case "archive" -> new CityBuilding[]{
+                    building("infill_reader_house", 14, 4, 15, 5, "house", 1),
+                    building("infill_ink_shop", 31, 14, 32, 16, "shop", 2),
+                    building("infill_scribe_alley", 14, 19, 15, 20, "guild", 0)
+            };
+            case "belltower" -> new CityBuilding[]{
+                    building("infill_chime_tower", 31, 8, 32, 10, "barracks", 1),
+                    building("infill_lantern_shop", 14, 19, 15, 20, "shop", 2),
+                    building("infill_lane_house", 1, 14, 2, 16, "house", 0)
+            };
+            case "sanctum" -> new CityBuilding[]{
+                    building("infill_oratory", 14, 4, 15, 5, "hall", 1),
+                    building("infill_herb_shop", 31, 14, 32, 16, "shop", 0),
+                    building("infill_cloister_cell", 14, 19, 15, 20, "house", 2)
+            };
+            default -> new CityBuilding[]{
+                    building("infill_lane_house", 14, 4, 15, 5, "house", 1),
+                    building("infill_river_tower", 31, 14, 32, 16, "barracks", 0),
+                    building("infill_alley_shop", 14, 19, 15, 20, "shop", 2)
+            };
+        };
+        for (CityBuilding candidate : candidates) {
+            if (canAddCityInfillBuilding(buildings, area, candidate)) {
+                buildings.add(candidate);
+            }
+        }
+    }
+
+    private void addTownLandmarkBuildings(List<CityBuilding> buildings, MapArea area, String variant) {
+        CityBuilding landmark = switch (variant) {
+            case "archive" -> building("moonspire_mage_tower", 16, 14, 20, 17, "mage_tower", 2);
+            case "highwall" -> building("ironvale_arena", 16, 14, 21, 17, "arena", 1);
+            case "belltower" -> building("reedwatch_bell_tower", 16, 14, 20, 17, "bell_tower", 0);
+            case "sanctum" -> building("embermarket_sun_shrine", 16, 14, 20, 17, "sun_shrine", 2);
+            default -> building("briarbridge_river_hall", 16, 14, 20, 17, "river_hall", 0);
+        };
+        if (canAddCityInfillBuilding(buildings, area, landmark)) {
+            buildings.add(landmark);
+        }
+    }
+
+    private boolean canAddCityInfillBuilding(List<CityBuilding> buildings, MapArea area, CityBuilding candidate) {
+        for (CityBuilding building : buildings) {
+            if (rectsOverlap(candidate.x1(), candidate.y1(), candidate.x2(), candidate.y2(),
+                    building.x1(), building.y1(), building.x2(), building.y2())) {
+                return false;
+            }
+        }
+        for (int y = candidate.y1(); y <= candidate.y2(); y++) {
+            for (int x = candidate.x1(); x <= candidate.x2(); x++) {
+                char tile = area.tileAt(x, y);
+                if (tile == 'r' || tile == 'q' || tile == 'B' || tile == 'w' || tile == 'x' || tile == 't') {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private List<CityBuilding> mutableCityBuildings(String mapId) {
@@ -2363,6 +2440,10 @@ public final class WorldMap {
                 case "deco_tree_young" -> 58;
                 case "deco_tree_blue_pine" -> 74;
                 case "deco_tree_pine" -> 78;
+                case "deco_tree_birch_harvestable", "deco_tree_pine_harvestable",
+                        "deco_tree_deadwood_harvestable" -> 72;
+                case "deco_tree_magical_harvestable", "deco_tree_elder_harvestable",
+                        "deco_tree_fruit_harvestable" -> 86;
                 default -> 82;
             };
             return base + jitter * 6;
@@ -2393,10 +2474,16 @@ public final class WorldMap {
             case "deco_bush", "deco_tundra_frost_bush" -> 32 + jitter * 2;
             case "deco_forest_log", "deco_forest_moss_rock", "deco_rocks", "deco_desert_rocks",
                     "deco_tundra_rocks", "deco_badlands_rocks", "deco_mountain_rocks",
-                    "deco_mountain_cairn", "deco_mountain_pass_way_cairn", "deco_beach_driftwood" -> 36 + jitter * 4;
+                    "deco_mountain_cairn", "deco_mountain_pass_way_cairn", "deco_beach_driftwood",
+                    "deco_ore_iron_vein", "deco_ore_copper_vein", "deco_ore_coal_deposit",
+                    "deco_ore_tin_vein", "deco_ore_silver_vein", "deco_ore_gold_vein",
+                    "deco_ore_mithril_vein", "deco_ore_cobalt_vein", "deco_ore_adamantite_vein",
+                    "deco_ore_crystal_vein", "deco_ore_steel_scrap",
+                    "deco_wood_ironwood_log_pile", "deco_wood_fallen_ash_log" -> 36 + jitter * 4;
             case "deco_forest_ancient_roots", "deco_forest_shrine_stone", "deco_forest_fairy_pool",
                     "deco_imagen_grass_pond", "deco_marsh_lily_pool", "deco_marsh_bubble_pool",
-                    "deco_mountain_spring_pool", "deco_mountain_pass_snowmelt_pool" -> 58 + jitter * 6;
+                    "deco_mountain_spring_pool", "deco_mountain_pass_snowmelt_pool",
+                    "deco_tree_enchanted_stump", "deco_tree_glowing_root_cluster" -> 58 + jitter * 6;
             case "deco_grass_stone_stack",
                     "deco_desert_sun_bleached_bones", "deco_desert_jar_cache", "deco_tundra_rune_stone",
                     "deco_badlands_skull_marker", "deco_badlands_totem_stones",
@@ -2492,6 +2579,9 @@ public final class WorldMap {
     private void addCityProps(MapArea area) {
         for (int y = 2; y < area.height() - 2; y++) {
             for (int x = 2; x < area.width() - 2; x++) {
+                if (cityBuildingAt(area.id, x, y) != null) {
+                    continue;
+                }
                 char tile = area.tileAt(x, y);
                 int roll = Math.abs(hash(x, y, area.id.hashCode())) % 100;
                 if ((tile == 'p' || tile == 'C') && roll < 12) {
@@ -2524,9 +2614,68 @@ public final class WorldMap {
                 }
             }
         }
+        addCityAlleyProps(area);
     }
 
-    private void addTownProps(MapArea area) {
+    private void addCityAlleyProps(MapArea area) {
+        String[] alleyPlants = {
+                "city_prop_ivy_wall_planter",
+                "city_prop_potted_shrub_tall",
+                "city_prop_flower_crate",
+                "city_prop_vine_trellis",
+                "city_prop_moss_barrel_planter",
+                "city_prop_herb_planter_narrow",
+                "city_prop_vine_lantern_post",
+                "city_prop_flower_baskets"
+        };
+        int[][] anchors = {
+                {5, 7, 34}, {13, 7, 36}, {20, 7, 34}, {31, 8, 38},
+                {5, 13, 34}, {14, 14, 32}, {21, 14, 34}, {30, 14, 36},
+                {6, 19, 34}, {14, 20, 32}, {20, 20, 34}, {29, 19, 36}
+        };
+        for (int i = 0; i < anchors.length; i++) {
+            int x = anchors[i][0];
+            int y = anchors[i][1];
+            if (!canPlaceCityAlleyProp(area, x, y)) {
+                continue;
+            }
+            String asset = alleyPlants[Math.floorMod(area.id.hashCode() + i * 3, alleyPlants.length)];
+            area.props.add(new WorldProp(x, y, asset, anchors[i][2]));
+        }
+        addHorizontalAlleyGreenery(area, alleyPlants);
+    }
+
+    private boolean canPlaceCityAlleyProp(MapArea area, int x, int y) {
+        char tile = area.tileAt(x, y);
+        return Terrain.passable(tile)
+                && tile != 'r'
+                && tile != 'q'
+                && tile != 'B'
+                && tile != 'w'
+                && cityBuildingAt(area.id, x, y) == null
+                && area.props.stream().noneMatch(prop -> prop.x() == x && prop.y() == y);
+    }
+
+    private void addHorizontalAlleyGreenery(MapArea area, String[] alleyPlants) {
+        int[] alleys = {4, 7, 13, 20, 22};
+        for (int lane = 0; lane < alleys.length; lane++) {
+            int y = alleys[lane];
+            for (int x = 3; x < area.width() - 3; x += 2) {
+                char tile = area.tileAt(x, y);
+                if (tile != 'l' && tile != 'j' && tile != 'y' && tile != 'C' && tile != 'G') {
+                    continue;
+                }
+                int roll = Math.floorMod(hash(x, y, area.id.hashCode() + lane * 431), 100);
+                if (roll >= 34 || !canPlaceCityAlleyProp(area, x, y)) {
+                    continue;
+                }
+                String asset = alleyPlants[Math.floorMod(roll + x + area.id.hashCode(), alleyPlants.length)];
+                area.props.add(new WorldProp(x, y, asset, 30 + roll % 10));
+            }
+        }
+    }
+
+    private void addTownProps(MapArea area, String variant) {
         String[] commons = {
                 "city_prop_news_kiosk", "city_prop_wagon_awning", "city_prop_bunting_pole", "city_prop_stone_bench"
         };
@@ -2535,10 +2684,39 @@ public final class WorldMap {
         };
         for (int i = 0; i < anchors.length; i++) {
             int[] anchor = anchors[i];
-            if (Terrain.passable(area.tileAt(anchor[0], anchor[1])) && cityBuildingAt(area.id, anchor[0], anchor[1]) == null) {
-                area.props.add(new WorldProp(anchor[0], anchor[1], commons[Math.floorMod(area.id.hashCode() + i, commons.length)], anchor[2]));
-            }
+            placeCityPropIfFree(area, anchor[0], anchor[1], commons[Math.floorMod(area.id.hashCode() + i, commons.length)], anchor[2]);
         }
+        addTownParks(area, variant);
+    }
+
+    private void addTownParks(MapArea area, String variant) {
+        String[] flowers = switch (variant) {
+            case "highwall" -> new String[]{"deco_tundra_frost_bush", "deco_snow_mound", "city_prop_source_snow_bush"};
+            case "archive" -> new String[]{"city_prop_flower_baskets", "city_prop_herb_planter_narrow", "deco_soft_purple_flowers"};
+            case "belltower" -> new String[]{"deco_reeds", "deco_marsh_firefly_reeds", "city_prop_moss_barrel_planter"};
+            case "sanctum" -> new String[]{"deco_desert_blooming_cactus", "deco_dry_grass", "city_prop_planter_stone"};
+            default -> new String[]{"deco_flowers", "deco_bush", "city_prop_flower_crate"};
+        };
+        int[][] parkTiles = {
+                {4, 23}, {6, 23}, {8, 24}, {26, 23}, {28, 24}, {30, 23},
+                {5, 22}, {29, 22}, {15, 8}, {20, 8}
+        };
+        for (int i = 0; i < parkTiles.length; i++) {
+            int x = parkTiles[i][0];
+            int y = parkTiles[i][1];
+            String asset = flowers[Math.floorMod(area.id.hashCode() + i * 5, flowers.length)];
+            placeCityPropIfFree(area, x, y, asset, 30 + Math.floorMod(area.id.hashCode() + i, 12));
+        }
+        placeCityPropIfFree(area, 7, 25, "city_prop_stone_bench", 36);
+        placeCityPropIfFree(area, 27, 25, "city_prop_stone_bench", 36);
+    }
+
+    private boolean placeCityPropIfFree(MapArea area, int x, int y, String asset, int size) {
+        if (!canPlaceCityAlleyProp(area, x, y)) {
+            return false;
+        }
+        area.props.add(new WorldProp(x, y, asset, size));
+        return true;
     }
 
     private void addVillageProps(MapArea area, String variant) {
@@ -3001,6 +3179,20 @@ public final class WorldMap {
                 option("deco_tree_pine", forestCore ? 18 : 14),
                 option("deco_tree_blue_pine", forestCore ? 10 : 8),
                 option("deco_tree_young", edge ? 18 : 9),
+                option("deco_tree_oak_harvestable", forestCore ? 8 : 4),
+                option("deco_tree_birch_harvestable", forestCore ? 6 : 5),
+                option("deco_tree_pine_harvestable", forestCore ? 7 : 5),
+                option("deco_tree_willow_harvestable", edge ? 6 : 3),
+                option("deco_tree_maple_harvestable", forestCore ? 6 : 3),
+                option("deco_tree_ash_harvestable", forestCore ? 5 : 3),
+                option("deco_tree_fruit_harvestable", edge ? 5 : 2, 420),
+                option("deco_tree_elder_harvestable", forestCore ? 3 : 1, 220),
+                option("deco_tree_magical_harvestable", forestCore ? 2 : 1, 120),
+                option("deco_tree_deadwood_harvestable", edge ? 4 : 2, 360),
+                option("deco_wood_ironwood_log_pile", forestCore ? 3 : 1, 180),
+                option("deco_tree_enchanted_stump", forestCore ? 2 : 1, 120),
+                option("deco_wood_fallen_ash_log", 4, 420),
+                option("deco_tree_glowing_root_cluster", forestCore ? 2 : 1, 95),
                 option("deco_forest_fern", edge ? 22 : 10),
                 option("deco_forest_moss_rock", edge ? 12 : 7),
                 option("deco_forest_log", 8, 520),
@@ -3084,6 +3276,17 @@ public final class WorldMap {
         return weightedDecoration(roll, patchSeed, new DecorationOption[]{
                 option("deco_mountain_rocks", pass ? 22 : 36),
                 option("deco_rocks", 18),
+                option("deco_ore_iron_vein", pass ? 6 : 9),
+                option("deco_ore_copper_vein", pass ? 6 : 8),
+                option("deco_ore_coal_deposit", pass ? 7 : 9),
+                option("deco_ore_tin_vein", 5, 620),
+                option("deco_ore_silver_vein", 3, 260),
+                option("deco_ore_gold_vein", 2, 180),
+                option("deco_ore_mithril_vein", snow ? 3 : 1, 140),
+                option("deco_ore_cobalt_vein", snow ? 4 : 2, 220),
+                option("deco_ore_adamantite_vein", 1, 60),
+                option("deco_ore_crystal_vein", 3, 160),
+                option("deco_ore_steel_scrap", pass ? 3 : 1, 120),
                 option("deco_mountain_cairn", pass ? 20 : 6, pass ? 520 : 180),
                 option("deco_mountain_pass_way_cairn", pass ? 14 : 3, pass ? 440 : 90),
                 option("deco_mountain_scrub_pine", snow ? 10 : 18),
@@ -3126,7 +3329,17 @@ public final class WorldMap {
                 || asset.equals("deco_tree_blue_pine")
                 || asset.equals("deco_tree_oak")
                 || asset.equals("deco_tree_round")
-                || asset.equals("deco_tree_young");
+                || asset.equals("deco_tree_young")
+                || asset.equals("deco_tree_oak_harvestable")
+                || asset.equals("deco_tree_birch_harvestable")
+                || asset.equals("deco_tree_pine_harvestable")
+                || asset.equals("deco_tree_willow_harvestable")
+                || asset.equals("deco_tree_maple_harvestable")
+                || asset.equals("deco_tree_ash_harvestable")
+                || asset.equals("deco_tree_elder_harvestable")
+                || asset.equals("deco_tree_magical_harvestable")
+                || asset.equals("deco_tree_deadwood_harvestable")
+                || asset.equals("deco_tree_fruit_harvestable");
     }
 
     private boolean isForestFlora(String asset) {
@@ -3176,7 +3389,9 @@ public final class WorldMap {
                 || asset.equals("deco_cactus")
                 || asset.equals("deco_desert_blooming_cactus")
                 || asset.equals("deco_badlands_red_spire")
-                || asset.equals("deco_forest_fern");
+                || asset.equals("deco_forest_fern")
+                || asset.equals("deco_tree_enchanted_stump")
+                || asset.equals("deco_tree_glowing_root_cluster");
     }
 
     private DecorationOption option(String asset, int weight) {

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 public final class VillageManager {
-    public static final boolean FREE_BUILD_MODE = true;
-
     private VillageManager() {
     }
 
@@ -119,7 +117,7 @@ public final class VillageManager {
                     Map.of(2, VillageCost.of(35, Map.of("wood", 3, "stone", 1)),
                             3, VillageCost.of(60, Map.of("wood", 5, "stone", 3)))),
             building("warehouse", "Warehouse", 5, 4, VillageCost.of(35, Map.of("wood", 6, "stone", 3)),
-                    List.of("village_building_warehouse", "imagegen_city_warehouse", "village_building_granary"),
+                    List.of("village_building_warehouse", "village_building_granary", "city_building_house_wide"),
                     "Stores gathered village materials for construction and crafting.", 3, 80, "hauler",
                     Map.of(2, VillageCost.of(45, Map.of("wood", 5, "stone", 5)),
                             3, VillageCost.of(80, Map.of("wood", 8, "stone", 8, "iron_ore", 2)))),
@@ -144,17 +142,17 @@ public final class VillageManager {
                     Map.of(2, VillageCost.of(40, Map.of("wood", 4, "stone", 2)),
                             3, VillageCost.of(70, Map.of("wood", 6, "stone", 4)))),
             building("shop", "Workshop", 4, 3, VillageCost.of(35, Map.of("wood", 4, "stone", 2)),
-                    List.of("village_building_workshop", "imagegen_city_workshop", "city_building_town_shop"),
+                    List.of("village_building_workshop", "city_building_town_shop", "city_building_house_shop"),
                     "A crafting yard for tools, repairs, and future production chains.", 3, 0, "builder",
                     Map.of(2, VillageCost.of(50, Map.of("wood", 5, "stone", 4)),
                             3, VillageCost.of(90, Map.of("wood", 7, "stone", 6, "iron_ore", 3)))),
             building("inn", "Hall", 5, 4, VillageCost.of(45, Map.of("wood", 5, "stone", 2)),
-                    List.of("imagegen_city_hall", "city_building_town_gabled", "city_building_town_shop"),
+                    List.of("imagegen_city_hall_lvl2", "city_building_town_manor", "city_building_town_gabled"),
                     "A gathering hall that supports larger village crews.", 3, 0, "",
                     Map.of(2, VillageCost.of(60, Map.of("wood", 6, "stone", 4)),
                             3, VillageCost.of(100, Map.of("wood", 10, "stone", 6)))),
             building("guild", "Study", 4, 3, VillageCost.of(40, Map.of("wood", 3, "stone", 4)),
-                    List.of("imagegen_city_study", "city_building_stone_shop", "city_building_stone_hall"),
+                    List.of("imagegen_city_study_lvl2", "city_building_stone_hall", "city_building_stone_shop"),
                     "Planning space for future research and specialist upgrades.", 3, 0, "",
                     Map.of(2, VillageCost.of(60, Map.of("stone", 6, "iron_ore", 1)),
                             3, VillageCost.of(110, Map.of("stone", 9, "iron_ore", 3)))),
@@ -510,11 +508,16 @@ public final class VillageManager {
         if (primary.isBlank() || level <= 1) {
             return primary;
         }
-        return primary + "_lvl" + Math.max(2, Math.min(3, level));
+        String base = primary.replaceFirst("_lvl[23]$", "");
+        return base + "_lvl" + Math.max(2, Math.min(3, level));
     }
 
     public static boolean canAfford(Actor actor, VillageCost cost) {
-        if (FREE_BUILD_MODE) {
+        return canAfford(actor, cost, false);
+    }
+
+    public static boolean canAfford(Actor actor, VillageCost cost, boolean creativeBuildMode) {
+        if (creativeBuildMode) {
             return true;
         }
         if (actor == null || cost == null) {
@@ -559,7 +562,11 @@ public final class VillageManager {
     }
 
     public static void spend(Actor actor, VillageCost cost) {
-        if (FREE_BUILD_MODE || actor == null || cost == null || cost.isFree()) {
+        spend(actor, cost, false);
+    }
+
+    public static void spend(Actor actor, VillageCost cost, boolean creativeBuildMode) {
+        if (creativeBuildMode || actor == null || cost == null || cost.isFree()) {
             return;
         }
         actor.gold -= cost.gold();

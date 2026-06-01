@@ -14,7 +14,9 @@ public enum Profession {
     COOKING("cooking", "Cooking"),
     SURVIVAL("survival", "Survival");
 
-    public static final int MAX_LEVEL = 10;
+    public static final int BASE_MAX_LEVEL = 10;
+    public static final int MAX_LEVEL = BASE_MAX_LEVEL;
+    public static final int ABSOLUTE_MAX_LEVEL = 16;
     public static final List<Profession> ALL = List.of(values());
 
     private final String id;
@@ -48,7 +50,11 @@ public enum Profession {
     }
 
     public static int xpForLevel(int level) {
-        int clamped = Math.max(1, Math.min(MAX_LEVEL, level));
+        return xpForLevel(level, BASE_MAX_LEVEL);
+    }
+
+    public static int xpForLevel(int level, int cap) {
+        int clamped = Math.max(1, Math.min(Math.max(1, cap), level));
         int xp = 0;
         for (int rank = 1; rank < clamped; rank++) {
             xp += xpToNext(rank);
@@ -61,9 +67,14 @@ public enum Profession {
     }
 
     public static int levelForXp(int xp) {
+        return levelForXp(xp, BASE_MAX_LEVEL);
+    }
+
+    public static int levelForXp(int xp, int cap) {
         int level = 1;
+        int maxLevel = Math.max(1, Math.min(ABSOLUTE_MAX_LEVEL, cap));
         int remaining = Math.max(0, xp);
-        while (level < MAX_LEVEL && remaining >= xpToNext(level)) {
+        while (level < maxLevel && remaining >= xpToNext(level)) {
             remaining -= xpToNext(level);
             level++;
         }

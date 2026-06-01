@@ -24,6 +24,7 @@ public final class GameConfig {
     public int masterVolume = 80;
     public int musicVolume = 70;
     public int sfxVolume = 75;
+    public boolean creativeBuildMode = true;
 
     private GameConfig(
             double wildEncounterChance,
@@ -75,6 +76,7 @@ public final class GameConfig {
             config.masterVolume = readInt(props, "masterVolume", config.masterVolume);
             config.musicVolume = readInt(props, "musicVolume", config.musicVolume);
             config.sfxVolume = readInt(props, "sfxVolume", config.sfxVolume);
+            config.creativeBuildMode = readBoolean(props, "creativeBuildMode", config.creativeBuildMode);
         } catch (IOException ignored) {
         }
         return config;
@@ -92,6 +94,7 @@ public final class GameConfig {
         props.setProperty("masterVolume", Integer.toString(masterVolume));
         props.setProperty("musicVolume", Integer.toString(musicVolume));
         props.setProperty("sfxVolume", Integer.toString(sfxVolume));
+        props.setProperty("creativeBuildMode", Boolean.toString(creativeBuildMode));
         try (var out = Files.newOutputStream(settingsPath)) {
             props.store(out, "Echoes of Alderfall Java settings");
         }
@@ -125,6 +128,14 @@ public final class GameConfig {
         } catch (NumberFormatException ex) {
             return fallback;
         }
+    }
+
+    private static boolean readBoolean(Properties props, String key, boolean fallback) {
+        String value = props.getProperty(key);
+        if (value == null || value.isBlank()) {
+            return fallback;
+        }
+        return Boolean.parseBoolean(value);
     }
 
     public void adjustChance(String key, double delta) {

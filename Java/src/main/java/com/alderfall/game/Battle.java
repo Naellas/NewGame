@@ -1193,14 +1193,17 @@ public final class Battle {
 
     private String effectForAbility(String abilityName) {
         String lowered = abilityName.toLowerCase();
-        if (lowered.contains("arcane") || lowered.contains("rune") || lowered.contains("chain spark")) {
+        if (lowered.contains("chain spark")) {
+            return "lightning";
+        }
+        if (lowered.contains("arcane") || lowered.contains("rune")) {
             return "arcane";
         }
         if (lowered.contains("fire") || lowered.contains("candle")) {
             return "ember";
         }
         if (lowered.contains("radiant") && lowered.contains("bolt")) {
-            return "radiant";
+            return "holy";
         }
         if (lowered.contains("arc")) {
             return "fire";
@@ -1223,10 +1226,19 @@ public final class Battle {
         if (lowered.contains("smoke")) {
             return "dust";
         }
+        if (lowered.contains("fang") || lowered.contains("knife storm")) {
+            return "claw";
+        }
+        if (lowered.contains("bash")) {
+            return "bash";
+        }
+        if (lowered.contains("strike") || lowered.contains("rush")) {
+            return "impact";
+        }
         if (lowered.contains("storm")) {
             return "sonic";
         }
-        if (lowered.contains("slash") || lowered.contains("rush") || lowered.contains("bash") || lowered.contains("cut") || lowered.contains("knife")) {
+        if (lowered.contains("slash") || lowered.contains("cut") || lowered.contains("knife")) {
             return "slash";
         }
         return "strike";

@@ -32,21 +32,13 @@ public final class AssetStore {
     }
 
     public BufferedImage spriteFit(String name, int width, int height) {
-        return spriteFit(name, width, height, pixelated(name));
-    }
-
-    public BufferedImage spriteFitSmooth(String name, int width, int height) {
-        return spriteFit(name, width, height, false);
-    }
-
-    private BufferedImage spriteFit(String name, int width, int height, boolean pixelated) {
-        String key = "fit:" + (pixelated ? "pixel:" : "smooth:") + name + ":" + width + "x" + height;
+        String key = "fit:" + name + ":" + width + "x" + height;
         BufferedImage cached = cache.get(key);
         if (cached != null) {
             return cached;
         }
         BufferedImage source = croppedSource(name);
-        BufferedImage fitted = fit(source, width, height, pixelated);
+        BufferedImage fitted = fit(source, width, height, pixelated(name));
         cache.put(key, fitted);
         return fitted;
     }
@@ -78,26 +70,18 @@ public final class AssetStore {
     }
 
     public BufferedImage animatedSpriteFit(String name, String action, int width, int height, int frame) {
-        return animatedSpriteFit(name, action, width, height, frame, pixelated(name));
-    }
-
-    public BufferedImage animatedSpriteFitSmooth(String name, String action, int width, int height, int frame) {
-        return animatedSpriteFit(name, action, width, height, frame, false);
-    }
-
-    private BufferedImage animatedSpriteFit(String name, String action, int width, int height, int frame, boolean pixelated) {
         if (action == null || action.isBlank()) {
-            return spriteFit(name, width, height, pixelated);
+            return spriteFit(name, width, height);
         }
         String sheetName = name + "_" + action + "_anim";
         if (catalog.findAsset(sheetName) == null) {
-            return spriteFit(name, width, height, pixelated);
+            return spriteFit(name, width, height);
         }
         BufferedImage sheet = loadSource(sheetName);
         int frames = animationFrameCount(sheetName, sheet, width, height);
         int frameWidth = Math.max(1, sheet.getWidth() / frames);
         int selectedFrame = Math.floorMod(frame, frames);
-        String key = "anim:" + (pixelated ? "pixel:" : "smooth:") + sheetName + ":" + width + "x" + height + ":" + selectedFrame;
+        String key = "anim:" + sheetName + ":" + width + "x" + height + ":" + selectedFrame;
         BufferedImage cached = cache.get(key);
         if (cached != null) {
             return cached;
@@ -105,7 +89,7 @@ public final class AssetStore {
         int x = selectedFrame * frameWidth;
         int sourceWidth = Math.min(frameWidth, sheet.getWidth() - x);
         BufferedImage source = sheet.getSubimage(x, 0, sourceWidth, sheet.getHeight());
-        BufferedImage fitted = fit(source, width, height, pixelated);
+        BufferedImage fitted = fit(source, width, height, pixelated(name));
         cache.put(key, fitted);
         return fitted;
     }
@@ -197,10 +181,15 @@ public final class AssetStore {
             case "slime", "wolf", "bat", "skeleton", "goblin", "spider", "orc", "wraith",
                     "thornling", "sand_stalker", "ice_golem", "bog_beast", "ember_imp",
                     "sheep", "mountain_goat", "doe", "stag",
+                    "crystal_hare", "bramble_boar", "snow_lynx", "ember_tortoise",
                     "frost_wolf", "reed_serpent", "glass_scorpion", "stoneback_goat",
                     "moss_stag", "river_eel", "ash_scorpion", "crypt_bat",
                     "goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher",
-                    "goblin_shaman", "hobgoblin_guard", "goblin_warlord", "goblin_king" -> true;
+                    "goblin_shaman", "hobgoblin_guard", "goblin_warlord", "goblin_king",
+                    "red_dragon", "elder_dragon", "marsh_drake", "mountain_drake",
+                    "bandit_cutthroat", "bandit_archer", "bandit_captain",
+                    "orc_raider", "orc_berserker", "orc_shaman", "orc_shieldbearer",
+                    "swamp_troll", "frost_troll", "hill_giant", "stone_giant", "fire_giant" -> true;
             default -> false;
         };
     }

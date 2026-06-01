@@ -4,9 +4,11 @@ from pathlib import Path
 import sys
 from collections import deque
 
-from PIL import Image, ImageFilter
+from PIL import Image
 
 sys.path.append(str(Path(__file__).resolve().parent))
+
+from universal_cutout import CutoutSettings, clean_spill_edges, universal_cutout
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,16 +38,10 @@ def main() -> None:
 
 
 def remove_green_background(image: Image.Image) -> Image.Image:
-    out = image.convert("RGBA")
-    px = out.load()
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = px[x, y]
-            if a == 0:
-                continue
-            if g > 150 and g >= r + 50 and g >= b + 50:
-                px[x, y] = (r, g, b, 0)
-    return out
+    return universal_cutout(
+        image,
+        CutoutSettings(mode="green", trim=False, clear_strays=False, global_key=True),
+    )
 
 
 def detect_frame_boxes(image: Image.Image) -> list[tuple[int, int, int, int]]:
@@ -143,18 +139,7 @@ def visible_bbox(image: Image.Image) -> tuple[int, int, int, int]:
 
 
 def clean_green_edge(image: Image.Image) -> Image.Image:
-    out = image.convert("RGBA")
-    px = out.load()
-    alpha = out.getchannel("A")
-    edge = alpha.filter(ImageFilter.FIND_EDGES)
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = px[x, y]
-            if a == 0:
-                continue
-            if g > 120 and g >= r + 38 and g >= b + 38 and edge.getpixel((x, y)) > 0:
-                px[x, y] = (max(0, r - 6), min(110, (r + b) // 2), b, max(0, a - 12))
-    return out
+    return clean_spill_edges(image, "green", passes=2)
 
 
 if __name__ == "__main__":

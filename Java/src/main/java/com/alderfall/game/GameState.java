@@ -1382,7 +1382,7 @@ public final class GameState {
     }
 
     public boolean canAffordVillageCost(VillageManager.VillageCost cost) {
-        if (VillageManager.FREE_BUILD_MODE) {
+        if (config.creativeBuildMode) {
             return true;
         }
         if (cost == null) {
@@ -1401,7 +1401,7 @@ public final class GameState {
     }
 
     public void spendVillageCost(VillageManager.VillageCost cost) {
-        if (VillageManager.FREE_BUILD_MODE || cost == null || cost.isFree()) {
+        if (config.creativeBuildMode || cost == null || cost.isFree()) {
             return;
         }
         player.gold -= cost.gold();
@@ -1821,7 +1821,8 @@ public final class GameState {
             int tileBonus = role.preferredTile() == 'q'
                     ? 0
                     : Math.min(2, countVillageTiles(role.preferredTile()) / 8);
-            int professionLevel = role.profession().isBlank() ? 1 : ally.professionLevel(role.profession());
+            int professionLevel = role.profession().isBlank() ? 1
+                    : ally.professionLevel(role.profession()) + ally.professionPracticeBonus(role.profession());
             int amount = Math.max(1, role.baseAmount() + ally.level / 4 + levelBonus + tileBonus + (professionLevel - 1) / 2);
             int stored = addVillageStorage(role.resource(), amount);
             if (stored > 0) {
@@ -2224,16 +2225,16 @@ public final class GameState {
             return "goblin_warlord";
         }
         if (mapId.contains("crowhook")) {
-            return "orc_champion";
+            return "bandit_captain";
         }
         if (mapId.contains("frost")) {
-            return "ice_golem";
+            return dungeonDepth(mapId) > 1 ? "frost_troll" : "ice_golem";
         }
         if (mapId.contains("mire")) {
-            return "crypt_revenant";
+            return dungeonDepth(mapId) > 1 ? "swamp_troll" : "crypt_revenant";
         }
         if (mapId.contains("blackvault") || dungeonDepth(mapId) > 1) {
-            return "elder_wraith";
+            return mapId.contains("blackvault") ? "elder_dragon" : "elder_wraith";
         }
         return "bone_knight";
     }
@@ -2243,15 +2244,15 @@ public final class GameState {
         if (mapId.contains("redcap")) {
             pool = List.of("goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher", "goblin_shaman");
         } else if (mapId.contains("crowhook")) {
-            pool = List.of("goblin_skirmisher", "orc", "hobgoblin_guard", "wraith");
+            pool = List.of("bandit_cutthroat", "bandit_archer", "goblin_skirmisher", "orc_raider", "orc_shieldbearer", "bandit_captain");
         } else if (mapId.contains("frost")) {
-            pool = List.of("crypt_bat", "frost_wolf", "skeleton", "ice_golem");
+            pool = List.of("crypt_bat", "frost_wolf", "skeleton", "mountain_drake", "frost_troll", "ice_golem");
         } else if (mapId.contains("mire")) {
-            pool = List.of("slime", "spider", "reed_serpent", "bog_beast", "wraith");
+            pool = List.of("slime", "spider", "reed_serpent", "bog_beast", "marsh_drake", "swamp_troll", "wraith");
         } else if (mapId.contains("blackvault")) {
-            pool = List.of("skeleton", "wraith", "orc", "ash_scorpion");
+            pool = List.of("skeleton", "wraith", "orc_berserker", "ash_scorpion", "stone_giant", "elder_dragon");
         } else {
-            pool = List.of("crypt_bat", "skeleton", "spider", "wraith", "orc");
+            pool = List.of("crypt_bat", "skeleton", "spider", "wraith", "bandit_cutthroat", "orc_raider");
         }
         return pool.get(seeded.nextInt(pool.size()));
     }
@@ -2260,7 +2261,12 @@ public final class GameState {
         List<GameData.MonsterSpec> specs = new ArrayList<>();
         specs.add(monster.spec);
         if (monster.boss) {
-            String support = monster.spec.key().contains("goblin") ? "goblin_skirmisher" : "crypt_bat";
+            String support = switch (monster.spec.species()) {
+                case "bandit" -> "bandit_cutthroat";
+                case "goblin" -> "goblin_skirmisher";
+                case "orc" -> "orc_raider";
+                default -> "crypt_bat";
+            };
             specs.add(GameData.MONSTERS.getOrDefault(support, GameData.MONSTERS.get("crypt_bat")));
             if (player.level >= 4 || dungeonDepth(currentMapId) > 1) {
                 specs.add(GameData.MONSTERS.getOrDefault("skeleton", GameData.MONSTERS.get("skeleton")));
@@ -3035,15 +3041,15 @@ public final class GameState {
 
     private String chooseMonster(char tile) {
         List<String> pool = switch (tile) {
-            case 'f' -> List.of("doe", "wolf", "moss_stag", "thornling", "spider");
-            case 's' -> List.of("sand_stalker", "glass_scorpion", "ember_imp", "orc");
-            case 'n' -> List.of("frost_wolf", "crypt_bat", "ice_golem");
-            case 'v' -> List.of("slime", "spider", "reed_serpent", "bog_beast");
-            case 'b' -> List.of("goblin_skirmisher", "skeleton", "ash_scorpion", "wraith", "ember_imp");
-            case 'q', 'm' -> List.of("mountain_goat", "stoneback_goat", "crypt_bat", "ice_golem");
-            case 'w' -> List.of("river_eel", "slime", "reed_serpent");
-            case 'd' -> List.of("crypt_bat", "skeleton", "spider", "wraith", "orc");
-            default -> List.of("sheep", "doe", "meadow_wolf", "thornling");
+            case 'f' -> List.of("doe", "crystal_hare", "moss_stag", "bramble_boar", "thornling", "spider", "bandit_archer", "marsh_drake");
+            case 's' -> List.of("sand_stalker", "glass_scorpion", "ember_tortoise", "ember_imp", "bandit_cutthroat", "orc_raider", "orc_berserker", "red_dragon");
+            case 'n' -> List.of("frost_wolf", "snow_lynx", "crypt_bat", "frost_troll", "ice_golem", "mountain_drake");
+            case 'v' -> List.of("slime", "crystal_hare", "spider", "reed_serpent", "bog_beast", "marsh_drake", "swamp_troll");
+            case 'b' -> List.of("ember_tortoise", "goblin_skirmisher", "ash_scorpion", "skeleton", "wraith", "ember_imp", "bandit_cutthroat", "orc_raider", "orc_shaman", "fire_giant", "red_dragon");
+            case 'q', 'm' -> List.of("mountain_goat", "stoneback_goat", "snow_lynx", "crypt_bat", "mountain_drake", "stone_giant", "hill_giant", "ice_golem");
+            case 'w' -> List.of("river_eel", "slime", "reed_serpent", "marsh_drake");
+            case 'd' -> List.of("crypt_bat", "skeleton", "spider", "wraith", "bandit_cutthroat", "orc_raider", "bone_knight");
+            default -> List.of("sheep", "doe", "crystal_hare", "meadow_wolf", "bramble_boar", "thornling", "bandit_cutthroat", "bandit_archer");
         };
         int cap = Math.min(pool.size(), player.level < 4 ? 2 : player.level < 7 ? 3 : pool.size());
         return pool.get(random.nextInt(cap));

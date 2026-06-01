@@ -1,11 +1,13 @@
 package com.alderfall.game;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 final class AssetCatalog {
     private static final String[] FOLDERS = {
@@ -60,12 +62,33 @@ final class AssetCatalog {
 
     private Path searchAssetFolders(String name) {
         for (String folder : FOLDERS) {
-            Path path = assetsRoot.resolve(folder).resolve(name + ".png");
+            Path folderPath = assetsRoot.resolve(folder);
+            Path path = folderPath.resolve(name + ".png");
             if (Files.exists(path)) {
+                return path;
+            }
+            path = searchAssetFolderRecursively(folderPath, name);
+            if (path != null) {
                 return path;
             }
         }
         return null;
+    }
+
+    private Path searchAssetFolderRecursively(Path folder, String name) {
+        if (!Files.isDirectory(folder)) {
+            return null;
+        }
+        String fileName = name + ".png";
+        try (Stream<Path> paths = Files.walk(folder)) {
+            return paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().equals(fileName))
+                    .findFirst()
+                    .orElse(null);
+        } catch (IOException ignored) {
+            return null;
+        }
     }
 
     private Path rootAsset(String name) {

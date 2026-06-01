@@ -34,6 +34,15 @@ public final class SmokeTest {
         if (state.player.maxMp <= mpBeforeSkill || state.player.skillRank("channeling") != 1) {
             throw new IllegalStateException("Skill allocation failed.");
         }
+        int miningCapBefore = state.player.professionLevelCap(Profession.MINING.id());
+        state.player.skillPoints += 3;
+        state.allocateSkill("trade_foundations");
+        state.allocateSkill("trade_foundations");
+        state.allocateSkill("prospector_path");
+        if (state.player.professionLevelCap(Profession.MINING.id()) <= miningCapBefore
+                || state.player.professionPracticeBonus(Profession.MINING.id()) <= 0) {
+            throw new IllegalStateException("Profession skill branch did not improve cap and output bonus.");
+        }
         Battle statusBattle = new Battle(state.player, GameData.MONSTERS.get("skeleton"), state.random);
         statusBattle.useAbility(1);
         drainBattle(statusBattle);

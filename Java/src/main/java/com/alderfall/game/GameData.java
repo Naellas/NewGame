@@ -124,44 +124,78 @@ public final class GameData {
     }
 
     public static final Map<String, MonsterSpec> MONSTERS = Map.ofEntries(
-            entry("slime", "Bog Slime", "slime", 24, 7, 1, 8, 4),
-            entry("sheep", "Wild Sheep", "sheep", 26, 6, 1, 8, 4),
-            entry("mountain_goat", "Mountain Goat", "mountain_goat", 34, 9, 2, 13, 7),
-            entry("doe", "Woodland Doe", "doe", 30, 8, 1, 10, 6),
-            entry("stag", "Crown Stag", "stag", 44, 12, 3, 18, 12),
-            entry("wolf", "Grey Wolf", "wolf", 32, 10, 2, 12, 7),
-            entry("meadow_wolf", "Meadow Wolf", "wolf", 34, 11, 2, 14, 8),
-            entry("moss_stag", "Moss Stag", "moss_stag", 48, 13, 4, 22, 14),
-            entry("frost_wolf", "Frost Wolf", "frost_wolf", 46, 15, 4, 30, 24),
-            entry("stoneback_goat", "Stoneback Goat", "stoneback_goat", 54, 16, 6, 34, 26),
-            entry("bat", "Cave Bat", "bat", 22, 9, 1, 10, 5),
-            entry("crypt_bat", "Crypt Bat", "crypt_bat", 36, 13, 2, 22, 15),
-            entry("skeleton", "Restless Skeleton", "skeleton", 42, 12, 3, 18, 12),
-            entry("goblin", "Goblin Raider", "goblin", 36, 11, 2, 15, 10),
-            entry("goblin_scout", "Goblin Scout", "goblin_scout", 30, 10, 1, 13, 8),
-            entry("goblin_archer", "Goblin Archer", "goblin_archer", 34, 13, 1, 17, 12),
-            entry("goblin_trapper", "Goblin Trapper", "goblin_trapper", 38, 13, 2, 20, 15),
-            entry("goblin_skirmisher", "Goblin Skirmisher", "goblin_skirmisher", 44, 15, 3, 25, 18),
-            entry("goblin_shaman", "Goblin Shaman", "goblin_shaman", 48, 16, 3, 34, 26),
-            entry("hobgoblin_guard", "Hobgoblin Guard", "hobgoblin_guard", 62, 18, 6, 44, 34),
-            entry("goblin_warlord", "Goblin Warlord", "goblin_warlord", 82, 22, 7, 70, 58),
-            entry("goblin_king", "Goblin King", "goblin_king", 116, 27, 9, 120, 95),
-            entry("spider", "Cave Spider", "spider", 52, 14, 4, 23, 16),
-            entry("wraith", "Ash Wraith", "wraith", 58, 17, 4, 30, 21),
-            entry("orc", "Orc Brute", "orc", 66, 18, 5, 34, 28),
-            entry("bone_knight", "Bone Knight", "skeleton", 92, 23, 9, 78, 64),
-            entry("crypt_revenant", "Crypt Revenant", "wraith", 104, 25, 8, 92, 78),
-            entry("elder_wraith", "Elder Wraith", "wraith", 128, 29, 10, 130, 110),
-            entry("orc_champion", "Orc Champion", "orc", 112, 27, 9, 108, 92),
-            entry("thornling", "Briar Thornling", "thornling", 44, 13, 4, 20, 13),
-            entry("sand_stalker", "Sand Stalker", "sand_stalker", 62, 19, 5, 36, 30),
-            entry("glass_scorpion", "Glass Scorpion", "glass_scorpion", 58, 18, 6, 38, 32),
-            entry("ice_golem", "Ice Golem", "ice_golem", 96, 25, 11, 72, 66),
-            entry("bog_beast", "Bog Beast", "bog_beast", 84, 23, 8, 58, 50),
-            entry("reed_serpent", "Reed Serpent", "reed_serpent", 64, 20, 5, 42, 34),
-            entry("river_eel", "River Eel", "river_eel", 38, 14, 2, 24, 18),
-            entry("ash_scorpion", "Ash Scorpion", "ash_scorpion", 72, 22, 7, 52, 44),
-            entry("ember_imp", "Ember Imp", "ember_imp", 54, 20, 4, 42, 36)
+            monster("slime", "slime", "Bog Slime", "slime", 24, 7, 1, 8, 4),
+
+            monster("beast", "sheep", "Wild Sheep", "sheep", 26, 6, 1, 8, 4),
+            monster("beast", "doe", "Woodland Doe", "doe", 30, 8, 1, 10, 6),
+            monster("beast", "crystal_hare", "Crystal Hare", "crystal_hare", 32, 12, 3, 18, 14),
+            monster("beast", "mountain_goat", "Mountain Goat", "mountain_goat", 34, 9, 2, 13, 7),
+            monster("beast", "wolf", "Grey Wolf", "wolf", 32, 10, 2, 12, 7),
+            monster("beast", "meadow_wolf", "Meadow Wolf", "wolf", 34, 11, 2, 14, 8),
+            monster("beast", "stag", "Crown Stag", "stag", 44, 12, 3, 18, 12),
+            monster("beast", "moss_stag", "Moss Stag", "moss_stag", 48, 13, 4, 22, 14),
+            monster("beast", "frost_wolf", "Frost Wolf", "frost_wolf", 46, 15, 4, 30, 24),
+            monster("beast", "snow_lynx", "Snow Lynx", "snow_lynx", 52, 18, 4, 38, 30),
+            monster("beast", "bramble_boar", "Bramble Boar", "bramble_boar", 58, 17, 6, 36, 28),
+            monster("beast", "stoneback_goat", "Stoneback Goat", "stoneback_goat", 54, 16, 6, 34, 26),
+            monster("beast", "ember_tortoise", "Ember Tortoise", "ember_tortoise", 76, 18, 10, 48, 42),
+
+            monster("bat", "bat", "Cave Bat", "bat", 22, 9, 1, 10, 5),
+            monster("bat", "crypt_bat", "Crypt Bat", "crypt_bat", 36, 13, 2, 22, 15),
+
+            monster("bandit", "bandit_cutthroat", "Bandit Cutthroat", "bandit_cutthroat", 42, 13, 2, 22, 18),
+            monster("bandit", "bandit_archer", "Bandit Archer", "bandit_archer", 38, 14, 2, 24, 20),
+            monster("bandit", "bandit_captain", "Bandit Captain", "bandit_captain", 78, 22, 6, 62, 52),
+
+            monster("dragon", "red_dragon", "Red Dragon", "red_dragon", 132, 31, 10, 140, 125),
+            monster("dragon", "elder_dragon", "Elder Dragon", "elder_dragon", 190, 39, 15, 220, 190),
+
+            monster("drake", "marsh_drake", "Marsh Drake", "marsh_drake", 82, 22, 7, 62, 52),
+            monster("drake", "mountain_drake", "Mountain Drake", "mountain_drake", 96, 25, 8, 76, 66),
+
+            monster("goblin", "goblin", "Goblin Raider", "goblin", 36, 11, 2, 15, 10),
+            monster("goblin", "goblin_scout", "Goblin Scout", "goblin_scout", 30, 10, 1, 13, 8),
+            monster("goblin", "goblin_archer", "Goblin Archer", "goblin_archer", 34, 13, 1, 17, 12),
+            monster("goblin", "goblin_trapper", "Goblin Trapper", "goblin_trapper", 38, 13, 2, 20, 15),
+            monster("goblin", "goblin_skirmisher", "Goblin Skirmisher", "goblin_skirmisher", 44, 15, 3, 25, 18),
+            monster("goblin", "goblin_shaman", "Goblin Shaman", "goblin_shaman", 48, 16, 3, 34, 26),
+            monster("goblin", "hobgoblin_guard", "Hobgoblin Guard", "hobgoblin_guard", 62, 18, 6, 44, 34),
+            monster("goblin", "goblin_warlord", "Goblin Warlord", "goblin_warlord", 82, 22, 7, 70, 58),
+            monster("goblin", "goblin_king", "Goblin King", "goblin_king", 116, 27, 9, 120, 95),
+
+            monster("giant", "hill_giant", "Hill Giant", "hill_giant", 124, 28, 9, 116, 96),
+            monster("giant", "stone_giant", "Stone Giant", "stone_giant", 146, 30, 13, 145, 122),
+            monster("giant", "fire_giant", "Fire Giant", "fire_giant", 154, 33, 11, 160, 138),
+
+            monster("insect", "spider", "Cave Spider", "spider", 52, 14, 4, 23, 16),
+            monster("insect", "glass_scorpion", "Glass Scorpion", "glass_scorpion", 58, 18, 6, 38, 32),
+            monster("insect", "ash_scorpion", "Ash Scorpion", "ash_scorpion", 72, 22, 7, 52, 44),
+
+            monster("orc", "orc", "Orc Brute", "orc", 66, 18, 5, 34, 28),
+            monster("orc", "orc_raider", "Orc Raider", "orc_raider", 72, 20, 5, 46, 38),
+            monster("orc", "orc_berserker", "Orc Berserker", "orc_berserker", 86, 24, 4, 66, 54),
+            monster("orc", "orc_shaman", "Orc Shaman", "orc_shaman", 68, 21, 4, 58, 48),
+            monster("orc", "orc_shieldbearer", "Orc Shieldbearer", "orc_shieldbearer", 92, 21, 9, 72, 60),
+            monster("orc", "orc_champion", "Orc Champion", "orc", 112, 27, 9, 108, 92),
+
+            monster("plant", "thornling", "Briar Thornling", "thornling", 44, 13, 4, 20, 13),
+
+            monster("reptile", "sand_stalker", "Sand Stalker", "sand_stalker", 62, 19, 5, 36, 30),
+            monster("reptile", "bog_beast", "Bog Beast", "bog_beast", 84, 23, 8, 58, 50),
+            monster("reptile", "reed_serpent", "Reed Serpent", "reed_serpent", 64, 20, 5, 42, 34),
+            monster("reptile", "river_eel", "River Eel", "river_eel", 38, 14, 2, 24, 18),
+
+            monster("troll", "swamp_troll", "Swamp Troll", "swamp_troll", 108, 25, 9, 88, 74),
+            monster("troll", "frost_troll", "Frost Troll", "frost_troll", 116, 27, 10, 102, 88),
+
+            monster("undead", "skeleton", "Restless Skeleton", "skeleton", 42, 12, 3, 18, 12),
+            monster("undead", "bone_knight", "Bone Knight", "skeleton", 92, 23, 9, 78, 64),
+            monster("undead", "wraith", "Ash Wraith", "wraith", 58, 17, 4, 30, 21),
+            monster("undead", "crypt_revenant", "Crypt Revenant", "wraith", 104, 25, 8, 92, 78),
+            monster("undead", "elder_wraith", "Elder Wraith", "wraith", 128, 29, 10, 130, 110),
+
+            monster("elemental", "ice_golem", "Ice Golem", "ice_golem", 96, 25, 11, 72, 66),
+            monster("elemental", "ember_imp", "Ember Imp", "ember_imp", 54, 20, 4, 42, 36)
     );
 
     public static final Map<String, Quest> QUESTS = Map.ofEntries(
@@ -829,7 +863,8 @@ public final class GameData {
             ), "palisade_gaps", null)
     );
 
-    private static Map.Entry<String, MonsterSpec> entry(
+    private static Map.Entry<String, MonsterSpec> monster(
+            String species,
             String key,
             String name,
             String sprite,
@@ -839,7 +874,7 @@ public final class GameData {
             int xp,
             int gold
     ) {
-        return Map.entry(key, new MonsterSpec(key, name, sprite, hp, attack, defense, xp, gold));
+        return Map.entry(key, new MonsterSpec(key, name, species, sprite, hp, attack, defense, xp, gold));
     }
 
     private static Map.Entry<String, Quest> quest(
@@ -1020,7 +1055,7 @@ public final class GameData {
         return Map.entry(key, new Equipment(key, name, slot, icon, attackBonus, defenseBonus, hpBonus, mpBonus, minLevel, maxLevel, cost, description));
     }
 
-    public record MonsterSpec(String key, String name, String sprite, int hp, int attack, int defense, int xp, int gold) {
+    public record MonsterSpec(String key, String name, String species, String sprite, int hp, int attack, int defense, int xp, int gold) {
         public Actor createActor() {
             return new Actor(name, sprite, "Monster", hp, 0, attack, defense);
         }

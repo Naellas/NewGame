@@ -127,7 +127,41 @@ public final class Actor {
     }
 
     public int professionLevel(String professionId) {
-        return Profession.levelForXp(professionXp.getOrDefault(professionId, 0));
+        return Profession.levelForXp(professionXp.getOrDefault(professionId, 0), professionLevelCap(professionId));
+    }
+
+    public int professionLevelCap(String professionId) {
+        int cap = Profession.BASE_MAX_LEVEL
+                + skillRank("trade_foundations")
+                + skillRank("master_of_trades");
+        cap += switch (professionId) {
+            case "woodcutting" -> skillRank("forester_path") * 2 + skillRank("coppice_planning") + skillRank("heartwood_harvest");
+            case "fishing" -> skillRank("angler_path") * 2 + skillRank("tide_reader") + skillRank("deepwater_bounty");
+            case "mining" -> skillRank("prospector_path") * 2 + skillRank("seam_sense") + skillRank("gem_cutting");
+            case "crafting" -> skillRank("artisan_path") * 2 + skillRank("measured_cuts") + skillRank("masterwork_fittings");
+            case "weaving" -> skillRank("tailor_path") + skillRank("loom_logic") * 2 + skillRank("sailcloth_patterns");
+            case "leatherworking" -> skillRank("tailor_path") + skillRank("tanner_path") * 2 + skillRank("saddle_stitch");
+            case "cooking" -> skillRank("provisioner_path") + skillRank("spice_blends") * 2 + skillRank("feast_planning");
+            case "survival" -> skillRank("provisioner_path") + skillRank("trailcraft_path") * 2 + skillRank("emergency_cache");
+            default -> 0;
+        };
+        return Math.max(1, Math.min(Profession.ABSOLUTE_MAX_LEVEL, cap));
+    }
+
+    public int professionPracticeBonus(String professionId) {
+        int bonus = skillRank("trade_foundations") + skillRank("master_of_trades");
+        bonus += switch (professionId) {
+            case "woodcutting" -> skillRank("forester_path") + skillRank("resin_tapping") + skillRank("heartwood_harvest");
+            case "fishing" -> skillRank("angler_path") + skillRank("netcraft") + skillRank("deepwater_bounty");
+            case "mining" -> skillRank("prospector_path") + skillRank("blast_mining") + skillRank("gem_cutting");
+            case "crafting" -> skillRank("artisan_path") + skillRank("jig_templates") + skillRank("masterwork_fittings");
+            case "weaving" -> skillRank("tailor_path") + skillRank("dye_baths") + skillRank("sailcloth_patterns");
+            case "leatherworking" -> skillRank("tailor_path") + skillRank("curing_racks") + skillRank("reinforced_hide");
+            case "cooking" -> skillRank("provisioner_path") + skillRank("stockpot_rhythm") + skillRank("feast_planning");
+            case "survival" -> skillRank("provisioner_path") + skillRank("weather_eye") + skillRank("emergency_cache");
+            default -> 0;
+        };
+        return Math.max(0, bonus);
     }
 
     public List<String> gainProfessionXp(String professionId, int amount) {

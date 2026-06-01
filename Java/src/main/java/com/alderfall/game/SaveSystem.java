@@ -81,6 +81,22 @@ public final class SaveSystem {
         String saveId = nextSaveId(state, displaySaveName);
         Path path = savePath(saveId);
         Files.createDirectories(path.getParent());
+        writeSave(state, saveId, characterId, displaySaveName, path);
+    }
+
+    public void overwrite(GameState state, String saveId, String saveName) throws IOException {
+        Path path = savePath(saveId);
+        if (!Files.exists(path)) {
+            throw new IOException("Save file no longer exists.");
+        }
+        state.refreshPlayerVillageGrowth();
+        String characterId = saveIdFor(state.player.name);
+        String displaySaveName = saveName == null || saveName.isBlank() ? state.world.label(state.currentMapId) : saveName.strip();
+        Files.createDirectories(path.getParent());
+        writeSave(state, saveId, characterId, displaySaveName, path);
+    }
+
+    private void writeSave(GameState state, String saveId, String characterId, String displaySaveName, Path path) throws IOException {
         Properties props = new Properties();
         SavePosition position = normalizedSavePosition(state);
         props.setProperty("saveId", saveId);

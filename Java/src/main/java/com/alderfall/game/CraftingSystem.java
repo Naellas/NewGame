@@ -53,8 +53,29 @@ public final class CraftingSystem {
 
     public static final Map<String, ItemInfo> CRAFTING_ITEMS = Map.ofEntries(
             Map.entry("wood", new ItemInfo("Wood", "material_wood", "Crafting ingredient from chopped trees.")),
+            Map.entry("oak_wood", new ItemInfo("Oak Wood", "material_oak_wood", "Dense shield-ready timber from oak trees.")),
+            Map.entry("birch_wood", new ItemInfo("Birch Wood", "material_birch_wood", "Pale flexible wood used for light handles and bows.")),
+            Map.entry("pine_wood", new ItemInfo("Pine Wood", "material_pine_wood", "Resinous softwood for practical camp and tool work.")),
+            Map.entry("willow_wood", new ItemInfo("Willow Wood", "material_willow_wood", "Supple wood valued for bows and binding frames.")),
+            Map.entry("maple_wood", new ItemInfo("Maple Wood", "material_maple_wood", "Hard smooth-grained wood for fine hafts and staves.")),
+            Map.entry("ash_wood", new ItemInfo("Ash Wood", "material_ash_wood", "Springy wood favored for bows, spears, and staff cores.")),
+            Map.entry("elder_wood", new ItemInfo("Elder Wood", "material_elder_wood", "Old spell-friendly wood from elder trees.")),
+            Map.entry("magic_wood", new ItemInfo("Magic Wood", "material_magic_wood", "Blue-glowing timber from enchanted trees.")),
+            Map.entry("deadwood", new ItemInfo("Deadwood", "material_deadwood", "Dry brittle wood that chars into useful forge fuel.")),
+            Map.entry("fruitwood", new ItemInfo("Fruitwood", "material_fruitwood", "Sweet-smelling wood from orchard trees.")),
+            Map.entry("ironwood", new ItemInfo("Ironwood", "material_ironwood", "Heavy wood tough enough for armor plates.")),
+            Map.entry("enchanted_bark", new ItemInfo("Enchanted Bark", "material_enchanted_bark", "Living bark peeled from old magical stumps.")),
+            Map.entry("glowroot", new ItemInfo("Glowroot", "material_glowroot", "Luminous root fiber used in advanced alchemy and warding.")),
             Map.entry("stone", new ItemInfo("Stone", "material_stone", "Crafting ingredient chipped from mountain rock.")),
             Map.entry("iron_ore", new ItemInfo("Iron Ore", "material_iron_ore", "Metalworking ingredient mined from mountain seams.")),
+            Map.entry("copper_ore", new ItemInfo("Copper Ore", "material_copper_ore", "Conductive ore used in fittings, rings, and storm gear.")),
+            Map.entry("tin_ore", new ItemInfo("Tin Ore", "material_tin_ore", "Soft pale ore used in alloy work.")),
+            Map.entry("silver_ore", new ItemInfo("Silver Ore", "material_silver_ore", "Bright ore prized for charms and warded weapons.")),
+            Map.entry("gold_ore", new ItemInfo("Gold Ore", "material_gold_ore", "Soft precious ore for fine medallions and fittings.")),
+            Map.entry("mithril_ore", new ItemInfo("Mithril Ore", "material_mithril_ore", "Light blue ore used in high-tier blades and armor.")),
+            Map.entry("cobalt_ore", new ItemInfo("Cobalt Ore", "material_cobalt_ore", "Deep blue ore for cold and storm-tempered forgework.")),
+            Map.entry("adamantite_ore", new ItemInfo("Adamantite Ore", "material_adamantite_ore", "Rare purple ore for near-mythic equipment.")),
+            Map.entry("steel_scrap", new ItemInfo("Steel Scrap", "material_steel_scrap", "Recoverable steel from old battlefield deposits.")),
             Map.entry("wild_meat", new ItemInfo("Wild Meat", "material_wild_meat", "Cooking ingredient from hunted animals.")),
             Map.entry("wool", new ItemInfo("Wool", "material_wool", "Soft fiber from sheep and goats.")),
             Map.entry("skin", new ItemInfo("Skin", "material_skin", "Supple hide used for leatherwork.")),
@@ -99,6 +120,14 @@ public final class CraftingSystem {
             recipe("campfire_coal", "Campfire Coal", null,
                     Map.of("wood", 2, "flint", 1), "coal", 1, 70,
                     "Char wood into rough field fuel."),
+            recipe("deadwood_charcoal", "Deadwood Charcoal", null,
+                    Map.of("deadwood", 2, "flint", 1), "coal", 3, 65,
+                    Profession.WOODCUTTING.id(), Map.of(Profession.WOODCUTTING.id(), 1),
+                    "Burn dry deadwood down into hotter forge fuel."),
+            recipe("tin_copper_alloy", "Tin-Copper Alloy", Workstation.ANVIL,
+                    Map.of("copper_ore", 2, "tin_ore", 1, "coal", 1), "steel_scrap", 1, 90,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 2, Profession.MINING.id(), 2),
+                    "Work soft ores into repairable metal stock for simple fittings."),
             recipe("coconut_rations", "Coconut Rations", null,
                     Map.of("coconut", 2, "plant_fiber", 1), "trail_rations", 1, 80,
                     Profession.COOKING.id(), Map.of(Profession.COOKING.id(), 2, Profession.SURVIVAL.id(), 2),
@@ -120,17 +149,41 @@ public final class CraftingSystem {
                     Profession.WEAVING.id(), Map.of(Profession.WEAVING.id(), 2, Profession.FISHING.id(), 2),
                     "A simple rack for nets, ropes, and seaside supplies."),
             recipe("oaken_roundshield", "Oaken Roundshield", Workstation.CARPENTER,
-                    Map.of("wood", 4, "skin", 1, "plant_fiber", 2), "oaken_roundshield", 1, 120,
+                    Map.of("oak_wood", 4, "skin", 1, "plant_fiber", 2), "oaken_roundshield", 1, 120,
                     Profession.CRAFTING.id(), Map.of(Profession.WOODCUTTING.id(), 2, Profession.CRAFTING.id(), 2),
                     "A wooden shield bound with hide."),
             recipe("oak_bow", "Oak Bow", Workstation.CARPENTER,
-                    Map.of("wood", 5, "wool", 1, "plant_fiber", 2), "oak_bow", 1, 130,
+                    Map.of("oak_wood", 5, "wool", 1, "plant_fiber", 2), "oak_bow", 1, 130,
                     Profession.WEAVING.id(), Map.of(Profession.WOODCUTTING.id(), 2, Profession.WEAVING.id(), 2),
                     "A simple bow strung with twisted wool cord."),
+            recipe("ash_bow", "Ash Bow", Workstation.CARPENTER,
+                    Map.of("ash_wood", 5, "willow_wood", 1, "plant_fiber", 2), "ash_bow", 1, 150,
+                    Profession.WEAVING.id(), Map.of(Profession.WOODCUTTING.id(), 3, Profession.WEAVING.id(), 3),
+                    "A springy bow carved from ash and backed with willow."),
+            recipe("oakheart_staff", "Oakheart Staff", Workstation.CARPENTER,
+                    Map.of("oak_wood", 3, "elder_wood", 1, "crystal_dust", 1), "oakheart_staff", 1, 125,
+                    Profession.CRAFTING.id(), Map.of(Profession.WOODCUTTING.id(), 2, Profession.CRAFTING.id(), 2),
+                    "A sturdy staff with an elderwood focus point."),
+            recipe("ashwind_staff", "Ashwind Staff", Workstation.CARPENTER,
+                    Map.of("ash_wood", 3, "birch_wood", 2, "plant_fiber", 2), "ashwind_staff", 1, 145,
+                    Profession.CRAFTING.id(), Map.of(Profession.WOODCUTTING.id(), 3, Profession.CRAFTING.id(), 3),
+                    "Light ash wood shaped into a quick spell focus."),
+            recipe("frostroot_staff", "Frostroot Staff", Workstation.CARPENTER,
+                    Map.of("glowroot", 2, "willow_wood", 2, "frost_shard", 1), "frostroot_staff", 1, 170,
+                    Profession.CRAFTING.id(), Map.of(Profession.WOODCUTTING.id(), 4, Profession.CRAFTING.id(), 4),
+                    "A pale root-bound focus that keeps a chill in the grain."),
+            recipe("stormcall_staff", "Stormcall Staff", Workstation.CARPENTER,
+                    Map.of("magic_wood", 3, "cobalt_ore", 2, "copper_ore", 2), "stormcall_staff", 1, 195,
+                    Profession.CRAFTING.id(), Map.of(Profession.WOODCUTTING.id(), 5, Profession.MINING.id(), 4),
+                    "A forked staff wired with copper and cobalt seams."),
             recipe("woodcutter_axe", "Woodcutter Axe", Workstation.ANVIL,
                     Map.of("wood", 2, "iron_ore", 2, "coal", 1), "woodcutter_axe", 1, 120,
                     Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 2, Profession.MINING.id(), 2),
                     "A practical axe that speeds tree chopping."),
+            recipe("copper_signet", "Copper Signet", Workstation.ANVIL,
+                    Map.of("copper_ore", 3, "coal", 1), "copper_signet", 1, 90,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 2, Profession.MINING.id(), 1),
+                    "A simple ring stamped from heated copper."),
             recipe("iron_pickaxe", "Iron Pickaxe", Workstation.ANVIL,
                     Map.of("wood", 2, "iron_ore", 3, "coal", 1), "iron_pickaxe", 1, 140,
                     Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 3, Profession.MINING.id(), 2),
@@ -143,6 +196,50 @@ public final class CraftingSystem {
                     Map.of("iron_ore", 7, "skin", 2, "plant_fiber", 2, "coal", 2), "iron_mail", 1, 180,
                     Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 3, Profession.LEATHERWORKING.id(), 2),
                     "Protective mail rings over leather backing."),
+            recipe("iron_kite_shield", "Iron Kite Shield", Workstation.ANVIL,
+                    Map.of("iron_ore", 5, "oak_wood", 2, "coal", 2), "iron_kite_shield", 1, 180,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4, Profession.MINING.id(), 3),
+                    "A pointed iron shield built over a solid oak back."),
+            recipe("steel_sword", "Steel Sword", Workstation.ANVIL,
+                    Map.of("steel_scrap", 3, "iron_ore", 3, "coal", 3, "maple_wood", 1), "steel_sword", 1, 190,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4, Profession.MINING.id(), 4),
+                    "A sharper blade from recovered steel and fresh iron."),
+            recipe("steel_plate", "Steel Plate", Workstation.ANVIL,
+                    Map.of("steel_scrap", 5, "iron_ore", 6, "coal", 4, "skin", 2), "steel_plate", 1, 230,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 5, Profession.MINING.id(), 4),
+                    "Heavy steel armor built around leather straps."),
+            recipe("steel_greaves", "Steel Greaves", Workstation.ANVIL,
+                    Map.of("steel_scrap", 3, "iron_ore", 4, "coal", 2, "skin", 1), "steel_greaves", 1, 185,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4, Profession.MINING.id(), 4),
+                    "Leg armor with a dependable steel bite."),
+            recipe("silver_mace", "Silver Mace", Workstation.ANVIL,
+                    Map.of("silver_ore", 3, "iron_ore", 3, "coal", 2, "maple_wood", 1), "silver_mace", 1, 190,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4, Profession.MINING.id(), 4),
+                    "A polished mace useful against warded foes."),
+            recipe("steelcleaver", "Steelcleaver", Workstation.ANVIL,
+                    Map.of("steel_scrap", 4, "iron_ore", 3, "coal", 3, "ash_wood", 1), "steelcleaver", 1, 210,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 5, Profession.MINING.id(), 4),
+                    "A wide axe blade made for splitting armor."),
+            recipe("stormguard_plate", "Stormguard Plate", Workstation.ANVIL,
+                    Map.of("cobalt_ore", 4, "copper_ore", 4, "steel_scrap", 4, "coal", 3), "stormguard_plate", 1, 260,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 7, Profession.MINING.id(), 6),
+                    "Heavy armor grounded with copper and cobalt channels."),
+            recipe("frostvein_sword", "Frostvein Sword", Workstation.ANVIL,
+                    Map.of("cobalt_ore", 3, "silver_ore", 2, "frost_shard", 2, "coal", 2), "frostvein_sword", 1, 230,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 6, Profession.MINING.id(), 5),
+                    "Cold metal with pale blue seams."),
+            recipe("starforged_sword", "Starforged Sword", Workstation.ANVIL,
+                    Map.of("mithril_ore", 4, "adamantite_ore", 2, "silver_ore", 3, "magic_wood", 1), "starforged_sword", 1, 320,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 10, Profession.MINING.id(), 9),
+                    "A silver star-metal blade with a singing edge."),
+            recipe("starforged_plate", "Starforged Plate", Workstation.ANVIL,
+                    Map.of("mithril_ore", 6, "adamantite_ore", 4, "cobalt_ore", 5, "glowroot", 2), "starforged_plate", 1, 390,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 12, Profession.MINING.id(), 10),
+                    "A near-mythic suit of fallen star-metal."),
+            recipe("heartwood_vest", "Heartwood Vest", Workstation.CARPENTER,
+                    Map.of("ironwood", 4, "enchanted_bark", 3, "magic_wood", 2, "skin", 2), "heartwood_vest", 1, 280,
+                    Profession.CRAFTING.id(), Map.of(Profession.WOODCUTTING.id(), 8, Profession.CRAFTING.id(), 7),
+                    "Living wood plates over supple leather."),
             recipe("frostguard_aegis", "Frostguard Aegis", Workstation.ANVIL,
                     Map.of("iron_ore", 5, "frost_shard", 2, "skin", 1, "crystal_dust", 1), "frostguard_aegis", 1, 210,
                     Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4, Profession.MINING.id(), 3),
@@ -375,7 +472,7 @@ public final class CraftingSystem {
             if (random.nextDouble() < 0.25) {
                 output.put("skin", 1);
             }
-            applyProfessionGatherBonuses(output, profession, skillLevel, random);
+            applyProfessionGatherBonuses(actor, output, profession, skillLevel, random);
             ticks = adjustedGatherTicks(ticks, skillLevel);
             label = axe ? "Chopping trees" : stoneAxe ? "Hewing branches" : "Gathering fallen wood";
         } else if (candidate.terrain() == 'm' || candidate.terrain() == 'q') {
@@ -390,7 +487,7 @@ public final class CraftingSystem {
             if (random.nextDouble() < oreChance) {
                 output.put("iron_ore", ironPick && random.nextBoolean() ? 2 : 1);
             }
-            applyProfessionGatherBonuses(output, profession, skillLevel, random);
+            applyProfessionGatherBonuses(actor, output, profession, skillLevel, random);
             ticks = adjustedGatherTicks(ticks, skillLevel);
             label = stonePick ? "Mining mountain stone" : "Chipping loose stone";
         } else if (candidate.terrain() == 'w') {
@@ -405,7 +502,7 @@ public final class CraftingSystem {
             if (random.nextDouble() < 0.08 + skillLevel * 0.025) {
                 addLoot(output, "raw_fish", 1);
             }
-            applyProfessionGatherBonuses(output, profession, skillLevel, random);
+            applyProfessionGatherBonuses(actor, output, profession, skillLevel, random);
             ticks = adjustedGatherTicks(ticks, skillLevel);
             label = lure ? "Fishing with shell lure" : "Fishing";
         } else if (candidate.terrain() == 'P') {
@@ -415,7 +512,7 @@ public final class CraftingSystem {
             ticks = adjustedGatherTicks(propGatherTicks(candidate.asset()), skillLevel);
             label = "Gathering from " + candidate.label();
             addPropGatherOutput(candidate.asset(), output, random);
-            applyProfessionGatherBonuses(output, profession, skillLevel, random);
+            applyProfessionGatherBonuses(actor, output, profession, skillLevel, random);
         } else {
             return "Nothing useful to gather here.";
         }
@@ -473,6 +570,36 @@ public final class CraftingSystem {
         if (lower.contains("net")) {
             return "net rack";
         }
+        if (lower.contains("copper")) {
+            return "copper ore";
+        }
+        if (lower.contains("mithril")) {
+            return "mithril ore";
+        }
+        if (lower.contains("cobalt")) {
+            return "cobalt ore";
+        }
+        if (lower.contains("adamantite")) {
+            return "adamantite ore";
+        }
+        if (lower.contains("tin")) {
+            return "tin ore";
+        }
+        if (lower.contains("silver")) {
+            return "silver ore";
+        }
+        if (lower.contains("gold")) {
+            return "gold ore";
+        }
+        if (lower.contains("steel_scrap")) {
+            return "steel scrap";
+        }
+        if (lower.contains("coal")) {
+            return "coal";
+        }
+        if (lower.contains("ore")) {
+            return "ore";
+        }
         if (lower.contains("rock") || lower.contains("stone") || lower.contains("pebble") || lower.contains("cairn")) {
             return "stones";
         }
@@ -508,6 +635,10 @@ public final class CraftingSystem {
     }
 
     private static void addPropGatherOutput(String asset, Map<String, Integer> output, Random random) {
+        String lower = asset == null ? "" : asset.toLowerCase();
+        if (addTypedWoodOutput(lower, output, random) || addTypedOreOutput(lower, output, random)) {
+            return;
+        }
         switch (propProfile(asset)) {
             case WOOD -> {
                 addLoot(output, "wood", 1 + random.nextInt(2));
@@ -633,6 +764,112 @@ public final class CraftingSystem {
         }
     }
 
+    private static boolean addTypedWoodOutput(String lower, Map<String, Integer> output, Random random) {
+        String woodKey = null;
+        if (lower.contains("oak_harvestable")) {
+            woodKey = "oak_wood";
+        } else if (lower.contains("birch")) {
+            woodKey = "birch_wood";
+        } else if (lower.contains("pine_harvestable")) {
+            woodKey = "pine_wood";
+        } else if (lower.contains("willow")) {
+            woodKey = "willow_wood";
+        } else if (lower.contains("maple")) {
+            woodKey = "maple_wood";
+        } else if (lower.contains("ash_harvestable") || lower.contains("fallen_ash")) {
+            woodKey = "ash_wood";
+        } else if (lower.contains("elder")) {
+            woodKey = "elder_wood";
+        } else if (lower.contains("magical")) {
+            woodKey = "magic_wood";
+        } else if (lower.contains("deadwood")) {
+            woodKey = "deadwood";
+        } else if (lower.contains("fruit")) {
+            woodKey = "fruitwood";
+        } else if (lower.contains("ironwood")) {
+            woodKey = "ironwood";
+        } else if (lower.contains("enchanted_stump")) {
+            woodKey = "enchanted_bark";
+        } else if (lower.contains("glowing_root")) {
+            woodKey = "glowroot";
+        }
+        if (woodKey == null) {
+            return false;
+        }
+        addLoot(output, woodKey, 1 + random.nextInt(2));
+        if (lower.contains("ironwood") || lower.contains("magical") || lower.contains("glowing_root")) {
+            addLoot(output, woodKey, 1);
+        }
+        if (random.nextDouble() < 0.45) {
+            addLoot(output, "wood", 1);
+        }
+        if (lower.contains("fruit") && random.nextDouble() < 0.65) {
+            addLoot(output, "garden_vegetables", 1);
+        }
+        if ((lower.contains("magical") || lower.contains("enchanted") || lower.contains("glowing_root"))
+                && random.nextDouble() < 0.55) {
+            addLoot(output, "crystal_dust", 1);
+        }
+        if (lower.contains("deadwood") && random.nextDouble() < 0.55) {
+            addLoot(output, "coal", 1);
+        }
+        if (random.nextDouble() < 0.35) {
+            addLoot(output, "plant_fiber", 1);
+        }
+        return true;
+    }
+
+    private static boolean addTypedOreOutput(String lower, Map<String, Integer> output, Random random) {
+        String oreKey = null;
+        if (lower.contains("iron_vein")) {
+            oreKey = "iron_ore";
+        } else if (lower.contains("copper")) {
+            oreKey = "copper_ore";
+        } else if (lower.contains("coal")) {
+            oreKey = "coal";
+        } else if (lower.contains("mithril")) {
+            oreKey = "mithril_ore";
+        } else if (lower.contains("cobalt")) {
+            oreKey = "cobalt_ore";
+        } else if (lower.contains("adamantite")) {
+            oreKey = "adamantite_ore";
+        } else if (lower.contains("tin")) {
+            oreKey = "tin_ore";
+        } else if (lower.contains("silver")) {
+            oreKey = "silver_ore";
+        } else if (lower.contains("gold")) {
+            oreKey = "gold_ore";
+        } else if (lower.contains("crystal_vein")) {
+            oreKey = "crystal_dust";
+        } else if (lower.contains("steel_scrap")) {
+            oreKey = "steel_scrap";
+        }
+        if (oreKey == null) {
+            return false;
+        }
+        int amount = switch (oreKey) {
+            case "coal", "crystal_dust" -> 2 + random.nextInt(2);
+            case "adamantite_ore", "mithril_ore" -> 1;
+            default -> 1 + random.nextInt(2);
+        };
+        addLoot(output, oreKey, amount);
+        if (!"coal".equals(oreKey) && random.nextDouble() < 0.65) {
+            addLoot(output, "stone", 1);
+        }
+        if ("steel_scrap".equals(oreKey)) {
+            if (random.nextDouble() < 0.45) {
+                addLoot(output, "iron_ore", 1);
+            }
+            if (random.nextDouble() < 0.35) {
+                addLoot(output, "coal", 1);
+            }
+        }
+        if ("crystal_dust".equals(oreKey) && random.nextDouble() < 0.35) {
+            addLoot(output, "frost_shard", 1);
+        }
+        return true;
+    }
+
     private static List<Actor> gatherParticipants(Actor actor, List<Actor> helpers) {
         List<Actor> participants = new ArrayList<>();
         participants.add(actor);
@@ -643,13 +880,14 @@ public final class CraftingSystem {
     }
 
     private static int effectiveProfessionLevel(Actor actor, List<Actor> helpers, String profession) {
-        int level = actor.professionLevel(profession);
+        int level = actor.professionLevel(profession) + actor.professionPracticeBonus(profession);
         if (helpers != null) {
             for (Actor helper : helpers) {
-                level += Math.max(0, helper.professionLevel(profession) - 1) / 2;
+                int helperLevel = helper.professionLevel(profession) + helper.professionPracticeBonus(profession);
+                level += Math.max(0, helperLevel - 1) / 2;
             }
         }
-        return Math.max(1, Math.min(Profession.MAX_LEVEL + 4, level));
+        return Math.max(1, Math.min(Profession.ABSOLUTE_MAX_LEVEL + 4, level));
     }
 
     private static int adjustedGatherTicks(int ticks, int skillLevel) {
@@ -657,7 +895,7 @@ public final class CraftingSystem {
         return Math.max(18, (int) Math.round(ticks * multiplier));
     }
 
-    private static void applyProfessionGatherBonuses(Map<String, Integer> output, String profession, int skillLevel, Random random) {
+    private static void applyProfessionGatherBonuses(Actor actor, Map<String, Integer> output, String profession, int skillLevel, Random random) {
         int bonusRolls = Math.max(0, skillLevel - 1);
         for (int i = 0; i < bonusRolls; i++) {
             if (random.nextDouble() >= 0.16 + skillLevel * 0.018) {
@@ -682,6 +920,61 @@ public final class CraftingSystem {
                 default -> {
                 }
             }
+        }
+        applyUniqueProfessionPerks(actor, output, profession, random);
+    }
+
+    private static void applyUniqueProfessionPerks(Actor actor, Map<String, Integer> output, String profession, Random random) {
+        if (actor == null) {
+            return;
+        }
+        switch (profession) {
+            case "woodcutting" -> {
+                rollPerkLoot(actor, random, "resin_tapping", output, "plant_fiber", "herb_leaf");
+                rollPerkLoot(actor, random, "heartwood_harvest", output, "wood", "herb_seed");
+            }
+            case "fishing" -> {
+                rollPerkLoot(actor, random, "tide_reader", output, "seashell", "plant_fiber");
+                rollPerkLoot(actor, random, "netcraft", output, "raw_fish", "raw_fish");
+                rollPerkLoot(actor, random, "deepwater_bounty", output, "raw_fish", "shell_lure");
+            }
+            case "mining" -> {
+                rollPerkLoot(actor, random, "seam_sense", output, "iron_ore", "coal");
+                rollPerkLoot(actor, random, "blast_mining", output, "stone", "iron_ore");
+                rollPerkLoot(actor, random, "gem_cutting", output, "crystal_dust", "iron_ore");
+            }
+            case "weaving" -> {
+                rollPerkLoot(actor, random, "loom_logic", output, "plant_fiber", "wool");
+                rollPerkLoot(actor, random, "dye_baths", output, "herb_leaf", "plant_fiber");
+                rollPerkLoot(actor, random, "sailcloth_patterns", output, "wool", "plant_fiber");
+            }
+            case "leatherworking" -> {
+                rollPerkLoot(actor, random, "tanner_path", output, "skin", "bone");
+                rollPerkLoot(actor, random, "curing_racks", output, "skin", "skin");
+                rollPerkLoot(actor, random, "reinforced_hide", output, "skin", "bone");
+            }
+            case "cooking" -> {
+                rollPerkLoot(actor, random, "spice_blends", output, "herb_leaf", "garden_vegetables");
+                rollPerkLoot(actor, random, "stockpot_rhythm", output, "garden_vegetables", "raw_fish");
+                rollPerkLoot(actor, random, "feast_planning", output, "garden_vegetables", "herb_leaf");
+            }
+            default -> {
+                rollPerkLoot(actor, random, "trailcraft_path", output, "flint", "herb_leaf");
+                rollPerkLoot(actor, random, "weather_eye", output, "mushroom_spores", "herb_leaf");
+                rollPerkLoot(actor, random, "snare_lines", output, "skin", "bone");
+                rollPerkLoot(actor, random, "emergency_cache", output, "flint", "mushroom_spores");
+            }
+        }
+    }
+
+    private static void rollPerkLoot(Actor actor, Random random, String skill, Map<String, Integer> output, String common, String rare) {
+        int rank = actor.skillRank(skill);
+        if (rank <= 0) {
+            return;
+        }
+        double chance = 0.12 + rank * 0.10;
+        if (random.nextDouble() < chance) {
+            addLoot(output, random.nextDouble() < 0.72 ? common : rare, 1);
         }
     }
 
@@ -719,6 +1012,11 @@ public final class CraftingSystem {
         }
         if (lower.contains("crystal") || lower.contains("ice_crystals")) {
             return PropProfile.CRYSTAL;
+        }
+        if (lower.contains("ore") || lower.contains("coal") || lower.contains("mithril") || lower.contains("cobalt")
+                || lower.contains("adamantite") || lower.contains("copper") || lower.contains("silver")
+                || lower.contains("gold") || lower.contains("steel_scrap")) {
+            return PropProfile.STONE;
         }
         if (lower.contains("bone") || lower.contains("skull")) {
             return PropProfile.BONE;
@@ -777,12 +1075,30 @@ public final class CraftingSystem {
                 actor.consumeItem(entry.getKey());
             }
         }
-        int skillLevel = actor.professionLevel(recipe.profession());
+        int skillLevel = actor.professionLevel(recipe.profession()) + actor.professionPracticeBonus(recipe.profession());
         int ticks = adjustedGatherTicks(recipe.ticks(), skillLevel);
         int xp = 10 + Math.max(1, recipe.cost().values().stream().mapToInt(Integer::intValue).sum()) * 3;
-        activeTask = new ActiveTask("Crafting " + recipe.name(), ticks, Map.of(recipe.resultKey(), recipe.resultAmount()), 1,
+        int resultAmount = recipe.resultAmount() + craftedOutputBonus(actor, recipe);
+        activeTask = new ActiveTask("Crafting " + recipe.name(), ticks, Map.of(recipe.resultKey(), resultAmount), 1,
                 recipe.profession(), xp, List.of(actor));
         return "Crafting " + recipe.name() + "...";
+    }
+
+    private static int craftedOutputBonus(Actor actor, Recipe recipe) {
+        String profession = recipe.profession();
+        int bonus = 0;
+        if ("crafting".equals(profession)) {
+            bonus += actor.skillRank("jig_templates") >= 2 ? 1 : 0;
+            bonus += actor.skillRank("masterwork_fittings");
+        } else if ("weaving".equals(profession)) {
+            bonus += actor.skillRank("sailcloth_patterns");
+        } else if ("leatherworking".equals(profession)) {
+            bonus += actor.skillRank("saddle_stitch");
+        } else if ("cooking".equals(profession)) {
+            bonus += actor.skillRank("stockpot_rhythm") >= 2 ? 1 : 0;
+            bonus += actor.skillRank("feast_planning");
+        }
+        return Math.max(0, bonus);
     }
 
     public String tick(Actor actor) {
@@ -857,6 +1173,15 @@ public final class CraftingSystem {
     private static void rollMonsterLoot(String monsterKey, Random random, Map<String, Integer> loot) {
         switch (monsterKey) {
             case "sheep" -> addLoot(loot, "wool", 1 + random.nextInt(2));
+            case "crystal_hare" -> {
+                addLoot(loot, "skin", 1);
+                if (random.nextDouble() < 0.55) {
+                    addLoot(loot, "crystal_dust", 1);
+                }
+                if (random.nextDouble() < 0.35) {
+                    addLoot(loot, "wild_meat", 1);
+                }
+            }
             case "mountain_goat", "stoneback_goat" -> {
                 addLoot(loot, "wool", 1);
                 if (random.nextDouble() < 0.65) {
@@ -885,6 +1210,25 @@ public final class CraftingSystem {
                     addLoot(loot, "herb_leaf", 1);
                 }
             }
+            case "bramble_boar" -> {
+                addLoot(loot, "skin", 1);
+                addLoot(loot, "wild_meat", 1);
+                if (random.nextDouble() < 0.60) {
+                    addLoot(loot, "horn", 1);
+                }
+                if (random.nextDouble() < 0.45) {
+                    addLoot(loot, "plant_fiber", 1);
+                }
+            }
+            case "snow_lynx" -> {
+                addLoot(loot, "skin", 1);
+                if (random.nextDouble() < 0.55) {
+                    addLoot(loot, "wild_meat", 1);
+                }
+                if (random.nextDouble() < 0.55) {
+                    addLoot(loot, "frost_shard", 1);
+                }
+            }
             case "wolf", "meadow_wolf", "frost_wolf" -> {
                 addLoot(loot, "skin", 1);
                 if (random.nextDouble() < 0.45) {
@@ -899,7 +1243,8 @@ public final class CraftingSystem {
                     addLoot(loot, "venom_sac", 1);
                 }
             }
-            case "sand_stalker", "bog_beast", "glass_scorpion", "reed_serpent", "river_eel", "ash_scorpion" -> {
+            case "sand_stalker", "bog_beast", "glass_scorpion", "reed_serpent", "river_eel", "ash_scorpion",
+                    "marsh_drake", "mountain_drake" -> {
                 addLoot(loot, "scale", 1);
                 if (random.nextDouble() < 0.5) {
                     addLoot(loot, "skin", 1);
@@ -912,6 +1257,48 @@ public final class CraftingSystem {
                 }
                 if ("reed_serpent".equals(monsterKey) || "river_eel".equals(monsterKey)) {
                     addLoot(loot, "venom_sac", 1);
+                }
+                if ("marsh_drake".equals(monsterKey) && random.nextDouble() < 0.55) {
+                    addLoot(loot, "venom_sac", 1);
+                }
+                if ("mountain_drake".equals(monsterKey) && random.nextDouble() < 0.55) {
+                    addLoot(loot, "stone", 1);
+                }
+            }
+            case "red_dragon", "elder_dragon" -> {
+                addLoot(loot, "scale", 2);
+                addLoot(loot, "ember_shard", 1 + random.nextInt(2));
+                if ("elder_dragon".equals(monsterKey)) {
+                    addLoot(loot, "bone", 1);
+                }
+            }
+            case "swamp_troll", "frost_troll" -> {
+                addLoot(loot, "skin", 1);
+                addLoot(loot, "bone", 1);
+                if ("swamp_troll".equals(monsterKey) && random.nextDouble() < 0.55) {
+                    addLoot(loot, "venom_sac", 1);
+                }
+                if ("frost_troll".equals(monsterKey)) {
+                    addLoot(loot, "frost_shard", 1);
+                }
+            }
+            case "hill_giant", "stone_giant", "fire_giant" -> {
+                addLoot(loot, "bone", 1);
+                addLoot(loot, "stone", "hill_giant".equals(monsterKey) ? 1 : 2);
+                if (random.nextDouble() < 0.55) {
+                    addLoot(loot, "iron_ore", 1);
+                }
+                if ("fire_giant".equals(monsterKey)) {
+                    addLoot(loot, "ember_shard", 1);
+                }
+            }
+            case "ember_tortoise" -> {
+                addLoot(loot, "scale", 2);
+                if (random.nextDouble() < 0.60) {
+                    addLoot(loot, "ember_shard", 1);
+                }
+                if (random.nextDouble() < 0.35) {
+                    addLoot(loot, "stone", 1);
                 }
             }
             case "skeleton" -> addLoot(loot, "bone", 1 + random.nextInt(2));
@@ -927,7 +1314,9 @@ public final class CraftingSystem {
                 addLoot(loot, "frost_shard", 1);
             }
             case "goblin", "goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher",
-                    "goblin_shaman", "hobgoblin_guard", "goblin_warlord", "goblin_king", "orc" -> {
+                    "goblin_shaman", "hobgoblin_guard", "goblin_warlord", "goblin_king",
+                    "bandit_cutthroat", "bandit_archer", "bandit_captain",
+                    "orc", "orc_raider", "orc_berserker", "orc_shaman", "orc_shieldbearer", "orc_champion" -> {
                 if (random.nextDouble() < 0.7) {
                     addLoot(loot, "skin", 1);
                 }

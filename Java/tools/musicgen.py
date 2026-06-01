@@ -9,6 +9,7 @@ Usage:
     python tools/musicgen.py
     python tools/musicgen.py --list
     python tools/musicgen.py --only zone_forest battle_boss --bars 24
+    python tools/musicgen.py --sample-pack
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ import math
 import random
 import struct
 import wave
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable, Iterable
 
@@ -74,6 +75,50 @@ class TrackPreset:
     pad_wave: str = "triangle"
     lead_wave: str = "square"
     density: float = 1.0
+    pad_volume: float = 0.055
+    arp_volume: float = 0.045
+    bass_volume: float = 0.09
+    lead_volume: float = 0.105
+    drum_volume: float = 1.0
+    ceiling: float = 0.86
+    long_pads: bool = False
+    counterline: bool = False
+    shimmer: bool = False
+    detune_cents: float = 3.5
+    vibrato_depth: float = 0.0018
+    delay_mix: float = 0.08
+    reverb_mix: float = 0.14
+    filter_warmth: float = 0.10
+    saturation: float = 1.12
+
+
+@dataclass(frozen=True)
+class SampleOption:
+    suffix: str
+    label: str
+    description: str
+    tempo_scale: float = 1.0
+    drum: str | None = None
+    pad_wave: str | None = None
+    lead_wave: str | None = None
+    density: float | None = None
+    pad_volume: float = 1.0
+    arp_volume: float = 1.0
+    bass_volume: float = 1.0
+    lead_volume: float = 1.0
+    drum_volume: float = 1.0
+    ceiling: float | None = None
+    long_pads: bool | None = None
+    counterline: bool | None = None
+    shimmer: bool | None = None
+    bass_octave_delta: int = 0
+    lead_octave_delta: int = 0
+    detune_cents: float | None = None
+    vibrato_depth: float | None = None
+    delay_mix: float | None = None
+    reverb_mix: float | None = None
+    filter_warmth: float | None = None
+    saturation: float | None = None
 
 
 PRESETS: dict[str, TrackPreset] = {
@@ -215,6 +260,173 @@ PRESETS: dict[str, TrackPreset] = {
 }
 
 
+SAMPLE_OPTIONS = (
+    SampleOption(
+        suffix="hush",
+        label="Hush",
+        description="very soft ambient bed with long pads and almost no rhythmic edge",
+        tempo_scale=0.86,
+        drum="none",
+        pad_wave="sine",
+        lead_wave="bell",
+        density=0.42,
+        pad_volume=0.72,
+        arp_volume=0.28,
+        bass_volume=0.42,
+        lead_volume=0.30,
+        drum_volume=0.0,
+        ceiling=0.42,
+        long_pads=True,
+        counterline=False,
+        shimmer=True,
+        lead_octave_delta=-1,
+        detune_cents=6.0,
+        vibrato_depth=0.0024,
+        delay_mix=0.12,
+        reverb_mix=0.28,
+        filter_warmth=0.22,
+        saturation=1.04,
+    ),
+    SampleOption(
+        suffix="lyrical",
+        label="Lyrical",
+        description="soft but more melodic, with a clear tune and gentle answer phrase",
+        tempo_scale=0.94,
+        drum="soft",
+        pad_wave="sine",
+        lead_wave="triangle",
+        density=0.82,
+        pad_volume=0.88,
+        arp_volume=0.70,
+        bass_volume=0.72,
+        lead_volume=0.70,
+        drum_volume=0.35,
+        ceiling=0.58,
+        long_pads=True,
+        counterline=True,
+        shimmer=True,
+        detune_cents=4.5,
+        vibrato_depth=0.0020,
+        delay_mix=0.10,
+        reverb_mix=0.20,
+        filter_warmth=0.15,
+        saturation=1.08,
+    ),
+    SampleOption(
+        suffix="pulse",
+        label="Pulse",
+        description="travel groove with a steadier bass and brighter arpeggio motion",
+        tempo_scale=1.08,
+        pad_wave="triangle",
+        lead_wave="soft_square",
+        density=1.08,
+        pad_volume=0.78,
+        arp_volume=1.10,
+        bass_volume=0.92,
+        lead_volume=0.62,
+        drum_volume=0.70,
+        ceiling=0.68,
+        long_pads=False,
+        counterline=True,
+        shimmer=False,
+        detune_cents=2.5,
+        vibrato_depth=0.0012,
+        delay_mix=0.06,
+        reverb_mix=0.11,
+        filter_warmth=0.08,
+        saturation=1.18,
+    ),
+    SampleOption(
+        suffix="glass",
+        label="Glass",
+        description="glassy, spacious variation with bell tones and slow shimmer",
+        tempo_scale=0.78,
+        drum="drip",
+        pad_wave="sine",
+        lead_wave="bell",
+        density=0.56,
+        pad_volume=0.82,
+        arp_volume=0.34,
+        bass_volume=0.50,
+        lead_volume=0.42,
+        drum_volume=0.25,
+        ceiling=0.50,
+        long_pads=True,
+        counterline=True,
+        shimmer=True,
+        lead_octave_delta=1,
+        detune_cents=7.0,
+        vibrato_depth=0.0028,
+        delay_mix=0.14,
+        reverb_mix=0.30,
+        filter_warmth=0.20,
+        saturation=1.02,
+    ),
+)
+
+
+ZONE_TRACKS = (
+    "zone_grasslands",
+    "zone_forest",
+    "zone_desert",
+    "zone_marsh",
+    "zone_mountains",
+    "zone_tundra",
+    "zone_badlands",
+    "zone_water",
+)
+
+for zone_name in ZONE_TRACKS:
+    base = PRESETS[zone_name]
+    PRESETS[zone_name] = replace(
+        base,
+        lead_volume=base.lead_volume * 0.86,
+        arp_volume=base.arp_volume * 0.82,
+        ceiling=0.78 if zone_name != "zone_badlands" else 0.82,
+        counterline=True,
+        shimmer=zone_name in {"zone_grasslands", "zone_forest", "zone_mountains", "zone_tundra", "zone_water"},
+    )
+
+
+AMBIENT_VARIANTS = {
+    "zone_grasslands_ambient": ("zone_grasslands", "soft grassland air and distant bells", 84),
+    "zone_forest_ambient": ("zone_forest", "mossy canopy ambience", 72),
+    "zone_desert_ambient": ("zone_desert", "warm desert dusk ambience", 76),
+    "zone_marsh_ambient": ("zone_marsh", "misty marsh hush", 66),
+    "zone_mountains_ambient": ("zone_mountains", "thin mountain wind and low echoes", 68),
+    "zone_tundra_ambient": ("zone_tundra", "snowfield quiet and glassy tones", 62),
+    "zone_badlands_ambient": ("zone_badlands", "soft red-rock dusk", 78),
+    "zone_water_ambient": ("zone_water", "slow water shimmer", 66),
+}
+
+for ambient_name, (base_name, mood, tempo) in AMBIENT_VARIANTS.items():
+    base = PRESETS[base_name]
+    PRESETS[ambient_name] = replace(
+        base,
+        tempo=tempo,
+        mood=mood,
+        drum="none",
+        pad_wave="sine",
+        lead_wave="triangle",
+        density=min(base.density, 0.55),
+        pad_volume=0.042,
+        arp_volume=0.018,
+        bass_volume=0.038,
+        lead_volume=0.035,
+        drum_volume=0.0,
+        ceiling=0.48,
+        long_pads=True,
+        counterline=True,
+        shimmer=True,
+        detune_cents=6.0,
+        vibrato_depth=0.0024,
+        delay_mix=0.12,
+        reverb_mix=0.26,
+        filter_warmth=0.22,
+        saturation=1.04,
+    )
+
+
 def note_frequency(note: str, octave: int) -> float:
     semitone = NOTE_INDEX[note] - NOTE_INDEX["A"] + (octave - 4) * 12
     return 440.0 * (2 ** (semitone / 12))
@@ -232,10 +444,29 @@ def triangle(phase: float) -> float:
     return 4.0 * abs((phase % 1.0) - 0.5) - 1.0
 
 
+def soft_square(phase: float) -> float:
+    return math.tanh(math.sin(TAU * phase) * 2.2)
+
+
+def saw(phase: float) -> float:
+    return 2.0 * (phase % 1.0) - 1.0
+
+
+def bell(phase: float) -> float:
+    return (
+        math.sin(TAU * phase) * 0.72
+        + math.sin(TAU * phase * 2.01) * 0.20
+        + math.sin(TAU * phase * 3.02) * 0.08
+    )
+
+
 WAVES: dict[str, Callable[[float], float]] = {
     "sine": sine,
     "square": square,
+    "soft_square": soft_square,
+    "saw": saw,
     "triangle": triangle,
+    "bell": bell,
 }
 
 
@@ -260,15 +491,26 @@ def mix_tone(
     wave_name: str,
     attack: float = 0.01,
     release: float = 0.05,
+    detune_cents: float = 0.0,
+    vibrato_depth: float = 0.0,
 ) -> None:
     if not audio:
+        return
+    if detune_cents > 0.0:
+        spread = 2 ** (detune_cents / 1200.0)
+        mix_tone(audio, start_sec, duration_sec, frequency, volume * 0.68, wave_name, attack, release, 0.0, vibrato_depth)
+        mix_tone(audio, start_sec, duration_sec, frequency * spread, volume * 0.16, wave_name, attack, release, 0.0, vibrato_depth * 0.72)
+        mix_tone(audio, start_sec, duration_sec, frequency / spread, volume * 0.16, wave_name, attack, release, 0.0, vibrato_depth * 0.72)
         return
     start = max(0, int(start_sec * SAMPLE_RATE))
     length = max(1, int(duration_sec * SAMPLE_RATE))
     wave_fn = WAVES[wave_name]
     for local in range(length):
         out_idx = (start + local) % len(audio)
-        phase = (local / SAMPLE_RATE) * frequency
+        seconds = local / SAMPLE_RATE
+        phase = seconds * frequency
+        if vibrato_depth > 0.0:
+            phase += math.sin(TAU * 5.2 * seconds) * vibrato_depth
         env = envelope(local, length, attack, release)
         audio[out_idx] += wave_fn(phase) * volume * env
 
@@ -297,29 +539,29 @@ def mix_kick(audio: list[float], start_sec: float, volume: float = 0.38) -> None
         audio[out_idx] += math.sin(TAU * freq * (local / SAMPLE_RATE)) * volume * decay
 
 
-def mix_drums(audio: list[float], bar_start: float, beat: float, style: str, rng: random.Random) -> None:
+def mix_drums(audio: list[float], bar_start: float, beat: float, style: str, rng: random.Random, volume_scale: float = 1.0) -> None:
     if style == "none":
         return
 
     for b in range(4):
         t = bar_start + b * beat
         if style == "battle":
-            mix_kick(audio, t, 0.34)
-            mix_noise(audio, t + beat * 0.5, 0.035, 0.05, rng)
+            mix_kick(audio, t, 0.34 * volume_scale)
+            mix_noise(audio, t + beat * 0.5, 0.035, 0.05 * volume_scale, rng)
             if b in (1, 3):
-                mix_noise(audio, t, 0.07, 0.17, rng)
+                mix_noise(audio, t, 0.07, 0.17 * volume_scale, rng)
         elif style == "heavy":
             if b in (0, 2):
-                mix_kick(audio, t, 0.25)
-            mix_noise(audio, t + beat * 0.5, 0.04, 0.045, rng)
+                mix_kick(audio, t, 0.25 * volume_scale)
+            mix_noise(audio, t + beat * 0.5, 0.04, 0.045 * volume_scale, rng)
         elif style == "wood":
             if b in (0, 2):
-                mix_tone(audio, t, 0.045, 180, 0.08, "triangle", release=0.02)
+                mix_tone(audio, t, 0.045, 180, 0.08 * volume_scale, "triangle", release=0.02)
         elif style == "drip":
             if b in (1, 3):
-                mix_tone(audio, t + beat * 0.25, 0.08, 680 + b * 45, 0.045, "sine", release=0.04)
+                mix_tone(audio, t + beat * 0.25, 0.08, 680 + b * 45, 0.045 * volume_scale, "sine", release=0.04)
         elif b in (0, 2):
-            mix_kick(audio, t, 0.09)
+            mix_kick(audio, t, 0.09 * volume_scale)
 
 
 def normalize(audio: list[float], ceiling: float = 0.86) -> list[float]:
@@ -336,6 +578,53 @@ def seal_loop_boundary(audio: list[float]) -> list[float]:
     delta = audio[-1] - audio[0]
     span = len(audio) - 1
     return [sample - delta * (index / span) for index, sample in enumerate(audio)]
+
+
+def apply_warm_filter(audio: list[float], warmth: float) -> list[float]:
+    if not audio or warmth <= 0.0:
+        return audio
+    alpha = max(0.02, min(0.55, warmth))
+    filtered: list[float] = []
+    previous = audio[-1]
+    for sample in audio:
+        previous += (sample - previous) * alpha
+        filtered.append(previous)
+    previous = filtered[0]
+    for index in range(len(filtered) - 1, -1, -1):
+        previous += (filtered[index] - previous) * alpha
+        filtered[index] = previous
+    return filtered
+
+
+def apply_saturation(audio: list[float], drive: float) -> list[float]:
+    if not audio or drive <= 1.0:
+        return audio
+    ceiling = math.tanh(drive)
+    return [math.tanh(sample * drive) / ceiling for sample in audio]
+
+
+def apply_tap_delay(audio: list[float], delay_sec: float, mix: float) -> list[float]:
+    if not audio or mix <= 0.0:
+        return audio
+    delay = max(1, int(delay_sec * SAMPLE_RATE))
+    return [sample + audio[(index - delay) % len(audio)] * mix for index, sample in enumerate(audio)]
+
+
+def apply_room(audio: list[float], mix: float) -> list[float]:
+    if not audio or mix <= 0.0:
+        return audio
+    room = audio
+    for delay_sec, amount in ((0.073, 0.34), (0.137, 0.24), (0.211, 0.16), (0.319, 0.11)):
+        room = apply_tap_delay(room, delay_sec, mix * amount)
+    return room
+
+
+def post_process(audio: list[float], preset: TrackPreset) -> list[float]:
+    processed = apply_saturation(audio, preset.saturation)
+    processed = apply_tap_delay(processed, 0.23, preset.delay_mix)
+    processed = apply_room(processed, preset.reverb_mix)
+    processed = apply_warm_filter(processed, preset.filter_warmth)
+    return processed
 
 
 def write_wav(path: Path, audio: list[float]) -> None:
@@ -356,6 +645,35 @@ def scale_note(preset: TrackPreset, index: int) -> str:
     return scale[index % len(scale)]
 
 
+def arranged_preset(base: TrackPreset, option: SampleOption) -> TrackPreset:
+    return replace(
+        base,
+        tempo=max(40, round(base.tempo * option.tempo_scale)),
+        mood=f"{base.mood}; {option.description}",
+        bass_octave=max(1, base.bass_octave + option.bass_octave_delta),
+        lead_octave=max(3, base.lead_octave + option.lead_octave_delta),
+        drum=option.drum or base.drum,
+        pad_wave=option.pad_wave or base.pad_wave,
+        lead_wave=option.lead_wave or base.lead_wave,
+        density=option.density if option.density is not None else base.density,
+        pad_volume=base.pad_volume * option.pad_volume,
+        arp_volume=base.arp_volume * option.arp_volume,
+        bass_volume=base.bass_volume * option.bass_volume,
+        lead_volume=base.lead_volume * option.lead_volume,
+        drum_volume=base.drum_volume * option.drum_volume,
+        ceiling=option.ceiling if option.ceiling is not None else base.ceiling,
+        long_pads=option.long_pads if option.long_pads is not None else base.long_pads,
+        counterline=option.counterline if option.counterline is not None else base.counterline,
+        shimmer=option.shimmer if option.shimmer is not None else base.shimmer,
+        detune_cents=option.detune_cents if option.detune_cents is not None else base.detune_cents,
+        vibrato_depth=option.vibrato_depth if option.vibrato_depth is not None else base.vibrato_depth,
+        delay_mix=option.delay_mix if option.delay_mix is not None else base.delay_mix,
+        reverb_mix=option.reverb_mix if option.reverb_mix is not None else base.reverb_mix,
+        filter_warmth=option.filter_warmth if option.filter_warmth is not None else base.filter_warmth,
+        saturation=option.saturation if option.saturation is not None else base.saturation,
+    )
+
+
 def render_track(name: str, preset: TrackPreset, bars: int) -> list[float]:
     rng = random.Random(name)
     beat = 60 / preset.tempo
@@ -371,13 +689,28 @@ def render_track(name: str, preset: TrackPreset, bars: int) -> list[float]:
             mix_tone(
                 audio,
                 bar_start + i * 0.13 * beat,
-                4.15 * beat,
+                (7.65 if preset.long_pads else 4.15) * beat,
                 note_frequency(note, 4),
-                0.055,
+                preset.pad_volume,
                 preset.pad_wave,
-                attack=0.05,
-                release=0.1,
+                attack=0.12 if preset.long_pads else 0.05,
+                release=0.22 if preset.long_pads else 0.1,
+                detune_cents=preset.detune_cents,
+                vibrato_depth=preset.vibrato_depth * 0.7,
             )
+            if preset.long_pads and i == 0:
+                mix_tone(
+                    audio,
+                    bar_start + beat * 0.5,
+                    6.5 * beat,
+                    note_frequency(note, 3),
+                    preset.pad_volume * 0.58,
+                    "sine",
+                    attack=0.2,
+                    release=0.32,
+                    detune_cents=preset.detune_cents * 0.7,
+                    vibrato_depth=preset.vibrato_depth * 0.5,
+                )
 
         for step, arp_index in enumerate(preset.arp * 2):
             note = chord[arp_index % len(chord)]
@@ -386,10 +719,12 @@ def render_track(name: str, preset: TrackPreset, bars: int) -> list[float]:
                 bar_start + step * 0.5 * beat,
                 0.38 * beat,
                 note_frequency(note, 4),
-                0.045,
+                preset.arp_volume,
                 "triangle",
                 attack=0.006,
                 release=0.04,
+                detune_cents=preset.detune_cents * 0.25,
+                vibrato_depth=preset.vibrato_depth * 0.25,
             )
 
         bass_steps = 8 if preset.drum == "battle" else 4
@@ -400,10 +735,11 @@ def render_track(name: str, preset: TrackPreset, bars: int) -> list[float]:
                 start,
                 0.28 * beat,
                 note_frequency(root, preset.bass_octave),
-                0.12 if preset.drum == "battle" else 0.09,
+                0.12 if preset.drum == "battle" else preset.bass_volume,
                 "square",
                 attack=0.004,
                 release=0.04,
+                detune_cents=preset.detune_cents * 0.15,
             )
 
         lead_steps = 8 if preset.density >= 0.9 else 4
@@ -419,15 +755,49 @@ def render_track(name: str, preset: TrackPreset, bars: int) -> list[float]:
                 start,
                 0.34 * beat,
                 note_frequency(note, octave),
-                0.105,
+                preset.lead_volume,
                 preset.lead_wave,
                 attack=0.004,
                 release=0.035,
+                detune_cents=preset.detune_cents * 0.6,
+                vibrato_depth=preset.vibrato_depth,
             )
 
-        mix_drums(audio, bar_start, beat, preset.drum, rng)
+        if preset.counterline and bar % 2 == 1:
+            for step, idx in enumerate(reversed(preset.lead[:4])):
+                note = scale_note(preset, idx + 2)
+                mix_tone(
+                    audio,
+                    bar_start + (step + 0.5) * beat,
+                    0.55 * beat,
+                    note_frequency(note, preset.lead_octave - 1),
+                    preset.lead_volume * 0.42,
+                    "sine",
+                    attack=0.025,
+                    release=0.09,
+                    detune_cents=preset.detune_cents * 0.45,
+                    vibrato_depth=preset.vibrato_depth * 0.8,
+                )
 
-    return normalize(seal_loop_boundary(audio))
+        if preset.shimmer and bar % 4 in (1, 3):
+            for step in range(3):
+                note = chord[(step + bar) % len(chord)]
+                mix_tone(
+                    audio,
+                    bar_start + (1.1 + step * 0.72) * beat,
+                    0.45 * beat,
+                    note_frequency(note, preset.lead_octave + 1),
+                    preset.lead_volume * 0.22,
+                    "sine",
+                    attack=0.04,
+                    release=0.16,
+                    detune_cents=preset.detune_cents * 0.5,
+                    vibrato_depth=preset.vibrato_depth * 0.6,
+                )
+
+        mix_drums(audio, bar_start, beat, preset.drum, rng, preset.drum_volume)
+
+    return normalize(seal_loop_boundary(post_process(audio, preset)), preset.ceiling)
 
 
 def make_manifest(generated: Iterable[tuple[str, Path, TrackPreset, int]]) -> str:
@@ -440,12 +810,53 @@ def make_manifest(generated: Iterable[tuple[str, Path, TrackPreset, int]]) -> st
     return "\n".join(lines)
 
 
+def make_sample_manifest(generated: Iterable[tuple[str, Path, TrackPreset, int, SampleOption]]) -> str:
+    lines = [
+        "# Music Audition Samples",
+        "",
+        "Short samples generated for choosing biome music direction. These do not replace the in-game loops.",
+        "",
+    ]
+    for name, path, preset, bars, option in generated:
+        base_name = name.split("__", 1)[0]
+        length = bars * 4 * 60 / preset.tempo
+        lines.append(
+            f"- `{path.name}` - {base_name}, {option.label}: {option.description}; "
+            f"{preset.tempo} BPM, {length:.1f}s sample"
+        )
+    lines.append("")
+    lines.append("Generated with `python tools/musicgen.py --sample-pack`.")
+    return "\n".join(lines)
+
+
+def generate_sample_pack(output_dir: Path, bars: int) -> None:
+    generated: list[tuple[str, Path, TrackPreset, int, SampleOption]] = []
+    print(f"Generating {len(ZONE_TRACKS) * len(SAMPLE_OPTIONS)} audition sample(s) into {output_dir}...")
+    for base_name in ZONE_TRACKS:
+        base = PRESETS[base_name]
+        for option in SAMPLE_OPTIONS:
+            name = f"{base_name}__{option.suffix}"
+            preset = arranged_preset(base, option)
+            audio = render_track(name, preset, bars)
+            path = output_dir / f"{name}.wav"
+            write_wav(path, audio)
+            generated.append((name, path, preset, bars, option))
+            print(f"- {name}: {path}")
+
+    manifest = output_dir / "README.md"
+    manifest.write_text(make_sample_manifest(generated), encoding="utf-8")
+    print(f"Done. Audition manifest: {manifest}")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate procedural RPG music loops.")
     parser.add_argument("--list", action="store_true", help="List available track presets and exit.")
     parser.add_argument("--only", nargs="+", choices=sorted(PRESETS), help="Only generate these presets.")
     parser.add_argument("--bars", type=int, default=DEFAULT_BARS, help=f"Bars per loop. Default: {DEFAULT_BARS}.")
     parser.add_argument("--out", type=Path, default=OUT, help="Output directory. Default: assets/music.")
+    parser.add_argument("--sample-pack", action="store_true", help="Generate short biome audition variants without replacing game tracks.")
+    parser.add_argument("--sample-bars", type=int, default=4, help="Bars per audition sample. Default: 4.")
+    parser.add_argument("--sample-out", type=Path, default=OUT / "samples", help="Audition output directory. Default: assets/music/samples.")
     return parser.parse_args()
 
 
@@ -454,10 +865,21 @@ def main() -> None:
     if args.list:
         for name, preset in PRESETS.items():
             print(f"{name}: {preset.mood} ({preset.tempo} BPM)")
+        print("")
+        print("Sample options:")
+        for option in SAMPLE_OPTIONS:
+            print(f"{option.suffix}: {option.label} - {option.description}")
         return
 
     if args.bars < 2:
         raise SystemExit("--bars must be at least 2")
+
+    if args.sample_pack:
+        if args.sample_bars < 2:
+            raise SystemExit("--sample-bars must be at least 2")
+        sample_output_dir = args.sample_out if args.sample_out.is_absolute() else ROOT / args.sample_out
+        generate_sample_pack(sample_output_dir, args.sample_bars)
+        return
 
     output_dir = args.out if args.out.is_absolute() else ROOT / args.out
     names = args.only or list(PRESETS)

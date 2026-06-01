@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout
+from chroma_cutout import chroma_cutout, fit
 
 
 SRC = Path("assets/source/imagegen-mage-directional-model-sheet.png")
@@ -29,6 +29,9 @@ def main() -> None:
             keep_largest_only=True,
         )
         sprite.save(OUT / f"class_mage_model_{direction}.png")
+        if direction == "down":
+            sprite.save(OUT / "class_mage_model.png")
+            fit(sprite, 144, 160, margin=2).save(OUT / "class_mage.png")
 
 
 if __name__ == "__main__":
