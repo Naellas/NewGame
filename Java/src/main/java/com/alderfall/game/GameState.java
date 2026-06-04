@@ -1,9 +1,12 @@
 package com.alderfall.game;
 
+import com.alderfall.game.inventory.Equipment;
+import com.alderfall.game.inventory.Item;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -12,12 +15,42 @@ public final class GameState {
     public static final int TICKS_PER_GAME_DAY = 7200;
     private static final int WEATHER_BLOCK_TICKS = 1200;
     private static final int VILLAGE_PRODUCTION_TICKS = 900;
+    private static final int TICKS_PER_GAME_WEEK = TICKS_PER_GAME_DAY * 7;
+    private static final int VILLAGE_RECRUIT_RELATIONSHIP = 55;
+    private static final int COMPANION_RECRUIT_RELATIONSHIP = 20;
+    public static final int MIN_NPC_RELATIONSHIP = -100;
+    public static final int MAX_NPC_RELATIONSHIP = 100;
+    public static final int MAX_COMPANION_TRUST = 300;
+    private static final int MAX_ACTIVE_COMPANIONS = 3;
+    private static final int MAX_ENEMY_GROUP_SIZE = 5;
+    private static final int MAIN_STORY_TRUST_RELATIONSHIP = 18;
+    private static final int MAX_COMPANION_MEMORIES = 18;
     public static final List<String> STORY_INTRO = List.of(
-            "In the elder age, five crowns swore the Starforge Oath over the Heartstone of Alderfall. So long as the oath held, rivers ran clean, harvests ripened under gentle moons, and the old roads carried songs between every gate.",
-            "Now the Heartstone has cracked. Its echo wakes barrow kings, stirs raiders into armies, and turns border beacons from warning fires into accusations. Riverside blames Highwall. Belltower closes its marsh roads. Sanctum musters beneath desert banners. The Crownlands count their dead.",
-            "Oakhaven, small and stubborn beneath the old oaks, is the first village to refuse despair. In its well a silver ember burns without fuel, naming you as a bearer of the lost oath and marking your road across every divided kingdom.",
-            "Your quest is not only to survive. You must gather the echoes hidden in vault, fen, frost, and sunsteppe, win allies from rival thrones, and decide whether Alderfall will be reforged as one realm or remade into something stranger."
+            "You followed rumors of a ritual at an old road shrine and found Vaelthara, Demon Queen of Mercy. She beat you without effort, then let you breathe so fear could travel faster than fire.",
+            "Oathstead Camp is muddy, unfinished, and frightened. The five kingdoms still argue over roads, ledgers, bells, graves, shrines, and blame while the old wards fail quietly.",
+            "Maelis believes your fear because it looks real. Selene will need records, Odrick roads, Solari rites, Ysra bells, Mirella proof, and every kingdom trust earned in practical work.",
+            "The old portal answers only to twelve socket stones. Gather them, wake the Old Gate of Alderfall, and return to Vaelthara on terms she did not choose."
     );
+    private static final String[] BUILDING_OWNER_NAMES = {
+            "Bran", "Torin", "Marla", "Elowen", "Kael", "Liora", "Mira", "Orin",
+            "Rowan", "Sable", "Vexa", "Aster", "Bryn", "Cala", "Dain", "Fara"
+    };
+    private static final String[] BUILDING_PLACE_ROOTS = {
+            "Riverrun", "Oakwatch", "Stonegate", "Mossgate", "Bellmere", "Cinderford",
+            "Willowbend", "Highford", "Dawncross", "Briarbridge", "Moonwell", "Emberfall"
+    };
+    private static final String[] BUILDING_SIGNS = {
+            "Blue Lantern", "Copper Kettle", "Silver Stag", "Mended Boot", "Quiet Bell",
+            "Golden Reed", "Ashen Swan", "Wayfarer's Star", "Green Hammer", "River Pearl"
+    };
+    private static final String[] BOOKSHELF_MONSTER_LORE_KEYS = {
+            "slime", "wolf", "frost_wolf", "skeleton", "wraith", "spider", "ash_scorpion",
+            "marsh_drake", "sand_stalker", "ember_imp", "ice_golem", "bandit_archer"
+    };
+    public record FastTravelDestination(String mapId, String label, String kind, int cost, String portalAsset) {
+    }
+    public record WorldAbilityOption(Actor actor, Ability ability, String effectKey, String label, String description) {
+    }
     public final GameConfig config;
     public final WorldMap world;
     public final Random random = new Random();
@@ -25,11 +58,31 @@ public final class GameState {
     public final List<Actor> allies = new ArrayList<>();
     public final List<String> recruitedIds = new ArrayList<>();
     public final Set<String> villageAllies = new HashSet<>();
+    public final Set<String> romancedCompanionIds = new HashSet<>();
+    public final Set<String> marriedCompanionIds = new HashSet<>();
     public final Map<String, String> villageWorkerRoles = new LinkedHashMap<>();
     public final Map<String, String> villageBuildingAssignments = new LinkedHashMap<>();
+    public final Map<String, List<String>> villageBuildingDecorations = new LinkedHashMap<>();
     public final Map<String, Integer> villageStorage = new LinkedHashMap<>();
     public final Set<String> harvestedQuestResources = new HashSet<>();
+    public final Set<String> harvestedResourceNodes = new HashSet<>();
+    public final Map<String, String> questBranchOutcomes = new LinkedHashMap<>();
+    public final Set<String> unlockedRecipeKeys = new HashSet<>();
     public final Map<String, Integer> npcRelationships = new LinkedHashMap<>();
+    public final Map<String, List<CompanionMemory>> companionMemoryJournal = new LinkedHashMap<>();
+    public final Map<String, String> companionSoftRequests = new LinkedHashMap<>();
+    public final Map<String, Integer> companionDialogueTopicCounts = new LinkedHashMap<>();
+    public final Set<String> fulfilledCompanionSoftRequests = new HashSet<>();
+    public final Set<String> companionRelationshipMilestones = new HashSet<>();
+    public final Set<String> introducedNpcKeys = new HashSet<>();
+    public final Map<String, Integer> npcKnowledge = new LinkedHashMap<>();
+    private final Map<String, String> weeklyNpcQuestIds = new LinkedHashMap<>();
+    private int weeklyQuestBlock = -1;
+    public final Map<String, Integer> monsterInsights = new LinkedHashMap<>();
+    public final Map<String, Set<String>> monsterKnownVulnerabilities = new LinkedHashMap<>();
+    public final Map<String, Integer> settlementVisits = new LinkedHashMap<>();
+    public final Map<String, Integer> buildingKnowledge = new LinkedHashMap<>();
+    public final Map<String, Integer> worldAbilityTimers = new LinkedHashMap<>();
     public final CraftingSystem crafting = new CraftingSystem();
     public GameMode mode = GameMode.MAIN_MENU;
     public GameMode pauseReturnMode = GameMode.EXPLORE;
@@ -53,14 +106,27 @@ public final class GameState {
     public String selectedVillagePropCategory = "Decor";
     public char selectedVillageTile = 'A';
     public String selectedInteriorAsset = "interior_round_table";
+    public String selectedInteriorAssetCategory = "All";
     public TilePoint pendingVillageMoveSource;
     public String pendingVillageMoveMapId;
+    public int mapEditorKindIndex;
+    public int mapEditorSizeIndex = 1;
+    private String mapEditorReturnMapId = "";
+    private int mapEditorReturnX;
+    private int mapEditorReturnY;
+    private int mapEditorSerial;
     public Battle battle;
+    private boolean demonQueenBattleActive;
+    private boolean demonQueenDefeated;
     public Npc activeNpc;
+    public Actor activePartyTalkActor;
     public Shop activeShop;
     public CityBuilding activeVillageBuilding;
     public int dialogIndex;
     private DialogueLibrary.DialogueSession activeDialogueSession;
+    private String activeNpcIntroLine = "";
+    private String activeQuestDialogueLine = "";
+    private String activeShopDialogueBuildingKey = "";
     private List<VillageRecruitOption> settlementRecruitOptions = List.of();
     public int zoom = 100;
     public int worldTick;
@@ -68,9 +134,29 @@ public final class GameState {
     public boolean worldMapKingdoms;
     public String status = "Choose New Adventure or load an existing save.";
     private final Map<Npc, NpcRuntime> npcRuntime = new LinkedHashMap<>();
+    private final Map<String, List<Npc>> npcListCache = new LinkedHashMap<>();
+    private int npcListCacheTick = -1;
     private final Map<String, List<DungeonMonsterRuntime>> dungeonMonsterRuntime = new LinkedHashMap<>();
     private final Set<String> defeatedDungeonMonsters = new HashSet<>();
+    private final Map<String, List<QuestMonsterRuntime>> questMonsterRuntime = new LinkedHashMap<>();
+    private final Map<String, List<QuestNpcRuntime>> questNpcRuntime = new LinkedHashMap<>();
+    private List<QuestObjective> activeQuestObjectiveCache;
+    private final Map<String, WorldProp> removedResourceNodeProps = new LinkedHashMap<>();
     private DungeonMonsterRuntime activeDungeonMonster;
+    private QuestMonsterRuntime activeQuestMonster;
+    private String pendingResourceNodeMapId = "";
+    private TilePoint pendingResourceNodeTile;
+    private String pendingResourceNodeAsset = "";
+    private String pendingReadBookshelfMapId = "";
+    private TilePoint pendingReadBookshelfTile;
+    public String activeGatherMapId = "";
+    public CraftingSystem.GatherCandidate activeGatherCandidate;
+    public String lastGatheredPropMapId = "";
+    public WorldProp lastGatheredProp;
+    public int lastGatheredPropWorldTick = -1;
+    private TravelBanterPrompt activeTravelBanter;
+    private final List<PendingCompanionComment> pendingCompanionComments = new ArrayList<>();
+    private int nextTravelBanterTick = 420;
 
     public GameState(GameConfig config) {
         this.config = config;
@@ -78,28 +164,43 @@ public final class GameState {
         for (Map.Entry<String, Quest> entry : GameData.QUESTS.entrySet()) {
             quests.put(entry.getKey(), entry.getValue().copy());
         }
+        ensureStarterRecipeUnlocks();
     }
 
     public void openMainMenu() {
         activeNpc = null;
+        activePartyTalkActor = null;
         activeShop = null;
         activeVillageBuilding = null;
         battle = null;
         activeDungeonMonster = null;
+        activeQuestMonster = null;
         activeDialogueSession = null;
+        activeNpcIntroLine = "";
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
         dialogIndex = 0;
+        activeTravelBanter = null;
+        pendingCompanionComments.clear();
         mode = GameMode.MAIN_MENU;
         status = "Choose New Adventure or load an existing save.";
     }
 
     public void openClassSelect() {
         activeNpc = null;
+        activePartyTalkActor = null;
         activeShop = null;
         activeVillageBuilding = null;
         battle = null;
         activeDungeonMonster = null;
+        activeQuestMonster = null;
         activeDialogueSession = null;
+        activeNpcIntroLine = "";
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
         dialogIndex = 0;
+        activeTravelBanter = null;
+        pendingCompanionComments.clear();
         mode = GameMode.CLASS_SELECT;
         status = "Choose a class.";
     }
@@ -131,18 +232,45 @@ public final class GameState {
         world.clearPlayerVillageCustomizations();
         resetNpcRuntime();
         resetDungeonMonsterRuntime();
+        resetQuestMonsterRuntime();
         allies.clear();
         recruitedIds.clear();
         villageAllies.clear();
+        romancedCompanionIds.clear();
+        marriedCompanionIds.clear();
         villageWorkerRoles.clear();
         villageBuildingAssignments.clear();
+        villageBuildingDecorations.clear();
         villageStorage.clear();
         partyScreenIndex = 0;
         resetVillageInterface();
         harvestedQuestResources.clear();
+        restoreHarvestedResourceNodes();
+        harvestedResourceNodes.clear();
+        questBranchOutcomes.clear();
+        unlockedRecipeKeys.clear();
+        ensureStarterRecipeUnlocks();
         npcRelationships.clear();
+        companionMemoryJournal.clear();
+        companionSoftRequests.clear();
+        companionDialogueTopicCounts.clear();
+        fulfilledCompanionSoftRequests.clear();
+        companionRelationshipMilestones.clear();
+        introducedNpcKeys.clear();
+        npcKnowledge.clear();
+        weeklyNpcQuestIds.clear();
+        weeklyQuestBlock = -1;
+        monsterInsights.clear();
+        monsterKnownVulnerabilities.clear();
+        settlementVisits.clear();
+        buildingKnowledge.clear();
+        activeTravelBanter = null;
+        pendingCompanionComments.clear();
+        nextTravelBanterTick = 420;
+        recordSettlementVisit(currentMapId);
         battle = null;
         activeDungeonMonster = null;
+        activeQuestMonster = null;
         storyPage = 0;
         mode = GameMode.STORY_INTRO;
         status = className + " hears the first echo of Alderfall.";
@@ -302,7 +430,7 @@ public final class GameState {
         if (mode == GameMode.BATTLE) {
             status = "Battle!";
         } else if (mode == GameMode.DIALOG && activeNpc != null) {
-            status = "Talking to " + activeNpc.name() + ".";
+            status = "Talking to " + npcDisplayName(activeNpc) + ".";
         } else {
             status = world.describe(currentMapId, playerX, playerY);
         }
@@ -350,6 +478,140 @@ public final class GameState {
         return null;
     }
 
+    public boolean talkToNpc(Npc npc) {
+        if (mode != GameMode.EXPLORE || npc == null) {
+            return false;
+        }
+        if (crafting.active()) {
+            status = "Busy: " + crafting.progressLabel() + ".";
+            return false;
+        }
+        if (!npc.mapId().equals(currentMapId)) {
+            status = npcDisplayName(npc) + " is not here.";
+            return false;
+        }
+        TilePoint position = npcPosition(npc);
+        if (Math.abs(position.x() - playerX) + Math.abs(position.y() - playerY) > 1) {
+            status = npcDisplayName(npc) + " is too far away.";
+            return false;
+        }
+        String npcKey = npcRelationshipKey(npc);
+        boolean firstMeeting = introducedNpcKeys.add(npcKey);
+        if (firstMeeting) {
+            recordNpcKnowledge(npc, 1);
+            activeNpcIntroLine = npcIntroductionLine(npc);
+        } else {
+            activeNpcIntroLine = "";
+        }
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
+        activeNpc = npc;
+        activeShop = npc.shopId() == null ? null : GameData.SHOPS.get(npc.shopId());
+        activeDialogueSession = startDialogueSessionFor(npc);
+        dialogIndex = 0;
+        mode = GameMode.DIALOG;
+        String questNote = recordConversationQuestObjectives(npc);
+        status = "Talking to " + npc.name() + "." + questNote;
+        return true;
+    }
+
+    public boolean talkToPartyAlly(Actor ally) {
+        if (mode != GameMode.EXPLORE || ally == null) {
+            return false;
+        }
+        if (crafting.active()) {
+            status = "Busy: " + crafting.progressLabel() + ".";
+            return false;
+        }
+        if (!activeAllies().contains(ally)) {
+            status = ally.name + " is not traveling with you.";
+            return false;
+        }
+        Npc sourceNpc = npcForAlly(ally);
+        String relationshipMapId = sourceNpc == null ? currentMapId : sourceNpc.mapId();
+        List<String> dialog = sourceNpc == null ? partyAllyDialog(ally) : sourceNpc.dialog();
+        Npc npc = new Npc(
+                relationshipMapId,
+                ally.name,
+                ally.sprite,
+                playerX,
+                playerY,
+                dialog,
+                sourceNpc == null ? null : sourceNpc.questId(),
+                sourceNpc == null ? null : sourceNpc.shopId(),
+                sourceNpc == null ? null : sourceNpc.recruitId(),
+                0,
+                ally.professionXp
+        );
+        introducedNpcKeys.add(npcRelationshipKey(npc));
+        recordNpcKnowledge(npc, 1);
+        activeNpc = npc;
+        activePartyTalkActor = ally;
+        activeShop = null;
+        activeNpcIntroLine = "";
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
+        activeDialogueSession = startDialogueSessionFor(npc);
+        dialogIndex = 0;
+        mode = GameMode.DIALOG;
+        String questNote = recordConversationQuestObjectives(npc);
+        status = "Talking to " + ally.name + "." + questNote;
+        return true;
+    }
+
+    private List<String> partyAllyDialog(Actor ally) {
+        List<String> dialog = new ArrayList<>();
+        dialog.add(ally.name + ": I am with you. Say the word and I will adjust my pace.");
+        dialog.add("Class: " + ally.className + ". Level " + ally.level + ". " + abilityPreview(ally));
+        dialog.add("Pack: " + actorInventoryPreview(ally));
+        dialog.add("Skills: " + professionPreview(ally));
+        dialog.add("Road: I will keep one step off your heel so we do not crowd the same ground.");
+        return dialog;
+    }
+
+    private Npc npcForAlly(Actor ally) {
+        if (ally == null) {
+            return null;
+        }
+        String recruitId = recruitIdForAlly(ally);
+        if (!recruitId.isBlank()) {
+            for (Npc npc : GameData.NPCS) {
+                if (recruitId.equals(npc.recruitId())) {
+                    return npc;
+                }
+            }
+        }
+        for (Npc npc : GameData.NPCS) {
+            if (npc.name().equals(ally.name)) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
+    private String recruitIdForAlly(Actor ally) {
+        if (ally == null) {
+            return "";
+        }
+        for (String recruitId : recruitedIds) {
+            GameData.RecruitSpec spec = GameData.RECRUITS.get(recruitId);
+            if (spec != null && spec.name().equals(ally.name)) {
+                return recruitId;
+            }
+        }
+        for (Map.Entry<String, GameData.RecruitSpec> entry : GameData.RECRUITS.entrySet()) {
+            GameData.RecruitSpec spec = entry.getValue();
+            if (spec.name().equals(ally.name) && spec.sprite().equals(ally.sprite)) {
+                return entry.getKey();
+            }
+        }
+        return "";
+    }
+
+    private boolean recruitedCompanionNpc(Npc npc) {
+        return npc != null && npc.recruitId() != null && isRecruited(npc.recruitId());
+    }
+
     public void interact() {
         if (mode != GameMode.EXPLORE) {
             return;
@@ -373,6 +635,14 @@ public final class GameState {
             enterBuildingAt(buildingEntry.x(), buildingEntry.y());
             return;
         }
+        if (storyPortalNearPlayer() != null) {
+            interactStoryPortal();
+            return;
+        }
+        if (townPortalNearPlayer() != null) {
+            openFastTravel();
+            return;
+        }
         if (settlementBoardNearPlayer() != null) {
             openSettlementBoard();
             return;
@@ -387,25 +657,332 @@ public final class GameState {
             interactQuestInteractible(interactible);
             return;
         }
+        if (studyNearbyBookshelf()) {
+            return;
+        }
         Npc npc = npcAtPlayer();
         if (npc == null) {
             status = "No one is close enough to talk.";
             return;
         }
-        activeNpc = npc;
-        activeShop = npc.shopId() == null ? null : GameData.SHOPS.get(npc.shopId());
-        activeDialogueSession = DialogueLibrary.startSession(npc, questForNpc(npc), npcBiomeContext(npc), npcRelationship(npc), random);
-        dialogIndex = 0;
-        mode = GameMode.DIALOG;
-        status = "Talking to " + npc.name() + ".";
+        talkToNpc(npc);
+    }
+
+    public WorldProp townPortalNearPlayer() {
+        if (!isSettlementMap(currentMapId)) {
+            return null;
+        }
+        WorldProp best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (WorldProp prop : world.props(currentMapId)) {
+            if (!world.isTownPortalAsset(prop.asset())) {
+                continue;
+            }
+            int distance = Math.max(Math.abs(prop.x() - playerX), Math.abs(prop.y() - playerY));
+            if (distance <= 1 && distance < bestDistance) {
+                best = prop;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    public WorldProp storyPortalNearPlayer() {
+        WorldProp best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (WorldProp prop : world.props(currentMapId)) {
+            if (!GameData.STORY_PORTAL_ASSET.equals(prop.asset())) {
+                continue;
+            }
+            int distance = Math.max(Math.abs(prop.x() - playerX), Math.abs(prop.y() - playerY));
+            if (distance <= 1 && distance < bestDistance) {
+                best = prop;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    private void interactStoryPortal() {
+        if (mainStoryComplete()) {
+            status = "The Old Gate is quiet. Alderfall was never saved by crowns; it was saved by promises kept.";
+            return;
+        }
+        Quest gateQuest = quests.get("ms_twelve_stones_gate");
+        if (gateQuest == null || !gateQuest.accepted) {
+            status = "The Old Gate of Alderfall is dormant. Maelis has not prepared the twelve-stone oath yet.";
+            return;
+        }
+        int stones = magicStoneCount();
+        if (stones < GameData.MAGIC_STONE_KEYS.size()) {
+            status = "The Old Gate shows " + stones + "/" + GameData.MAGIC_STONE_KEYS.size()
+                    + " stones lit. Red-marked main story quests reveal the missing sockets.";
+            return;
+        }
+        List<GameData.MonsterSpec> specs = monsterSpecsForKeys(List.of(
+                "vaelthara", "morvane_mercy_taker", "kharvok_banner_bound", "velmora_bell_drowned", "sareth_cinder_knife"
+        ));
+        battle = createBattle(specs, world.tileAt(currentMapId, playerX, playerY), world.kind(currentMapId));
+        prepareBattleKnowledge(battle);
+        demonQueenBattleActive = true;
+        mode = GameMode.BATTLE;
+        status = "Vaelthara: So. The little survivor gathers stones and calls it courage. Maelis: You should have killed them.";
+    }
+
+    private int magicStoneCount() {
+        int count = 0;
+        for (String key : GameData.MAGIC_STONE_KEYS) {
+            if (player.hasItem(key)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private boolean hasAllMagicStones() {
+        return magicStoneCount() >= GameData.MAGIC_STONE_KEYS.size();
+    }
+
+    private boolean hasAllMagicStonesExcept(String exceptKey) {
+        for (String key : GameData.MAGIC_STONE_KEYS) {
+            if (!key.equals(exceptKey) && !player.hasItem(key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean mainStoryComplete() {
+        Quest gateQuest = quests.get("ms_twelve_stones_gate");
+        return demonQueenDefeated || (gateQuest != null && gateQuest.completed);
+    }
+
+    private boolean studyNearbyBookshelf() {
+        WorldProp shelf = nearbyBookshelf();
+        if (shelf == null) {
+            return false;
+        }
+        beginBookshelfReading(shelf);
+        return true;
+    }
+
+    public WorldProp readableBookshelfAtTile(int x, int y) {
+        if (!"interior".equals(world.kind(currentMapId))) {
+            return null;
+        }
+        for (WorldProp prop : world.props(currentMapId)) {
+            if ("interior_bookshelf".equals(prop.asset()) && prop.x() == x && prop.y() == y) {
+                return prop;
+            }
+        }
+        return null;
+    }
+
+    public void readBookshelfAtTile(int x, int y) {
+        if (mode != GameMode.EXPLORE) {
+            return;
+        }
+        WorldProp shelf = readableBookshelfAtTile(x, y);
+        if (shelf == null) {
+            status = "There are no readable books there.";
+            return;
+        }
+        if (Math.abs(shelf.x() - playerX) + Math.abs(shelf.y() - playerY) > 1) {
+            status = "Move closer to read the bookshelf.";
+            return;
+        }
+        beginBookshelfReading(shelf);
+    }
+
+    private void beginBookshelfReading(WorldProp shelf) {
+        if (crafting.active()) {
+            status = "Busy: " + crafting.progressLabel() + ".";
+            return;
+        }
+        pendingReadBookshelfMapId = currentMapId;
+        pendingReadBookshelfTile = new TilePoint(shelf.x(), shelf.y());
+        int ticks = Math.max(36, 84 - Math.max(1, player.intelligence) * 2);
+        status = crafting.beginReading("bookshelf", ticks);
+        if (!crafting.active()) {
+            pendingReadBookshelfMapId = "";
+            pendingReadBookshelfTile = null;
+        }
+    }
+
+    private void studyBookshelf(WorldProp shelf, String mapId) {
+        String recipeNote = learnRecipeFromBookshelf(shelf, mapId);
+        if (!recipeNote.isBlank()) {
+            status = recipeNote;
+            return;
+        }
+        String monsterKey = bookshelfMonsterLoreKey(shelf, mapId);
+        GameData.MonsterSpec spec = GameData.MONSTERS.get(monsterKey);
+        if (spec != null && monsterInsightCount(monsterKey) < 4) {
+            recordMonsterInsight(monsterKey);
+            status = "You study a shelf note on " + spec.name() + ". Monster knowledge improved.";
+            return;
+        }
+        String worldNote = bookshelfWorldKnowledgeMessage(mapId);
+        status = worldNote.isBlank()
+                ? "You read a few marked pages about Alderfall's roads, weather, and old borders."
+                : worldNote;
+    }
+
+    private WorldProp nearbyBookshelf() {
+        if (!"interior".equals(world.kind(currentMapId))) {
+            return null;
+        }
+        WorldProp best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (WorldProp prop : world.props(currentMapId)) {
+            if (!"interior_bookshelf".equals(prop.asset())) {
+                continue;
+            }
+            int distance = Math.abs(prop.x() - playerX) + Math.abs(prop.y() - playerY);
+            if (distance <= 1 && distance < bestDistance) {
+                best = prop;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    private String bookshelfMonsterLoreKey(WorldProp shelf, String mapId) {
+        int seed = mapId.hashCode() * 31 + shelf.x() * 928371 + shelf.y() * 364479;
+        return BOOKSHELF_MONSTER_LORE_KEYS[Math.floorMod(seed, BOOKSHELF_MONSTER_LORE_KEYS.length)];
+    }
+
+    private String bookshelfWorldKnowledgeMessage(String mapId) {
+        CityBuilding building = buildingForInteriorMap(mapId);
+        String sourceMapId = sourceMapForInterior(mapId);
+        if (building != null && !sourceMapId.isBlank()) {
+            String message = gainBuildingKnowledgeMessage(sourceMapId, building, 1, "The bookshelf");
+            if (!message.isBlank()) {
+                return message;
+            }
+        }
+        if (!sourceMapId.isBlank()) {
+            recordSettlementVisit(sourceMapId);
+            return "You read marginal notes about " + world.label(sourceMapId) + ". Local knowledge improved.";
+        }
+        return "";
+    }
+
+    private String learnRecipeFromBookshelf(WorldProp shelf, String mapId) {
+        for (CraftingSystem.Recipe recipe : CraftingSystem.recipesFromBookcase(mapId, shelf.x(), shelf.y())) {
+            String note = unlockRecipe(recipe.key(), "The bookshelf teaches");
+            if (!note.isBlank()) {
+                return note;
+            }
+        }
+        return "";
+    }
+
+    public void openFastTravel() {
+        if (townPortalNearPlayer() == null) {
+            status = "No town portal is close enough.";
+            return;
+        }
+        mode = GameMode.FAST_TRAVEL;
+        status = "Choose a destination.";
+    }
+
+    public List<FastTravelDestination> fastTravelDestinations() {
+        List<FastTravelDestination> destinations = new ArrayList<>();
+        WorldMap.SettlementSite current = currentSettlementSite();
+        for (WorldMap.SettlementSite settlement : world.settlementSites()) {
+            if (settlement.id().equals(currentMapId) || world.townPortalArrival(settlement.id()) == null) {
+                continue;
+            }
+            int cost = fastTravelCost(current, settlement);
+            String portalAsset = switch (settlement.kingdomId()) {
+                case "highwall" -> "town_portal_snow";
+                case "belltower" -> "town_portal_marsh";
+                case "sanctum" -> "town_portal_desert";
+                case "crownlands" -> settlement.kind().equals("Village") ? "town_portal_green" : "town_portal_city";
+                default -> settlement.kind().equals("Village") ? "town_portal_green" : "town_portal_city";
+            };
+            destinations.add(new FastTravelDestination(settlement.id(), settlement.label(), settlement.kind(), cost, portalAsset));
+        }
+        return destinations;
+    }
+
+    private WorldMap.SettlementSite currentSettlementSite() {
+        for (WorldMap.SettlementSite settlement : world.settlementSites()) {
+            if (settlement.id().equals(currentMapId)) {
+                return settlement;
+            }
+        }
+        return null;
+    }
+
+    private int fastTravelCost(WorldMap.SettlementSite current, WorldMap.SettlementSite target) {
+        if (current == null || target == null) {
+            return 15;
+        }
+        int distance = Math.abs(current.x() - target.x()) + Math.abs(current.y() - target.y());
+        int cost = 10 + distance / 12;
+        if ("City".equals(target.kind()) || "Town".equals(target.kind())) {
+            cost += 4;
+        }
+        if (current.kingdomId().equals(target.kingdomId())) {
+            cost = Math.max(8, cost - 3);
+        }
+        return Math.min(45, Math.max(8, cost));
+    }
+
+    public void fastTravelTo(int index) {
+        if (mode != GameMode.FAST_TRAVEL) {
+            return;
+        }
+        List<FastTravelDestination> destinations = fastTravelDestinations();
+        if (index < 0 || index >= destinations.size()) {
+            return;
+        }
+        FastTravelDestination destination = destinations.get(index);
+        if (player.gold < destination.cost()) {
+            status = destination.label() + " costs " + destination.cost() + " gold.";
+            return;
+        }
+        TilePoint arrival = world.townPortalArrival(destination.mapId());
+        if (arrival == null) {
+            status = "That portal is dormant.";
+            return;
+        }
+        player.gold -= destination.cost();
+        currentMapId = destination.mapId();
+        playerX = arrival.x();
+        playerY = arrival.y();
+        recordSettlementVisit(currentMapId);
+        mode = GameMode.EXPLORE;
+        regenerateResourceNodesOnTownEntry();
+        status = "Paid " + destination.cost() + " gold. The portal carries you to " + destination.label() + ".";
     }
 
     public void advanceDialog() {
         if (mode != GameMode.DIALOG || activeNpc == null) {
             return;
         }
+        if (!activeNpcIntroLine.isBlank()) {
+            activeNpcIntroLine = "";
+            dialogIndex = 0;
+            status = "Talking to " + activeNpc.name() + ".";
+            return;
+        }
+        if (!activeQuestDialogueLine.isBlank()) {
+            CityBuilding shopDialogueBuilding = activeShopDialogueBuilding();
+            if (shopDialogueBuilding != null) {
+                List<String> options = activeNpcDialogOptions();
+                if (!options.isEmpty()) {
+                    selectDialogOption(Math.max(0, Math.min(dialogIndex, options.size() - 1)));
+                    return;
+                }
+            }
+            clearActiveQuestDialogueLine();
+            return;
+        }
         Quest quest = questForNpc(activeNpc);
-        if (quest != null && (!quest.accepted || quest.ready())) {
+        if (quest != null && quest.ready()) {
             handleActiveNpcQuestAction();
             return;
         }
@@ -434,9 +1011,49 @@ public final class GameState {
             return List.of();
         }
         if (activeDialogueSession == null) {
-            activeDialogueSession = DialogueLibrary.startSession(activeNpc, questForNpc(activeNpc), npcBiomeContext(activeNpc), npcRelationship(activeNpc), random);
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
         }
-        return activeDialogueSession.optionLabels();
+        if (!activeNpcIntroLine.isBlank()) {
+            return List.of("Continue");
+        }
+        if (!activeQuestDialogueLine.isBlank()) {
+            if (activeShopDialogueBuilding() != null) {
+                return List.of("Open shop", "Continue");
+            }
+            return List.of("Continue");
+        }
+        List<String> options = new ArrayList<>(activeDialogueSession.optionLabels());
+        if (activePartyTalkActor != null) {
+            return options;
+        }
+        if (!activeNpcDialogueAtRoot()) {
+            return options;
+        }
+        CityBuilding inquiryBuilding = activeNpcPlaceInquiryBuilding();
+        if (inquiryBuilding != null) {
+            options.add("Ask about " + generatedBuildingName(inquiryBuilding));
+        }
+        CityBuilding shopBuilding = activeNpcAssignedShopBuilding();
+        if (shopBuilding != null) {
+            options.add("Ask about their shop");
+        }
+        return options;
+    }
+
+    public boolean activeNpcIntroductionPending() {
+        return activeNpc != null && !activeNpcIntroLine.isBlank();
+    }
+
+    public boolean activeNpcDialogueAtRoot() {
+        if (activeNpc == null
+                || activeNpcIntroLine != null && !activeNpcIntroLine.isBlank()
+                || activeQuestDialogueLine != null && !activeQuestDialogueLine.isBlank()) {
+            return false;
+        }
+        if (activeDialogueSession == null) {
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+        }
+        return activeDialogueSession.atRoot();
     }
 
     public String activeNpcDialogLine() {
@@ -444,42 +1061,570 @@ public final class GameState {
             return "...";
         }
         if (activeDialogueSession == null) {
-            activeDialogueSession = DialogueLibrary.startSession(activeNpc, questForNpc(activeNpc), npcBiomeContext(activeNpc), npcRelationship(activeNpc), random);
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+        }
+        if (!activeNpcIntroLine.isBlank()) {
+            return activeNpcIntroLine;
+        }
+        if (!activeQuestDialogueLine.isBlank()) {
+            return activeQuestDialogueLine;
         }
         return activeDialogueSession.line(npcRelationship(activeNpc));
+    }
+
+    private void clearActiveQuestDialogueLine() {
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
+        dialogIndex = 0;
+        if (activeNpc != null) {
+            status = "Talking to " + activeNpc.name() + ".";
+        }
     }
 
     public void selectDialogOption(int index) {
         if (mode != GameMode.DIALOG || activeNpc == null) {
             return;
         }
-        List<String> options = activeNpcDialogOptions();
-        if (index >= 0 && index < options.size()) {
+        if (!activeNpcIntroLine.isBlank()) {
+            activeNpcIntroLine = "";
+            dialogIndex = 0;
+            status = "Talking to " + activeNpc.name() + ".";
+            return;
+        }
+        if (!activeQuestDialogueLine.isBlank()) {
+            if (activeShopDialogueBuilding() != null && index == 0) {
+                openActiveShopDialogueShop();
+                return;
+            }
+            clearActiveQuestDialogueLine();
+            return;
+        }
+        if (activeDialogueSession == null) {
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+        }
+        List<String> baseOptions = activeDialogueSession.optionLabels();
+        if (activeDialogueSession.atRoot()) {
+            int customIndex = baseOptions.size();
+            CityBuilding inquiryBuilding = activeNpcPlaceInquiryBuilding();
+            if (inquiryBuilding != null) {
+                if (index == customIndex) {
+                    askActiveNpcAboutPlace(inquiryBuilding);
+                    return;
+                }
+                customIndex++;
+            }
+            CityBuilding shopBuilding = activeNpcAssignedShopBuilding();
+            if (shopBuilding != null && index == customIndex) {
+                askActiveNpcAboutAssignedShop(shopBuilding);
+                return;
+            }
+        }
+        if (index >= 0 && index < baseOptions.size()) {
             DialogueLibrary.DialogueChoiceResult result = activeDialogueSession.choose(index);
+            recordActiveCompanionDialogueTopic(result.repeatKey());
+            activeShopDialogueBuildingKey = "";
             if (result.relationshipDelta() != 0) {
                 adjustNpcRelationship(activeNpc, result.relationshipDelta());
             }
+            if (result.effect() != null && !result.effect().isBlank()) {
+                applyDialogueEffect(result.effect());
+            }
             dialogIndex = 0;
-            if (result.relationshipDelta() == 0) {
+            if (result.relationshipDelta() == 0 && (result.effect() == null || result.effect().isBlank())) {
                 status = "Talking to " + activeNpc.name() + ".";
             }
         }
+    }
+
+    private void recordActiveCompanionDialogueTopic(String repeatKey) {
+        if (repeatKey == null || repeatKey.isBlank()) {
+            return;
+        }
+        String recruitId = activeCompanionRecruitId();
+        if (recruitId.isBlank()) {
+            return;
+        }
+        String key = recruitId + ":" + repeatKey;
+        companionDialogueTopicCounts.merge(key, 1, (oldValue, increment) -> Math.min(999, oldValue + increment));
+    }
+
+    public boolean activeNpcCanTeachRecipe() {
+        return activeNpc != null && !unlearnedNpcRecipes(activeNpc).isEmpty();
+    }
+
+    public void learnRecipeFromActiveNpc() {
+        if (mode != GameMode.DIALOG || activeNpc == null) {
+            return;
+        }
+        List<CraftingSystem.Recipe> recipes = unlearnedNpcRecipes(activeNpc);
+        if (recipes.isEmpty()) {
+            status = activeNpc.name() + " has no new recipes to teach right now.";
+            return;
+        }
+        CraftingSystem.Recipe recipe = recipes.get(0);
+        String note = unlockRecipe(recipe.key(), activeNpc.name() + " teaches");
+        if (!note.isBlank()) {
+            adjustNpcRelationship(activeNpc, 1);
+            dialogIndex = 0;
+            status = note + " Relationship improved.";
+        }
+    }
+
+    private List<CraftingSystem.Recipe> unlearnedNpcRecipes(Npc npc) {
+        ensureStarterRecipeUnlocks();
+        return CraftingSystem.recipesTaughtByNpc(npc).stream()
+                .filter(recipe -> !unlockedRecipeKeys.contains(recipe.key()))
+                .toList();
     }
 
     public int npcRelationship(Npc npc) {
         return npcRelationships.getOrDefault(npcRelationshipKey(npc), 0);
     }
 
+    public boolean knowsNpc(Npc npc) {
+        return npc != null && introducedNpcKeys.contains(npcRelationshipKey(npc));
+    }
+
+    public String npcDisplayName(Npc npc) {
+        return knowsNpc(npc) ? npc.name() : "Stranger";
+    }
+
+    public String npcKnowledgeKey(Npc npc) {
+        return npc == null ? "" : npcRelationshipKey(npc);
+    }
+
+    public int npcKnowledgeCount(Npc npc) {
+        return npcKnowledge.getOrDefault(npcKnowledgeKey(npc), 0);
+    }
+
+    public int npcKnowledgeLevel(Npc npc) {
+        int count = npcKnowledgeCount(npc);
+        int intelligence = Math.max(1, player.intelligence);
+        if (count <= 0) {
+            return intelligence >= 12 ? 1 : 0;
+        }
+        return Math.min(5, 1 + count / 2 + intelligence / 6);
+    }
+
+    private void recordNpcKnowledge(Npc npc, int amount) {
+        if (npc == null) {
+            return;
+        }
+        String key = npcKnowledgeKey(npc);
+        int previous = npcKnowledge.getOrDefault(key, 0);
+        int next = Math.min(8, previous + Math.max(1, amount));
+        if (next > previous) {
+            npcKnowledge.put(key, next);
+        }
+    }
+
+    private String npcIntroductionLine(Npc npc) {
+        String sample = npc.dialog().isEmpty() ? "" : stripSpeakerPrefix(npc.dialog().get(0), npc.name());
+        String role = npcRoleIntroduction(npc);
+        String line = "I am " + npc.name() + role + ".";
+        if (!sample.isBlank()) {
+            line += " " + sample;
+        }
+        return line;
+    }
+
+    private String stripSpeakerPrefix(String line, String speaker) {
+        if (line == null) {
+            return "";
+        }
+        String cleaned = line.strip();
+        String prefix = speaker + ":";
+        if (cleaned.regionMatches(true, 0, prefix, 0, prefix.length())) {
+            return cleaned.substring(prefix.length()).strip();
+        }
+        return cleaned;
+    }
+
+    private String npcRoleIntroduction(Npc npc) {
+        if (npc.recruitId() != null && GameData.RECRUITS.containsKey(npc.recruitId())) {
+            return ", a " + GameData.RECRUITS.get(npc.recruitId()).className().toLowerCase();
+        }
+        if (npc.shopId() != null && GameData.SHOPS.containsKey(npc.shopId())) {
+            return ", keeper of " + GameData.SHOPS.get(npc.shopId()).name();
+        }
+        return "";
+    }
+
     private void adjustNpcRelationship(Npc npc, int delta) {
         String key = npcRelationshipKey(npc);
-        int value = Math.max(-100, Math.min(100, npcRelationships.getOrDefault(key, 0) + delta));
+        int adjustedDelta = relationshipDeltaWithCharisma(delta);
+        if (delta > 0 && specialCompanionNpc(npc)) {
+            adjustedDelta = Math.max(1, adjustedDelta / 2);
+        }
+        int previous = npcRelationships.getOrDefault(key, 0);
+        int value = Math.max(MIN_NPC_RELATIONSHIP, Math.min(maxRelationshipForNpc(npc), previous + adjustedDelta));
         npcRelationships.put(key, value);
-        String direction = delta > 0 ? "improved" : "worsened";
-        status = npc.name() + "'s opinion " + direction + " (" + value + ").";
+        maybeQueueRelationshipMilestonePrompt(npc, previous, value);
+        String direction = adjustedDelta > 0 ? "improved" : "worsened";
+        String bonus = adjustedDelta > delta ? " (CHA +" + (adjustedDelta - delta) + ")" : "";
+        status = npc.name() + "'s opinion " + direction + " (" + value + ")" + bonus + ".";
+    }
+
+    private int relationshipDeltaWithCharisma(int delta) {
+        if (delta <= 0) {
+            return delta;
+        }
+        return delta + Math.max(0, (player.charisma - 10) / 4);
     }
 
     private String npcRelationshipKey(Npc npc) {
-        return npc.mapId() + ":" + npc.name().strip().toLowerCase();
+        Npc canonical = sourceNpcForState(npc);
+        Npc keyed = canonical == null ? npc : canonical;
+        String key = rawNpcStateKey(keyed);
+        String rawKey = rawNpcStateKey(npc);
+        migrateNpcStateKey(rawKey, key);
+        return key;
+    }
+
+    private String rawNpcStateKey(Npc npc) {
+        return npc == null ? "" : npc.mapId() + ":" + npc.name().strip().toLowerCase();
+    }
+
+    private void migrateNpcStateKey(String oldKey, String newKey) {
+        if (oldKey.isBlank() || newKey.isBlank() || oldKey.equals(newKey)) {
+            return;
+        }
+        Integer oldRelationship = npcRelationships.remove(oldKey);
+        if (oldRelationship != null) {
+            int existing = npcRelationships.getOrDefault(newKey, oldRelationship);
+            npcRelationships.put(newKey, Math.max(existing, oldRelationship));
+        }
+        Integer oldKnowledge = npcKnowledge.remove(oldKey);
+        if (oldKnowledge != null) {
+            int existing = npcKnowledge.getOrDefault(newKey, oldKnowledge);
+            npcKnowledge.put(newKey, Math.max(existing, oldKnowledge));
+        }
+        if (introducedNpcKeys.remove(oldKey)) {
+            introducedNpcKeys.add(newKey);
+        }
+        String weeklyQuestId = weeklyNpcQuestIds.remove(oldKey);
+        if (weeklyQuestId != null) {
+            weeklyNpcQuestIds.putIfAbsent(newKey, weeklyQuestId);
+        }
+    }
+
+    public static int maxRelationshipForKey(String key) {
+        return companionRelationshipKey(key) ? MAX_COMPANION_TRUST : MAX_NPC_RELATIONSHIP;
+    }
+
+    private int maxRelationshipForNpc(Npc npc) {
+        return specialCompanionNpc(npc) ? MAX_COMPANION_TRUST : MAX_NPC_RELATIONSHIP;
+    }
+
+    public boolean isRomancedCompanion(String recruitId) {
+        return recruitId != null && romancedCompanionIds.contains(recruitId);
+    }
+
+    public boolean isMarriedCompanion(String recruitId) {
+        return recruitId != null && marriedCompanionIds.contains(recruitId);
+    }
+
+    private void applyDialogueEffect(String effect) {
+        if (effect != null && effect.startsWith("quest:accept:")) {
+            applyQuestAcceptEffect(effect);
+            return;
+        }
+        if (effect != null && effect.startsWith("quest:turnin:")) {
+            applyQuestTurnInEffect(effect);
+            return;
+        }
+        if (effect != null && effect.startsWith("quest:outcome:")) {
+            applyQuestOutcomeEffect(effect);
+            return;
+        }
+        if (effect != null && effect.startsWith("recruit:")) {
+            applyRecruitEffect(effect);
+            return;
+        }
+        String recruitId = activeCompanionRecruitId();
+        if (recruitId.isBlank()) {
+            return;
+        }
+        if (effect != null && effect.startsWith("milestone:")) {
+            applyRelationshipMilestoneEffect(recruitId, effect);
+            return;
+        }
+        String companionName = companionName(recruitId);
+        switch (effect) {
+            case "romance:start" -> {
+                romancedCompanionIds.add(recruitId);
+                publishCompanionEvent("romance:start:" + recruitId, "Chose affection with " + companionName,
+                        List.of("commitment", "loyalty", "mercy"), 1, "relationship",
+                        "Chose affection honestly.", true);
+                status = companionName + "'s affection deepens.";
+            }
+            case "romance:end" -> {
+                romancedCompanionIds.remove(recruitId);
+                publishCompanionEvent("romance:end:" + recruitId, "Asked " + companionName + " for space",
+                        List.of("truth", "patience"), 0, "relationship",
+                        "Chose distance instead of pretending affection.", true);
+                status = companionName + " gives you space.";
+            }
+            case "romance:date_plan" -> {
+                recordCompanionMemory(recruitId, "romance", "Planned a quiet date with the player.");
+                status = companionName + " agrees to find a quieter place with you.";
+            }
+            case "romance:date" -> {
+                romancedCompanionIds.add(recruitId);
+                recordCompanionMemory(recruitId, "romance", "Shared a quiet date with the player.");
+                publishCompanionEvent("romance:date:" + recruitId, "Shared a quiet date with " + companionName,
+                        List.of("commitment", "loyalty", "patience"), 1, "relationship",
+                        "Shared a quiet date with the player.", true);
+                status = companionName + " will remember this quiet hour with you.";
+            }
+            case "marriage:accept" -> {
+                romancedCompanionIds.add(recruitId);
+                marriedCompanionIds.add(recruitId);
+                publishCompanionEvent("marriage:accept:" + recruitId, "Made a promise with " + companionName,
+                        List.of("commitment", "loyalty", "oathstead"), 2, "relationship",
+                        "Made a lasting promise at Oathstead.", true);
+                status = companionName + " accepts your proposal. Oathstead will have another promise to celebrate.";
+            }
+            case "companion_request:accept" -> {
+                status = acceptSoftCompanionRequest(recruitId);
+            }
+            default -> {
+            }
+        }
+    }
+
+    private void applyRecruitEffect(String effect) {
+        if (activeNpc == null || effect == null) {
+            return;
+        }
+        String recruitId = effect.substring("recruit:".length()).strip();
+        if (recruitId.isBlank() || !recruitId.equals(activeNpc.recruitId())) {
+            return;
+        }
+        if (!companionRecruitmentEligible(recruitId, activeNpc)) {
+            status = activeNpc.name() + " needs relationship " + COMPANION_RECRUIT_RELATIONSHIP
+                    + " or one completed companion chapter before joining. Current: " + npcRelationship(activeNpc) + ".";
+            return;
+        }
+        String recruitNote = recruitAlly(recruitId);
+        status = recruitNote == null ? activeNpc.name() + " cannot join right now." : recruitNote;
+        activeDialogueSession = startDialogueSessionFor(activeNpc);
+    }
+
+    private void applyQuestAcceptEffect(String effect) {
+        if (activeNpc == null || effect == null) {
+            return;
+        }
+        String questId = effect.substring("quest:accept:".length()).strip();
+        Quest quest = questForNpc(activeNpc);
+        if (quest == null || quest.accepted || quest.completed || !quest.id.equals(questId)) {
+            return;
+        }
+        handleActiveNpcQuestAction();
+    }
+
+    private void applyQuestTurnInEffect(String effect) {
+        if (activeNpc == null || effect == null) {
+            return;
+        }
+        String questId = effect.substring("quest:turnin:".length()).strip();
+        Quest quest = questForNpc(activeNpc);
+        if (quest == null || !quest.ready() || quest.completed || !quest.id.equals(questId)) {
+            return;
+        }
+        handleActiveNpcQuestAction();
+    }
+
+    private void applyQuestOutcomeEffect(String effect) {
+        if (effect == null) {
+            return;
+        }
+        String[] fields = effect.split(":", 4);
+        if (fields.length != 4) {
+            return;
+        }
+        Quest quest = quests.get(fields[2].strip());
+        if (quest == null || quest.completed) {
+            return;
+        }
+        String outcome = normalizeQuestOutcome(fields[3]);
+        if (outcome.isBlank()) {
+            return;
+        }
+        questBranchOutcomes.put(quest.outcomeKey(), outcome);
+        if (quest.accepted && !quest.ready() && quest.activeObjectiveKind() == Quest.ObjectiveKind.CHOICE) {
+            quest.recordConversation();
+            invalidateQuestObjectiveCache();
+        }
+        String label = readableQuestOutcome(outcome);
+        if (quest.companionQuest() && quest.chainOwnerId != null && !quest.chainOwnerId.isBlank()) {
+            recordCompanionMemory(quest.chainOwnerId, "quest_choice", "Chose " + label + " during " + quest.title + ".");
+        }
+        publishCompanionEvent("quest_outcome:" + quest.outcomeKey() + ":" + outcome,
+                "Chose " + label + " in " + quest.title,
+                List.of("truth", "choice", "consequence", quest.companionQuest() ? "companion_quest" : "local"),
+                quest.companionQuest() ? 1 : 0,
+                "quest_choice",
+                "Chose " + label + " during " + quest.title + ".",
+                quest.companionQuest());
+        status = "Choice recorded: " + label + ".";
+        if (quest.ready()) {
+            status += " " + quest.activeReadyDialog();
+        }
+    }
+
+    private String normalizeQuestOutcome(String outcome) {
+        if (outcome == null) {
+            return "";
+        }
+        return outcome.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9_\\-]+", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_|_$", "")
+                .strip();
+    }
+
+    public String questBranchOutcome(Quest quest) {
+        return quest == null ? "" : questBranchOutcomes.getOrDefault(quest.outcomeKey(), "");
+    }
+
+    public String questBranchOutcome(String outcomeKey) {
+        return outcomeKey == null || outcomeKey.isBlank() ? "" : questBranchOutcomes.getOrDefault(outcomeKey, "");
+    }
+
+    public String readableQuestOutcome(String outcome) {
+        if (outcome == null || outcome.isBlank()) {
+            return "undecided";
+        }
+        String[] parts = outcome.replace('-', '_').split("_+");
+        List<String> words = new ArrayList<>();
+        for (String part : parts) {
+            if (part.isBlank()) {
+                continue;
+            }
+            words.add(part.substring(0, 1).toUpperCase(Locale.ROOT) + part.substring(1).toLowerCase(Locale.ROOT));
+        }
+        return words.isEmpty() ? outcome : String.join(" ", words);
+    }
+
+    private void applyRelationshipMilestoneEffect(String recruitId, String effect) {
+        try {
+            int threshold = Integer.parseInt(effect.substring("milestone:".length()));
+            if (threshold <= 0) {
+                return;
+            }
+            String key = relationshipMilestoneKey(recruitId, threshold);
+            if (companionRelationshipMilestones.add(key)) {
+                String label = relationshipMilestoneLabel(threshold);
+                recordCompanionMemory(recruitId, "relationship_milestone", "Reached " + label + " with the player.");
+                publishCompanionEvent("relationship_milestone:" + recruitId + ":" + threshold,
+                        "Reached " + label + " with " + companionName(recruitId),
+                        List.of("loyalty", "commitment"), 1, "relationship_milestone",
+                        "Reached " + label + " with the player.", true);
+                status = companionName(recruitId) + " will remember this " + label + ".";
+            }
+        } catch (NumberFormatException ignored) {
+        }
+    }
+
+    private String activeCompanionRecruitId() {
+        Npc canonical = sourceNpcForState(activeNpc);
+        if (canonical != null && canonical.recruitId() != null) {
+            return canonical.recruitId();
+        }
+        return activeNpc != null && activeNpc.recruitId() != null ? activeNpc.recruitId() : "";
+    }
+
+    private String companionName(String recruitId) {
+        GameData.RecruitSpec spec = GameData.RECRUITS.get(recruitId);
+        return spec == null ? "Your companion" : spec.name();
+    }
+
+    private Npc canonicalCompanionNpc(Npc npc) {
+        if (npc == null) {
+            return null;
+        }
+        if (npc.recruitId() != null && !npc.recruitId().isBlank()) {
+            for (Npc candidate : GameData.NPCS) {
+                if (npc.recruitId().equals(candidate.recruitId())) {
+                    return candidate;
+                }
+            }
+        }
+        for (Npc candidate : GameData.NPCS) {
+            if (candidate.recruitId() != null && candidate.name().equals(npc.name())) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private Npc sourceNpcForState(Npc npc) {
+        Npc canonical = canonicalCompanionNpc(npc);
+        if (canonical != null) {
+            return canonical;
+        }
+        Npc questSource = questNpcSourceFor(npc);
+        if (questSource != null) {
+            return questSource;
+        }
+        if (npc == null || !syntheticVillageAllyNpc(npc)) {
+            return null;
+        }
+        Actor ally = allyByName(npc.name());
+        return ally == null ? null : npcForAlly(ally);
+    }
+
+    private boolean syntheticVillageAllyNpc(Npc npc) {
+        if (npc == null) {
+            return false;
+        }
+        if (activePartyTalkActor != null && npc == activeNpc) {
+            return true;
+        }
+        if (WorldMap.PLAYER_VILLAGE_ID.equals(npc.mapId())) {
+            return true;
+        }
+        return npc.mapId() != null && npc.mapId().startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_");
+    }
+
+    private boolean specialCompanionNpc(Npc npc) {
+        Npc canonical = sourceNpcForState(npc);
+        if (canonical == null || canonical.recruitId() == null) {
+            return false;
+        }
+        for (Quest quest : quests.values()) {
+            if (canonical.recruitId().equals(quest.chainOwnerId) && quest.companionQuest()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean companionRelationshipKey(String key) {
+        if (key == null || key.isBlank()) {
+            return false;
+        }
+        String normalized = key.strip().toLowerCase();
+        for (Npc npc : GameData.NPCS) {
+            if (npc.recruitId() == null || npc.recruitId().isBlank() || !companionRecruitId(npc.recruitId())) {
+                continue;
+            }
+            String npcKey = npc.mapId() + ":" + npc.name().strip().toLowerCase();
+            if (npcKey.equals(normalized)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean companionRecruitId(String recruitId) {
+        for (Quest quest : GameData.QUESTS.values()) {
+            if (recruitId.equals(quest.chainOwnerId) && quest.companionQuest()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String npcBiomeContext(Npc npc) {
@@ -489,42 +1634,611 @@ public final class GameState {
         return DialogueLibrary.biomeContext(npc, npcTile, currentBiomeTile());
     }
 
+    private DialogueLibrary.DialogueSession startDialogueSessionFor(Npc npc) {
+        return DialogueLibrary.startSession(
+                npc,
+                questForNpc(npc),
+                npcBiomeContext(npc),
+                npcRelationship(npc),
+                random,
+                dialogueContextFor(npc)
+        );
+    }
+
+    private DialogueLibrary.DialogueContext dialogueContextFor(Npc npc) {
+        String recruitId = companionRecruitIdForContext(npc);
+        boolean recruited = !recruitId.isBlank() && isRecruited(recruitId);
+        boolean romanced = !recruitId.isBlank() && isRomancedCompanion(recruitId);
+        boolean married = !recruitId.isBlank() && isMarriedCompanion(recruitId);
+        Actor ally = companionActorForContext(npc, recruitId);
+        boolean stationed = ally != null && villageAllies.contains(ally.name);
+        String buildingLabel = "";
+        String roleLabel = "";
+        if (stationed) {
+            String buildingKey = buildingAssignmentForAlly(ally.name);
+            CityBuilding building = buildingKey.isBlank() ? null : playerVillageBuildingByKey(buildingKey);
+            if (building != null) {
+                buildingLabel = VillageManager.buildingLabel(building.style());
+            }
+            String roleId = villageWorkerRoles.getOrDefault(ally.name, "idle");
+            roleLabel = VillageManager.workerRole(roleId).label();
+        }
+        return new DialogueLibrary.DialogueContext(
+                recruited,
+                !recruited && companionRecruitmentEligible(recruitId, npc),
+                stationed,
+                romanced,
+                married,
+                buildingLabel,
+                roleLabel,
+                knownCompanionNamesForDialogue(),
+                recentCompanionMemoryTexts(recruitId),
+                sharedTableConversationContext(),
+                sharedTableConversationLabel(),
+                companionApprovalMotive(recruitId),
+                companionEpilogueReady(),
+                activeSoftRequestText(recruitId),
+                relationshipMilestoneResolved(recruitId, 150),
+                relationshipMilestoneResolved(recruitId, 180),
+                relationshipMilestoneResolved(recruitId, 250),
+                pendingRelationshipMilestone(recruitId, npcRelationship(npc)),
+                relationshipMilestoneLabel(pendingRelationshipMilestone(recruitId, npcRelationship(npc))),
+                companionDialogueTopicCountsFor(recruitId),
+                questBranchOutcomes
+        );
+    }
+
+    private Map<String, Integer> companionDialogueTopicCountsFor(String recruitId) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return Map.of();
+        }
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        String prefix = recruitId + ":";
+        for (var entry : companionDialogueTopicCounts.entrySet()) {
+            if (entry.getKey().startsWith(prefix) && entry.getValue() > 0) {
+                counts.put(entry.getKey().substring(prefix.length()), entry.getValue());
+            }
+        }
+        return counts;
+    }
+
+    private boolean relationshipMilestoneResolved(String recruitId, int threshold) {
+        return recruitId != null
+                && !recruitId.isBlank()
+                && companionRelationshipMilestones.contains(relationshipMilestoneKey(recruitId, threshold));
+    }
+
+    private boolean companionEpilogueReady() {
+        Quest gateQuest = quests.get("ms_twelve_stones_gate");
+        return demonQueenDefeated || gateQuest != null && gateQuest.completed;
+    }
+
+    private String companionApprovalMotive(String recruitId) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return "trust";
+        }
+        return companionApprovalProfile(recruitId).motive();
+    }
+
+    private int pendingRelationshipMilestone(String recruitId, int relationship) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return 0;
+        }
+        for (int threshold : new int[]{50, 100, 150, 180, 250}) {
+            if (relationship >= threshold && !companionRelationshipMilestones.contains(relationshipMilestoneKey(recruitId, threshold))) {
+                return threshold;
+            }
+        }
+        return 0;
+    }
+
+    private String relationshipMilestoneLabel(int threshold) {
+        return switch (threshold) {
+            case 50 -> "guarded respect";
+            case 100 -> "personal admission";
+            case 150 -> "loyalty";
+            case 180 -> "romance possible";
+            case 250 -> "future promise";
+            default -> "";
+        };
+    }
+
+    private String relationshipMilestoneKey(String recruitId, int threshold) {
+        return recruitId + ":" + threshold;
+    }
+
+    private boolean sharedTableConversationContext() {
+        return !sharedTableConversationLabel().isBlank();
+    }
+
+    private String sharedTableConversationLabel() {
+        if (WorldMap.PLAYER_VILLAGE_ID.equals(currentMapId) || currentMapId.startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_")) {
+            return "Oathstead";
+        }
+        CityBuilding interiorBuilding = buildingForInteriorMap(currentMapId);
+        if (socialRestBuilding(interiorBuilding)) {
+            return generatedBuildingName(interiorBuilding);
+        }
+        String label = world.label(currentMapId);
+        String lowerLabel = label.toLowerCase();
+        if (lowerLabel.contains("inn") || lowerLabel.contains("tavern")) {
+            return label;
+        }
+        if (isSettlementMap(currentMapId)) {
+            TilePoint player = new TilePoint(playerX, playerY);
+            CityBuilding nearest = null;
+            int bestDistance = Integer.MAX_VALUE;
+            for (CityBuilding building : world.cityBuildings(currentMapId)) {
+                if (!socialRestBuilding(building)) {
+                    continue;
+                }
+                int distance = distanceToBuilding(player, building);
+                if (distance < bestDistance) {
+                    nearest = building;
+                    bestDistance = distance;
+                }
+            }
+            if (nearest != null && bestDistance <= 6) {
+                return generatedBuildingName(nearest);
+            }
+        }
+        return "";
+    }
+
+    private boolean socialRestBuilding(CityBuilding building) {
+        if (building == null) {
+            return false;
+        }
+        String style = building.style();
+        String key = building.key() == null ? "" : building.key().toLowerCase();
+        String generated = generatedBuildingName(building).toLowerCase();
+        return "inn".equals(style)
+                || "restaurant".equals(style)
+                || key.contains("inn")
+                || key.contains("tavern")
+                || generated.contains("inn")
+                || generated.contains("tavern");
+    }
+
+    private String companionRecruitIdForContext(Npc npc) {
+        Npc canonical = sourceNpcForState(npc);
+        if (canonical != null && canonical.recruitId() != null) {
+            return canonical.recruitId();
+        }
+        return npc != null && npc.recruitId() != null ? npc.recruitId() : "";
+    }
+
+    private Actor companionActorForContext(Npc npc, String recruitId) {
+        if (recruitId != null && !recruitId.isBlank()) {
+            GameData.RecruitSpec spec = GameData.RECRUITS.get(recruitId);
+            if (spec != null) {
+                Actor ally = allyByName(spec.name());
+                if (ally != null) {
+                    return ally;
+                }
+            }
+        }
+        return npc == null ? null : allyByName(npc.name());
+    }
+
+    private List<String> knownCompanionNamesForDialogue() {
+        List<String> names = new ArrayList<>();
+        for (Npc npc : GameData.NPCS) {
+            if (npc.recruitId() == null || npc.recruitId().isBlank() || !companionRecruitId(npc.recruitId())) {
+                continue;
+            }
+            boolean known = isRecruited(npc.recruitId())
+                    || introducedNpcKeys.contains(npcRelationshipKey(npc))
+                    || npcRelationships.containsKey(npcRelationshipKey(npc))
+                    || companionQuestTouched(npc.recruitId());
+            if (known && !names.contains(npc.name())) {
+                names.add(npc.name());
+            }
+        }
+        return names;
+    }
+
+    private boolean companionQuestTouched(String recruitId) {
+        for (Quest quest : quests.values()) {
+            if (recruitId.equals(quest.chainOwnerId) && (quest.accepted || quest.completed || quest.progress > 0)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void recordCompanionMemory(String recruitId, String category, String text) {
+        if (recruitId == null || recruitId.isBlank() || !GameData.RECRUITS.containsKey(recruitId)
+                || text == null || text.isBlank()) {
+            return;
+        }
+        String cleanedCategory = category == null || category.isBlank() ? "event" : category.strip();
+        String cleanedText = text.replaceAll("\\s+", " ").strip();
+        List<CompanionMemory> memories = companionMemoryJournal.computeIfAbsent(recruitId, ignored -> new ArrayList<>());
+        if (!memories.isEmpty()) {
+            CompanionMemory latest = memories.get(memories.size() - 1);
+            if (latest.category().equals(cleanedCategory) && latest.text().equals(cleanedText)) {
+                return;
+            }
+        }
+        memories.add(new CompanionMemory(worldTick, cleanedCategory, cleanedText));
+        while (memories.size() > MAX_COMPANION_MEMORIES) {
+            memories.remove(0);
+        }
+    }
+
+    public List<CompanionMemory> companionMemories(String recruitId) {
+        return List.copyOf(companionMemoryJournal.getOrDefault(recruitId, List.of()));
+    }
+
+    public String latestCompanionMemoryText(String recruitId) {
+        List<CompanionMemory> memories = companionMemoryJournal.getOrDefault(recruitId, List.of());
+        return memories.isEmpty() ? "" : memories.get(memories.size() - 1).text();
+    }
+
+    private List<String> recentCompanionMemoryTexts(String recruitId) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return List.of();
+        }
+        List<CompanionMemory> memories = companionMemoryJournal.getOrDefault(recruitId, List.of());
+        if (memories.isEmpty()) {
+            return List.of();
+        }
+        List<String> recent = new ArrayList<>();
+        for (int i = memories.size() - 1; i >= 0 && recent.size() < 4; i--) {
+            String text = memories.get(i).text();
+            if (!text.isBlank() && !recent.contains(text)) {
+                recent.add(text);
+            }
+        }
+        return recent;
+    }
+
+    private void recordCompanionMemoryForNpc(Npc npc, String category, String text) {
+        String recruitId = companionRecruitIdForContext(npc);
+        if (!recruitId.isBlank()) {
+            recordCompanionMemory(recruitId, category, text);
+        }
+    }
+
+    private void recordCompanionMemoryForAlly(Actor ally, String category, String text) {
+        String recruitId = recruitIdForAlly(ally);
+        if (!recruitId.isBlank()) {
+            recordCompanionMemory(recruitId, category, text);
+        }
+    }
+
+    private void recordMainStoryMemory(String text) {
+        for (String recruitId : recruitedIds) {
+            recordCompanionMemory(recruitId, "main_story", text);
+        }
+    }
+
+    private String activeSoftRequestText(String recruitId) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return "";
+        }
+        SoftCompanionRequest request = softCompanionRequest(recruitId, companionSoftRequests.getOrDefault(recruitId, ""));
+        if (request != null && fulfilledCompanionSoftRequests.contains(softRequestKey(recruitId, request.id()))) {
+            return "";
+        }
+        return request == null ? "" : request.prompt();
+    }
+
+    private SoftCompanionRequest activeSoftRequest(String recruitId) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return null;
+        }
+        String requestId = companionSoftRequests.getOrDefault(recruitId, "");
+        SoftCompanionRequest active = softCompanionRequest(recruitId, requestId);
+        if (active != null && !fulfilledCompanionSoftRequests.contains(softRequestKey(recruitId, active.id()))) {
+            return active;
+        }
+        for (SoftCompanionRequest request : softCompanionRequestsFor(recruitId)) {
+            if (!fulfilledCompanionSoftRequests.contains(softRequestKey(recruitId, request.id()))) {
+                return request;
+            }
+        }
+        return null;
+    }
+
+    private String acceptSoftCompanionRequest(String recruitId) {
+        SoftCompanionRequest request = activeSoftRequest(recruitId);
+        String companionName = companionName(recruitId);
+        if (request == null) {
+            return companionName + " has no more personal requests right now.";
+        }
+        String key = softRequestKey(recruitId, request.id());
+        if (request.id().equals(companionSoftRequests.get(recruitId)) && !fulfilledCompanionSoftRequests.contains(key)) {
+            return companionName + " knows you are still carrying that request: " + request.prompt();
+        }
+        companionSoftRequests.put(recruitId, request.id());
+        recordCompanionMemory(recruitId, "request", request.acceptMemory());
+        publishCompanionEvent("companion_request:" + recruitId + ":" + request.id(),
+                "Accepted " + companionName + "'s request",
+                List.of("loyalty", "commitment"), 1, "request", request.acceptMemory(), true);
+        return companionName + " trusts you with a personal request: " + request.prompt();
+    }
+
+    private void fulfillSoftCompanionRequestsForEvent(List<String> eventTags, String detail) {
+        if (eventTags == null || eventTags.isEmpty()) {
+            return;
+        }
+        for (Actor ally : activeAllies()) {
+            String recruitId = recruitIdForAlly(ally);
+            if (recruitId.isBlank()) {
+                continue;
+            }
+            SoftCompanionRequest request = activeSoftRequest(recruitId);
+            if (request == null || !request.id().equals(companionSoftRequests.get(recruitId))) {
+                continue;
+            }
+            String key = softRequestKey(recruitId, request.id());
+            if (fulfilledCompanionSoftRequests.contains(key) || request.tags().stream().noneMatch(eventTags::contains)) {
+                continue;
+            }
+            fulfilledCompanionSoftRequests.add(key);
+            companionSoftRequests.remove(recruitId);
+            recordCompanionMemory(recruitId, "request_fulfilled", request.fulfillMemory(detail));
+            adjustNpcRelationshipDirect(npcForAlly(ally), 3);
+            enqueueCompanionComment(new PendingCompanionComment(
+                    ally.name,
+                    ally.name + ": You remembered what I asked. That matters more than doing it perfectly.",
+                    List.of("I meant to.", "You matter.", "Keep me honest."),
+                    List.of(
+                            "Affirms that you honored the request deliberately. Builds trust.",
+                            "Makes the answer personal. Builds trust strongly.",
+                            "Invites them to keep holding you accountable."
+                    ),
+                    List.of(1, 2, 1)
+            ));
+        }
+    }
+
+    private String softRequestKey(String recruitId, String requestId) {
+        return recruitId + ":" + requestId;
+    }
+
+    private SoftCompanionRequest softCompanionRequest(String recruitId, String requestId) {
+        if (requestId == null || requestId.isBlank()) {
+            return null;
+        }
+        for (SoftCompanionRequest request : softCompanionRequestsFor(recruitId)) {
+            if (request.id().equals(requestId)) {
+                return request;
+            }
+        }
+        return null;
+    }
+
+    private List<SoftCompanionRequest> softCompanionRequestsFor(String recruitId) {
+        return switch (recruitId == null ? "" : recruitId) {
+            case "seraphine" -> List.of(
+                    softRequest("free_choice", "When power asks for obedience, check whether anyone is still free to refuse.",
+                            List.of("freedom", "truth", "evidence"), "Accepted Seraphine's request to protect free choice.",
+                            "Kept Seraphine's request by choosing evidence and freedom over easy obedience."));
+            case "maera" -> List.of(
+                    softRequest("keep_evidence", "When truth becomes inconvenient, do not make it lonely.",
+                            List.of("evidence", "truth", "main_story", "knowledge"), "Accepted Maera's request to protect inconvenient truth.",
+                            "Kept Maera's request by preserving evidence when the road wanted speed."));
+            case "cassia" -> List.of(
+                    softRequest("protect_first", "If glory and protection point in different directions, choose protection.",
+                            List.of("protection", "duty", "oathstead", "combat"), "Accepted Cassia's request to choose protection first.",
+                            "Kept Cassia's request by choosing protection over spectacle."));
+            case "lyra" -> List.of(
+                    softRequest("care_supplies", "Before we chase another danger, remember medicine, food, and rest are not optional.",
+                            List.of("healing", "gather", "craft", "protection"), "Accepted Lyra's request to keep care practical.",
+                            "Kept Lyra's request by making room for care before the next danger."));
+            case "samir" -> List.of(
+                    softRequest("honest_light", "When faith or victory sounds too clean, ask what it had to wash away.",
+                            List.of("truth", "mercy", "holy", "main_story"), "Accepted Samir's request to keep the light honest.",
+                            "Kept Samir's request by choosing honest light over easy certainty."));
+            case "aria" -> List.of(
+                    softRequest("watch_trails", "When everyone rushes, look for the trail they hope we miss.",
+                            List.of("scouting", "caution", "survival", "gather"), "Accepted Aria's request to watch the overlooked paths.",
+                            "Kept Aria's request by noticing the useful trail before rushing on."));
+            case "vesper" -> List.of(
+                    softRequest("leave_roots", "Take what is needed, but leave enough living for tomorrow.",
+                            List.of("nature", "gather", "oathstead", "patience"), "Accepted Vesper's request to leave room for living things.",
+                            "Kept Vesper's request by taking care without stripping tomorrow bare."));
+            case "rafiq" -> List.of(
+                    softRequest("second_chance", "When someone reaches for a second chance, make them earn it without making them beg.",
+                            List.of("mercy", "courage", "loyalty", "combat"), "Accepted Rafiq's request to leave room for earned second chances.",
+                            "Kept Rafiq's request by treating second chances as work, not charity."));
+            case "calder" -> List.of(
+                    softRequest("maintain_promises", "When something holds today, ask what keeps it holding tomorrow.",
+                            List.of("craft", "oathstead", "build", "practical", "protection"), "Accepted Calder's request to maintain what matters.",
+                            "Kept Calder's request by strengthening something before it failed."));
+            default -> List.of();
+        };
+    }
+
+    private SoftCompanionRequest softRequest(String id, String prompt, List<String> tags, String acceptMemory, String fulfillMemory) {
+        return new SoftCompanionRequest(id, prompt, tags, acceptMemory, fulfillMemory);
+    }
+
     public void openActiveShop() {
-        if (mode == GameMode.DIALOG && activeShop != null) {
+        if (mode != GameMode.DIALOG) {
+            return;
+        }
+        if (activeShop == null) {
+            CityBuilding assignedShop = activeNpcAssignedShopBuilding();
+            if (assignedShop != null) {
+                activeShop = shopForVillageBuilding(assignedShop);
+            }
+        }
+        if (activeShop != null) {
             mode = GameMode.SHOP;
             status = activeShop.name() + ". Press 1-" + activeShop.availableStock(player.level).size() + " to buy, Esc to leave.";
         }
     }
 
-    public boolean handleActiveNpcQuestAction() {
-        if (activeNpc.questId() == null) {
-            return false;
+    public boolean activeNpcCanOpenAssignedShop() {
+        return activeNpcAssignedShopBuilding() != null;
+    }
+
+    private void openActiveShopDialogueShop() {
+        CityBuilding building = activeShopDialogueBuilding();
+        if (building == null) {
+            clearActiveQuestDialogueLine();
+            status = "That shop assignment is no longer active.";
+            return;
         }
-        Quest quest = quests.get(activeNpc.questId());
+        activeShop = shopForVillageBuilding(building);
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
+        mode = GameMode.SHOP;
+        status = activeShop.name() + ". Press 1-" + activeShop.availableStock(player.level).size() + " to buy, Esc to leave.";
+    }
+
+    public boolean handleActiveNpcQuestAction() {
+        Quest quest = questForNpc(activeNpc);
         if (quest == null) {
             return false;
         }
+        if (quest.accepted && !quest.ready()) {
+            recordStoryInventoryObjective(quest);
+            if (quest.activeObjectiveKind().conversationObjective()) {
+                String note = recordConversationQuestObjective(quest, activeNpc);
+                if (!note.isBlank()) {
+                    status = note;
+                    return true;
+                }
+            }
+        }
         if (!quest.accepted) {
+            if (!canAcceptActiveStoryQuest(quest)) {
+                return true;
+            }
             quest.accepted = true;
-            status = "Quest accepted: " + quest.title + ". " + quest.startDialog;
+            invalidateQuestObjectiveCache();
+            invalidateNpcListCache();
+            recordNpcKnowledge(activeNpc, quest.companionQuest() ? 2 : 1);
+            if (quest.companionQuest()) {
+                recordCompanionMemoryForNpc(activeNpc, "quest_start", "Started " + quest.title + " together.");
+            }
+            publishCompanionEvent(
+                    "quest_start:" + quest.id,
+                    "Started " + quest.title,
+                    quest.companionQuest()
+                            ? List.of("commitment", "companion_quest", "duty", "truth", "evidence")
+                            : quest.mainStoryQuest()
+                            ? List.of("main_story", "courage", "duty", "truth", "evidence")
+                            : List.of("helpful", "practical"),
+                    0,
+                    "",
+                    "",
+                    quest.companionQuest() || quest.mainStoryQuest()
+            );
+            activeQuestDialogueLine = questSpeakerLine(quest.activeStartDialog());
+            activeShopDialogueBuildingKey = "";
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+            status = "Quest accepted: " + quest.title + ". " + quest.activeStartDialog();
+            if ("ms_ember_socket_rite".equals(quest.id)) {
+                String note = unlockRecipe("ember_socket_stone", activeNpc.name() + " teaches");
+                if (!note.isBlank()) {
+                    status += " " + note;
+                }
+            }
             return true;
         } else if (quest.ready()) {
+            if (!quest.finalStage()) {
+                String completedStage = quest.activeStage().title();
+                String stageCompleteLine = quest.activeCompleteDialog();
+                quest.advanceStage();
+                questMonsterRuntime.remove(quest.id);
+                questNpcRuntime.remove(quest.id);
+                invalidateQuestObjectiveCache();
+                invalidateNpcListCache();
+                activeQuestMonster = activeQuestMonster != null && quest.id.equals(activeQuestMonster.questId)
+                        ? null
+                        : activeQuestMonster;
+                activeQuestDialogueLine = questSpeakerLine(stageCompleteLine.isBlank()
+                        ? quest.activeStartDialog()
+                        : stageCompleteLine + " " + quest.activeStartDialog());
+                activeShopDialogueBuildingKey = "";
+                activeDialogueSession = startDialogueSessionFor(activeNpc);
+                String stageLabel = completedStage == null || completedStage.isBlank() ? "stage" : completedStage;
+                status = "Quest stage complete: " + stageLabel + ". " + quest.activeStartDialog();
+                return true;
+            }
             quest.completed = true;
+            invalidateQuestObjectiveCache();
+            invalidateNpcListCache();
             player.gold += quest.rewardGold;
-            int questXp = (int) Math.round(quest.rewardXp * (1.0 + player.skillRank("hard_won_lessons") * 0.08));
+            int questXp = (int) Math.round(quest.rewardXp * 0.80 * (1.0 + player.skillRank("hard_won_lessons") * 0.08));
             List<String> notes = player.gainXp(questXp);
-            status = "Quest complete: " + quest.title + ". " + quest.completeDialog;
-            String recruitNote = recruitAlly(activeNpc.recruitId());
-            if (recruitNote != null) {
-                status += " " + recruitNote;
+            adjustNpcRelationship(activeNpc, quest.mainStoryQuest() ? 30 : quest.companionQuest() ? 18 : 10);
+            recordNpcKnowledge(activeNpc, quest.companionQuest() ? 2 : 1);
+            if (quest.companionQuest()) {
+                recordCompanionMemoryForNpc(activeNpc, "quest_complete", "Completed " + quest.title + " together.");
+            } else if (quest.mainStoryQuest()) {
+                recordMainStoryMemory("Saw the player complete " + quest.title + ".");
+            }
+            publishCompanionEvent(
+                    "quest_complete:" + quest.id,
+                    "Completed " + quest.title,
+                    quest.companionQuest()
+                            ? List.of("loyalty", "companion_quest", "duty", "truth", "evidence")
+                            : quest.mainStoryQuest()
+                            ? List.of("main_story", "courage", "protection", "truth", "evidence")
+                            : List.of("helpful", "practical"),
+                    quest.mainStoryQuest() || quest.companionQuest() ? 1 : 0,
+                    "quest_witness",
+                    "Saw the player complete " + quest.title + ".",
+                    true
+            );
+            activeQuestDialogueLine = questSpeakerLine(quest.activeCompleteDialog());
+            activeShopDialogueBuildingKey = "";
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+            status = "Quest complete: " + quest.title + ". " + quest.activeCompleteDialog();
+            String stoneReward = GameData.mainStoryStoneReward(quest.id);
+            if (!stoneReward.isBlank() && !player.hasItem(stoneReward)) {
+                player.addItem(stoneReward, 1);
+                status += " Gained " + GameData.itemName(stoneReward) + " (" + magicStoneCount() + "/"
+                        + GameData.MAGIC_STONE_KEYS.size() + ").";
+            }
+            if (quest.companionQuest()) {
+                Quest next = quest.nextQuestId == null ? null : quests.get(quest.nextQuestId);
+                if (next != null && !next.completed) {
+                    status += " " + activeNpc.name() + " has more to share.";
+                }
+                if (activeNpc.recruitId() != null && !isRecruited(activeNpc.recruitId())) {
+                    status += companionRecruitmentEligible(activeNpc.recruitId(), activeNpc)
+                            ? " You can ask " + activeNpc.name() + " to travel with you."
+                            : " Relationship " + npcRelationship(activeNpc) + "/" + COMPANION_RECRUIT_RELATIONSHIP
+                            + " or one completed companion chapter needed before " + activeNpc.name() + " can join.";
+                }
+            } else if (quest.mainStoryQuest()) {
+                Quest next = quest.nextQuestId == null ? null : quests.get(quest.nextQuestId);
+                if (next != null && !next.completed) {
+                    status += " " + activeNpc.name() + " trusts you more; keep talking before asking for the next secret.";
+                } else {
+                    status += " The void portal waits in the world with " + magicStoneCount() + "/"
+                            + GameData.MAGIC_STONE_KEYS.size() + " stones lit.";
+                }
+            } else {
+                Quest next = quest.nextQuestId == null ? null : quests.get(quest.nextQuestId);
+                if (next != null && !next.completed) {
+                    status += " " + questFollowUpLine(next);
+                }
+                String recruitNote = recruitAlly(activeNpc.recruitId());
+                if (recruitNote != null) {
+                    status += " " + recruitNote;
+                }
             }
             if (!notes.isEmpty()) {
                 status += " " + notes.get(notes.size() - 1);
             }
             refreshPlayerVillageGrowth();
+            questMonsterRuntime.remove(quest.id);
+            invalidateQuestObjectiveCache();
+            if (activeQuestMonster != null && quest.id.equals(activeQuestMonster.questId)) {
+                activeQuestMonster = null;
+            }
             return true;
         } else if (!quest.completed) {
-            status = quest.title + ": " + quest.progress + "/" + quest.needed + ". " + quest.progressDialog;
+            status = quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ". " + quest.activeProgressDialog();
             return true;
         } else {
             status = quest.title + " is already complete.";
@@ -532,8 +2246,426 @@ public final class GameState {
         }
     }
 
+    private String questFollowUpLine(Quest next) {
+        Npc giver = questGiver(next.id);
+        if (giver == null) {
+            return "A new lead opens: " + next.title + ".";
+        }
+        return "A new lead opens: speak with " + giver.name() + " in " + world.label(giver.mapId()) + ".";
+    }
+
+    private String recordConversationQuestObjectives(Npc npc) {
+        if (npc == null) {
+            return "";
+        }
+        String note = "";
+        for (Quest quest : quests.values()) {
+            if (!quest.accepted || quest.completed || quest.ready() || !quest.activeObjectiveKind().conversationObjective()) {
+                continue;
+            }
+            String update = recordConversationQuestObjective(quest, npc);
+            if (!update.isBlank()) {
+                note = update;
+            }
+        }
+        return note.isBlank() ? "" : " " + note;
+    }
+
+    private String recordConversationQuestObjective(Quest quest, Npc npc) {
+        if (quest == null || npc == null || !conversationObjectiveMatches(quest, npc)) {
+            return "";
+        }
+        String key = conversationObjectiveKey(quest, npc);
+        if (harvestedQuestResources.contains(key)) {
+            return "";
+        }
+        int oldProgress = quest.progress;
+        quest.recordConversation();
+        if (quest.progress <= oldProgress) {
+            return "";
+        }
+        harvestedQuestResources.add(key);
+        invalidateQuestObjectiveCache();
+        String note = quest.objectiveAction() + " objective updated: " + quest.title + " "
+                + quest.progress + "/" + quest.activeNeeded() + ".";
+        if (quest.ready()) {
+            note += " " + quest.activeReadyDialog();
+        }
+        return note;
+    }
+
+    private boolean conversationObjectiveMatches(Quest quest, Npc npc) {
+        if (quest.activeObjectiveKind() == Quest.ObjectiveKind.ASK_AROUND) {
+            Npc giver = questGiver(quest.id);
+            return giver == null || !npcRelationshipKey(giver).equals(npcRelationshipKey(npc)) || quest.activeNeeded() <= 1;
+        }
+        if (targetNpcMatches(quest.activeTargetNpcId(), npc)) {
+            return true;
+        }
+        String npcName = normalizeQuestMatchText(npc.name());
+        String npcRecruitId = normalizeQuestMatchText(npc.recruitId());
+        String npcKey = normalizeQuestMatchText(npcRelationshipKey(npc));
+        for (String candidate : List.of(quest.activeMonsterKey(), quest.activeObjectiveAsset(), quest.activeTarget())) {
+            String expected = normalizeQuestMatchText(candidate);
+            if (expected.isBlank()) {
+                continue;
+            }
+            if (expected.equals(npcName) || expected.equals(npcRecruitId) || expected.equals(npcKey)) {
+                return true;
+            }
+        }
+        Npc giver = questGiver(quest.id);
+        return giver != null && npcRelationshipKey(giver).equals(npcRelationshipKey(npc));
+    }
+
+    private boolean targetNpcMatches(String targetNpcId, Npc npc) {
+        String expected = normalizeQuestMatchText(targetNpcId);
+        if (expected.isBlank() || npc == null) {
+            return false;
+        }
+        return expected.equals(normalizeQuestMatchText(npc.name()))
+                || expected.equals(normalizeQuestMatchText(npc.recruitId()))
+                || expected.equals(normalizeQuestMatchText(npcRelationshipKey(npc)))
+                || expected.equals(normalizeQuestMatchText(npc.mapId() + ":" + npc.name()));
+    }
+
+    private String conversationObjectiveKey(Quest quest, Npc npc) {
+        String npcKey = npcRelationshipKey(npc);
+        return "quest-conversation:" + questStageResourceId(quest) + ":" + npcKey;
+    }
+
+    private String normalizeQuestMatchText(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "")
+                .strip();
+    }
+
+    private String questSpeakerLine(String line) {
+        if (activeNpc == null) {
+            return line == null ? "" : line.strip();
+        }
+        return stripSpeakerPrefix(line, activeNpc.name());
+    }
+
+    private boolean canAcceptActiveStoryQuest(Quest quest) {
+        if (quest == null || !quest.mainStoryQuest() || activeNpc == null) {
+            return true;
+        }
+        if (!mainStoryPrerequisiteComplete(quest)) {
+            status = activeNpc.name() + " is not ready to reveal this part of the Twelve Socket Stones yet.";
+            return false;
+        }
+        if ("ms_kingdoms_answer".equals(quest.id) && !hasAllMagicStonesExcept("stone_dawn")) {
+            status = "Maelis needs the other eleven socket stones before the kingdoms can answer together.";
+            return false;
+        }
+        if ("ms_twelve_stones_gate".equals(quest.id) && !hasAllMagicStones()) {
+            status = "The Old Gate oath needs all twelve socket stones before Maelis will send you there.";
+            return false;
+        }
+        boolean deeperReveal = activeNpc.questId() != null && !activeNpc.questId().equals(quest.id);
+        if (deeperReveal && npcRelationship(activeNpc) < MAIN_STORY_TRUST_RELATIONSHIP) {
+            status = activeNpc.name() + " withholds the next part of the Demon Queen puzzle. Relationship "
+                    + npcRelationship(activeNpc) + "/" + MAIN_STORY_TRUST_RELATIONSHIP + " needed.";
+            return false;
+        }
+        return true;
+    }
+
+    private void recordStoryInventoryObjective(Quest quest) {
+        String requiredItem = GameData.mainStoryRequiredItem(quest.id);
+        if (requiredItem.isBlank() || !player.hasItem(requiredItem)) {
+            return;
+        }
+        quest.progress = Math.max(quest.progress, quest.activeNeeded());
+        invalidateQuestObjectiveCache();
+    }
+
     public Quest questForNpc(Npc npc) {
-        return npc.questId() == null ? null : quests.get(npc.questId());
+        if (npc == null) {
+            return null;
+        }
+        Quest questNpcQuest = questForQuestNpc(npc);
+        if (questNpcQuest != null) {
+            return questNpcQuest;
+        }
+        Quest authored = authoredQuestForNpc(npc);
+        if (authored != null && !authored.completed) {
+            if (!questPrerequisiteMet(authored)) {
+                return null;
+            }
+            if (authored.mainStoryQuest() && !mainStoryAvailable(authored)) {
+                return null;
+            }
+            return authored;
+        }
+        ensureWeeklyNpcQuests();
+        String weeklyId = weeklyNpcQuestIds.get(npcRelationshipKey(npc));
+        Quest weekly = weeklyId == null ? null : quests.get(weeklyId);
+        return weekly != null && !weekly.completed ? weekly : null;
+    }
+
+    private Quest questForQuestNpc(Npc npc) {
+        if (npc == null) {
+            return null;
+        }
+        for (List<QuestNpcRuntime> runtimes : questNpcRuntime.values()) {
+            for (QuestNpcRuntime runtime : runtimes) {
+                if (!runtime.npc.equals(npc)) {
+                    continue;
+                }
+                Quest quest = quests.get(runtime.questId);
+                return quest != null && quest.accepted && !quest.completed ? quest : null;
+            }
+        }
+        return null;
+    }
+
+    private Quest authoredQuestForNpc(Npc npc) {
+        if (npc.questId() == null) {
+            return null;
+        }
+        Quest quest = quests.get(npc.questId());
+        while (quest != null && quest.completed && quest.nextQuestId != null && !quest.nextQuestId.isBlank()) {
+            Quest next = quests.get(quest.nextQuestId);
+            if (next == null || next.completed) {
+                quest = next;
+                continue;
+            }
+            return next;
+        }
+        return quest;
+    }
+
+    private boolean questPrerequisiteMet(Quest quest) {
+        String predecessorId = questPredecessorId(quest == null ? "" : quest.id);
+        if (predecessorId.isBlank()) {
+            return true;
+        }
+        Quest predecessor = quests.get(predecessorId);
+        return predecessor != null && predecessor.completed;
+    }
+
+    private String questPredecessorId(String questId) {
+        if (questId == null || questId.isBlank()) {
+            return "";
+        }
+        for (Quest candidate : quests.values()) {
+            if (candidate.nextQuestId != null && questId.equals(candidate.nextQuestId)) {
+                return candidate.id;
+            }
+        }
+        return "";
+    }
+
+    private boolean mainStoryAvailable(Quest quest) {
+        if (quest == null || !quest.mainStoryQuest() || quest.completed) {
+            return true;
+        }
+        if (!mainStoryPrerequisiteComplete(quest)) {
+            return false;
+        }
+        if ("ms_kingdoms_answer".equals(quest.id)) {
+            return hasAllMagicStonesExcept("stone_dawn");
+        }
+        if ("ms_twelve_stones_gate".equals(quest.id)) {
+            return hasAllMagicStones();
+        }
+        return true;
+    }
+
+    private boolean mainStoryPrerequisiteComplete(Quest quest) {
+        String prerequisiteId = GameData.mainStoryPrerequisite(quest.id);
+        if (prerequisiteId.isBlank()) {
+            return true;
+        }
+        Quest prerequisite = quests.get(prerequisiteId);
+        return prerequisite != null && prerequisite.completed;
+    }
+
+    public void ensureWeeklyNpcQuests() {
+        int block = Math.floorDiv(worldTick, TICKS_PER_GAME_WEEK);
+        if (block == weeklyQuestBlock) {
+            return;
+        }
+        weeklyQuestBlock = block;
+        weeklyNpcQuestIds.clear();
+        for (Npc npc : GameData.NPCS) {
+            if (authoredQuestForNpc(npc) != null && !authoredQuestForNpc(npc).completed) {
+                continue;
+            }
+            String id = weeklyQuestId(npc, block);
+            quests.put(id, createWeeklyNpcQuest(npc, id, block));
+            weeklyNpcQuestIds.put(npcRelationshipKey(npc), id);
+        }
+        if (block > 0) {
+            status = "A new week begins. Fresh sidequests are posted across the settlements.";
+        }
+    }
+
+    private String weeklyQuestId(Npc npc, int block) {
+        return "weekly_" + block + "_" + npc.mapId().replace('-', '_') + "_"
+                + npc.name().strip().toLowerCase().replaceAll("[^a-z0-9]+", "_");
+    }
+
+    private Quest createWeeklyNpcQuest(Npc npc, String id, int block) {
+        int seed = Math.abs(npcRelationshipKey(npc).hashCode() * 31 + block * 7919);
+        int template = Math.floorMod(seed, 15);
+        int rewardGold = 28 + Math.floorMod(seed / 7, 55);
+        int rewardXp = 22 + Math.floorMod(seed / 11, 48);
+        Npc missingTarget = weeklyQuestRelocationTarget(npc, seed);
+        return switch (template) {
+            case 0 -> new Quest(id, "Roadside Trouble", npc.name() + " needs the nearest road cleared before the next supply run.",
+                    "Goblin Scout", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.DEFEAT, WorldMap.OVERWORLD_ID, null, 0, null, "goblin_scout",
+                    npc.name() + ": Scouts are testing the road again. Give them a reason to test somewhere else.",
+                    npc.name() + ": Two scouts should be enough to make the rest reconsider.",
+                    npc.name() + ": The road sounds quieter. Come back before the rumor outruns you.",
+                    npc.name() + ": Good. Small roads stay open by small victories.",
+                    Quest.QuestType.SIDE, null, null);
+            case 1 -> new Quest(id, "Market Errand", npc.name() + " asks for wheat from the marked farm before prices climb again.",
+                    "Wheat Sheaf", 3, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.GATHER, WorldMap.OVERWORLD_ID, "farmland", 0, "location_farmland_wheat", null,
+                    npc.name() + ": The market needs food more than speeches. Bring three sheaves if your hands are free.",
+                    npc.name() + ": The west field is marked. Try not to flatten what you do not carry.",
+                    npc.name() + ": That should be enough grain. Bring it here.",
+                    npc.name() + ": Useful work, and useful work is what keeps villages alive.",
+                    Quest.QuestType.SIDE, null, null);
+            case 2 -> new Quest(id, "Old Marks", npc.name() + " wants old grave marks checked before another week of weather.",
+                    "Tombstone", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID, "graveyard", Math.floorMod(seed, 3), "location_graveyard_tombstones", null,
+                    npc.name() + ": Two old marks need eyes on them. Weather has been editing history again.",
+                    npc.name() + ": Check the stones and remember what they say.",
+                    npc.name() + ": You saw the marks. Tell me what survived.",
+                    npc.name() + ": Names kept for another week. That matters.",
+                    Quest.QuestType.SIDE, null, null);
+            case 3 -> new Quest(id, "Camp Smoke", npc.name() + " asks you to douse raider campfires before they become signals.",
+                    "Campfire", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID, "goblin_camp", 0, "location_camp_fire", null,
+                    npc.name() + ": Smoke travels farther than sense. Put out two campfires before they speak for raiders.",
+                    npc.name() + ": The camp is marked. Quiet hands, quick boots.",
+                    npc.name() + ": No smoke? Then bring me the good news.",
+                    npc.name() + ": Excellent. Silence is cheaper than patrols.",
+                    Quest.QuestType.SIDE, null, null);
+            case 4 -> new Quest(id, "Boundary Stones", npc.name() + " wants old ward markers checked before the local borders drift into argument.",
+                    "Ward Marker", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID, "graveyard", Math.floorMod(seed / 5, 3), "quest_ward_marker", null,
+                    npc.name() + ": Borders begin as stones and end as quarrels. Check two ward markers before anyone redraws both.",
+                    npc.name() + ": The marked wards should still hold a little charm. Tell me which ones have gone quiet.",
+                    npc.name() + ": You have the ward signs? Good. Come back before the neighbors invent their own.",
+                    npc.name() + ": That settles the line for another week. Peace is mostly paperwork with better boots.",
+                    Quest.QuestType.SIDE, null, null);
+            case 5 -> new Quest(id, "Herbs Before Rain", npc.name() + " needs salve herbs from marked field edges before weather spoils them.",
+                    "Salve Herb", 3, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.GATHER, WorldMap.OVERWORLD_ID, "farmland", Math.floorMod(seed / 13, 2), "quest_salve_herbs", null,
+                    npc.name() + ": Rain is coming, and the field edges have the herbs we need for salves. Gather three clean bundles.",
+                    npc.name() + ": The marked rows are not glamorous, but glamour heals poorly.",
+                    npc.name() + ": Bring the herbs in while they still smell like medicine.",
+                    npc.name() + ": Good bundles. By nightfall, these will be less pretty and more useful.",
+                    Quest.QuestType.SIDE, null, null);
+            case 6 -> new Quest(id, "Missing by the Tree Line", npc.name() + " has a witness who saw someone cornered beyond the road.",
+                    "Trapped Traveler", 1, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.RESCUE, WorldMap.OVERWORLD_ID, null, 0, null, "wolf",
+                    npc.name() + ": Someone is trapped past the tree line. I need you fast, not dramatic.",
+                    npc.name() + ": Follow the marked danger and break whatever has them pinned.",
+                    npc.name() + ": If they are breathing and the road is clear, come back.",
+                    npc.name() + ": Good. A rescue is a victory that still has a pulse.",
+                    Quest.QuestType.SIDE, null, null);
+            case 7 -> new Quest(id, "Hold the Storehouse", npc.name() + " expects raiders to test a supply point before nightfall.",
+                    "Storehouse", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.DEFEND, WorldMap.OVERWORLD_ID, "goblin_camp", 0, null, "goblin",
+                    npc.name() + ": Raiders are circling the storehouse road. Hold the point before they learn we are soft.",
+                    npc.name() + ": Two pressure points are marked. Let them find resistance, not panic.",
+                    npc.name() + ": The storehouse still stands? Then bring me that answer.",
+                    npc.name() + ": Good. Grain in a storehouse is courage with a roof.",
+                    Quest.QuestType.SIDE, null, null);
+            case 8 -> new Quest(id, "Clue Under Mud", npc.name() + " needs a hidden clue found before rain buries it for good.",
+                    "Mud-Wrapped Clue", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.SEARCH, WorldMap.OVERWORLD_ID, "farmland", Math.floorMod(seed / 17, 2), "quest_ward_marker", null,
+                    npc.name() + ": Something was hidden near the field edge. Search carefully; the obvious answer is probably bait.",
+                    npc.name() + ": The marked places are small, muddy, and easy to overlook. That is why they matter.",
+                    npc.name() + ": You found enough signs. Bring them here before mud edits them.",
+                    npc.name() + ": That clue has weight. Now the story has less room to lie.",
+                    Quest.QuestType.SIDE, null, null);
+            case 9 -> new Quest(id, "Ask the Neighbors", npc.name() + " needs rumor separated from testimony before blame starts walking.",
+                    "the missing cart", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.ASK_AROUND, WorldMap.OVERWORLD_ID, null, 0, null, null,
+                    npc.name() + ": Ask two people what they heard about the missing cart. I need patterns, not panic.",
+                    npc.name() + ": Talk to people who do not share the same doorway. Repeated details matter.",
+                    npc.name() + ": Two accounts are enough to start with. Bring me the shape of it.",
+                    npc.name() + ": Good. Rumor is less dangerous when it has been made to stand still.",
+                    Quest.QuestType.SIDE, null, null);
+            case 10 -> new Quest(id, "Plain Report", npc.name() + " wants the answer said directly before a bad decision becomes policy.",
+                    npc.name(), 1, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.REPORT, WorldMap.OVERWORLD_ID, null, 0, null, null,
+                    npc.name() + ": When you are ready, report the matter plainly. I need truth, not theatre.",
+                    npc.name() + ": Tell me what you know. Do not sand the edges off it.",
+                    npc.name() + ": That is enough to answer for. Finish the report.",
+                    npc.name() + ": Good. A plain report can save more lives than a pretty promise.",
+                    Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), "");
+            case 11 -> new Quest(id, "Safe Passage", npc.name() + " asks you to mark a usable path for someone who cannot fight through trouble.",
+                    "Safe Road", 2, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.ESCORT, WorldMap.OVERWORLD_ID, "farmland", Math.floorMod(seed / 19, 2), "location_farmland_scarecrow", null,
+                    npc.name() + ": Someone needs a route that does not turn brave people into mourned people. Walk the markers.",
+                    npc.name() + ": Reach the waypoints and make sure the path can be trusted.",
+                    npc.name() + ": The safe road is marked? Come back and make it official.",
+                    npc.name() + ": Good. Not every rescue begins with screaming. Some begin with a road that holds.",
+                    Quest.QuestType.SIDE, null, null);
+            case 12 -> new Quest(id, "Sealed Packet", npc.name() + " asks you to hand over a sealed packet only after agreeing not to read it.",
+                    npc.name(), 1, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.DELIVER, WorldMap.OVERWORLD_ID, null, 0, null, null,
+                    npc.name() + ": This packet needs delivered into my hands formally. A little ceremony keeps records honest.",
+                    npc.name() + ": Say you are delivering it, then let the seal speak for itself.",
+                    npc.name() + ": The packet is here. Finish the handoff.",
+                    npc.name() + ": Good. Some trust survives because people handle small things cleanly.",
+                    Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), "");
+            case 13 -> new Quest(id, "Hard Truth", npc.name() + " asks you to decide whether a painful truth should be spoken now or carried carefully.",
+                    "a difficult truth", 1, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.CHOICE, WorldMap.OVERWORLD_ID, null, 0, null, null,
+                    npc.name() + ": There is a truth here that will hurt someone. I need judgment, not eagerness.",
+                    npc.name() + ": Choose how this should be handled. Truth, mercy, protection, or consequence; none of them are weightless.",
+                    npc.name() + ": You have chosen. Come back and stand by it.",
+                    npc.name() + ": I will remember how you carried that answer.",
+                    Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), id + "_choice");
+            case 14 -> new Quest(id, "Missing on the Field Road", missingTarget.name() + " left the settlement after an argument and has not returned.",
+                    missingTarget.name(), 1, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.TALK, WorldMap.OVERWORLD_ID, "farmland", Math.floorMod(seed / 23, 2), missingTarget.sprite(), null,
+                    npc.name() + ": " + missingTarget.name() + " is not where they should be. Find them before pride becomes a funeral.",
+                    npc.name() + ": Search the field road. If you find them, listen first; panic makes poor witnesses.",
+                    npc.name() + ": You found " + missingTarget.name() + ". Come back and tell me whether they are safe.",
+                    npc.name() + ": Good. A missing person found alive is worth more than any tidy explanation.",
+                    Quest.QuestType.SIDE, null, null, rawNpcStateKey(missingTarget), "");
+            default -> new Quest(id, "Bad Tracks", npc.name() + " has found hoofprints, claw marks, and one nervous witness near the settlement edge.",
+                    "Mountain Goat", 3, rewardGold, rewardXp,
+                    Quest.ObjectiveKind.DEFEAT, WorldMap.OVERWORLD_ID, null, 0, null, "mountain_goat",
+                    npc.name() + ": Something keeps battering signs, rails, and patience. The tracks say goats. I blame ambition.",
+                    npc.name() + ": Drive off three ridge-breakers before the road learns to duck.",
+                    npc.name() + ": If the edge is quiet again, come back for the less dramatic part.",
+                    npc.name() + ": Excellent. Repairs are easier when they stop moving.",
+                    Quest.QuestType.SIDE, null, null);
+        };
+    }
+
+    private Npc weeklyQuestRelocationTarget(Npc giver, int seed) {
+        List<Npc> candidates = GameData.NPCS.stream()
+                .filter(npc -> !npc.equals(giver))
+                .filter(npc -> npc.mapId().equals(giver.mapId()))
+                .filter(npc -> npc.questId() == null)
+                .filter(npc -> npc.recruitId() == null)
+                .toList();
+        if (candidates.isEmpty()) {
+            candidates = GameData.NPCS.stream()
+                    .filter(npc -> !npc.equals(giver))
+                    .filter(npc -> npc.mapId().equals(giver.mapId()))
+                    .toList();
+        }
+        if (candidates.isEmpty()) {
+            return giver;
+        }
+        return candidates.get(Math.floorMod(seed / 29, candidates.size()));
     }
 
     public String questGiverName(String questId) {
@@ -548,7 +2680,11 @@ public final class GameState {
 
     private Npc questGiver(String questId) {
         for (Npc npc : GameData.NPCS) {
-            if (questId.equals(npc.questId())) {
+            Quest authored = authoredQuestForNpc(npc);
+            if (authored != null && questId.equals(authored.id)) {
+                return npc;
+            }
+            if (questId.equals(weeklyNpcQuestIds.get(npcRelationshipKey(npc)))) {
                 return npc;
             }
         }
@@ -556,14 +2692,117 @@ public final class GameState {
     }
 
     public void closeOverlay() {
+        if (isMapEditorMap()) {
+            exitMapEditor();
+            return;
+        }
+        finishActiveNpcDialogue();
         activeNpc = null;
+        activePartyTalkActor = null;
         activeShop = null;
         activeDialogueSession = null;
+        activeNpcIntroLine = "";
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
         activeVillageBuilding = null;
         dialogIndex = 0;
         pendingVillageMoveSource = null;
         pendingVillageMoveMapId = null;
         mode = GameMode.EXPLORE;
+    }
+
+    private void finishActiveNpcDialogue() {
+        if (mode != GameMode.DIALOG || activeNpc == null || activeDialogueSession == null) {
+            return;
+        }
+        String repeatKey = activeDialogueSession.lastRepeatKey();
+        if (repeatKey == null || repeatKey.isBlank()) {
+            return;
+        }
+        String recruitId = activeCompanionRecruitId();
+        if (recruitId.isBlank()) {
+            return;
+        }
+        String line = companionDialogueAfterLine(recruitId, repeatKey);
+        if (line.isBlank()) {
+            return;
+        }
+        Actor ally = companionActorForContext(activeNpc, recruitId);
+        if (ally != null && activeAllies().contains(ally)) {
+            enqueueCompanionComment(new PendingCompanionComment(
+                    ally.name,
+                    ally.name + ": " + line,
+                    List.of("I hear you.", "We will carry it carefully.", "Keep moving."),
+                    List.of(
+                            "A warm acknowledgement. Builds a little trust.",
+                            "Promises to keep the conversation in mind.",
+                            "Lets the thought rest without changing trust."
+                    ),
+                    List.of(1, 1, 0)
+            ));
+        } else {
+            status = activeNpc.name() + ": " + line;
+        }
+    }
+
+    private String companionDialogueAfterLine(String recruitId, String repeatKey) {
+        return switch (recruitId == null ? "" : recruitId) {
+            case "seraphine" -> switch (repeatKey) {
+                case "romance", "future" -> "No hidden clause in that conversation. Terrifying, but clean.";
+                case "trust", "values" -> "You keep asking where choice begins. I notice that more than I say.";
+                case "memory", "outcome.detail" -> "Some choices only stay honest when someone keeps naming them.";
+                default -> "The wording matters. It usually does.";
+            };
+            case "maera" -> switch (repeatKey) {
+                case "memory", "outcome.detail" -> "That belongs in the record, but not where strangers can flatten it.";
+                case "quest.clarify", "quest.personal" -> "The motive and the evidence are not separate. Remember that.";
+                case "future" -> "I reserve the right to annotate that future heavily.";
+                default -> "If the answer bothered you, good. Useful answers often do.";
+            };
+            case "cassia" -> switch (repeatKey) {
+                case "quest.warning", "next" -> "Good questions. They keep people alive before courage gets dramatic.";
+                case "trust", "feeling" -> "I am still standing. That is not the whole answer, but it is a true one.";
+                case "home", "future" -> "Worth defending does not always mean easy to hold.";
+                default -> "We named it. That makes it easier to carry cleanly.";
+            };
+            case "lyra" -> switch (repeatKey) {
+                case "checkin", "feeling", "need" -> "Next time I say I am fine too quickly, you may look unconvinced.";
+                case "memory" -> "Some memories need air before they heal.";
+                case "future" -> "A future is care that survived long enough to rest.";
+                default -> "Do not let the road make tenderness feel inefficient.";
+            };
+            case "samir" -> switch (repeatKey) {
+                case "trust", "values" -> "Questions like that keep trust awake.";
+                case "romance", "future" -> "Some light is warmer because no one ordered it to shine.";
+                case "quest.clarify" -> "The shadow under the answer matters as much as the flame.";
+                default -> "Carry the question gently. It may still be teaching us.";
+            };
+            case "aria" -> switch (repeatKey) {
+                case "checkin", "feeling" -> "Do not get smug about asking the right question. Just... keep asking sometimes.";
+                case "home", "romance", "future" -> "I still know the exits. That is why staying means anything.";
+                case "quest.warning", "quest.practical" -> "Watch the second trail. The obvious one is rarely lonely.";
+                default -> "If I sounded honest, blame the road. It was distracting me.";
+            };
+            case "vesper" -> switch (repeatKey) {
+                case "memory" -> "Spoken roots keep growing after the conversation ends.";
+                case "home", "future" -> "Home should grow around people, not over them.";
+                case "need", "request" -> "Needs are safer once named, if no one grabs them too hard.";
+                default -> "Let that answer sit in the soil before we pull at it again.";
+            };
+            case "rafiq" -> switch (repeatKey) {
+                case "romance", "future" -> "I was almost sincere without injury. A historic achievement.";
+                case "opinion" -> "My opinions are expensive. You are getting the troubling discount.";
+                case "trust" -> "Trust remains a terrible plan. Naturally, I am considering it.";
+                default -> "If that sounded honest, please remember I had many better jokes available.";
+            };
+            case "calder" -> switch (repeatKey) {
+                case "need", "trust", "values" -> "Named weight is easier to brace.";
+                case "home", "future" -> "A place worth keeping needs maintenance after the warm words.";
+                case "quest.practical", "quest.warning" -> "Check the supports twice. Then move.";
+                default -> "Good talk. Now we see whether it holds under weather.";
+            };
+            default -> "";
+        };
     }
 
     public void gatherNearby() {
@@ -572,6 +2811,103 @@ public final class GameState {
         }
         CraftingSystem.GatherCandidate candidate = crafting.findGatherTarget(world, currentMapId, playerX, playerY);
         status = crafting.beginGather(player, activeAllies(), candidate, random);
+        trackPendingResourceNode(candidate);
+    }
+
+    private void trackPendingResourceNode(CraftingSystem.GatherCandidate candidate) {
+        pendingResourceNodeMapId = "";
+        pendingResourceNodeTile = null;
+        pendingResourceNodeAsset = "";
+        activeGatherMapId = "";
+        activeGatherCandidate = null;
+        if (crafting.active() && candidate != null) {
+            activeGatherMapId = currentMapId;
+            activeGatherCandidate = candidate;
+            publishCompanionEvent("gather:" + candidate.label() + ":" + worldTick,
+                    "Gathered " + candidate.label(),
+                    gatherTags(candidate),
+                    0,
+                    "",
+                    "",
+                    false);
+        }
+        if (crafting.active() && shouldDepleteGatheredProp(candidate)) {
+            pendingResourceNodeMapId = currentMapId;
+            pendingResourceNodeTile = candidate.tile();
+            pendingResourceNodeAsset = candidate.asset();
+        }
+    }
+
+    private boolean shouldDepleteGatheredProp(CraftingSystem.GatherCandidate candidate) {
+        if (candidate == null || candidate.terrain() != 'P' || candidate.asset().isBlank()) {
+            return false;
+        }
+        String asset = candidate.asset().toLowerCase();
+        return !asset.startsWith("interior_") && !"interior".equals(world.kind(currentMapId));
+    }
+
+    private List<String> gatherTags(CraftingSystem.GatherCandidate candidate) {
+        if (candidate == null) {
+            return List.of("gather", "survival", "practical");
+        }
+        String label = candidate.label().toLowerCase();
+        List<String> tags = new ArrayList<>(List.of("gather", "survival", "practical"));
+        if (label.contains("herb") || label.contains("flower") || label.contains("root") || label.contains("wood")
+                || label.contains("mushroom") || label.contains("vegetable")) {
+            tags.add("nature");
+        }
+        if (label.contains("ore") || label.contains("stone") || label.contains("coal")) {
+            tags.add("craft");
+        }
+        if (label.contains("fish") || label.contains("meat") || label.contains("coconut")) {
+            tags.add("protection");
+        }
+        return tags;
+    }
+
+    public void gatherNearby(int facingDx, int facingDy) {
+        if (mode != GameMode.EXPLORE) {
+            return;
+        }
+        CraftingSystem.GatherCandidate candidate = gatherTarget(facingDx, facingDy);
+        if (candidate == null) {
+            status = "Face a resource node, mountain, water, beach prop, or planter to gather.";
+            return;
+        }
+        status = crafting.beginGather(player, activeAllies(), candidate, random);
+        trackPendingResourceNode(candidate);
+    }
+
+    public void gatherAtTile(int x, int y) {
+        if (mode != GameMode.EXPLORE) {
+            return;
+        }
+        CraftingSystem.GatherCandidate candidate = crafting.findGatherTargetAt(world, currentMapId, x, y);
+        if (candidate == null) {
+            status = "Nothing useful to gather there.";
+            return;
+        }
+        int distance = Math.abs(candidate.tile().x() - playerX) + Math.abs(candidate.tile().y() - playerY);
+        if (distance > 1) {
+            status = "Move closer to gather " + candidate.label() + ".";
+            return;
+        }
+        status = crafting.beginGather(player, activeAllies(), candidate, random);
+        trackPendingResourceNode(candidate);
+    }
+
+    public CraftingSystem.GatherCandidate gatherTargetAtTile(int x, int y) {
+        if (mode != GameMode.EXPLORE) {
+            return null;
+        }
+        return crafting.findGatherTargetAt(world, currentMapId, x, y);
+    }
+
+    public CraftingSystem.GatherCandidate gatherTarget(int facingDx, int facingDy) {
+        if (mode != GameMode.EXPLORE) {
+            return null;
+        }
+        return crafting.findGatherTarget(world, currentMapId, playerX, playerY, facingDx, facingDy);
     }
 
     public void toggleCrafting() {
@@ -605,24 +2941,147 @@ public final class GameState {
         return null;
     }
 
+    public WorldProp craftingStationAtTile(int x, int y) {
+        for (WorldProp prop : world.props(currentMapId)) {
+            CraftingSystem.Workstation workstation = CraftingSystem.workstationForAsset(prop.asset());
+            if (workstation == null) {
+                continue;
+            }
+            int[] footprint = CraftingSystem.workstationFootprint(prop.asset());
+            if (x >= prop.x() && y >= prop.y() && x < prop.x() + footprint[0] && y < prop.y() + footprint[1]) {
+                return prop;
+            }
+        }
+        return null;
+    }
+
+    public CraftingSystem.Workstation workstationAtTile(int x, int y) {
+        WorldProp prop = craftingStationAtTile(x, y);
+        return prop == null ? null : CraftingSystem.workstationForAsset(prop.asset());
+    }
+
+    public void openCraftingAtTile(int x, int y) {
+        if (mode != GameMode.EXPLORE) {
+            return;
+        }
+        WorldProp station = craftingStationAtTile(x, y);
+        CraftingSystem.Workstation workstation = station == null ? null : CraftingSystem.workstationForAsset(station.asset());
+        if (workstation == null) {
+            status = "There is no crafting station there.";
+            return;
+        }
+        int[] footprint = CraftingSystem.workstationFootprint(station.asset());
+        boolean nearby = false;
+        for (int yy = station.y(); yy < station.y() + footprint[1] && !nearby; yy++) {
+            for (int xx = station.x(); xx < station.x() + footprint[0]; xx++) {
+                if (Math.abs(xx - playerX) + Math.abs(yy - playerY) <= 1) {
+                    nearby = true;
+                    break;
+                }
+            }
+        }
+        if (!nearby) {
+            status = "Move closer to craft at " + workstation.label() + ".";
+            return;
+        }
+        mode = GameMode.CRAFTING;
+        status = "Crafting at " + workstation.label() + ".";
+    }
+
     public List<CraftingSystem.Recipe> availableCraftingRecipes() {
-        return CraftingSystem.recipesFor(currentWorkstation());
+        ensureStarterRecipeUnlocks();
+        discoverRecipesFromInventory(false);
+        return CraftingSystem.sortRecipes(CraftingSystem.recipesFor(currentWorkstation()).stream()
+                .filter(recipe -> unlockedRecipeKeys.contains(recipe.key()))
+                .toList());
+    }
+
+    public List<CraftingSystem.Recipe> learnedCraftingRecipes() {
+        ensureStarterRecipeUnlocks();
+        discoverRecipesFromInventory(false);
+        return CraftingSystem.sortRecipes(CraftingSystem.RECIPES.stream()
+                .filter(recipe -> unlockedRecipeKeys.contains(recipe.key()))
+                .toList());
     }
 
     public void craftRecipe(String recipeKey) {
         if (mode != GameMode.CRAFTING && mode != GameMode.EXPLORE) {
             return;
         }
+        ensureStarterRecipeUnlocks();
         CraftingSystem.Recipe recipe = CraftingSystem.recipeByKey(recipeKey);
+        if (recipe != null && !unlockedRecipeKeys.contains(recipe.key())) {
+            status = "You have not learned " + recipe.name() + " yet.";
+            return;
+        }
         CraftingSystem.Workstation workstation = currentWorkstation();
         if (recipe == null || (recipe.workstation() != null && recipe.workstation() != workstation)) {
             status = "That recipe needs the right workstation.";
             return;
         }
+        if (!stageWarehouseIngredientsForCraft(recipe)) {
+            return;
+        }
         status = crafting.beginCraft(player, recipe);
         if (crafting.active()) {
+            publishCompanionEvent("craft:" + recipe.key() + ":" + worldTick,
+                    "Started crafting " + recipe.name(),
+                    craftTags(recipe),
+                    0,
+                    "",
+                    "",
+                    false);
             mode = GameMode.EXPLORE;
         }
+    }
+
+    private boolean stageWarehouseIngredientsForCraft(CraftingSystem.Recipe recipe) {
+        for (Map.Entry<String, Integer> entry : recipe.cost().entrySet()) {
+            int available = player.inventory.getOrDefault(entry.getKey(), 0) + villageStorage.getOrDefault(entry.getKey(), 0);
+            if (available < entry.getValue()) {
+                status = "Need " + CraftingSystem.costLabel(recipe.cost()) + " for " + recipe.name() + ".";
+                return false;
+            }
+        }
+        for (Map.Entry<String, Integer> entry : recipe.cost().entrySet()) {
+            int missing = Math.max(0, entry.getValue() - player.inventory.getOrDefault(entry.getKey(), 0));
+            if (missing <= 0) {
+                continue;
+            }
+            int stored = villageStorage.getOrDefault(entry.getKey(), 0);
+            int fromWarehouse = Math.min(stored, missing);
+            if (fromWarehouse > 0) {
+                updateVillageStorage(entry.getKey(), stored - fromWarehouse);
+                player.addItem(entry.getKey(), fromWarehouse);
+            }
+        }
+        return true;
+    }
+
+    private List<String> craftTags(CraftingSystem.Recipe recipe) {
+        if (recipe == null) {
+            return List.of("craft", "practical");
+        }
+        List<String> tags = new ArrayList<>(List.of("craft", "practical"));
+        switch (recipe.category()) {
+            case CONSUMABLE -> {
+                tags.add("healing");
+                tags.add("protection");
+            }
+            case ARMOR, TOOL -> {
+                tags.add("protection");
+                tags.add("duty");
+            }
+            case WEAPON -> tags.add("combat");
+            case SEED -> tags.add("nature");
+            case DECOR -> {
+                tags.add("oathstead");
+                tags.add("build");
+            }
+            default -> {
+            }
+        }
+        return tags;
     }
 
     public void craftRecipeAt(int index) {
@@ -630,6 +3089,43 @@ public final class GameState {
         if (index >= 0 && index < recipes.size()) {
             craftRecipe(recipes.get(index).key());
         }
+    }
+
+    public void ensureStarterRecipeUnlocks() {
+        unlockedRecipeKeys.addAll(CraftingSystem.starterRecipeKeys());
+    }
+
+    public String unlockRecipe(String recipeKey, String source) {
+        ensureStarterRecipeUnlocks();
+        CraftingSystem.Recipe recipe = CraftingSystem.recipeByKey(recipeKey);
+        if (recipe == null || unlockedRecipeKeys.contains(recipe.key())) {
+            return "";
+        }
+        unlockedRecipeKeys.add(recipe.key());
+        String prefix = source == null || source.isBlank() ? "Learned" : source;
+        return prefix + " " + recipe.name() + ".";
+    }
+
+    private String discoverRecipesFromInventory(boolean describe) {
+        ensureStarterRecipeUnlocks();
+        List<String> learned = new ArrayList<>();
+        for (String itemKey : new ArrayList<>(player.inventory.keySet())) {
+            if (player.inventory.getOrDefault(itemKey, 0) <= 0) {
+                continue;
+            }
+            for (CraftingSystem.Recipe recipe : CraftingSystem.recipesUsingIngredient(itemKey)) {
+                if (unlockedRecipeKeys.add(recipe.key())) {
+                    learned.add(recipe.name());
+                }
+            }
+        }
+        if (!describe || learned.isEmpty()) {
+            return "";
+        }
+        int shown = Math.min(3, learned.size());
+        String names = String.join(", ", learned.subList(0, shown));
+        String extra = learned.size() > shown ? " +" + (learned.size() - shown) + " more" : "";
+        return "Ingredient ideas unlocked: " + names + extra + ".";
     }
 
     public void toggleQuestLog() {
@@ -755,6 +3251,7 @@ public final class GameState {
             playerX += shift;
             playerY += shift;
         }
+        invalidateNpcListCache();
         VillageManager.SettlementStage stage = villageStage();
         status = "Oathstead grew to Stage " + stage.stage() + ": " + stage.title()
                 + ". The village expanded by 10 tiles in every direction.";
@@ -800,6 +3297,7 @@ public final class GameState {
         actor.healFull();
         syncSkillAbilities(actor);
         allies.add(actor);
+        invalidateNpcListCache();
         settlementRecruitOptions = options.stream()
                 .filter(candidate -> candidate != option)
                 .toList();
@@ -855,7 +3353,9 @@ public final class GameState {
     }
 
     public boolean isManagedVillageContext() {
-        return WorldMap.PLAYER_VILLAGE_ID.equals(currentMapId) || currentMapId.startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_");
+        return WorldMap.PLAYER_VILLAGE_ID.equals(currentMapId)
+                || currentMapId.startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_")
+                || isMapEditorMap();
     }
 
     public boolean isManagedVillageMap() {
@@ -863,7 +3363,110 @@ public final class GameState {
     }
 
     public boolean isManagedVillageInterior() {
-        return currentMapId.startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_") && "interior".equals(world.kind(currentMapId));
+        return (currentMapId.startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_") || isMapEditorMap())
+                && "interior".equals(world.kind(currentMapId));
+    }
+
+    public boolean isMapEditorMap() {
+        return world.isEditorMap(currentMapId);
+    }
+
+    public String selectedMapEditorKind() {
+        return switch (Math.floorMod(mapEditorKindIndex, 3)) {
+            case 0 -> "village";
+            case 1 -> "city";
+            default -> "interior";
+        };
+    }
+
+    public String selectedMapEditorKindLabel() {
+        return switch (selectedMapEditorKind()) {
+            case "city" -> "City";
+            case "interior" -> "Interior";
+            default -> "Village";
+        };
+    }
+
+    public int[] selectedMapEditorSize() {
+        return switch (Math.floorMod(mapEditorSizeIndex, 4)) {
+            case 0 -> new int[]{18, 14};
+            case 1 -> new int[]{26, 18};
+            case 2 -> new int[]{36, 24};
+            default -> new int[]{48, 32};
+        };
+    }
+
+    public String selectedMapEditorSizeLabel() {
+        int[] size = selectedMapEditorSize();
+        return size[0] + "x" + size[1];
+    }
+
+    public void previousMapEditorKind() {
+        mapEditorKindIndex = Math.floorMod(mapEditorKindIndex - 1, 3);
+        status = "Map editor type: " + selectedMapEditorKindLabel() + ".";
+    }
+
+    public void nextMapEditorKind() {
+        mapEditorKindIndex = Math.floorMod(mapEditorKindIndex + 1, 3);
+        status = "Map editor type: " + selectedMapEditorKindLabel() + ".";
+    }
+
+    public void previousMapEditorSize() {
+        mapEditorSizeIndex = Math.floorMod(mapEditorSizeIndex - 1, 4);
+        status = "Map editor size: " + selectedMapEditorSizeLabel() + ".";
+    }
+
+    public void nextMapEditorSize() {
+        mapEditorSizeIndex = Math.floorMod(mapEditorSizeIndex + 1, 4);
+        status = "Map editor size: " + selectedMapEditorSizeLabel() + ".";
+    }
+
+    public void enterMapEditor() {
+        if (mode != GameMode.VILLAGE && mode != GameMode.EXPLORE) {
+            return;
+        }
+        if (isMapEditorMap()) {
+            status = "Already editing " + world.label(currentMapId) + ".";
+            mode = GameMode.VILLAGE;
+            return;
+        }
+        mapEditorReturnMapId = currentMapId;
+        mapEditorReturnX = playerX;
+        mapEditorReturnY = playerY;
+        String kind = selectedMapEditorKind();
+        int[] size = selectedMapEditorSize();
+        String mapId = "editor_" + kind + "_" + player.name.toLowerCase().replaceAll("[^a-z0-9]+", "_") + "_" + (++mapEditorSerial);
+        world.createEditorMap(mapId, "Custom " + selectedMapEditorKindLabel(), kind, size[0], size[1]);
+        currentMapId = mapId;
+        playerX = Math.max(1, size[0] / 2);
+        playerY = Math.max(1, "interior".equals(kind) ? size[1] - 3 : size[1] / 2);
+        resetVillageInterface();
+        villageTab = "interior".equals(kind) ? 3 : 0;
+        mode = GameMode.VILLAGE;
+        status = "Map editor opened: " + selectedMapEditorKindLabel() + " " + size[0] + "x" + size[1] + ".";
+    }
+
+    public void exitMapEditor() {
+        if (!isMapEditorMap()) {
+            closeOverlay();
+            return;
+        }
+        String editedLabel = world.label(currentMapId);
+        currentMapId = mapEditorReturnMapId == null || mapEditorReturnMapId.isBlank() ? WorldMap.PLAYER_VILLAGE_ID : mapEditorReturnMapId;
+        playerX = mapEditorReturnX;
+        playerY = mapEditorReturnY;
+        resetVillageInterface();
+        mode = GameMode.EXPLORE;
+        status = "Closed " + editedLabel + ". Returned to " + world.label(currentMapId) + ".";
+    }
+
+    public String exportMapEditorDesign() {
+        String export = world.exportEditorMap(currentMapId);
+        if (export.isBlank()) {
+            status = "Open the map editor before exporting.";
+            return "";
+        }
+        return export;
     }
 
     public void setVillageTab(int tab) {
@@ -917,7 +3520,21 @@ public final class GameState {
     }
 
     public void selectInteriorAsset(String asset) {
-        selectedInteriorAsset = VillageManager.interiorAsset(asset).asset();
+        VillageManager.PlaceableAsset option = VillageManager.interiorAsset(asset);
+        selectedInteriorAsset = option.asset();
+        if (!"All".equals(selectedInteriorAssetCategory)) {
+            selectedInteriorAssetCategory = option.category();
+        }
+        setVillageEditAction("place");
+    }
+
+    public void selectInteriorAssetCategory(String category) {
+        List<VillageManager.PlaceableAsset> options = VillageManager.interiorAssets(category);
+        if (options.isEmpty()) {
+            return;
+        }
+        selectedInteriorAssetCategory = VillageManager.interiorAssetCategories().contains(category) ? category : "All";
+        selectedInteriorAsset = options.get(0).asset();
         setVillageEditAction("place");
     }
 
@@ -925,13 +3542,32 @@ public final class GameState {
         if (mode != GameMode.VILLAGE) {
             return;
         }
-        if (villageTab == 3 || isManagedVillageInterior()) {
+        if (isMapEditorMap()) {
+            handleMapEditorClick(x, y);
+            return;
+        }
+        if (isManagedVillageInterior()) {
+            if (villageTab == 1) {
+                handleInteriorTileClick(x, y);
+            } else {
+                handleInteriorPlacementClick(x, y);
+            }
+            return;
+        }
+        if (villageTab == 3) {
             handleInteriorPlacementClick(x, y);
             return;
         }
         if (!isManagedVillageMap()) {
             status = "Village building changes must be made at Oathstead Camp.";
             return;
+        }
+        if ("delete".equals(villageEditAction)) {
+            WorldProp prop = world.playerVillagePropAt(x, y);
+            if (prop != null && world.removePlayerVillageProp(prop)) {
+                status = "Village asset removed.";
+                return;
+            }
         }
         if (villageTab == 1) {
             handleVillageTileClick(x, y);
@@ -944,11 +3580,172 @@ public final class GameState {
         handleVillageBuildingClick(x, y);
     }
 
+    private void handleVillageBuildingDecorationClick(int x, int y) {
+        CityBuilding building = world.cityBuildingAt(WorldMap.PLAYER_VILLAGE_ID, x, y);
+        if (building == null || !building.key().startsWith("player_")) {
+            status = "Select one of your placed buildings to decorate.";
+            return;
+        }
+        List<String> decor = villageBuildingDecorations.computeIfAbsent(building.key(), ignored -> new ArrayList<>());
+        if ("delete".equals(villageEditAction)) {
+            if (decor.isEmpty()) {
+                status = VillageManager.buildingLabel(building.style()) + " has no interior decor to remove.";
+                return;
+            }
+            String removed = decor.remove(decor.size() - 1);
+            status = "Removed " + interiorDecorLabel(removed) + ". " + buildingInteriorSummary(building);
+            return;
+        }
+        if ("move".equals(villageEditAction) || "upgrade".equals(villageEditAction)) {
+            status = "Interior decor can be placed or deleted from the Inside tab.";
+            return;
+        }
+        VillageManager.PlaceableAsset asset = VillageManager.interiorAsset(selectedInteriorAsset);
+        decor.add(asset.asset());
+        status = "Added " + asset.label() + " to " + VillageManager.buildingLabel(building.style()) + ". "
+                + buildingInteriorSummary(building);
+    }
+
+    private void handleMapEditorClick(int x, int y) {
+        String kind = world.kind(currentMapId);
+        if ("interior".equals(kind)) {
+            if (villageTab == 1) {
+                handleMapEditorTileClick(x, y);
+            } else if (villageTab == 3 || villageTab == 2) {
+                handleMapEditorInteriorAssetClick(x, y);
+            } else {
+                status = "Interior maps use Tiles and Inside tools.";
+            }
+            return;
+        }
+        if (villageTab == 0) {
+            handleMapEditorBuildingClick(x, y);
+        } else if (villageTab == 1) {
+            handleMapEditorTileClick(x, y);
+        } else if (villageTab == 2) {
+            handleMapEditorAssetClick(x, y);
+        } else {
+            status = "Use the Interior editor type for inside layouts.";
+        }
+    }
+
+    private void handleMapEditorBuildingClick(int x, int y) {
+        CityBuilding building = world.cityBuildingAt(currentMapId, x, y);
+        if ("delete".equals(villageEditAction)) {
+            status = world.removeEditorBuilding(currentMapId, building) ? "Editor building removed." : "No editor building there.";
+            return;
+        }
+        if ("move".equals(villageEditAction)) {
+            if (pendingVillageMoveSource == null) {
+                if (building == null) {
+                    status = "Select an editor building first.";
+                    return;
+                }
+                pendingVillageMoveSource = building.anchor();
+                pendingVillageMoveMapId = currentMapId;
+                status = "Choose the new building location.";
+                return;
+            }
+            CityBuilding source = currentMapId.equals(pendingVillageMoveMapId)
+                    ? world.cityBuildingAt(currentMapId, pendingVillageMoveSource.x(), pendingVillageMoveSource.y())
+                    : null;
+            status = world.moveEditorBuilding(currentMapId, source, x, y) ? "Editor building moved." : "That building will not fit there.";
+            pendingVillageMoveSource = null;
+            pendingVillageMoveMapId = null;
+            return;
+        }
+        if ("upgrade".equals(villageEditAction)) {
+            status = "Editor buildings use their base form.";
+            return;
+        }
+        VillageManager.BuildingPlan plan = VillageManager.buildingPlan(selectedVillageBuildingStyle);
+        CityBuilding placed = world.placeEditorBuilding(currentMapId, plan.style(), x, y);
+        status = placed == null ? "That building will not fit there." : "Placed " + plan.label() + ".";
+    }
+
+    private void handleMapEditorTileClick(int x, int y) {
+        char tile = selectedVillageTile;
+        if ("delete".equals(villageEditAction)) {
+            tile = switch (world.kind(currentMapId)) {
+                case "city" -> 'p';
+                case "interior" -> 'g';
+                default -> 'g';
+            };
+        }
+        VillageManager.TilePlan plan = VillageManager.tilePlan(tile);
+        status = world.setEditorTile(currentMapId, x, y, tile)
+                ? ("interior".equals(world.kind(currentMapId)) ? "Interior tile set." : plan.label() + " set.")
+                : "That tile cannot be changed.";
+    }
+
+    private void handleMapEditorAssetClick(int x, int y) {
+        WorldProp prop = world.editorPropAt(currentMapId, x, y);
+        if ("delete".equals(villageEditAction)) {
+            status = world.removeEditorProp(currentMapId, prop) ? "Editor prop removed." : "No editor prop there.";
+            return;
+        }
+        if ("move".equals(villageEditAction)) {
+            if (pendingVillageMoveSource == null) {
+                if (prop == null) {
+                    status = "Select an editor prop first.";
+                    return;
+                }
+                pendingVillageMoveSource = new TilePoint(x, y);
+                pendingVillageMoveMapId = currentMapId;
+                status = "Choose the new prop location.";
+                return;
+            }
+            WorldProp source = currentMapId.equals(pendingVillageMoveMapId)
+                    ? world.editorPropAt(currentMapId, pendingVillageMoveSource.x(), pendingVillageMoveSource.y())
+                    : null;
+            status = world.moveEditorProp(currentMapId, source, x, y) ? "Editor prop moved." : "That prop will not fit there.";
+            pendingVillageMoveSource = null;
+            pendingVillageMoveMapId = null;
+            return;
+        }
+        VillageManager.PlaceableAsset asset = VillageManager.outdoorAsset(selectedVillageAsset);
+        status = world.addEditorProp(currentMapId, x, y, asset.asset(), asset.size())
+                ? asset.label() + " placed."
+                : "That prop cannot be placed there.";
+    }
+
+    private void handleMapEditorInteriorAssetClick(int x, int y) {
+        WorldProp prop = world.editorInteriorPropAt(currentMapId, x, y);
+        if ("delete".equals(villageEditAction)) {
+            status = world.removeEditorInteriorProp(currentMapId, prop) ? "Interior asset removed." : "No interior asset there.";
+            return;
+        }
+        if ("move".equals(villageEditAction)) {
+            if (pendingVillageMoveSource == null) {
+                if (prop == null) {
+                    status = "Select a placed interior asset first.";
+                    return;
+                }
+                pendingVillageMoveSource = new TilePoint(x, y);
+                pendingVillageMoveMapId = currentMapId;
+                status = "Choose the new interior location.";
+                return;
+            }
+            WorldProp source = currentMapId.equals(pendingVillageMoveMapId)
+                    ? world.editorInteriorPropAt(currentMapId, pendingVillageMoveSource.x(), pendingVillageMoveSource.y())
+                    : null;
+            status = world.moveEditorInteriorProp(currentMapId, source, x, y) ? "Interior asset moved." : "That interior asset will not fit there.";
+            pendingVillageMoveSource = null;
+            pendingVillageMoveMapId = null;
+            return;
+        }
+        VillageManager.PlaceableAsset asset = VillageManager.interiorAsset(selectedInteriorAsset);
+        status = world.addEditorInteriorProp(currentMapId, x, y, asset.asset(), asset.size())
+                ? asset.label() + " placed."
+                : "That interior asset cannot be placed there.";
+    }
+
     private void handleVillageBuildingClick(int x, int y) {
         CityBuilding building = world.cityBuildingAt(WorldMap.PLAYER_VILLAGE_ID, x, y);
         if ("delete".equals(villageEditAction)) {
             if (world.removePlayerVillageBuilding(building)) {
                 villageBuildingAssignments.remove(building.key());
+                villageBuildingDecorations.remove(building.key());
                 resetNpcRuntime();
                 status = "Building removed.";
             } else {
@@ -1000,6 +3797,11 @@ public final class GameState {
         } else if (!refreshPlayerVillageGrowth()) {
             status = "Placed " + villageBuildingLabel(placed.style()) + ".";
         }
+        if (placed != null) {
+            publishCompanionEvent("oathstead_build:" + placed.key(), "Placed " + villageBuildingLabel(placed.style()),
+                    List.of("oathstead", "build", "practical", "craft"), 1, "oathstead_build",
+                    "Helped place " + villageBuildingLabel(placed.style()) + " at Oathstead.", true);
+        }
     }
 
     private void upgradeVillageBuildingAt(int x, int y) {
@@ -1024,6 +3826,10 @@ public final class GameState {
             if (!refreshPlayerVillageGrowth()) {
                 status = plan.label() + " upgraded to level " + (level + 1) + ".";
             }
+            publishCompanionEvent("oathstead_upgrade:" + building.key() + ":" + (level + 1),
+                    "Upgraded " + plan.label(),
+                    List.of("oathstead", "build", "practical", "craft"), 1, "oathstead_build",
+                    "Helped upgrade " + plan.label() + " at Oathstead.", true);
         } else {
             status = "That building cannot be upgraded right now.";
         }
@@ -1049,6 +3855,29 @@ public final class GameState {
         } else if (!refreshPlayerVillageGrowth()) {
             status = plan.label() + " set at " + x + ", " + y + ".";
         }
+    }
+
+    private void handleInteriorTileClick(int x, int y) {
+        if (!isManagedVillageInterior()) {
+            status = "Enter a village building to edit its interior tiles.";
+            return;
+        }
+        if ("move".equals(villageEditAction)) {
+            status = "Interior tiles can be placed or deleted directly.";
+            return;
+        }
+        char tile = "delete".equals(villageEditAction) ? 'i' : selectedVillageTile;
+        char resolved = tile == 'o' ? 'o' : 'i';
+        VillageManager.TilePlan plan = VillageManager.tilePlan(resolved);
+        if (!"delete".equals(villageEditAction) && !canAffordVillageCost(plan.cost())) {
+            status = "You need " + VillageManager.costLabel(plan.cost()) + " for " + plan.label() + ".";
+            return;
+        }
+        boolean placed = world.setPlayerInteriorTile(currentMapId, x, y, resolved);
+        if (placed && !"delete".equals(villageEditAction)) {
+            spendVillageCost(plan.cost());
+        }
+        status = placed ? plan.label() + " set at " + x + ", " + y + "." : "That interior tile cannot be changed.";
     }
 
     private void handleVillageAssetClick(int x, int y) {
@@ -1144,10 +3973,11 @@ public final class GameState {
     }
 
     public void toggleSkills() {
-        if (mode == GameMode.SKILLS) {
+        if (mode == GameMode.SKILLS || mode == GameMode.PARTY) {
             closeOverlay();
         } else if (mode == GameMode.EXPLORE) {
-            mode = GameMode.SKILLS;
+            partyScreenIndex = Math.max(0, Math.min(partyScreenIndex, partyMembers().size() - 1));
+            mode = GameMode.PARTY;
         }
     }
 
@@ -1187,8 +4017,30 @@ public final class GameState {
             return;
         }
         player.gold -= cost;
+        if (CraftingSystem.isRecipeBookItem(itemKey)) {
+            String recipeKey = CraftingSystem.recipeKeyForBookItem(itemKey);
+            String note = unlockRecipe(recipeKey, GameData.itemName(itemKey) + " teaches");
+            status = note.isBlank()
+                    ? "You already know the recipe in " + GameData.itemName(itemKey) + "."
+                    : "Bought " + GameData.itemName(itemKey) + ". " + note;
+            return;
+        }
         player.addItem(itemKey, 1);
         status = "Bought " + GameData.itemName(itemKey) + ".";
+    }
+
+    public void sellShopItem(int index) {
+        if (mode != GameMode.SHOP || activeShop == null || index < 0 || index >= player.inventory.size()) {
+            return;
+        }
+        String itemKey = player.inventory.keySet().stream().toList().get(index);
+        int value = Math.max(1, GameData.itemCost(itemKey) / 2);
+        if (!player.consumeItem(itemKey)) {
+            status = "No " + GameData.itemName(itemKey) + " to sell.";
+            return;
+        }
+        player.gold += value;
+        status = "Sold " + GameData.itemName(itemKey) + " for " + value + "g.";
     }
 
     public boolean isRecruited(String recruitId) {
@@ -1196,9 +4048,24 @@ public final class GameState {
     }
 
     public List<Actor> activeAllies() {
-        return allies.stream()
-                .filter(ally -> !villageAllies.contains(ally.name))
-                .toList();
+        List<Actor> active = new ArrayList<>();
+        for (String recruitId : recruitedIds) {
+            GameData.RecruitSpec spec = GameData.RECRUITS.get(recruitId);
+            if (spec == null) {
+                continue;
+            }
+            Actor ally = allyByName(spec.name());
+            if (ally != null && villageAllies.contains(ally.name)) {
+                continue;
+            }
+            if (ally != null && !active.contains(ally)) {
+                active.add(ally);
+            }
+            if (active.size() >= MAX_ACTIVE_COMPANIONS) {
+                break;
+            }
+        }
+        return active;
     }
 
     public List<Actor> stationedAllies() {
@@ -1240,7 +4107,167 @@ public final class GameState {
         syncSkillAbilities(ally);
         allies.add(ally);
         recruitedIds.add(recruitId);
-        return ally.name + " joins your party.";
+        invalidateNpcListCache();
+        recordCompanionMemory(recruitId, "recruited", "Joined the player's companions.");
+        publishCompanionEvent("recruited:" + recruitId, spec.name() + " joined the party",
+                List.of("loyalty", "commitment", "companionship"), 1, "recruited",
+                "Joined the player's companions.", true);
+        triggerActionBanter(ally, companionRecruitmentBanter(recruitId, ally.name));
+        return activeAllies().contains(ally)
+                ? ally.name + " joins your party."
+                : ally.name + " joins your companions at Oathstead. Active party is full ("
+                + MAX_ACTIVE_COMPANIONS + "/" + MAX_ACTIVE_COMPANIONS + ").";
+    }
+
+    private String companionRecruitmentBanter(String recruitId, String name) {
+        return switch (recruitId == null ? "" : recruitId) {
+            case "seraphine" -> name + ": By choice, no clauses. Try not to make me regret the clean wording.";
+            case "maera" -> name + ": I am coming. If the road lies, I reserve the right to annotate it violently.";
+            case "cassia" -> name + ": I stand with you. Not by order. Remember that when the road gets loud.";
+            case "lyra" -> name + ": I am with you. Someone has to keep mercy stocked and heroes hydrated.";
+            case "samir" -> name + ": I walk beside you. Bring questions. I dislike lonely light.";
+            case "aria" -> name + ": Fine. I am scouting with you. Step where I step unless I am showing off.";
+            case "vesper" -> name + ": I am coming. If we pass something still alive, we stop long enough to notice.";
+            case "rafiq" -> name + ": I join you under protest, excitement, and excellent lighting.";
+            case "calder" -> name + ": I am with you. First rule: if the road cracks, we inspect before bragging.";
+            default -> name + ": I am with you now.";
+        };
+    }
+
+    public boolean canRecruitActiveNpcToVillage() {
+        if (activeNpc == null) {
+            return false;
+        }
+        if (allyByName(activeNpc.name()) != null && villageAllies.contains(activeNpc.name())) {
+            return false;
+        }
+        return npcRelationship(activeNpc) >= villageRecruitThreshold(activeNpc);
+    }
+
+    public boolean canRecruitActiveNpcToParty() {
+        return activeNpc != null
+                && activeNpc.recruitId() != null
+                && !isRecruited(activeNpc.recruitId())
+                && companionRecruitmentEligible(activeNpc.recruitId(), activeNpc);
+    }
+
+    public void recruitActiveNpcToParty() {
+        if ((mode != GameMode.DIALOG && mode != GameMode.SHOP) || activeNpc == null || activeNpc.recruitId() == null) {
+            return;
+        }
+        if (!companionRecruitmentEligible(activeNpc.recruitId(), activeNpc)) {
+            status = activeNpc.name() + " needs relationship " + COMPANION_RECRUIT_RELATIONSHIP
+                    + " or one completed companion chapter to join the party. Current: " + npcRelationship(activeNpc) + ".";
+            return;
+        }
+        String recruitNote = recruitAlly(activeNpc.recruitId());
+        status = recruitNote == null ? activeNpc.name() + " cannot join right now." : recruitNote;
+    }
+
+    private boolean companionRecruitmentEligible(String recruitId, Npc npc) {
+        if (recruitId == null || recruitId.isBlank() || isRecruited(recruitId)) {
+            return false;
+        }
+        return npcRelationship(npc) >= COMPANION_RECRUIT_RELATIONSHIP
+                || companionAnyQuestCompleted(recruitId);
+    }
+
+    private boolean companionAnyQuestCompleted(String recruitId) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return false;
+        }
+        for (Quest quest : quests.values()) {
+            if (recruitId.equals(quest.chainOwnerId) && quest.completed) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean companionChainComplete(String recruitId) {
+        boolean found = false;
+        for (Quest quest : quests.values()) {
+            if (recruitId.equals(quest.chainOwnerId)) {
+                found = true;
+                if (!quest.completed) {
+                    return false;
+                }
+            }
+        }
+        return found;
+    }
+
+    public int villageRecruitThreshold(Npc npc) {
+        return specialCompanionNpc(npc) ? COMPANION_RECRUIT_RELATIONSHIP : VILLAGE_RECRUIT_RELATIONSHIP;
+    }
+
+    public void recruitActiveNpcToVillage() {
+        if ((mode != GameMode.DIALOG && mode != GameMode.SHOP) || activeNpc == null) {
+            return;
+        }
+        int threshold = villageRecruitThreshold(activeNpc);
+        int relationship = npcRelationship(activeNpc);
+        if (relationship < threshold) {
+            status = activeNpc.name() + " needs relationship " + threshold + " to join Oathstead. Current: " + relationship + ".";
+            return;
+        }
+        Actor ally = allyByName(activeNpc.name());
+        if (ally == null && activeNpc.recruitId() != null && !isRecruited(activeNpc.recruitId())) {
+            recruitAlly(activeNpc.recruitId());
+            ally = allyByName(activeNpc.name());
+            GameData.RecruitSpec spec = GameData.RECRUITS.get(activeNpc.recruitId());
+            if (ally == null && spec != null) {
+                ally = allyByName(spec.name());
+            }
+        }
+        if (ally == null) {
+            ally = createVillageActorFromNpc(activeNpc);
+            allies.add(ally);
+        }
+        villageAllies.add(ally.name);
+        villageWorkerRoles.putIfAbsent(ally.name, "idle");
+        invalidateNpcListCache();
+        status = ally.name + " agrees to settle at Oathstead.";
+        refreshPlayerVillageGrowth();
+    }
+
+    private Actor createVillageActorFromNpc(Npc npc) {
+        String className = villageClassForNpc(npc);
+        int level = Math.max(1, Math.min(player.level, 1 + npcRelationship(npc) / 35));
+        Actor actor = new Actor(npc.name(), npc.sprite(), className,
+                42 + level * 3,
+                className.equals("Mage") || className.equals("Cleric") || className.equals("Medic") ? 24 + level * 2 : 14 + level,
+                8 + level,
+                2 + level / 2);
+        actor.abilities.addAll(GameData.classAbilities(className));
+        actor.level = level;
+        actor.healFull();
+        actor.professionXp.putAll(npc.professionXp());
+        syncSkillAbilities(actor);
+        return actor;
+    }
+
+    private String villageClassForNpc(Npc npc) {
+        String text = (npc.name() + " " + npc.sprite() + " " + String.join(" ", npc.dialog())).toLowerCase();
+        if (text.contains("medic") || text.contains("healer") || text.contains("salve") || text.contains("clinic")) {
+            return "Medic";
+        }
+        if (text.contains("scribe") || text.contains("archive") || text.contains("rune") || text.contains("spell")) {
+            return "Mage";
+        }
+        if (text.contains("scout") || text.contains("guide") || text.contains("track") || text.contains("road")) {
+            return "Scout";
+        }
+        if (text.contains("guard") || text.contains("captain") || text.contains("shield") || text.contains("wall")) {
+            return "Guard";
+        }
+        if (text.contains("merchant") || text.contains("peddler") || text.contains("seller") || text.contains("market")) {
+            return "Trader";
+        }
+        if (text.contains("farmer") || text.contains("baker") || text.contains("cook")) {
+            return "Forager";
+        }
+        return "Worker";
     }
 
     public void stationAlly(String allyName) {
@@ -1252,6 +4279,7 @@ public final class GameState {
         villageAllies.add(ally.name);
         villageWorkerRoles.putIfAbsent(ally.name, "idle");
         partyScreenIndex = Math.max(0, Math.min(partyScreenIndex, partyMembers().size() - 1));
+        invalidateNpcListCache();
         status = ally.name + " is set to city attendance at Oathstead.";
         refreshPlayerVillageGrowth();
     }
@@ -1265,7 +4293,8 @@ public final class GameState {
         villageAllies.remove(ally.name);
         villageWorkerRoles.remove(ally.name);
         villageBuildingAssignments.values().removeIf(name -> name.equals(ally.name));
-        status = ally.name + " rejoins your traveling party.";
+        invalidateNpcListCache();
+        status = ally.name + " ends city attendance at Oathstead.";
     }
 
     public void openBuildingAssignment(CityBuilding building) {
@@ -1288,6 +4317,146 @@ public final class GameState {
         CityBuilding building = activeVillageBuilding;
         activeVillageBuilding = null;
         enterBuildingAt(building.x1(), building.y2());
+    }
+
+    public void openActiveVillageBuildingShop() {
+        if (activeVillageBuilding == null) {
+            status = "Select a building first.";
+            return;
+        }
+        String assigned = assignedAllyForBuilding(activeVillageBuilding.key());
+        if (assigned.isBlank()) {
+            status = "Assign a city-attendance worker before opening a shop.";
+            return;
+        }
+        activeNpc = null;
+        activeShop = shopForVillageBuilding(activeVillageBuilding);
+        mode = GameMode.SHOP;
+        status = activeShop.name() + " opened.";
+    }
+
+    private Shop shopForVillageBuilding(CityBuilding building) {
+        List<String> stock = new ArrayList<>(baseBuildingShopStock(building.style()));
+        int quality = buildingToolScore(building);
+        List<String> upgrades = upgradedBuildingShopStock(building.style());
+        for (int i = 0; i < Math.min(quality, upgrades.size()); i++) {
+            String item = upgrades.get(i);
+            if (!stock.contains(item)) {
+                stock.add(item);
+            }
+        }
+        return new Shop("village_" + building.key(), VillageManager.buildingLabel(building.style()) + " Shop", stock);
+    }
+
+    private List<String> baseBuildingShopStock(String style) {
+        return switch (style) {
+            case "blacksmith" -> List.of("iron_sword", "steel_sword", "riveted_mail", "guard_cuirass", "iron_kite_shield");
+            case "shop" -> List.of("stone_axe", "woodcutter_axe", "river_buckler", "oaken_roundshield", "recipe_book_oak_bow");
+            case "apothecary" -> List.of("potion_small", "potion_large", "ether", "guard_tonic", "recipe_book_apothecary_salve");
+            case "inn" -> List.of("trail_rations", "potion_small", "ether", "recipe_book_camp_cookery");
+            case "bakery" -> List.of("trail_rations", "potion_small", "recipe_book_camp_cookery");
+            case "warehouse", "granary" -> List.of("trail_rations", "escape_scroll", "guard_tonic");
+            case "forestry_hut" -> List.of("stone_axe", "woodcutter_axe", "oaken_roundshield", "recipe_book_oak_bow");
+            case "mine" -> List.of("stone_pickaxe", "iron_pickaxe", "riveted_mail", "recipe_book_iron_mail");
+            case "hunting_camp" -> List.of("potion_small", "scout_hood", "ranger_jerkin", "recipe_book_fisher_knots");
+            case "farmstead", "garden" -> List.of("trail_rations", "potion_small", "recipe_book_camp_cookery");
+            case "fishing_hut" -> List.of("trail_rations", "shell_lure", "recipe_book_fisher_knots");
+            case "guild" -> List.of("ether", "archive_lens", "recipe_book_escape_scrolls");
+            case "shrine" -> List.of("potion_small", "ether", "sunward_medallion");
+            case "watchtower" -> List.of("iron_sword", "river_buckler", "guard_tonic");
+            case "house", "row" -> List.of("potion_small", "trail_rations", "traveler_cloak");
+            default -> List.of("potion_small", "trail_rations");
+        };
+    }
+
+    private List<String> upgradedBuildingShopStock(String style) {
+        return switch (style) {
+            case "blacksmith" -> List.of("steel_bastion_plate", "mountain_plate", "emberforged_plate", "starforged_plate");
+            case "shop" -> List.of("towerguard_shield", "frostguard_aegis", "heartstone_bulwark");
+            case "apothecary" -> List.of("battle_kit", "phoenix_feather", "heartstone_locket");
+            case "inn", "bakery" -> List.of("battle_kit", "phoenix_feather");
+            case "warehouse", "granary" -> List.of("battle_kit", "escape_scroll", "royal_wardplate");
+            case "forestry_hut" -> List.of("heartwood_vest", "thornwall_shield", "heartstone_bulwark");
+            case "mine" -> List.of("steel_bastion_plate", "mountain_plate", "frostbound_plate");
+            case "hunting_camp" -> List.of("stormhide_jacket", "thornsilk_armor", "obsidian_fang");
+            case "farmstead", "garden" -> List.of("guard_tonic", "phoenix_feather");
+            case "fishing_hut" -> List.of("marshrunner_mantle", "marshlight_seal");
+            case "guild" -> List.of("starweave_robes", "starrelic_ring", "voidglass_staff");
+            case "shrine" -> List.of("suncloth_mantle", "sunwarden_plate", "phoenix_crown_pin");
+            case "watchtower" -> List.of("towerguard_shield", "royal_heater", "stormguard_plate");
+            case "house", "row" -> List.of("river_pearl_charm", "thornroot_charm");
+            default -> List.of("battle_kit");
+        };
+    }
+
+    public String buildingInteriorSummary(CityBuilding building) {
+        if (building == null) {
+            return "No building selected.";
+        }
+        return "Decor " + buildingDecorCount(building)
+                + " | Appeal +" + buildingAttractiveness(building)
+                + " | Shop +" + buildingToolScore(building)
+                + " | Revenue +" + buildingRevenueBonus(building) + "g/day";
+    }
+
+    public int buildingDecorCount(CityBuilding building) {
+        return buildingDecorAssets(building).size();
+    }
+
+    public int buildingAttractiveness(CityBuilding building) {
+        int score = 0;
+        for (String asset : buildingDecorAssets(building)) {
+            if (asset.contains("flower") || asset.contains("plant") || asset.contains("rug")
+                    || asset.contains("aquarium") || asset.contains("vase") || asset.contains("window")) {
+                score += 2;
+            } else {
+                score += 1;
+            }
+        }
+        return score;
+    }
+
+    public int buildingToolScore(CityBuilding building) {
+        int score = 0;
+        for (String asset : buildingDecorAssets(building)) {
+            if (asset.contains("anvil") || asset.contains("forge") || asset.contains("workbench")
+                    || asset.contains("carpenter") || asset.contains("alchemy") || asset.contains("cooking")
+                    || asset.contains("counter") || asset.contains("bookshelf") || asset.contains("shelf")) {
+                score++;
+            }
+        }
+        return score;
+    }
+
+    public int buildingRevenueBonus(CityBuilding building) {
+        int beds = 0;
+        int counters = 0;
+        for (String asset : buildingDecorAssets(building)) {
+            if (asset.contains("bed")) {
+                beds++;
+            }
+            if (asset.contains("counter") || asset.contains("table") || asset.contains("bar")) {
+                counters++;
+            }
+        }
+        int styleBase = "inn".equals(building.style()) ? beds * 5 : counters * 2;
+        return styleBase + buildingAttractiveness(building) / 2;
+    }
+
+    private String interiorDecorLabel(String asset) {
+        return asset == null ? "decor" : asset.replace("interior_", "").replace('_', ' ');
+    }
+
+    private List<String> buildingDecorAssets(CityBuilding building) {
+        if (building == null) {
+            return List.of();
+        }
+        List<String> assets = new ArrayList<>(villageBuildingDecorations.getOrDefault(building.key(), List.of()));
+        String mapId = "house_" + WorldMap.PLAYER_VILLAGE_ID + "_" + building.anchor().x() + "_" + building.anchor().y();
+        for (WorldProp prop : world.playerInteriorProps().getOrDefault(mapId, List.of())) {
+            assets.add(prop.asset());
+        }
+        return assets;
     }
 
     public String assignedAllyForBuilding(String buildingKey) {
@@ -1330,8 +4499,16 @@ public final class GameState {
         } else {
             villageWorkerRoles.putIfAbsent(ally.name, "idle");
         }
+        invalidateNpcListCache();
         status = ally.name + " assigned to " + VillageManager.buildingLabel(activeVillageBuilding.style()) + ".";
         resetNpcRuntime();
+        recordCompanionMemoryForAlly(ally, "oathstead_work", "Assigned to " + VillageManager.buildingLabel(activeVillageBuilding.style()) + " at Oathstead.");
+        publishCompanionEvent("oathstead_assignment:" + ally.name, ally.name + " was assigned to "
+                        + VillageManager.buildingLabel(activeVillageBuilding.style()),
+                List.of("oathstead", "practical", "duty", "craft"), 1, "oathstead_work",
+                "Assigned work at Oathstead.", true);
+        triggerActionBanter(ally, ally.name + ": The " + VillageManager.buildingLabel(activeVillageBuilding.style()).toLowerCase()
+                + " gives me work with edges. Good. I trust useful edges.");
     }
 
     public void clearActiveBuildingAssignment() {
@@ -1342,6 +4519,7 @@ public final class GameState {
         status = removed == null || removed.isBlank()
                 ? "No one was assigned there."
                 : removed + " is no longer assigned to that building.";
+        invalidateNpcListCache();
         resetNpcRuntime();
     }
 
@@ -1357,6 +4535,7 @@ public final class GameState {
             return;
         }
         villageWorkerRoles.put(ally.name, role.id());
+        invalidateNpcListCache();
         status = ally.name + " assigned as " + role.label() + ".";
         refreshPlayerVillageGrowth();
     }
@@ -1482,7 +4661,7 @@ public final class GameState {
     }
 
     public void useItem(String itemKey) {
-        Equipment equipment = GameData.EQUIPMENT.get(itemKey);
+        Equipment equipment = GameData.equipment(itemKey);
         if (equipment != null) {
             status = player.equipItem(itemKey);
             return;
@@ -1490,6 +4669,14 @@ public final class GameState {
         Item item = GameData.ITEMS.get(itemKey);
         if (item == null || !player.hasItem(itemKey)) {
             status = "No usable " + GameData.itemName(itemKey) + ".";
+            return;
+        }
+        if ("escape_scroll".equals(itemKey)) {
+            useEscapeScroll();
+            return;
+        }
+        if (player.level < item.minLevel()) {
+            status = item.name() + " requires level " + item.minLevel() + ".";
             return;
         }
         int heal = item.heal();
@@ -1523,6 +4710,27 @@ public final class GameState {
         status = "Used " + item.name() + ".";
     }
 
+    private void useEscapeScroll() {
+        if (mode == GameMode.BATTLE) {
+            status = "Escape scrolls cannot be read in battle.";
+            return;
+        }
+        if (!"dungeon".equals(world.kind(currentMapId))) {
+            status = "The scroll only answers from inside a dungeon.";
+            return;
+        }
+        WorldTransition escape = world.dungeonEscapeTransition(currentMapId);
+        if (escape == null) {
+            status = "The scroll flickers, but finds no way out.";
+            return;
+        }
+        player.consumeItem("escape_scroll");
+        battle = null;
+        activeDungeonMonster = null;
+        mode = GameMode.EXPLORE;
+        applyTransition(escape);
+    }
+
     public void unequipSlot(String slot) {
         if (mode == GameMode.INVENTORY) {
             unequipEquipmentSlot(partyScreenActor(), slot);
@@ -1539,7 +4747,7 @@ public final class GameState {
     }
 
     private void useInventoryItemForActor(Actor actor, String itemKey) {
-        if (GameData.EQUIPMENT.containsKey(itemKey)) {
+        if (GameData.isEquipment(itemKey)) {
             equipPartyItem(actor, itemKey);
             return;
         }
@@ -1550,6 +4758,14 @@ public final class GameState {
                 return;
             }
             status = "No usable " + GameData.itemName(itemKey) + ".";
+            return;
+        }
+        if ("escape_scroll".equals(itemKey)) {
+            useEscapeScroll();
+            return;
+        }
+        if (actor.level < item.minLevel()) {
+            status = item.name() + " requires level " + item.minLevel() + ".";
             return;
         }
         if (actor.hp >= actor.maxHp && actor.mp >= actor.maxMp) {
@@ -1587,7 +4803,7 @@ public final class GameState {
         if (mode != GameMode.INVENTORY || itemKey == null || slot == null) {
             return;
         }
-        Equipment item = GameData.EQUIPMENT.get(itemKey);
+        Equipment item = GameData.equipment(itemKey);
         if (item == null) {
             status = GameData.itemName(itemKey) + " is not gear.";
             return;
@@ -1609,7 +4825,7 @@ public final class GameState {
     }
 
     private void equipPartyItem(Actor actor, String itemKey) {
-        Equipment item = GameData.EQUIPMENT.get(itemKey);
+        Equipment item = GameData.equipment(itemKey);
         if (item == null) {
             status = "That item cannot be equipped.";
             return;
@@ -1646,8 +4862,9 @@ public final class GameState {
     }
 
     public boolean canAllocateSkill(Actor actor, String skillKey) {
-        if (actor.skillPoints <= 0) {
-            status = "No skill points available.";
+        boolean professionSkill = SkillTrees.isProfessionSkill(skillKey);
+        if (professionSkill ? actor.professionSkillPoints <= 0 : actor.skillPoints <= 0) {
+            status = professionSkill ? "No profession skill points available." : "No skill points available.";
             return false;
         }
         SkillNode node = SkillTrees.availableSkillTree(actor.className).get(skillKey);
@@ -1657,6 +4874,10 @@ public final class GameState {
         }
         if (actor.skillRank(skillKey) >= node.maxRank()) {
             status = node.name() + " is already mastered.";
+            return false;
+        }
+        if (actor.level < node.levelRequirement()) {
+            status = node.name() + " requires level " + node.levelRequirement() + ".";
             return false;
         }
         for (String required : node.requires()) {
@@ -1684,11 +4905,63 @@ public final class GameState {
         if (node == null || !canAllocateSkill(actor, skillKey)) {
             return;
         }
-        actor.skillPoints--;
+        if (SkillTrees.isProfessionSkill(skillKey)) {
+            actor.professionSkillPoints--;
+        } else {
+            actor.skillPoints--;
+        }
         actor.skillAllocations.put(skillKey, actor.skillRank(skillKey) + 1);
         applySkillEffects(actor, node, 1);
         syncSkillAbilities(actor);
         status = actor.name + " learned " + node.name() + ".";
+    }
+
+    public void savePartyLoadoutPreset(String presetName) {
+        Actor actor = loadoutScreenActor();
+        if (actor != null && actor.saveAbilityLoadoutPreset(presetName)) {
+            status = actor.name + " saved " + presetName + " loadout.";
+        }
+    }
+
+    public void applyPartyLoadoutPreset(String presetName) {
+        Actor actor = loadoutScreenActor();
+        if (actor != null && actor.applyAbilityLoadoutPreset(presetName)) {
+            status = actor.name + " equipped " + presetName + " loadout.";
+        } else if (actor != null) {
+            status = actor.name + " has no " + presetName + " loadout saved.";
+        }
+    }
+
+    public void placePartyAbilityInLoadout(String abilityName, int slot) {
+        Actor actor = loadoutScreenActor();
+        if (actor == null || abilityName == null || abilityName.isBlank()) {
+            return;
+        }
+        if (actor.placeAbilityInLoadout(abilityName, slot)) {
+            status = actor.name + " prepared " + abilityName + ".";
+        } else {
+            status = actor.name + " does not know " + abilityName + ".";
+        }
+    }
+
+    public void removePartyAbilityFromLoadout(String abilityName) {
+        Actor actor = loadoutScreenActor();
+        if (actor != null && actor.removeAbilityFromLoadout(abilityName)) {
+            status = actor.name + " set aside " + abilityName + ".";
+        }
+    }
+
+    private Actor loadoutScreenActor() {
+        return mode == GameMode.SKILLS ? player : partyScreenActor();
+    }
+
+    public void allocateStat(Actor actor, String statKey) {
+        if (actor == null || actor.statPoints <= 0) {
+            return;
+        }
+        if (actor.allocateStat(statKey)) {
+            status = actor.name + " improved " + statLabel(statKey) + ".";
+        }
     }
 
     public void respecSkills() {
@@ -1721,10 +4994,16 @@ public final class GameState {
             }
         }
         player.gold -= cost;
-        actor.skillPoints += spent;
+        int professionSpent = SkillTrees.professionSpent(actor.skillAllocations);
+        actor.professionSkillPoints += professionSpent;
+        actor.skillPoints += spent - professionSpent;
         actor.skillAllocations.clear();
+        List<String> previousLoadout = List.copyOf(actor.activeAbilityNames);
         syncSkillAbilities(actor);
-        status = actor.name + "'s skills reset for " + cost + " gold.";
+        int removed = Math.max(0, previousLoadout.size() - actor.activeAbilityNames.size());
+        actor.sanitizeAbilityLoadoutPresets();
+        status = actor.name + "'s skills reset for " + cost + " gold."
+                + (removed > 0 ? " Removed " + removed + " unlearned loadout slot" + (removed == 1 ? "." : "s.") : "");
     }
 
     public boolean move(int dx, int dy) {
@@ -1737,7 +5016,17 @@ public final class GameState {
         }
         int nx = playerX + dx;
         int ny = playerY + dy;
+        WorldTransition currentTransition = world.transitionAt(currentMapId, playerX, playerY);
+        WorldTransition targetTransition = world.transitionAt(currentMapId, nx, ny);
         if (!world.isPassable(currentMapId, nx, ny)) {
+            if (targetTransition != null) {
+                applyTransition(targetTransition);
+                return true;
+            }
+            if (currentTransition != null) {
+                applyTransition(currentTransition);
+                return true;
+            }
             CityBuilding building = world.cityBuildingEntryAt(currentMapId, nx, ny, playerX, playerY);
             if (building != null && isSettlementMap(currentMapId)) {
                 enterBuildingAt(nx, ny);
@@ -1753,9 +5042,16 @@ public final class GameState {
             startDungeonMonsterBattle(dungeonMonster);
             return true;
         }
+        QuestMonsterRuntime questMonster = questMonsterAt(currentMapId, nx, ny);
+        if (questMonster != null) {
+            playerX = nx;
+            playerY = ny;
+            startQuestMonsterBattle(questMonster);
+            return true;
+        }
         Npc npc = npcAt(currentMapId, nx, ny);
         if (npc != null) {
-            status = npc.name() + " is there. Press E to talk.";
+            status = npcDisplayName(npc) + " is there. Press E to talk.";
             return false;
         }
         QuestObjective blockingObjective = blockingQuestObjectiveAt(currentMapId, nx, ny);
@@ -1765,11 +5061,11 @@ public final class GameState {
         }
         playerX = nx;
         playerY = ny;
-        WorldTransition transition = world.transitionAt(currentMapId, playerX, playerY);
-        if (transition != null) {
-            applyTransition(transition);
+        if (targetTransition != null) {
+            applyTransition(targetTransition);
             return true;
         }
+        tickWorldAbilityTimers();
         status = world.describe(currentMapId, playerX, playerY);
         maybeStartEncounter();
         return true;
@@ -1786,15 +5082,31 @@ public final class GameState {
         if (crafting.active()) {
             String finished = crafting.tick(player);
             if (!finished.isBlank()) {
-                status = finished;
+                String bonus = applyGatherWorldBonus();
+                if (completePendingBookshelfReading()) {
+                    activeGatherMapId = "";
+                    activeGatherCandidate = null;
+                    return;
+                }
+                depletePendingResourceNode();
+                activeGatherMapId = "";
+                activeGatherCandidate = null;
+                String discovered = discoverRecipesFromInventory(true);
+                status = discovered.isBlank() ? finished : finished + " " + discovered;
+                if (!bonus.isBlank()) {
+                    status += " " + bonus;
+                }
             }
             return;
         }
         if (mode != GameMode.EXPLORE) {
             return;
         }
+        ensureWeeklyNpcQuests();
         updateNpcMovement();
         updateDungeonMonsterMovement();
+        updateQuestMonsterMovement();
+        updateTravelBanter();
     }
 
     private void tickVillageProduction() {
@@ -1803,12 +5115,14 @@ public final class GameState {
         }
         Map<String, Integer> produced = new LinkedHashMap<>();
         Map<String, Integer> levelSummary = world.playerVillageBuildingRoleLevels();
+        int goldRevenue = 0;
         for (Actor ally : stationedAllies()) {
             String buildingKey = buildingAssignmentForAlly(ally.name);
             CityBuilding assignedBuilding = buildingKey.isBlank() ? null : playerVillageBuildingByKey(buildingKey);
             if (assignedBuilding == null) {
                 continue;
             }
+            goldRevenue += Math.max(0, buildingRevenueBonus(assignedBuilding)) / 2;
             VillageManager.WorkerRole role = VillageManager.workerRole(villageRoleFor(ally.name));
             if ("idle".equals(role.id()) || role.resource().isBlank()) {
                 continue;
@@ -1840,6 +5154,124 @@ public final class GameState {
         if (!produced.isEmpty()) {
             status = "Village stores gained " + resourceList(produced) + ".";
         }
+        if (goldRevenue > 0) {
+            player.gold += goldRevenue;
+            status = (produced.isEmpty() ? "" : status + " ") + "Village businesses earned " + goldRevenue + "g.";
+        }
+    }
+
+    private void updateTravelBanter() {
+        if (activeTravelBanter != null && worldTick >= activeTravelBanter.expiresAtTick()) {
+            activeTravelBanter = null;
+            nextTravelBanterTick = worldTick + 480 + random.nextInt(900);
+        }
+        if (activeTravelBanter == null && !pendingCompanionComments.isEmpty()) {
+            showPendingCompanionComment();
+            return;
+        }
+        if (activeTravelBanter != null || worldTick < nextTravelBanterTick || activeAllies().isEmpty()) {
+            return;
+        }
+        if (!WorldMap.OVERWORLD_ID.equals(currentMapId) || mode != GameMode.EXPLORE) {
+            nextTravelBanterTick = worldTick + 360;
+            return;
+        }
+        if (random.nextDouble() > 0.018) {
+            return;
+        }
+        Actor speaker = activeAllies().get(random.nextInt(activeAllies().size()));
+        String line = travelBanterLine(speaker);
+        activeTravelBanter = new TravelBanterPrompt(
+                speaker.name,
+                line,
+                List.of("Keep talking.", "Stay focused.", "Tell me later."),
+                List.of(
+                        "Encourage the companion to say more. Improves trust slightly.",
+                        "A tactical answer. Keeps momentum without changing trust.",
+                        "Defers the conversation. Slightly distant, but not hostile."
+                ),
+                List.of(1, 0, 0),
+                worldTick + 520
+        );
+        nextTravelBanterTick = worldTick + 1200 + random.nextInt(1600);
+    }
+
+    private String travelBanterLine(Actor speaker) {
+        String recruitId = recruitIdForAlly(speaker);
+        String className = speaker.className;
+        String terrain = Terrain.name(world.tileAt(currentMapId, playerX, playerY));
+        String companionLine = companionExplorationBark(speaker, recruitId, terrain);
+        if (!companionLine.isBlank()) {
+            return companionLine;
+        }
+        if (className.contains("Medic") || className.equals("Cleric") || className.equals("Grovekeeper")) {
+            return "This road is collecting injuries before we have earned them. I can smell trouble under the " + terrain.toLowerCase() + ".";
+        }
+        if (className.contains("Mage") || className.equals("Wildspeaker") || className.equals("Thornbinder")) {
+            return "The air changed. Not enough for a spell, enough for a warning.";
+        }
+        if (className.contains("Ranger") || className.equals("Scout") || className.equals("Dune Guide")) {
+            return "Tracks cross here twice. Someone doubled back, or wanted us to think they did.";
+        }
+        if (className.contains("Rogue") || className.equals("Veilrunner") || className.equals("Nightblade")) {
+            return "If an ambush waits ahead, it has terrible manners. I would have chosen better cover.";
+        }
+        return "Good pace. Bad road. That usually means we are exactly where someone needs us.";
+    }
+
+    private String companionExplorationBark(Actor speaker, String recruitId, String terrain) {
+        if (recruitId == null || recruitId.isBlank()) {
+            return "";
+        }
+        String ground = terrain.toLowerCase();
+        return switch (recruitId) {
+            case "seraphine" -> speaker.name + ": Roads like this always have terms. The trick is finding who wrote them before we step into the fee.";
+            case "maera" -> speaker.name + ": The " + ground + " keeps better records than most archives. Less flattering, usually more accurate.";
+            case "cassia" -> speaker.name + ": Watch the edges. Trouble prefers people who stare only at the road ahead.";
+            case "lyra" -> speaker.name + ": If anyone starts limping, say it before pride turns a small hurt into a long one.";
+            case "samir" -> speaker.name + ": The light sits strangely here. Not wrong. Asking questions, maybe.";
+            case "aria" -> speaker.name + ": Tracks cross the " + ground + " and then pretend not to. Amateur lie. Useful lie.";
+            case "vesper" -> speaker.name + ": Something living passed here recently. Even fear leaves roots if it stays long enough.";
+            case "rafiq" -> speaker.name + ": Excellent terrain for a dramatic ambush. Poor terrain for my boots. The road has mixed priorities.";
+            case "calder" -> speaker.name + ": Bad footing. Keep your weight honest and the road might return the favor.";
+            default -> "";
+        };
+    }
+
+    public TravelBanterPrompt activeTravelBanter() {
+        return activeTravelBanter;
+    }
+
+    public void replyToTravelBanter(int optionIndex) {
+        if (activeTravelBanter == null || optionIndex < 0 || optionIndex >= activeTravelBanter.options().size()) {
+            return;
+        }
+        String speaker = activeTravelBanter.speaker();
+        Actor ally = allyByName(speaker);
+        Npc npc = npcForAlly(ally);
+        int delta = optionIndex < activeTravelBanter.optionRelationshipDeltas().size()
+                ? activeTravelBanter.optionRelationshipDeltas().get(optionIndex)
+                : 0;
+        if (delta != 0) {
+            adjustNpcRelationshipDirect(npc, delta);
+        }
+        if (optionIndex == 0) {
+            status = delta > 0
+                    ? speaker + " takes the answer in, and the road between you feels warmer."
+                    : speaker + " accepts the answer and keeps pace.";
+        } else if (optionIndex == 1) {
+            status = speaker + " nods and scans the horizon.";
+        } else {
+            status = delta < 0
+                    ? speaker + " lets the matter drop, but the silence has edges."
+                    : speaker + " lets the thought rest for now.";
+        }
+        activeTravelBanter = null;
+        if (!pendingCompanionComments.isEmpty()) {
+            nextTravelBanterTick = worldTick + 120;
+            return;
+        }
+        nextTravelBanterTick = worldTick + 900 + random.nextInt(1200);
     }
 
     private void addSecondaryVillageYield(String roleId, int levelBonus, int professionLevel, Map<String, Integer> produced) {
@@ -2089,12 +5521,30 @@ public final class GameState {
 
     public void resetNpcRuntime() {
         npcRuntime.clear();
+        invalidateNpcListCache();
     }
 
     public void resetDungeonMonsterRuntime() {
         dungeonMonsterRuntime.clear();
         defeatedDungeonMonsters.clear();
         activeDungeonMonster = null;
+    }
+
+    public void resetQuestMonsterRuntime() {
+        questMonsterRuntime.clear();
+        questNpcRuntime.clear();
+        activeQuestMonster = null;
+        invalidateNpcListCache();
+        invalidateQuestObjectiveCache();
+    }
+
+    private void invalidateNpcListCache() {
+        npcListCache.clear();
+        npcListCacheTick = -1;
+    }
+
+    private void invalidateQuestObjectiveCache() {
+        activeQuestObjectiveCache = null;
     }
 
     public TilePoint npcPosition(Npc npc) {
@@ -2157,6 +5607,25 @@ public final class GameState {
         return null;
     }
 
+    private QuestMonsterRuntime questMonsterAt(String mapId, int x, int y) {
+        if (!WorldMap.OVERWORLD_ID.equals(mapId)) {
+            return null;
+        }
+        ensureActiveQuestMonsterRuntime();
+        return questMonsterAtRuntime(x, y, null);
+    }
+
+    private QuestMonsterRuntime questMonsterAtRuntime(int x, int y, QuestMonsterRuntime ignored) {
+        for (List<QuestMonsterRuntime> monsters : questMonsterRuntime.values()) {
+            for (QuestMonsterRuntime monster : monsters) {
+                if (monster != ignored && monster.x == x && monster.y == y) {
+                    return monster;
+                }
+            }
+        }
+        return null;
+    }
+
     private List<DungeonMonsterRuntime> dungeonMonstersForMap(String mapId) {
         if (!"dungeon".equals(world.kind(mapId))) {
             return List.of();
@@ -2214,10 +5683,14 @@ public final class GameState {
     }
 
     private int dungeonDepth(String mapId) {
-        if (mapId.endsWith("_2") || mapId.contains("deep")) {
-            return 2;
+        int underscore = mapId.lastIndexOf('_');
+        if (underscore >= 0 && underscore < mapId.length() - 1) {
+            try {
+                return Math.max(1, Integer.parseInt(mapId.substring(underscore + 1)));
+            } catch (NumberFormatException ignored) {
+            }
         }
-        return 1;
+        return mapId.contains("deep") ? 2 : 1;
     }
 
     private String chooseDungeonBoss(String mapId) {
@@ -2273,9 +5746,22 @@ public final class GameState {
             }
         }
         activeDungeonMonster = monster;
-        battle = new Battle(player, activeAllies(), specs, random, world.tileAt(currentMapId, monster.x, monster.y), world.kind(currentMapId));
+        battle = createBattle(specs, world.tileAt(currentMapId, monster.x, monster.y), world.kind(currentMapId));
+        prepareBattleKnowledge(battle);
         mode = GameMode.BATTLE;
         status = monster.spec.name() + " attacks!";
+    }
+
+    private void startQuestMonsterBattle(QuestMonsterRuntime monster) {
+        Quest quest = quests.get(monster.questId);
+        List<GameData.MonsterSpec> specs = quest == null
+                ? monsterSpecsForKeys(List.of(monster.spec.key()))
+                : storyObjectiveMonsterSpecs(monster.spec.key());
+        activeQuestMonster = monster;
+        battle = createBattle(specs, world.tileAt(WorldMap.OVERWORLD_ID, monster.x, monster.y), world.kind(WorldMap.OVERWORLD_ID));
+        prepareBattleKnowledge(battle);
+        mode = GameMode.BATTLE;
+        status = monster.spec.name() + " answers " + (quest == null ? "the hunt" : quest.title) + ".";
     }
 
     private void clearDefeatedDungeonMonster() {
@@ -2290,13 +5776,34 @@ public final class GameState {
         activeDungeonMonster = null;
     }
 
+    private void clearDefeatedQuestMonster() {
+        if (activeQuestMonster == null) {
+            return;
+        }
+        List<QuestMonsterRuntime> monsters = questMonsterRuntime.get(activeQuestMonster.questId);
+        if (monsters != null) {
+            monsters.removeIf(monster -> monster.id.equals(activeQuestMonster.id));
+        }
+        activeQuestMonster = null;
+        invalidateQuestObjectiveCache();
+    }
+
     public void maybeStartEncounter() {
         char tile = world.tileAt(currentMapId, playerX, playerY);
         String kind = world.kind(currentMapId);
-        if (tile == 'r' || tile == 'B' || tile == 'c' || tile == 'u' || "city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
+        if ("dungeon".equals(kind)) {
             return;
         }
-        double chance = "dungeon".equals(kind) ? config.dungeonEncounterChance : tile == 'd' ? config.dungeonEntranceEncounterChance : config.wildEncounterChance;
+        if (Terrain.connectingRoad(tile) || "city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
+            return;
+        }
+        double chance = tile == 'd' ? config.dungeonEntranceEncounterChance : config.wildEncounterChance;
+        if (worldAbilityActive("encounter_ward")) {
+            chance *= 0.35;
+        }
+        if (worldAbilityActive("encounter_lure")) {
+            chance *= 2.25;
+        }
         if (random.nextDouble() >= chance) {
             return;
         }
@@ -2304,65 +5811,541 @@ public final class GameState {
         List<GameData.MonsterSpec> specs = chooseMonsterGroup(monsterTile).stream()
                 .map(key -> GameData.MONSTERS.getOrDefault(key, GameData.MONSTERS.get("slime")))
                 .toList();
-        battle = new Battle(player, activeAllies(), specs, random, tile, kind);
+        battle = createBattle(specs, tile, kind);
+        prepareBattleKnowledge(battle);
         mode = GameMode.BATTLE;
         status = "Battle!";
     }
 
     public List<QuestObjective> activeQuestObjectives() {
+        if (activeQuestObjectiveCache != null) {
+            return activeQuestObjectiveCache;
+        }
         List<QuestObjective> objectives = new ArrayList<>();
+        pruneQuestMonsterRuntime();
         for (Quest quest : quests.values()) {
+            if (!quest.accepted || quest.completed || quest.ready()) {
+                continue;
+            }
+            if (quest.activeObjectiveKind().combatObjective()) {
+                for (QuestMonsterRuntime monster : questMonstersForQuest(quest)) {
+                    objectives.add(new QuestObjective(
+                            quest.id,
+                            quest.title,
+                            quest.activeTarget(),
+                            WorldMap.OVERWORLD_ID,
+                            monster.x,
+                            monster.y,
+                            monster.spec.sprite(),
+                            quest.activeObjectiveKind(),
+                            monster.spec.key(),
+                            true
+                    ));
+                }
+                continue;
+            }
             if (!quest.hasWorldObjective()) {
                 continue;
             }
-            int count = quest.objectiveKind == Quest.ObjectiveKind.DEFEAT ? 1 : quest.needed - quest.progress;
-            for (int i = 0; i < count; i++) {
-                String asset = quest.objectiveAsset != null && !quest.objectiveAsset.isBlank()
-                        ? quest.objectiveAsset
-                        : quest.monsterKey != null ? quest.monsterKey : "icon_chest";
-                int variant = quest.objectiveKind == Quest.ObjectiveKind.DEFEAT ? 0 : quest.progress + i;
-                TilePoint point = world.objectivePoint(quest.objectiveLocationKind, quest.objectiveLocationIndex, variant, asset);
+            int remaining = Math.max(0, quest.activeNeeded() - quest.progress);
+            Set<TilePoint> usedObjectivePoints = new HashSet<>();
+            String asset = quest.activeObjectiveAsset() != null && !quest.activeObjectiveAsset().isBlank()
+                    ? quest.activeObjectiveAsset()
+                    : quest.activeMonsterKey() != null ? quest.activeMonsterKey() : "icon_chest";
+            int added = 0;
+            for (int variant = 0; variant < quest.activeNeeded() && added < remaining; variant++) {
+                TilePoint point = uniqueQuestObjectivePoint(quest, variant, asset, usedObjectivePoints);
+                if (questObjectiveSlotHandled(quest, point, asset)) {
+                    continue;
+                }
                 objectives.add(new QuestObjective(
                         quest.id,
                         quest.title,
-                        quest.target,
-                        quest.objectiveMapId,
+                        quest.activeTarget(),
+                        quest.activeObjectiveMapId(),
                         point.x(),
                         point.y(),
                         asset,
-                        quest.objectiveKind,
-                        quest.monsterKey,
-                        quest.objectiveKind == Quest.ObjectiveKind.DEFEAT
+                        quest.activeObjectiveKind(),
+                        quest.activeMonsterKey(),
+                        quest.activeObjectiveKind().combatObjective()
                 ));
+                added++;
             }
         }
-        return objectives;
+        activeQuestObjectiveCache = List.copyOf(objectives);
+        return activeQuestObjectiveCache;
+    }
+
+    private boolean questObjectiveSlotHandled(Quest quest, TilePoint point, String asset) {
+        return harvestedQuestResources.contains(resourceKey(questStageResourceId(quest), quest.activeObjectiveMapId(), point.x(), point.y(), asset));
+    }
+
+    private TilePoint uniqueQuestObjectivePoint(Quest quest, int variant, String asset, Set<TilePoint> used) {
+        TilePoint first = null;
+        for (int attempt = 0; attempt < 72; attempt++) {
+            TilePoint candidate = world.objectivePoint(quest.activeObjectiveLocationKind(), quest.activeObjectiveLocationIndex(), variant + attempt, asset);
+            if (first == null) {
+                first = candidate;
+            }
+            if (used.add(candidate)) {
+                return candidate;
+            }
+        }
+        TilePoint fallback = first == null
+                ? new TilePoint(playerX, playerY)
+                : nearbyUniqueObjectivePoint(first, quest, used);
+        used.add(fallback);
+        return fallback;
+    }
+
+    private TilePoint nearbyUniqueObjectivePoint(TilePoint origin, Quest quest, Set<TilePoint> used) {
+        for (int radius = 1; radius <= 6; radius++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dx = -radius; dx <= radius; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) != radius) {
+                        continue;
+                    }
+                    TilePoint candidate = new TilePoint(origin.x() + dx, origin.y() + dy);
+                    if (used.contains(candidate)) {
+                        continue;
+                    }
+                    if (quest.activeObjectiveLocationKind() != null
+                            && !quest.activeObjectiveLocationKind().isBlank()
+                            && !quest.activeObjectiveLocationKind().equals(world.locationKindAt(quest.activeObjectiveMapId(), candidate.x(), candidate.y()))) {
+                        continue;
+                    }
+                    if (world.isPassable(quest.activeObjectiveMapId(), candidate.x(), candidate.y())) {
+                        return candidate;
+                    }
+                }
+            }
+        }
+        return origin;
+    }
+
+    private void ensureActiveQuestMonsterRuntime() {
+        pruneQuestMonsterRuntime();
+        for (Quest quest : quests.values()) {
+            if (quest.accepted && !quest.completed && !quest.ready() && quest.activeObjectiveKind().combatObjective()) {
+                questMonstersForQuest(quest);
+            }
+        }
+    }
+
+    private void pruneQuestMonsterRuntime() {
+        questMonsterRuntime.entrySet().removeIf(entry -> {
+            Quest quest = quests.get(entry.getKey());
+            if (quest == null || !quest.accepted || quest.completed || quest.ready() || !quest.activeObjectiveKind().combatObjective()) {
+                return true;
+            }
+            String monsterKey = questMonsterKey(quest);
+            entry.getValue().removeIf(monster -> !monster.spec.key().equals(monsterKey));
+            int remaining = Math.max(0, quest.activeNeeded() - quest.progress);
+            while (entry.getValue().size() > remaining) {
+                QuestMonsterRuntime removed = entry.getValue().remove(entry.getValue().size() - 1);
+                if (activeQuestMonster == removed) {
+                    activeQuestMonster = null;
+                }
+            }
+            return entry.getValue().isEmpty() && remaining <= 0;
+        });
+    }
+
+    private List<QuestMonsterRuntime> questMonstersForQuest(Quest quest) {
+        String monsterKey = questMonsterKey(quest);
+        GameData.MonsterSpec spec = monsterKey == null ? null : GameData.MONSTERS.get(monsterKey);
+        int remaining = Math.max(0, quest.activeNeeded() - quest.progress);
+        if (spec == null || remaining <= 0) {
+            questMonsterRuntime.remove(quest.id);
+            invalidateQuestObjectiveCache();
+            return List.of();
+        }
+        List<QuestMonsterRuntime> monsters = questMonsterRuntime.computeIfAbsent(quest.id, ignored -> new ArrayList<>());
+        if (monsters.removeIf(monster -> !monster.spec.key().equals(spec.key()))) {
+            invalidateQuestObjectiveCache();
+        }
+        while (monsters.size() > remaining) {
+            QuestMonsterRuntime removed = monsters.remove(monsters.size() - 1);
+            if (activeQuestMonster == removed) {
+                activeQuestMonster = null;
+            }
+            invalidateQuestObjectiveCache();
+        }
+        while (monsters.size() < remaining) {
+            int index = monsters.size();
+            TilePoint point = questMonsterSpawnPoint(quest, spec, index, monsters);
+            monsters.add(new QuestMonsterRuntime(quest.id, quest.id + ":" + index, spec, point.x(), point.y(), worldTick + 20 + random.nextInt(60)));
+            invalidateQuestObjectiveCache();
+        }
+        return monsters;
+    }
+
+    private String questMonsterKey(Quest quest) {
+        if (quest.activeMonsterKey() != null && !quest.activeMonsterKey().isBlank() && GameData.MONSTERS.containsKey(quest.activeMonsterKey())) {
+            return quest.activeMonsterKey();
+        }
+        return GameData.monsterKeyForName(quest.activeTarget());
+    }
+
+    private TilePoint questMonsterSpawnPoint(Quest quest, GameData.MonsterSpec spec, int index, List<QuestMonsterRuntime> localMonsters) {
+        Random seeded = new Random(quest.id.hashCode() * 1103515245L + index * 2654435761L + spec.key().hashCode());
+        TilePoint center = questMonsterSpawnCenter(quest, index);
+        int minRadius = quest.activeObjectiveLocationKind() == null || quest.activeObjectiveLocationKind().isBlank() ? 7 : 0;
+        int maxRadius = quest.activeObjectiveLocationKind() == null || quest.activeObjectiveLocationKind().isBlank() ? 34 : 12;
+        char[] preferred = questMonsterPreferredTiles(spec);
+        List<TilePoint> preferredPoints = new ArrayList<>();
+        List<TilePoint> fallbackPoints = new ArrayList<>();
+        for (int dy = -maxRadius; dy <= maxRadius; dy++) {
+            for (int dx = -maxRadius; dx <= maxRadius; dx++) {
+                int distance = Math.abs(dx) + Math.abs(dy);
+                if (distance < minRadius || distance > maxRadius) {
+                    continue;
+                }
+                int x = center.x() + dx;
+                int y = center.y() + dy;
+                if (!validQuestMonsterTile(x, y, localMonsters)) {
+                    continue;
+                }
+                TilePoint point = new TilePoint(x, y);
+                char tile = world.tileAt(WorldMap.OVERWORLD_ID, x, y);
+                if (tileMatches(tile, preferred)) {
+                    preferredPoints.add(point);
+                } else {
+                    fallbackPoints.add(point);
+                }
+            }
+        }
+        List<TilePoint> pool = preferredPoints.isEmpty() ? fallbackPoints : preferredPoints;
+        if (pool.isEmpty()) {
+            return center;
+        }
+        return pool.get(seeded.nextInt(pool.size()));
+    }
+
+    private TilePoint questMonsterSpawnCenter(Quest quest, int index) {
+        if (quest.activeObjectiveLocationKind() != null && !quest.activeObjectiveLocationKind().isBlank()) {
+            return world.objectivePoint(quest.activeObjectiveLocationKind(), quest.activeObjectiveLocationIndex(), index,
+                    quest.activeObjectiveAsset() == null || quest.activeObjectiveAsset().isBlank() ? quest.activeMonsterKey() : quest.activeObjectiveAsset());
+        }
+        Npc giver = questGiver(quest.id);
+        WorldMap.SettlementSite settlement = settlementForMap(giver == null ? "" : giver.mapId());
+        if (settlement != null) {
+            return new TilePoint(settlement.x(), settlement.y());
+        }
+        return new TilePoint(WorldMap.START_POSITION.x(), WorldMap.START_POSITION.y());
+    }
+
+    private WorldMap.SettlementSite settlementForMap(String mapId) {
+        if (mapId == null || mapId.isBlank()) {
+            return null;
+        }
+        String sourceMap = "interior".equals(world.kind(mapId)) ? sourceMapForInterior(mapId) : mapId;
+        for (WorldMap.SettlementSite settlement : world.settlementSites()) {
+            if (settlement.id().equals(sourceMap)) {
+                return settlement;
+            }
+        }
+        return null;
+    }
+
+    private boolean validQuestMonsterTile(int x, int y, List<QuestMonsterRuntime> localMonsters) {
+        char tile = world.tileAt(WorldMap.OVERWORLD_ID, x, y);
+        if (!world.isPassable(WorldMap.OVERWORLD_ID, x, y) || Terrain.connectingRoad(tile) || tile == 'c' || tile == 'u' || tile == 'A') {
+            return false;
+        }
+        if (WorldMap.OVERWORLD_ID.equals(currentMapId) && x == playerX && y == playerY) {
+            return false;
+        }
+        for (QuestMonsterRuntime monster : localMonsters) {
+            if (monster.x == x && monster.y == y) {
+                return false;
+            }
+        }
+        for (List<QuestMonsterRuntime> monsters : questMonsterRuntime.values()) {
+            for (QuestMonsterRuntime monster : monsters) {
+                if (monster.x == x && monster.y == y) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private char[] questMonsterPreferredTiles(GameData.MonsterSpec spec) {
+        String key = spec.key();
+        return switch (spec.species()) {
+            case "bandit" -> new char[]{'g', 'f', 'b', 's'};
+            case "bat", "undead" -> new char[]{'f', 'v', 'n', 'b'};
+            case "beast" -> {
+                if (key.contains("frost") || key.contains("snow")) {
+                    yield new char[]{'n', 'q'};
+                }
+                if (key.contains("mountain") || key.contains("stoneback")) {
+                    yield new char[]{'q', 'n', 'b'};
+                }
+                yield new char[]{'g', 'f'};
+            }
+            case "demon" -> new char[]{'b', 's', 'f'};
+            case "dragon", "drake" -> key.contains("marsh") ? new char[]{'v'} : new char[]{'q', 'b', 's'};
+            case "elemental" -> key.contains("ice") ? new char[]{'n', 'q'} : new char[]{'s', 'b'};
+            case "giant" -> key.contains("fire") ? new char[]{'s', 'b'} : new char[]{'q', 'b', 'n'};
+            case "goblin", "orc" -> new char[]{'g', 'f', 'b', 'v'};
+            case "insect" -> key.contains("scorpion") ? new char[]{'s', 'b'} : new char[]{'f', 'v'};
+            case "plant" -> new char[]{'f', 'g', 'v'};
+            case "reptile" -> key.contains("sand") ? new char[]{'s', 'b', 'P'} : new char[]{'v', 'P'};
+            case "slime", "troll" -> key.contains("frost") ? new char[]{'n', 'q'} : new char[]{'v', 'f'};
+            default -> new char[]{'g', 'f', 'v', 'b', 's', 'n', 'q', 'P'};
+        };
+    }
+
+    private boolean tileMatches(char tile, char[] preferred) {
+        for (char candidate : preferred) {
+            if (tile == candidate) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void ensureActiveQuestNpcRuntime() {
+        pruneQuestNpcRuntime();
+        for (Quest quest : quests.values()) {
+            if (!questNeedsQuestNpc(quest)) {
+                continue;
+            }
+            questNpcsForQuest(quest);
+        }
+    }
+
+    private void pruneQuestNpcRuntime() {
+        if (questNpcRuntime.entrySet().removeIf(entry -> {
+            Quest quest = quests.get(entry.getKey());
+            return !questNeedsQuestNpc(quest);
+        })) {
+            invalidateNpcListCache();
+        }
+    }
+
+    private boolean questNeedsQuestNpc(Quest quest) {
+        return quest != null
+                && quest.accepted
+                && !quest.completed
+                && !quest.ready()
+                && (questTemporaryNpcObjective(quest) || questRelocatesExistingNpc(quest));
+    }
+
+    private boolean questTemporaryNpcObjective(Quest quest) {
+        if (quest == null || quest.activeTargetNpcId() != null && !quest.activeTargetNpcId().isBlank()) {
+            return false;
+        }
+        return switch (quest.activeObjectiveKind()) {
+            case RESCUE, TALK, DELIVER, ESCORT, CHOICE -> true;
+            default -> false;
+        };
+    }
+
+    private boolean questRelocatesExistingNpc(Quest quest) {
+        if (quest == null || quest.activeTargetNpcId() == null || quest.activeTargetNpcId().isBlank()) {
+            return false;
+        }
+        Npc source = questTargetSourceNpc(quest);
+        if (source == null || quest.activeObjectiveLocationKind() == null || quest.activeObjectiveLocationKind().isBlank()) {
+            return false;
+        }
+        String objectiveMapId = quest.activeObjectiveMapId() == null || quest.activeObjectiveMapId().isBlank()
+                ? WorldMap.OVERWORLD_ID
+                : quest.activeObjectiveMapId();
+        return !objectiveMapId.equals(source.mapId()) || !quest.activeObjectiveLocationKind().isBlank();
+    }
+
+    private List<QuestNpcRuntime> questNpcsForQuest(Quest quest) {
+        List<QuestNpcRuntime> npcs = questNpcRuntime.computeIfAbsent(quest.id, ignored -> new ArrayList<>());
+        Npc source = questTargetSourceNpc(quest);
+        boolean shouldRelocate = source != null && questRelocatesExistingNpc(quest);
+        if (!shouldRelocate && !questTemporaryNpcObjective(quest)) {
+            npcs.clear();
+            invalidateNpcListCache();
+            return List.of();
+        }
+        if (npcs.size() == 1 && (source == null || source.equals(npcs.get(0).sourceNpc))) {
+            return npcs;
+        }
+        npcs.clear();
+        TilePoint point = questNpcSpawnPoint(quest, source);
+        String mapId = quest.activeObjectiveMapId() == null || quest.activeObjectiveMapId().isBlank()
+                ? WorldMap.OVERWORLD_ID
+                : quest.activeObjectiveMapId();
+        Npc npc = source == null
+                ? createTemporaryQuestNpc(quest, mapId, point)
+                : relocateQuestNpc(source, quest, mapId, point);
+        npcs.add(new QuestNpcRuntime(quest.id, quest.id + ":npc:0", npc, source));
+        invalidateNpcListCache();
+        return npcs;
+    }
+
+    private Npc createTemporaryQuestNpc(Quest quest, String mapId, TilePoint point) {
+        String name = quest.activeTarget() == null || quest.activeTarget().isBlank() ? "Quest Witness" : quest.activeTarget();
+        String sprite = quest.activeObjectiveAsset() != null && quest.activeObjectiveAsset().startsWith("npc_")
+                ? quest.activeObjectiveAsset()
+                : quest.activeObjectiveKind() == Quest.ObjectiveKind.RESCUE ? "npc_citizen_man" : "npc_citizen_woman";
+        List<String> dialog = List.of(
+                name + ": I was beginning to think the road had swallowed every decent person.",
+                "Quest: " + quest.title + ".",
+                "Lead: " + quest.activeProgressDialog()
+        );
+        return new Npc(mapId, name, sprite, point.x(), point.y(), dialog, null, null);
+    }
+
+    private Npc relocateQuestNpc(Npc source, Quest quest, String mapId, TilePoint point) {
+        List<String> dialog = new ArrayList<>(source.dialog());
+        dialog.add(0, source.name() + ": You found me. That means the trail was not as dead as I feared.");
+        dialog.add("Quest: " + quest.title + ".");
+        return new Npc(
+                mapId,
+                source.name(),
+                source.sprite(),
+                point.x(),
+                point.y(),
+                List.copyOf(dialog),
+                source.questId(),
+                source.shopId(),
+                source.recruitId(),
+                source.recruitCost(),
+                source.professionXp()
+        );
+    }
+
+    private TilePoint questNpcSpawnPoint(Quest quest, Npc source) {
+        String mapId = quest.activeObjectiveMapId() == null || quest.activeObjectiveMapId().isBlank()
+                ? WorldMap.OVERWORLD_ID
+                : quest.activeObjectiveMapId();
+        TilePoint center = quest.activeObjectiveLocationKind() == null || quest.activeObjectiveLocationKind().isBlank()
+                ? questMonsterSpawnCenter(quest, 0)
+                : world.objectivePoint(quest.activeObjectiveLocationKind(), quest.activeObjectiveLocationIndex(), 0,
+                quest.activeObjectiveAsset() == null || quest.activeObjectiveAsset().isBlank() ? source == null ? "" : source.sprite() : quest.activeObjectiveAsset());
+        Random seeded = new Random(quest.id.hashCode() * 2862933555777941757L + (source == null ? 0 : source.name().hashCode()));
+        for (int radius = 0; radius <= 8; radius++) {
+            List<TilePoint> candidates = new ArrayList<>();
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dx = -radius; dx <= radius; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) != radius) {
+                        continue;
+                    }
+                    int x = center.x() + dx;
+                    int y = center.y() + dy;
+                    if (validQuestNpcTile(mapId, x, y)) {
+                        candidates.add(new TilePoint(x, y));
+                    }
+                }
+            }
+            if (!candidates.isEmpty()) {
+                return candidates.get(seeded.nextInt(candidates.size()));
+            }
+        }
+        return center;
+    }
+
+    private boolean validQuestNpcTile(String mapId, int x, int y) {
+        if (!world.isPassable(mapId, x, y)) {
+            return false;
+        }
+        if (mapId.equals(currentMapId) && x == playerX && y == playerY) {
+            return false;
+        }
+        for (List<QuestMonsterRuntime> monsters : questMonsterRuntime.values()) {
+            for (QuestMonsterRuntime monster : monsters) {
+                if (WorldMap.OVERWORLD_ID.equals(mapId) && monster.x == x && monster.y == y) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private Npc questTargetSourceNpc(Quest quest) {
+        if (quest == null || quest.activeTargetNpcId() == null || quest.activeTargetNpcId().isBlank()) {
+            return null;
+        }
+        String expected = normalizeQuestMatchText(quest.activeTargetNpcId());
+        for (Npc npc : GameData.NPCS) {
+            if (expected.equals(normalizeQuestMatchText(npc.name()))
+                    || expected.equals(normalizeQuestMatchText(npc.recruitId()))
+                    || expected.equals(normalizeQuestMatchText(rawNpcStateKey(npc)))
+                    || expected.equals(normalizeQuestMatchText(npc.mapId() + ":" + npc.name()))) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
+    private boolean questNpc(Npc npc) {
+        if (npc == null) {
+            return false;
+        }
+        for (List<QuestNpcRuntime> runtimes : questNpcRuntime.values()) {
+            for (QuestNpcRuntime runtime : runtimes) {
+                if (runtime.npc.equals(npc)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Npc questNpcSourceFor(Npc npc) {
+        if (npc == null) {
+            return null;
+        }
+        for (List<QuestNpcRuntime> runtimes : questNpcRuntime.values()) {
+            for (QuestNpcRuntime runtime : runtimes) {
+                if (runtime.npc.equals(npc)) {
+                    return runtime.sourceNpc;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean npcRelocatedByQuest(Npc npc) {
+        if (npc == null) {
+            return false;
+        }
+        ensureActiveQuestNpcRuntime();
+        for (List<QuestNpcRuntime> runtimes : questNpcRuntime.values()) {
+            for (QuestNpcRuntime runtime : runtimes) {
+                if (npc.equals(runtime.sourceNpc)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public List<QuestInteractible> activeQuestInteractibles(String mapId) {
         List<QuestInteractible> interactibles = new ArrayList<>();
         for (Quest quest : quests.values()) {
-            if (!quest.hasWorldObjective() || quest.objectiveKind != Quest.ObjectiveKind.GATHER || quest.objectiveAsset == null || quest.objectiveAsset.isBlank()) {
+            if (!quest.hasWorldObjective() || !quest.activeObjectiveKind().gatherObjective() || quest.activeObjectiveAsset() == null || quest.activeObjectiveAsset().isBlank()) {
                 continue;
             }
-            if (!quest.objectiveMapId.equals(mapId)) {
+            if (!quest.activeObjectiveMapId().equals(mapId)) {
                 continue;
             }
             for (WorldProp prop : world.props(mapId)) {
-                if (!quest.objectiveAsset.equals(prop.asset())) {
+                if (!quest.activeObjectiveAsset().equals(prop.asset())) {
                     continue;
                 }
                 String locationKind = world.locationKindAt(mapId, prop.x(), prop.y());
-                if (quest.objectiveLocationKind != null && !quest.objectiveLocationKind.equals(locationKind)) {
+                if (quest.activeObjectiveLocationKind() != null && !quest.activeObjectiveLocationKind().equals(locationKind)) {
                     continue;
                 }
-                if (harvestedQuestResources.contains(resourceKey(quest.id, mapId, prop.x(), prop.y(), prop.asset()))) {
+                if (harvestedQuestResources.contains(resourceKey(questStageResourceId(quest), mapId, prop.x(), prop.y(), prop.asset()))) {
                     continue;
                 }
                 interactibles.add(new QuestInteractible(
                         quest.id,
                         quest.title,
-                        quest.target,
+                        quest.activeTarget(),
                         mapId,
                         prop.x(),
                         prop.y(),
@@ -2401,6 +6384,24 @@ public final class GameState {
         }
         battle.useAbility(index);
         updateAfterBattleAction();
+    }
+
+    public void togglePartyAbilityLoadout(String abilityName) {
+        Actor actor = partyScreenActor();
+        if (actor == null || abilityName == null || abilityName.isBlank()) {
+            return;
+        }
+        boolean wasActive = actor.isAbilityActive(abilityName);
+        boolean changed = actor.toggleAbilityLoadout(abilityName);
+        if (!changed) {
+            status = actor.hasAbility(abilityName)
+                    ? actor.name + "'s loadout is full."
+                    : actor.name + " does not know " + abilityName + ".";
+            return;
+        }
+        status = wasActive
+                ? actor.name + " set aside " + abilityName + "."
+                : actor.name + " prepared " + abilityName + ".";
     }
 
     public void tickBattle() {
@@ -2447,14 +6448,48 @@ public final class GameState {
         status = target == null ? "No ally target." : "Ally target: " + target.name + ".";
     }
 
+    public void recordMonsterInsight(String monsterKey) {
+        if (monsterKey == null || monsterKey.isBlank() || !GameData.MONSTERS.containsKey(monsterKey)) {
+            return;
+        }
+        monsterInsights.merge(monsterKey, 1, Integer::sum);
+    }
+
+    public void recordMonsterVulnerability(String monsterKey, String damageType) {
+        String type = GameData.normalizeDamageType(damageType);
+        if (monsterKey == null || monsterKey.isBlank() || !GameData.MONSTERS.containsKey(monsterKey)
+                || !GameData.DAMAGE_TYPES.contains(type)) {
+            return;
+        }
+        monsterKnownVulnerabilities.computeIfAbsent(monsterKey, key -> new HashSet<>()).add(type);
+    }
+
+    public Set<String> knownMonsterVulnerabilities(String monsterKey) {
+        Set<String> known = monsterKnownVulnerabilities.get(monsterKey);
+        return known == null ? Set.of() : Set.copyOf(known);
+    }
+
+    public int monsterInsightCount(String monsterKey) {
+        return Math.max(0, monsterInsights.getOrDefault(monsterKey, 0));
+    }
+
+    public int monsterInsightLevel(String monsterKey) {
+        return GameData.monsterInsightLevel(monsterInsightCount(monsterKey), player.intelligence);
+    }
+
+    public int monsterInsightPercent(String monsterKey) {
+        return GameData.monsterInsightPercent(monsterInsightCount(monsterKey), player.intelligence);
+    }
+
     public void revive() {
         player.healFull();
         for (Actor ally : allies) {
             ally.healFull();
         }
-        currentMapId = WorldMap.OVERWORLD_ID;
-        playerX = WorldMap.START_POSITION.x();
-        playerY = WorldMap.START_POSITION.y();
+        currentMapId = WorldMap.PLAYER_VILLAGE_ID;
+        TilePoint respawn = world.playerVillageRespawnPoint();
+        playerX = respawn.x();
+        playerY = respawn.y();
         battle = null;
         activeDungeonMonster = null;
         mode = GameMode.EXPLORE;
@@ -2473,10 +6508,474 @@ public final class GameState {
     }
 
     public void applyTransition(WorldTransition transition) {
+        String previousMapId = currentMapId;
         currentMapId = transition.targetMapId();
         playerX = transition.targetX();
         playerY = transition.targetY();
+        if (!previousMapId.equals(currentMapId)) {
+            recordSettlementVisit(currentMapId);
+        }
+        regenerateResourceNodesOnTownEntry();
         status = transition.message();
+    }
+
+    public int settlementVisitCount(String mapId) {
+        return settlementVisits.getOrDefault(mapId, 0);
+    }
+
+    public int settlementKnowledgeLevel(String mapId) {
+        int visits = settlementVisitCount(mapId);
+        int intelligence = Math.max(1, player.intelligence);
+        if (visits <= 0) {
+            return intelligence >= 10 ? 1 : 0;
+        }
+        return Math.min(5, 1 + visits / 2 + intelligence / 5);
+    }
+
+    public void recordSettlementVisit(String mapId) {
+        if (mapId == null || !isSettlementMap(mapId)) {
+            return;
+        }
+        settlementVisits.merge(mapId, 1, Integer::sum);
+    }
+
+    public String buildingKnowledgeKey(String mapId, CityBuilding building) {
+        if (building == null) {
+            return "";
+        }
+        String key = building.key() == null || building.key().isBlank()
+                ? building.x1() + "_" + building.y1()
+                : building.key();
+        return mapId + ":" + key;
+    }
+
+    public int buildingKnowledgeCount(String mapId, CityBuilding building) {
+        return buildingKnowledge.getOrDefault(buildingKnowledgeKey(mapId, building), 0);
+    }
+
+    public int buildingKnowledgeLevel(String mapId, CityBuilding building) {
+        int count = buildingKnowledgeCount(mapId, building);
+        int intelligence = Math.max(1, player.intelligence);
+        if (count <= 0) {
+            return intelligence >= 12 ? 1 : 0;
+        }
+        return Math.min(5, 1 + count / 2 + intelligence / 6);
+    }
+
+    public String generatedBuildingName(CityBuilding building) {
+        if (building == null) {
+            return "Building";
+        }
+        int seed = buildingNameSeed(building);
+        String owner = BUILDING_OWNER_NAMES[Math.floorMod(seed, BUILDING_OWNER_NAMES.length)];
+        String place = BUILDING_PLACE_ROOTS[Math.floorMod(seed / 5, BUILDING_PLACE_ROOTS.length)];
+        String sign = BUILDING_SIGNS[Math.floorMod(seed / 11, BUILDING_SIGNS.length)];
+        return switch (building.style()) {
+            case "arena" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Arena";
+                case 1 -> "The " + sign + " Ring";
+                default -> owner + "'s Trial Yard";
+            };
+            case "mage_tower" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Spire";
+                case 1 -> owner + "'s Star Tower";
+                default -> "The " + sign + " Observatory";
+            };
+            case "bell_tower" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Bell Tower";
+                case 1 -> "The " + sign + " Belfry";
+                default -> owner + "'s Watchbell";
+            };
+            case "sun_shrine", "shrine" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Shrine";
+                case 1 -> "The " + sign + " Chapel";
+                default -> owner + "'s Votive House";
+            };
+            case "river_hall", "hall" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Manor";
+                case 1 -> "The " + sign + " Hall";
+                default -> owner + "'s Meeting House";
+            };
+            case "barracks", "watchtower" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Guardhouse";
+                case 1 -> "The " + sign + " Watch";
+                default -> owner + "'s Lookout";
+            };
+            case "warehouse", "granary" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Storehouse";
+                case 1 -> owner + "'s Warehouse";
+                default -> "The " + sign + " Granary";
+            };
+            case "guild", "study" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " Study";
+                case 1 -> "The " + sign + " Guildhall";
+                default -> owner + "'s Archive";
+            };
+            case "inn" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> "Traveller's Inn";
+                case 1 -> "The " + sign + " Inn";
+                case 2 -> place + " Rest";
+                default -> owner + "'s Hearth";
+            };
+            case "blacksmith" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Forge";
+                case 1 -> "The " + sign + " Smithy";
+                case 2 -> place + " Ironworks";
+                default -> owner + "'s Tool Yard";
+            };
+            case "bakery" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Bakery";
+                case 1 -> "The " + sign + " Oven";
+                case 2 -> place + " Bakehouse";
+                default -> owner + "'s Bread Shop";
+            };
+            case "restaurant" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Kitchen";
+                case 1 -> "The " + sign + " Table";
+                case 2 -> place + " Eating House";
+                default -> owner + "'s Cookshop";
+            };
+            case "apothecary" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Apothecary";
+                case 1 -> "The " + sign + " Herbary";
+                case 2 -> place + " Remedies";
+                default -> owner + "'s Tonic House";
+            };
+            case "alchemist" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Alchemy House";
+                case 1 -> "The " + sign + " Laboratory";
+                case 2 -> place + " Essences";
+                default -> owner + "'s Glassworks";
+            };
+            case "forestry_hut" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Timber Hut";
+                case 1 -> "The " + sign + " Woodlot";
+                case 2 -> place + " Foresters";
+                default -> owner + "'s Saw Yard";
+            };
+            case "workshop" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Carpenter Shop";
+                case 1 -> "The " + sign + " Workshop";
+                case 2 -> place + " Joinery";
+                default -> owner + "'s Repair Yard";
+            };
+            case "carpenter" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Carpenter Shop";
+                case 1 -> "The " + sign + " Joinery";
+                case 2 -> place + " Woodworks";
+                default -> owner + "'s Saw Yard";
+            };
+            case "fishing_hut" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Fish Hut";
+                case 1 -> "The " + sign + " Net House";
+                case 2 -> place + " Fishery";
+                default -> owner + "'s Dock Store";
+            };
+            case "shop", "mine" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Workshop";
+                case 1 -> "The " + sign + " Shop";
+                case 2 -> place + " Works";
+                default -> owner + "'s Tradehouse";
+            };
+            case "row" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> place + " Longhouse";
+                case 1 -> owner + "'s Homestead";
+                case 2 -> "The " + sign + " Row";
+                default -> place + " Hearth";
+            };
+            case "house", "farmstead", "hunting_camp" -> switch (Math.floorMod(seed, 4)) {
+                case 0 -> owner + "'s Homestead";
+                case 1 -> place + " Cottage";
+                case 2 -> "The " + sign + " House";
+                default -> owner + "'s Yard";
+            };
+            case "garden" -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> owner + "'s Garden";
+                case 1 -> place + " Green";
+                default -> "The " + sign + " Plot";
+            };
+            default -> switch (Math.floorMod(seed, 3)) {
+                case 0 -> place + " House";
+                case 1 -> "The " + sign;
+                default -> owner + "'s Place";
+            };
+        };
+    }
+
+    public String buildingTypeLabel(CityBuilding building) {
+        if (building == null) {
+            return "Building";
+        }
+        return switch (building.style()) {
+            case "arena" -> "Arena";
+            case "mage_tower" -> "Mage Tower";
+            case "bell_tower" -> "Bell Tower";
+            case "sun_shrine" -> "Sun Shrine";
+            case "river_hall" -> "River Hall";
+            case "hall" -> "Hall";
+            case "barracks" -> "Barracks";
+            case "warehouse" -> "Warehouse";
+            case "guild" -> "Guildhall";
+            case "inn" -> "Inn";
+            case "shop" -> "Workshop";
+            case "row" -> "Longhouse";
+            case "house" -> "Homestead";
+            case "granary" -> "Granary";
+            case "watchtower" -> "Watchtower";
+            case "shrine" -> "Shrine";
+            case "garden" -> "Garden";
+            case "blacksmith" -> "Blacksmith";
+            case "bakery" -> "Bakery";
+            case "apothecary" -> "Apothecary";
+            case "restaurant" -> "Restaurant";
+            case "alchemist" -> "Alchemist";
+            case "workshop" -> "Workshop";
+            case "carpenter" -> "Carpenter";
+            case "fishing_hut" -> "Fishing Hut";
+            case "forestry_hut" -> "Forestry Hut";
+            case "mine" -> "Mine";
+            case "farmstead" -> "Farmstead";
+            case "hunting_camp" -> "Hunting Camp";
+            default -> VillageManager.isManagedBuildingStyle(building.style())
+                    ? VillageManager.buildingLabel(building.style())
+                    : titleCase(building.style().replace("_", " "));
+        };
+    }
+
+    private int buildingNameSeed(CityBuilding building) {
+        int hash = 17;
+        hash = hash * 31 + (building.key() == null ? 0 : building.key().hashCode());
+        hash = hash * 31 + (building.style() == null ? 0 : building.style().hashCode());
+        hash = hash * 31 + building.x1();
+        hash = hash * 31 + building.y1();
+        hash = hash * 31 + building.x2();
+        hash = hash * 31 + building.y2();
+        hash = hash * 31 + building.palette();
+        return hash == Integer.MIN_VALUE ? 0 : Math.abs(hash);
+    }
+
+    public boolean gainBuildingKnowledge(String mapId, CityBuilding building, int amount, String source) {
+        String message = gainBuildingKnowledgeMessage(mapId, building, amount, source);
+        if (message.isBlank()) {
+            status = "You already know as much as you can about " + generatedBuildingName(building) + ".";
+            return false;
+        }
+        status = message;
+        return true;
+    }
+
+    public boolean inspectBuilding(String mapId, CityBuilding building) {
+        String message = gainBuildingKnowledgeMessage(mapId, building, 1, "Inspection");
+        String name = generatedBuildingName(building);
+        if (message.isBlank()) {
+            status = "You inspect " + name + ", but nothing new stands out.";
+            return false;
+        }
+        status = message;
+        return true;
+    }
+
+    public boolean enterBuilding(CityBuilding building) {
+        if (building == null || !isSettlementMap(currentMapId)) {
+            return false;
+        }
+        for (TilePoint door : world.cityBuildingDoorTiles(building)) {
+            if (playerX == door.x() && playerY == door.y() + 1) {
+                enterBuildingAt(door.x(), door.y());
+                return true;
+            }
+        }
+        status = "Stand at the door to enter " + generatedBuildingName(building) + ".";
+        return false;
+    }
+
+    private String gainBuildingKnowledgeMessage(String mapId, CityBuilding building, int amount, String source) {
+        if (building == null || mapId == null || mapId.isBlank()) {
+            return "";
+        }
+        String key = buildingKnowledgeKey(mapId, building);
+        int previous = buildingKnowledge.getOrDefault(key, 0);
+        int next = Math.min(6, previous + Math.max(1, amount));
+        if (next <= previous) {
+            return "";
+        }
+        buildingKnowledge.put(key, next);
+        int xp = 1;
+        List<String> notes = player.gainXp(xp);
+        String message = source + " reveals more about " + generatedBuildingName(building) + ". +" + xp + " XP.";
+        if (!notes.isEmpty()) {
+            message += " " + String.join(" ", notes);
+        }
+        return message;
+    }
+
+    private CityBuilding activeNpcPlaceInquiryBuilding() {
+        if (activeNpc == null) {
+            return null;
+        }
+        String mapId = activeNpc.mapId();
+        if ("interior".equals(world.kind(mapId))) {
+            return buildingForInteriorMap(mapId);
+        }
+        if (!isSettlementMap(mapId)) {
+            return null;
+        }
+        TilePoint position = npcPosition(activeNpc);
+        CityBuilding best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (CityBuilding building : world.cityBuildings(mapId)) {
+            int distance = distanceToBuilding(position, building);
+            if (distance < bestDistance) {
+                best = building;
+                bestDistance = distance;
+            }
+        }
+        return bestDistance <= 7 ? best : null;
+    }
+
+    private CityBuilding activeNpcAssignedShopBuilding() {
+        if (activeNpc == null || activePartyTalkActor != null) {
+            return null;
+        }
+        String buildingKey = buildingAssignmentForAlly(activeNpc.name());
+        if (buildingKey.isBlank()) {
+            return null;
+        }
+        CityBuilding building = playerVillageBuildingByKey(buildingKey);
+        if (building == null || !activeNpc.name().equals(assignedAllyForBuilding(building.key()))) {
+            return null;
+        }
+        return building;
+    }
+
+    private CityBuilding activeShopDialogueBuilding() {
+        if (activeShopDialogueBuildingKey.isBlank() || activeNpc == null) {
+            return null;
+        }
+        CityBuilding building = playerVillageBuildingByKey(activeShopDialogueBuildingKey);
+        if (building == null || !activeNpc.name().equals(assignedAllyForBuilding(building.key()))) {
+            return null;
+        }
+        return building;
+    }
+
+    private void askActiveNpcAboutPlace(CityBuilding building) {
+        if (activeNpc == null || building == null) {
+            return;
+        }
+        activeShopDialogueBuildingKey = "";
+        String mapId = "interior".equals(world.kind(activeNpc.mapId()))
+                ? sourceMapForInterior(activeNpc.mapId())
+                : activeNpc.mapId();
+        String message = gainBuildingKnowledgeMessage(mapId, building, 1, activeNpc.name());
+        if (message.isBlank()) {
+            status = activeNpc.name() + " has no new stories about " + generatedBuildingName(building) + ".";
+        } else {
+            status = message;
+            adjustNpcRelationship(activeNpc, 1);
+            recordNpcKnowledge(activeNpc, 1);
+        }
+        dialogIndex = 0;
+    }
+
+    private void askActiveNpcAboutAssignedShop(CityBuilding building) {
+        if (activeNpc == null || building == null) {
+            return;
+        }
+        activeShopDialogueBuildingKey = building.key();
+        activeQuestDialogueLine = activeNpc.name() + ": " + assignedShopDialogue(building);
+        status = activeNpc.name() + " talks through the " + VillageManager.buildingLabel(building.style()).toLowerCase() + " shop.";
+        dialogIndex = 0;
+    }
+
+    private String assignedShopDialogue(CityBuilding building) {
+        Shop shop = shopForVillageBuilding(building);
+        int stockCount = shop.availableStock(player.level).size();
+        String label = VillageManager.buildingLabel(building.style()).toLowerCase();
+        String focus = switch (building.style()) {
+            case "blacksmith" -> "I stock blades, shields, and plate. More forge tools inside let me offer stronger armor.";
+            case "shop" -> "I handle carpentry goods: axes, shields, bows, and repair tools. Workbenches improve the shelf.";
+            case "apothecary" -> "I sell herbs, tonics, potions, and field medicine. Alchemy tools help me mix better stock.";
+            case "inn" -> "I sell meals, drink, and travel supplies. More beds inside mean more overnight gold for the village.";
+            case "bakery" -> "I keep food and camp cookery ready. Ovens, counters, and tidy tables make the trade better.";
+            case "warehouse", "granary" -> "I move stored goods and useful supplies. Better shelves and counters make storage work pay.";
+            case "forestry_hut" -> "I sell axes, woodcraft, bows, and shields. Carpenter tools inside improve what I can carry.";
+            case "mine" -> "I stock picks, mail, and mining gear. Proper tools inside help me bring in stronger equipment.";
+            case "hunting_camp" -> "I trade hunting gear, leathers, and scouting supplies. Racks and worktables improve the stock.";
+            case "farmstead", "garden" -> "I sell food, herbs, and simple supplies. Plants and tidy counters make people linger.";
+            case "fishing_hut" -> "I sell food, lures, and waterside gear. Nets, counters, and worktables improve the trade.";
+            case "guild" -> "I keep books, scrolls, lenses, and arcane gear. Shelves and study tools widen the selection.";
+            case "shrine" -> "I offer tonics, charms, and restorative supplies. Sacred decor helps the place draw visitors.";
+            case "watchtower" -> "I stock guard arms, shields, and patrol tonics. Weapon racks and tables improve the armory.";
+            case "house", "row" -> "I run a small household trade. Attractive decor brings more customers through the door.";
+            default -> "I keep a practical shelf for travelers. Useful tools and pleasant decor make it better.";
+        };
+        return focus + " Right now this " + label + " has " + stockCount + " shop lines and " + buildingInteriorSummary(building) + ".";
+    }
+
+    private CityBuilding buildingForInteriorMap(String mapId) {
+        String sourceMapId = sourceMapForInterior(mapId);
+        if (sourceMapId.isBlank()) {
+            return null;
+        }
+        int[] anchor = interiorAnchor(mapId);
+        return anchor == null ? null : world.cityBuildingAt(sourceMapId, anchor[0], anchor[1]);
+    }
+
+    private String sourceMapForInterior(String mapId) {
+        if (mapId == null || !mapId.startsWith("house_")) {
+            return "";
+        }
+        int last = mapId.lastIndexOf('_');
+        if (last <= "house_".length()) {
+            return "";
+        }
+        int previous = mapId.lastIndexOf('_', last - 1);
+        if (previous <= "house_".length()) {
+            return "";
+        }
+        return mapId.substring("house_".length(), previous);
+    }
+
+    private int[] interiorAnchor(String mapId) {
+        try {
+            int last = mapId.lastIndexOf('_');
+            int previous = mapId.lastIndexOf('_', last - 1);
+            return new int[]{Integer.parseInt(mapId.substring(previous + 1, last)), Integer.parseInt(mapId.substring(last + 1))};
+        } catch (RuntimeException ignored) {
+            return null;
+        }
+    }
+
+    private int distanceToBuilding(TilePoint point, CityBuilding building) {
+        int dx = point.x() < building.x1() ? building.x1() - point.x() : Math.max(0, point.x() - building.x2());
+        int dy = point.y() < building.y1() ? building.y1() - point.y() : Math.max(0, point.y() - building.y2());
+        return dx + dy;
+    }
+
+    private String titleCase(String value) {
+        StringBuilder result = new StringBuilder();
+        for (String part : value.split("\\s+")) {
+            if (part.isBlank()) {
+                continue;
+            }
+            if (result.length() > 0) {
+                result.append(' ');
+            }
+            result.append(Character.toUpperCase(part.charAt(0)));
+            if (part.length() > 1) {
+                result.append(part.substring(1));
+            }
+        }
+        return result.length() == 0 ? "Building" : result.toString();
+    }
+
+    private void regenerateResourceNodesOnTownEntry() {
+        if (!isSettlementMap(currentMapId) || harvestedResourceNodes.isEmpty()) {
+            return;
+        }
+        restoreHarvestedResourceNodes();
+        harvestedResourceNodes.clear();
     }
 
     private boolean isSettlementMap(String mapId) {
@@ -2496,12 +6995,14 @@ public final class GameState {
     }
 
     private void enterBuildingAt(int wx, int wy) {
+        CityBuilding building = world.cityBuildingEntryAt(currentMapId, wx, wy, playerX, playerY);
+        String knowledgeMessage = building == null ? "" : gainBuildingKnowledgeMessage(currentMapId, building, 2, "Entering");
         String houseMapId = world.ensureHouseInterior(currentMapId, wx, wy, playerX, playerY);
         TilePoint entry = world.interiorEntryPoint(houseMapId);
         currentMapId = houseMapId;
         playerX = entry.x();
         playerY = entry.y();
-        status = "You step inside.";
+        status = knowledgeMessage.isBlank() ? "You step inside." : "You step inside. " + knowledgeMessage;
     }
 
     private QuestObjective questObjectiveNearPlayer() {
@@ -2518,7 +7019,7 @@ public final class GameState {
             }
             boolean assetMatchesTile = world.propsAt(objective.mapId(), objective.x(), objective.y()).stream()
                     .anyMatch(prop -> prop.asset().equals(objective.asset()));
-            int kindPriority = objective.kind() == Quest.ObjectiveKind.VISIT ? -2 : objective.kind() == Quest.ObjectiveKind.GATHER ? -1 : 0;
+            int kindPriority = objective.kind().inspectObjective() ? -2 : objective.kind().gatherObjective() ? -1 : 0;
             int score = distance * 10 + (assetMatchesTile ? 0 : 1) + kindPriority;
             if (score < bestScore) {
                 best = objective;
@@ -2543,10 +7044,10 @@ public final class GameState {
 
     private void interactQuestInteractible(QuestInteractible interactible) {
         Quest quest = quests.get(interactible.questId());
-        if (quest == null || quest.completed || quest.objectiveKind != Quest.ObjectiveKind.GATHER) {
+        if (quest == null || quest.completed || !quest.activeObjectiveKind().gatherObjective()) {
             return;
         }
-        String resourceKey = resourceKey(quest.id, interactible.mapId(), interactible.x(), interactible.y(), interactible.asset());
+        String resourceKey = resourceKey(questStageResourceId(quest), interactible.mapId(), interactible.x(), interactible.y(), interactible.asset());
         if (harvestedQuestResources.contains(resourceKey)) {
             status = "Already gathered from here.";
             return;
@@ -2555,9 +7056,10 @@ public final class GameState {
         quest.recordGather(interactible.target());
         if (quest.progress > oldProgress) {
             harvestedQuestResources.add(resourceKey);
-            status = "Gathered " + interactible.target() + ". " + quest.title + ": " + quest.progress + "/" + quest.needed + ".";
+            invalidateQuestObjectiveCache();
+            status = "Gathered " + interactible.target() + ". " + quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ".";
             if (quest.ready()) {
-                status += " " + quest.readyDialog;
+                status += " " + quest.activeReadyDialog();
             }
         }
     }
@@ -2567,39 +7069,248 @@ public final class GameState {
         if (quest == null || quest.completed) {
             return;
         }
-        if (objective.kind() == Quest.ObjectiveKind.GATHER) {
+        if (objective.kind().gatherObjective()) {
             recordMarkedObjective(quest, objective, "Gathered");
             return;
         }
-        if (objective.kind() == Quest.ObjectiveKind.VISIT) {
-            recordMarkedObjective(quest, objective, "Inspected");
+        if (objective.kind().inspectObjective()) {
+            recordMarkedObjective(quest, objective, objective.kind() == Quest.ObjectiveKind.SEARCH ? "Searched" : objective.kind() == Quest.ObjectiveKind.ESCORT ? "Reached" : "Inspected");
+            return;
+        }
+        QuestMonsterRuntime questMonster = questMonsterAtRuntime(objective.x(), objective.y(), null);
+        if (questMonster != null) {
+            startQuestMonsterBattle(questMonster);
             return;
         }
         String monsterKey = objective.monsterKey() == null || objective.monsterKey().isBlank() ? "goblin" : objective.monsterKey();
-        GameData.MonsterSpec spec = GameData.MONSTERS.getOrDefault(monsterKey, GameData.MONSTERS.get("goblin"));
-        battle = new Battle(player, activeAllies(), List.of(spec), random, world.tileAt(currentMapId, objective.x(), objective.y()), world.kind(currentMapId));
+        List<GameData.MonsterSpec> specs = storyObjectiveMonsterSpecs(monsterKey);
+        battle = createBattle(specs, world.tileAt(currentMapId, objective.x(), objective.y()), world.kind(currentMapId));
+        prepareBattleKnowledge(battle);
         mode = GameMode.BATTLE;
         status = objective.target() + " answers the challenge.";
     }
 
+    private List<GameData.MonsterSpec> storyObjectiveMonsterSpecs(String monsterKey) {
+        return switch (monsterKey) {
+            case "flame_herald" -> monsterSpecsForKeys(List.of("flame_herald", "ember_imp", "ember_imp"));
+            case "frost_witch" -> monsterSpecsForKeys(List.of("frost_witch", "wraith", "ice_golem"));
+            case "shadow_beast" -> monsterSpecsForKeys(List.of("shadow_beast", "wraith", "goblin_shaman"));
+            case "void_knight" -> monsterSpecsForKeys(List.of("void_knight", "bone_knight"));
+            case "kharvok_banner_bound" -> monsterSpecsForKeys(List.of("kharvok_banner_bound", "orc_raider", "orc_shieldbearer"));
+            case "velmora_bell_drowned" -> monsterSpecsForKeys(List.of("velmora_bell_drowned", "wraith", "skeleton"));
+            case "rootmaw_stag" -> monsterSpecsForKeys(List.of("rootmaw_stag", "thornling", "bramble_boar"));
+            case "nameless_warden" -> monsterSpecsForKeys(List.of("nameless_warden", "bone_knight", "skeleton"));
+            case "hailback_broodmother" -> monsterSpecsForKeys(List.of("hailback_broodmother", "spider", "frost_wolf"));
+            case "sareth_cinder_knife" -> monsterSpecsForKeys(List.of("sareth_cinder_knife", "ember_imp", "ember_imp"));
+            case "morvane_mercy_taker" -> monsterSpecsForKeys(List.of("morvane_mercy_taker", "void_knight", "ember_imp"));
+            default -> monsterSpecsForKeys(List.of(monsterKey == null || monsterKey.isBlank() ? "goblin" : monsterKey));
+        };
+    }
+
+    private void prepareBattleKnowledge(Battle battle) {
+        if (battle == null) {
+            return;
+        }
+        battle.setMonsterInsightCounts(monsterInsights);
+        battle.setKnownMonsterVulnerabilities(monsterKnownVulnerabilities);
+    }
+
+    private Battle createBattle(List<GameData.MonsterSpec> specs, char tile, String kind) {
+        Battle created = new Battle(player, activeAllies(), specs, random, tile, kind, config.monsterLevelScaling);
+        applyWorldBattleAdvantage(created);
+        return created;
+    }
+
+    public List<WorldAbilityOption> worldAbilityOptions() {
+        List<WorldAbilityOption> options = new ArrayList<>();
+        for (Actor actor : partyMembers()) {
+            for (Ability ability : actor.activeAbilities()) {
+                String effect = worldEffectForAbility(ability);
+                if (!effect.isBlank()) {
+                    options.add(new WorldAbilityOption(actor, ability, effect,
+                            worldAbilityLabel(effect), worldAbilityDescription(effect, actor, ability)));
+                }
+            }
+        }
+        return options;
+    }
+
+    public void useWorldAbility(int index) {
+        if (mode != GameMode.EXPLORE) {
+            return;
+        }
+        List<WorldAbilityOption> options = worldAbilityOptions();
+        if (index < 0 || index >= options.size()) {
+            return;
+        }
+        WorldAbilityOption option = options.get(index);
+        Actor actor = option.actor();
+        Ability ability = option.ability();
+        if (actor.mp < ability.cost()) {
+            status = actor.name + " lacks MP for " + ability.name() + ".";
+            return;
+        }
+        actor.mp -= ability.cost();
+        int duration = 36 + actor.level + actor.abilityScalingBonus(ability);
+        if ("battle_advantage".equals(option.effectKey())) {
+            duration = Math.max(18, duration / 2);
+        }
+        worldAbilityTimers.merge(option.effectKey(), duration, Math::max);
+        status = actor.name + " used " + ability.name() + ": " + option.label() + ".";
+    }
+
+    public boolean worldAbilityActive(String effectKey) {
+        return worldAbilityTimers.getOrDefault(effectKey, 0) > 0;
+    }
+
+    public int worldAbilityRemaining(String effectKey) {
+        return Math.max(0, worldAbilityTimers.getOrDefault(effectKey, 0));
+    }
+
+    public String worldAbilityLabel(String effectKey) {
+        return switch (effectKey) {
+            case "travel_speed" -> "Swift Travel";
+            case "gather_focus" -> "Gather Focus";
+            case "encounter_ward" -> "Quiet Road";
+            case "encounter_lure" -> "Challenge Call";
+            case "battle_advantage" -> "Opening Advantage";
+            default -> effectKey;
+        };
+    }
+
+    public String worldAbilityDescription(String effectKey, Actor actor, Ability ability) {
+        return switch (effectKey) {
+            case "travel_speed" -> "Increases overland movement speed while the timer lasts.";
+            case "gather_focus" -> "Adds extra gathered material after completed gathering actions.";
+            case "encounter_ward" -> "Greatly reduces random encounter chance while travelling.";
+            case "encounter_lure" -> "Raises random encounter chance for players hunting fights.";
+            case "battle_advantage" -> "The next battle starts with party Haste and Shield.";
+            default -> "World-use ability.";
+        } + "\nCaster: " + actor.name + ". Cost: " + ability.cost() + " MP.";
+    }
+
+    public double travelSpeedWorldMultiplier() {
+        return worldAbilityActive("travel_speed") ? 0.68 : 1.0;
+    }
+
+    private String worldEffectForAbility(Ability ability) {
+        String name = ability.name().toLowerCase(Locale.ROOT);
+        if (name.contains("grace") || name.contains("step") || name.contains("quick") || name.contains("tempo")
+                || name.contains("path") || name.contains("pack") || name.contains("route") || name.contains("trail")) {
+            return "travel_speed";
+        }
+        if (name.contains("smoke") || name.contains("veil") || name.contains("shadow") || name.contains("camouflage")
+                || name.contains("snare") || name.contains("hidden") || name.contains("exit") || name.contains("prison")) {
+            return "encounter_ward";
+        }
+        if (name.contains("war cry") || name.contains("banner") || name.contains("howl") || name.contains("herdcall")
+                || name.contains("storm") || name.contains("flare") || name.contains("sunburst") || name.contains("challenge")
+                || name.contains("judgment") || name.contains("verdict")) {
+            return "encounter_lure";
+        }
+        if (ability.kind() == Ability.AbilityKind.HEAL || ability.kind() == Ability.AbilityKind.DEFEND
+                || name.contains("hymn") || name.contains("memory") || name.contains("ward")
+                || name.contains("blessing") || name.contains("aegis") || name.contains("guard")
+                || name.contains("refuge") || name.contains("line anchor") || name.contains("halo")
+                || name.contains("mend") || name.contains("salve") || name.contains("remedy")
+                || name.contains("circle") || name.contains("shelter")) {
+            return "battle_advantage";
+        }
+        if (name.contains("herb") || name.contains("green") || name.contains("vine") || name.contains("thorn")
+                || name.contains("briar") || name.contains("root") || name.contains("petal")
+                || name.contains("grove") || name.contains("wood") || name.contains("forage")
+                || name.contains("harvest") || name.contains("flower")) {
+            return "gather_focus";
+        }
+        return "";
+    }
+
+    private void tickWorldAbilityTimers() {
+        for (String key : new ArrayList<>(worldAbilityTimers.keySet())) {
+            int remaining = worldAbilityTimers.getOrDefault(key, 0) - 1;
+            if (remaining <= 0) {
+                worldAbilityTimers.remove(key);
+            } else {
+                worldAbilityTimers.put(key, remaining);
+            }
+        }
+    }
+
+    private String applyGatherWorldBonus() {
+        if (!worldAbilityActive("gather_focus") || activeGatherCandidate == null) {
+            return "";
+        }
+        Map<String, Integer> output = crafting.lastCompletedOutput();
+        if (output.isEmpty()) {
+            return "";
+        }
+        String key = output.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("");
+        if (key.isBlank()) {
+            return "";
+        }
+        int amount = Math.max(1, output.getOrDefault(key, 1) / 2);
+        player.addItem(key, amount);
+        return "Gather Focus: +" + amount + " " + GameData.itemName(key) + ".";
+    }
+
+    private void applyWorldBattleAdvantage(Battle battle) {
+        if (battle == null || !worldAbilityActive("battle_advantage")) {
+            return;
+        }
+        boolean strong = worldAbilityRemaining("battle_advantage") > 45;
+        battle.grantPartyStartingAdvantage(strong);
+        worldAbilityTimers.remove("battle_advantage");
+    }
+
     private void updateAfterBattleAction() {
+        if (battle != null) {
+            absorbBattleVulnerabilityDiscoveries();
+        }
         if (battle != null && battle.finished && battle.victory) {
             if (!battle.questRecorded) {
                 for (String defeatedName : battle.defeatedMonsterNames()) {
                     recordQuestProgress(defeatedName);
                 }
+                for (String defeatedKey : battle.defeatedMonsterKeys()) {
+                    recordMonsterInsight(defeatedKey);
+                }
                 battle.questRecorded = true;
             }
             if (!battle.lootGranted) {
-                String loot = CraftingSystem.grantLoot(player, battle.monsterSpecs, random);
+                char terrain = world.tileAt(currentMapId, playerX, playerY);
+                String loot = CraftingSystem.grantLoot(player, battle.monsterSpecs, random,
+                        world.kind(currentMapId), terrain, dungeonLootTier(currentMapId));
                 if (!loot.isBlank()) {
                     battle.addLog("Loot: " + loot + ".");
                 }
                 battle.lootGranted = true;
             }
+            if (!battle.companionTrustGranted) {
+                grantCompanionCombatTrust(battle);
+                battle.companionTrustGranted = true;
+            }
             clearDefeatedDungeonMonster();
-            status = "Victory. Press Enter to continue.";
+            clearDefeatedQuestMonster();
+            if (demonQueenBattleActive && (battle.defeatedMonsterKeys().contains("vaelthara")
+                    || battle.defeatedMonsterKeys().contains("demon_queen"))) {
+                Quest gateQuest = quests.get("ms_twelve_stones_gate");
+                if (gateQuest != null) {
+                    gateQuest.accepted = true;
+                    gateQuest.progress = gateQuest.needed;
+                    gateQuest.completed = true;
+                    invalidateQuestObjectiveCache();
+                }
+                demonQueenDefeated = true;
+                demonQueenBattleActive = false;
+                status = "Vaelthara's mercy breaks. Alderfall was never saved by crowns. It was saved by people who kept their promises. Press Enter to continue.";
+            } else {
+                status = "Victory. Press Enter to continue.";
+            }
         } else if (battle != null && battle.finished) {
+            demonQueenBattleActive = false;
             status = "Defeated. Press R to revive.";
         } else if (battle != null && battle.isAnimating()) {
             String animationStatus = battle.animationStatus();
@@ -2610,39 +7321,562 @@ public final class GameState {
         }
     }
 
+    private int dungeonLootTier(String mapId) {
+        if (mapId == null || !"dungeon".equals(world.kind(mapId))) {
+            return 0;
+        }
+        int highestDigit = 0;
+        for (int i = 0; i < mapId.length(); i++) {
+            char ch = mapId.charAt(i);
+            if (Character.isDigit(ch)) {
+                highestDigit = Math.max(highestDigit, Character.digit(ch, 10));
+            }
+        }
+        return Math.max(1, Math.min(4, highestDigit == 0 ? 2 : highestDigit));
+    }
+
+    private void absorbBattleVulnerabilityDiscoveries() {
+        for (Map.Entry<String, List<String>> entry : battle.discoveredMonsterVulnerabilities().entrySet()) {
+            for (String type : entry.getValue()) {
+                recordMonsterVulnerability(entry.getKey(), type);
+            }
+        }
+    }
+
+    private void grantCompanionCombatTrust(Battle completedBattle) {
+        List<Actor> companions = activeAllies();
+        if (companions.isEmpty()) {
+            return;
+        }
+        boolean questBattle = activeQuestMonster != null && questMonsterIsCompanionQuest(activeQuestMonster);
+        boolean bossBattle = completedBattle.defeatedMonsterKeys().stream()
+                .anyMatch(key -> key.contains("queen") || key.contains("boss") || key.equals("vaelthara"));
+        boolean hardFight = player.hp <= Math.max(1, player.maxHp / 3)
+                || companions.stream().anyMatch(ally -> ally.hp > 0 && ally.hp <= Math.max(1, ally.maxHp / 3))
+                || completedBattle.enemies().size() >= 3;
+        int delta = bossBattle || questBattle ? 3 : hardFight ? 2 : 1;
+        List<String> names = new ArrayList<>();
+        for (Actor ally : companions) {
+            Npc npc = npcForAlly(ally);
+            if (npc == null) {
+                continue;
+            }
+            adjustNpcRelationshipDirect(npc, delta);
+            recordCompanionMemoryForAlly(ally, bossBattle || questBattle ? "major_combat" : hardFight ? "hard_combat" : "combat",
+                    combatMemoryText(completedBattle, bossBattle || questBattle, hardFight));
+            names.add(ally.name);
+        }
+        if (!names.isEmpty()) {
+            completedBattle.addLog("Trust +" + delta + ": " + String.join(", ", names) + ".");
+            List<String> tags = new ArrayList<>(List.of("combat", "courage", "protection"));
+            if (bossBattle || questBattle) {
+                tags.add("main_story");
+                tags.add("duty");
+            }
+            if (hardFight) {
+                tags.add("reckless");
+            }
+            publishCompanionEvent(
+                    "combat:" + worldTick,
+                    bossBattle || questBattle ? "Survived a decisive fight" : hardFight ? "Survived a hard fight" : "Won a fight",
+                    tags,
+                    0,
+                    "",
+                    "",
+                    bossBattle || questBattle || hardFight
+            );
+        }
+    }
+
+    private boolean questMonsterIsCompanionQuest(QuestMonsterRuntime monster) {
+        if (monster == null) {
+            return false;
+        }
+        Quest quest = quests.get(monster.questId);
+        return quest != null && quest.companionQuest();
+    }
+
+    private String combatMemoryText(Battle completedBattle, boolean majorFight, boolean hardFight) {
+        String foes = completedBattle.defeatedMonsterNames().isEmpty()
+                ? "enemies"
+                : String.join(", ", completedBattle.defeatedMonsterNames());
+        if (majorFight) {
+            return "Survived a decisive battle against " + foes + ".";
+        }
+        if (hardFight) {
+            return "Survived a hard fight against " + foes + ".";
+        }
+        return "Fought beside the player against " + foes + ".";
+    }
+
+    private void adjustNpcRelationshipDirect(Npc npc, int delta) {
+        if (npc == null || delta == 0) {
+            return;
+        }
+        String key = npcRelationshipKey(npc);
+        int previous = npcRelationships.getOrDefault(key, 0);
+        int value = Math.max(MIN_NPC_RELATIONSHIP, Math.min(maxRelationshipForNpc(npc), previous + delta));
+        npcRelationships.put(key, value);
+        maybeQueueRelationshipMilestonePrompt(npc, previous, value);
+    }
+
+    private void maybeQueueRelationshipMilestonePrompt(Npc npc, int previous, int current) {
+        if (current <= previous || !specialCompanionNpc(npc)) {
+            return;
+        }
+        String recruitId = companionRecruitIdForContext(npc);
+        int threshold = pendingRelationshipMilestone(recruitId, current);
+        if (threshold <= 0 || previous >= threshold) {
+            return;
+        }
+        Actor ally = companionActorForContext(npc, recruitId);
+        if (ally == null || !activeAllies().contains(ally)) {
+            return;
+        }
+        String label = relationshipMilestoneLabel(threshold);
+        enqueueCompanionComment(new PendingCompanionComment(
+                ally.name,
+                ally.name + ": When we have a quiet moment, there is something I should say about this " + label + " between us.",
+                List.of("We will talk.", "Say it when ready.", "Keep moving for now."),
+                List.of(
+                        "Acknowledges the moment and leaves room for the full conversation.",
+                        "Gives the companion patience and agency.",
+                        "Defers the scene without losing it."
+                ),
+                List.of(1, 1, 0)
+        ));
+    }
+
+    private void publishCompanionEvent(
+            String eventId,
+            String detail,
+            List<String> tags,
+            int baseApproval,
+            String memoryCategory,
+            String memoryText,
+            boolean important
+    ) {
+        if (activeAllies().isEmpty()) {
+            return;
+        }
+        List<String> eventTags = tags == null ? List.of() : tags;
+        if (eventId == null || !eventId.startsWith("companion_request:")) {
+            fulfillSoftCompanionRequestsForEvent(eventTags, detail);
+        }
+        if (!important && random.nextDouble() > 0.35) {
+            return;
+        }
+        List<CompanionEventReaction> reactions = new ArrayList<>();
+        for (Actor ally : activeAllies()) {
+            String recruitId = recruitIdForAlly(ally);
+            if (recruitId.isBlank()) {
+                continue;
+            }
+            int delta = companionApprovalDelta(recruitId, eventTags, baseApproval);
+            Npc npc = npcForAlly(ally);
+            if (delta != 0) {
+                adjustNpcRelationshipDirect(npc, delta);
+            }
+            if (important && memoryText != null && !memoryText.isBlank()) {
+                recordCompanionMemory(recruitId, memoryCategory, memoryText);
+            }
+            reactions.add(new CompanionEventReaction(ally, recruitId, delta));
+        }
+        if (reactions.isEmpty()) {
+            return;
+        }
+        CompanionEventReaction speaker = reactions.stream()
+                .max((left, right) -> Integer.compare(Math.abs(left.approvalDelta()), Math.abs(right.approvalDelta())))
+                .orElse(reactions.get(0));
+        String line = companionEventCommentLine(speaker.ally(), speaker.recruitId(), detail, eventTags, speaker.approvalDelta());
+        List<String> options;
+        List<String> tooltips;
+        List<Integer> deltas;
+        if (speaker.approvalDelta() < 0) {
+            options = List.of("You may be right.", "It was necessary.", "Drop it.");
+            tooltips = List.of(
+                    "Acknowledge their concern. Repairs a little trust.",
+                    "Stand by the action. Keeps the disagreement contained.",
+                    "Dismiss their concern. Damages trust."
+            );
+            deltas = List.of(1, 0, -1);
+        } else {
+            options = List.of("I hear you.", "Good point.", "Keep moving.");
+            tooltips = List.of(
+                    "Meet the comment warmly. Builds a little more trust.",
+                    "Accept the observation without lingering.",
+                    "Keep the party focused. No extra trust change."
+            );
+            deltas = List.of(1, 0, 0);
+        }
+        enqueueCompanionComment(new PendingCompanionComment(speaker.ally().name, line, options, tooltips, deltas));
+    }
+
+    private int companionApprovalDelta(String recruitId, List<String> tags, int baseApproval) {
+        CompanionApprovalProfile profile = companionApprovalProfile(recruitId);
+        int score = baseApproval;
+        for (String tag : tags) {
+            if (profile.likes().contains(tag)) {
+                score++;
+            }
+            if (profile.dislikes().contains(tag)) {
+                score--;
+            }
+        }
+        return Math.max(-2, Math.min(3, score));
+    }
+
+    private CompanionApprovalProfile companionApprovalProfile(String recruitId) {
+        return switch (recruitId == null ? "" : recruitId) {
+            case "seraphine" -> new CompanionApprovalProfile(
+                    List.of("freedom", "clever", "evidence", "mercy", "oathstead"),
+                    List.of("greed", "cruelty", "coercion", "waste"),
+                    "choice");
+            case "maera" -> new CompanionApprovalProfile(
+                    List.of("evidence", "knowledge", "clever", "main_story", "truth"),
+                    List.of("reckless", "ignorance", "secrecy"),
+                    "truth");
+            case "cassia" -> new CompanionApprovalProfile(
+                    List.of("duty", "protection", "courage", "combat", "oathstead"),
+                    List.of("reckless", "cruelty", "cowardice"),
+                    "duty");
+            case "lyra" -> new CompanionApprovalProfile(
+                    List.of("mercy", "healing", "protection", "gather", "craft"),
+                    List.of("cruelty", "reckless", "waste"),
+                    "care");
+            case "samir" -> new CompanionApprovalProfile(
+                    List.of("mercy", "truth", "holy", "main_story", "oathstead"),
+                    List.of("cruelty", "greed", "cynicism"),
+                    "light");
+            case "aria" -> new CompanionApprovalProfile(
+                    List.of("caution", "scouting", "clever", "survival", "gather"),
+                    List.of("reckless", "noise", "coercion"),
+                    "watchfulness");
+            case "vesper" -> new CompanionApprovalProfile(
+                    List.of("nature", "mercy", "gather", "oathstead", "patience"),
+                    List.of("waste", "cruelty", "greed"),
+                    "living things");
+            case "rafiq" -> new CompanionApprovalProfile(
+                    List.of("courage", "clever", "mercy", "style", "combat"),
+                    List.of("cowardice", "cruelty", "greed"),
+                    "second chances");
+            case "calder" -> new CompanionApprovalProfile(
+                    List.of("craft", "oathstead", "duty", "practical", "protection"),
+                    List.of("reckless", "waste", "glamour"),
+                    "what holds");
+            default -> new CompanionApprovalProfile(List.of("practical", "protection"), List.of("reckless", "cruelty"), "trust");
+        };
+    }
+
+    private String companionEventCommentLine(Actor speaker, String recruitId, String detail, List<String> tags, int approvalDelta) {
+        String first = speaker.name.split("\\s+")[0];
+        String subject = detail == null || detail.isBlank() ? "that" : detail;
+        boolean approving = approvalDelta >= 0;
+        if (tags.contains("combat")) {
+            if (approvalDelta < 0) {
+                return companionCombatConcernLine(speaker, recruitId);
+            }
+            return switch (recruitId) {
+                case "seraphine" -> speaker.name + ": You fought like someone refusing a contract written in blood. Effective. Messy. Satisfying.";
+                case "maera" -> speaker.name + ": Combat is a poor argument, but that one produced a convincing conclusion.";
+                case "cassia" -> speaker.name + ": You held the line. More importantly, you knew why it mattered.";
+                case "lyra" -> speaker.name + ": Victory is acceptable. Breathing afterward is better. Let me count everyone twice.";
+                case "samir" -> speaker.name + ": You did not let fear choose your hands. That is a kind of light.";
+                case "aria" -> speaker.name + ": Clean enough. I saw two openings you missed and one you made on purpose. Progress.";
+                case "vesper" -> speaker.name + ": The fight is over. Now we see what still lives around it.";
+                case "rafiq" -> speaker.name + ": We survived with style adjacent to competence. I am calling it growth.";
+                case "calder" -> speaker.name + ": You held under impact. Good. Now we check what cracked.";
+                default -> speaker.name + ": You held when the fight tried to make you smaller. I noticed.";
+            };
+        }
+        if (tags.contains("oathstead") || tags.contains("build")) {
+            return switch (recruitId) {
+                case "seraphine" -> speaker.name + ": Oathstead keeps becoming more like a choice people can survive. Dangerous precedent.";
+                case "maera" -> speaker.name + ": A settlement is a record with roofs. This one is starting to cite its sources.";
+                case "cassia" -> speaker.name + ": Better walls, better work, fewer frightened people. That is a plan I can stand behind.";
+                case "lyra" -> speaker.name + ": Places heal too. Slowly, with timber, food, and people who come back.";
+                case "samir" -> speaker.name + ": A hearth built honestly gives better light than any sermon.";
+                case "aria" -> speaker.name + ": More corners to watch. More doors worth keeping open.";
+                case "vesper" -> speaker.name + ": The ground is accepting us by inches. Do not rush it.";
+                case "rafiq" -> speaker.name + ": Mud, labor, hope. Oathstead remains terribly unfashionable and annoyingly persuasive.";
+                case "calder" -> speaker.name + ": Good. " + subject + " is the kind of work that keeps promises from falling over.";
+                default -> speaker.name + ": Oathstead will remember " + subject.toLowerCase() + ".";
+            };
+        }
+        if (tags.contains("gather") || tags.contains("craft")) {
+            if (approvalDelta < 0) {
+                return speaker.name + ": Useful, maybe. Wasteful, if we stop noticing what it cost.";
+            }
+            return switch (recruitId) {
+                case "calder" -> speaker.name + ": Useful hands. Useful materials. That is how hope becomes something with nails in it.";
+                case "vesper" -> speaker.name + ": Take what is needed, leave enough for tomorrow. That is the whole lesson, somehow.";
+                case "lyra" -> speaker.name + ": Supplies first. Bravery works better when someone remembered bandages.";
+                case "aria" -> speaker.name + ": Good. A road party that gathers well goes hungry less often.";
+                default -> speaker.name + ": Practical work suits us better than speeches, " + first + " included.";
+            };
+        }
+        if (tags.contains("main_story")) {
+            return speaker.name + ": That choice moved more than our feet. Alderfall will feel it, whether it knows your name or not.";
+        }
+        if (tags.contains("commitment") || tags.contains("loyalty")) {
+            return approving
+                    ? speaker.name + ": Promises are heavier when spoken clearly. I respect that."
+                    : speaker.name + ": Promises made too quickly become cages. Walk carefully.";
+        }
+        return approving
+                ? speaker.name + ": " + subject + " tells me something about the kind of road you are choosing."
+                : speaker.name + ": " + subject + " sits poorly with me. I am saying it now, before silence makes it worse.";
+    }
+
+    private String companionCombatConcernLine(Actor speaker, String recruitId) {
+        return switch (recruitId == null ? "" : recruitId) {
+            case "seraphine" -> speaker.name + ": We lived, but do not mistake survival for consent. Next time we choose the terms sooner.";
+            case "maera" -> speaker.name + ": The conclusion stands. The method deserves several angry footnotes.";
+            case "cassia" -> speaker.name + ": Victory with too many exposed backs is not courage. It is a lesson we paid for in breath.";
+            case "lyra" -> speaker.name + ": I can mend wounds. I cannot mend the habit of collecting them for no reason.";
+            case "samir" -> speaker.name + ": Fear did not win, but haste nearly did. Let courage keep its eyes open.";
+            case "aria" -> speaker.name + ": We won after ignoring three exits and two warnings. I prefer victories with fewer invitations to disaster.";
+            case "vesper" -> speaker.name + ": The fight ended. The damage is still speaking. Listen before we call this clean.";
+            case "rafiq" -> speaker.name + ": Dramatic, yes. Sensible, barely. I object to becoming a cautionary ballad.";
+            case "calder" -> speaker.name + ": A structure can stand and still be cracked. That fight was the same. We inspect before boasting.";
+            default -> speaker.name + ": We lived. I would like the next victory to require less luck and fewer heroic assumptions.";
+        };
+    }
+
+    private void enqueueCompanionComment(PendingCompanionComment comment) {
+        if (comment == null || comment.line().isBlank()) {
+            return;
+        }
+        if (activeTravelBanter == null && mode == GameMode.EXPLORE) {
+            activeTravelBanter = comment.toPrompt(worldTick + 900);
+            nextTravelBanterTick = worldTick + 1300;
+            return;
+        }
+        pendingCompanionComments.add(comment);
+        while (pendingCompanionComments.size() > 4) {
+            pendingCompanionComments.remove(0);
+        }
+    }
+
+    private void showPendingCompanionComment() {
+        if (pendingCompanionComments.isEmpty()) {
+            return;
+        }
+        PendingCompanionComment comment = pendingCompanionComments.remove(0);
+        activeTravelBanter = comment.toPrompt(worldTick + 900);
+        nextTravelBanterTick = worldTick + 1300;
+    }
+
+    private void triggerPostCombatBanter(Actor speaker, boolean majorFight, boolean hardFight) {
+        if (speaker == null) {
+            return;
+        }
+        activeTravelBanter = new TravelBanterPrompt(
+                speaker.name,
+                postCombatBanterLine(speaker, majorFight, hardFight),
+                List.of("You held well too.", "Everyone still standing?", "Keep watch."),
+                List.of(
+                        "Warm response. Builds trust with this companion.",
+                        "Practical care. Small trust gain and a steadier tone.",
+                        "Tactical response. No extra trust, but keeps the party moving."
+                ),
+                List.of(1, 1, 0),
+                worldTick + 900
+        );
+        nextTravelBanterTick = worldTick + 1300;
+    }
+
+    private void triggerActionBanter(Actor speaker, String line) {
+        if (speaker == null || line == null || line.isBlank()) {
+            return;
+        }
+        enqueueCompanionComment(new PendingCompanionComment(
+                speaker.name,
+                line,
+                List.of("I am glad you are here.", "Make it your own.", "We keep moving."),
+                List.of(
+                        "Warm response. Improves trust with this companion.",
+                        "Encourages them to invest in their role.",
+                        "Practical response. No extra trust, but keeps momentum."
+                ),
+                List.of(1, 1, 0)
+        ));
+    }
+
+    private String postCombatBanterLine(Actor speaker, boolean majorFight, boolean hardFight) {
+        String recruitId = recruitIdForAlly(speaker);
+        if (!recruitId.isBlank()) {
+            if (majorFight) {
+                return companionEventCommentLine(
+                        speaker,
+                        recruitId,
+                        "Survived a decisive battle.",
+                        List.of("combat", "courage", "major"),
+                        1
+                );
+            }
+            if (hardFight) {
+                return companionCombatConcernLine(speaker, recruitId);
+            }
+        }
+        if (majorFight) {
+            return speaker.name + ": That was not just a fight. That was the road deciding whether we meant what we promised.";
+        }
+        if (hardFight) {
+            return speaker.name + ": Next time we survive by a wider margin. I am fond of breathing.";
+        }
+        if (speaker.className.contains("Medic") || speaker.className.equals("Battle Medic")) {
+            return speaker.name + ": Victory is nicer when everyone keeps their blood on the inside.";
+        }
+        if (speaker.className.contains("Ranger") || speaker.className.equals("Scout")) {
+            return speaker.name + ": Clean enough. Tracks say nothing else is rushing us yet.";
+        }
+        if (speaker.className.contains("Rogue") || speaker.className.equals("Veilrunner")) {
+            return speaker.name + ": I have seen worse ambushes. I have also planned better ones.";
+        }
+        return speaker.name + ": You held. I noticed.";
+    }
+
     private String resourceKey(String questId, String mapId, int x, int y, String asset) {
         return questId + ":" + mapId + ":" + x + ":" + y + ":" + asset;
     }
 
+    private String questStageResourceId(Quest quest) {
+        if (quest == null || !quest.stagedQuest()) {
+            return quest == null ? "" : quest.id;
+        }
+        return quest.id + "@stage" + quest.stageIndex;
+    }
+
+    private String resourceNodeKey(String mapId, int x, int y, String asset) {
+        return resourceKey("resource", mapId, x, y, asset);
+    }
+
+    private void depletePendingResourceNode() {
+        if (pendingResourceNodeTile == null || pendingResourceNodeMapId.isBlank() || pendingResourceNodeAsset.isBlank()) {
+            return;
+        }
+        String key = resourceNodeKey(
+                pendingResourceNodeMapId,
+                pendingResourceNodeTile.x(),
+                pendingResourceNodeTile.y(),
+                pendingResourceNodeAsset
+        );
+        WorldProp removedProp = null;
+        for (WorldProp prop : world.propsAt(pendingResourceNodeMapId, pendingResourceNodeTile.x(), pendingResourceNodeTile.y())) {
+            if (pendingResourceNodeAsset.equals(prop.asset())) {
+                removedProp = prop;
+                removedResourceNodeProps.put(key, prop);
+                break;
+            }
+        }
+        if (world.removePropAt(pendingResourceNodeMapId, pendingResourceNodeTile.x(), pendingResourceNodeTile.y(), pendingResourceNodeAsset)) {
+            harvestedResourceNodes.add(key);
+            lastGatheredPropMapId = pendingResourceNodeMapId;
+            lastGatheredProp = removedProp == null
+                    ? new WorldProp(pendingResourceNodeTile.x(), pendingResourceNodeTile.y(), pendingResourceNodeAsset, 48)
+                    : removedProp;
+            lastGatheredPropWorldTick = worldTick;
+        }
+        pendingResourceNodeMapId = "";
+        pendingResourceNodeTile = null;
+        pendingResourceNodeAsset = "";
+    }
+
+    private boolean completePendingBookshelfReading() {
+        if (pendingReadBookshelfTile == null || pendingReadBookshelfMapId.isBlank()) {
+            return false;
+        }
+        String mapId = pendingReadBookshelfMapId;
+        TilePoint tile = pendingReadBookshelfTile;
+        pendingReadBookshelfMapId = "";
+        pendingReadBookshelfTile = null;
+        for (WorldProp prop : world.propsAt(mapId, tile.x(), tile.y())) {
+            if ("interior_bookshelf".equals(prop.asset())) {
+                studyBookshelf(prop, mapId);
+                return true;
+            }
+        }
+        status = "You finish reading, but the notes are no longer there.";
+        return true;
+    }
+
+    public void restoreHarvestedResourceNodes() {
+        for (Map.Entry<String, WorldProp> entry : removedResourceNodeProps.entrySet()) {
+            String[] fields = entry.getKey().split(":", 5);
+            if (fields.length != 5) {
+                continue;
+            }
+            String mapId = fields[1];
+            WorldProp removed = entry.getValue();
+            boolean alreadyPresent = false;
+            for (WorldProp prop : world.propsAt(mapId, removed.x(), removed.y())) {
+                if (removed.asset().equals(prop.asset())) {
+                    alreadyPresent = true;
+                    break;
+                }
+            }
+            if (!alreadyPresent) {
+                world.restoreProp(mapId, removed);
+            }
+        }
+        removedResourceNodeProps.clear();
+    }
+
+    public void applyHarvestedResourceNodes() {
+        removedResourceNodeProps.clear();
+        for (String key : harvestedResourceNodes) {
+            String[] fields = key.split(":", 5);
+            if (fields.length != 5) {
+                continue;
+            }
+            try {
+                String mapId = fields[1];
+                int x = Integer.parseInt(fields[2]);
+                int y = Integer.parseInt(fields[3]);
+                String asset = fields[4];
+                for (WorldProp prop : world.propsAt(mapId, x, y)) {
+                    if (asset.equals(prop.asset())) {
+                        removedResourceNodeProps.put(key, prop);
+                        break;
+                    }
+                }
+                world.removePropAt(mapId, x, y, asset);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+    }
+
     private void recordMarkedObjective(Quest quest, QuestObjective objective, String verb) {
-        String resourceKey = resourceKey(quest.id, objective.mapId(), objective.x(), objective.y(), objective.asset());
+        String resourceKey = resourceKey(questStageResourceId(quest), objective.mapId(), objective.x(), objective.y(), objective.asset());
         if (harvestedQuestResources.contains(resourceKey) || resourceAlreadyGatheredForQuest(quest, objective.mapId(), objective.x(), objective.y())) {
             status = "Already handled this objective.";
             return;
         }
         int oldProgress = quest.progress;
-        if (objective.kind() == Quest.ObjectiveKind.GATHER) {
+        if (objective.kind().gatherObjective()) {
             quest.recordGather(objective.target());
-        } else if (objective.kind() == Quest.ObjectiveKind.VISIT) {
+        } else if (objective.kind().inspectObjective()) {
             quest.recordVisit(objective.target());
         }
         if (quest.progress > oldProgress) {
             harvestedQuestResources.add(resourceKey);
             markGatheredResourcesAt(quest, objective.mapId(), objective.x(), objective.y());
-            status = verb + " " + objective.target() + ". " + quest.title + ": " + quest.progress + "/" + quest.needed + ".";
+            invalidateQuestObjectiveCache();
+            status = verb + " " + objective.target() + ". " + quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ".";
             if (quest.ready()) {
-                status += " " + quest.readyDialog;
+                status += " " + quest.activeReadyDialog();
             }
         }
     }
 
     private boolean resourceAlreadyGatheredForQuest(Quest quest, String mapId, int x, int y) {
-        if (quest.objectiveAsset == null || quest.objectiveAsset.isBlank()) {
+        if (quest.activeObjectiveAsset() == null || quest.activeObjectiveAsset().isBlank()) {
             return false;
         }
         for (WorldProp prop : world.propsAt(mapId, x, y)) {
-            if (quest.objectiveAsset.equals(prop.asset())
-                    && harvestedQuestResources.contains(resourceKey(quest.id, mapId, x, y, prop.asset()))) {
+            if (quest.activeObjectiveAsset().equals(prop.asset())
+                    && harvestedQuestResources.contains(resourceKey(questStageResourceId(quest), mapId, x, y, prop.asset()))) {
                 return true;
             }
         }
@@ -2650,12 +7884,13 @@ public final class GameState {
     }
 
     private void markGatheredResourcesAt(Quest quest, String mapId, int x, int y) {
-        if (quest.objectiveAsset == null || quest.objectiveAsset.isBlank()) {
+        if (quest.activeObjectiveAsset() == null || quest.activeObjectiveAsset().isBlank()) {
             return;
         }
         for (WorldProp prop : world.propsAt(mapId, x, y)) {
-            if (quest.objectiveAsset.equals(prop.asset())) {
-                harvestedQuestResources.add(resourceKey(quest.id, mapId, x, y, prop.asset()));
+            if (quest.activeObjectiveAsset().equals(prop.asset())) {
+                harvestedQuestResources.add(resourceKey(questStageResourceId(quest), mapId, x, y, prop.asset()));
+                invalidateQuestObjectiveCache();
             }
         }
     }
@@ -2677,9 +7912,28 @@ public final class GameState {
         for (SkillNode node : availableTree.values()) {
             Ability ability = node.ability();
             if (ability != null && actor.skillRank(node.id()) > 0 && !actor.hasAbility(ability.name())) {
-                actor.abilities.add(ability);
+                if (actor.abilities.size() >= Actor.MAX_ABILITIES) {
+                    break;
+                }
+                actor.abilities.add(upgradedAbility(ability, actor.skillRank(node.id())));
             }
         }
+        actor.sanitizeAbilityLoadout();
+        actor.sanitizeAbilityLoadoutPresets();
+    }
+
+    private Ability upgradedAbility(Ability ability, int rank) {
+        int extraRanks = Math.max(0, rank - 1);
+        if (extraRanks <= 0) {
+            return ability;
+        }
+        int powerGain = switch (ability.kind()) {
+            case DAMAGE -> "all_enemies".equals(ability.target()) ? 6 : 9;
+            case HEAL -> "party".equals(ability.target()) ? 5 : 7;
+            case DEFEND -> 0;
+        };
+        int costGain = ability.kind() == Ability.AbilityKind.DEFEND ? 1 : 2;
+        return ability.upgraded(extraRanks * powerGain, extraRanks * costGain);
     }
 
     private void applySkillEffects(SkillNode node, int direction) {
@@ -2696,6 +7950,8 @@ public final class GameState {
                 case "max_mp" -> actor.maxMp = Math.max(0, actor.maxMp + delta);
                 case "attack" -> actor.attack = Math.max(1, actor.attack + delta);
                 case "defense" -> actor.defense = Math.max(0, actor.defense + delta);
+                case "strength", "intelligence", "dexterity", "charisma", "constitution", "willpower" ->
+                        actor.increaseStat(entry.getKey(), delta);
                 default -> {
                 }
             }
@@ -2704,14 +7960,27 @@ public final class GameState {
         actor.mp = Math.max(0, Math.min(actor.maxMp, (int) Math.round(actor.maxMp * mpRatio)));
     }
 
+    private String statLabel(String statKey) {
+        return switch (statKey) {
+            case "strength" -> "Strength";
+            case "intelligence" -> "Intelligence";
+            case "dexterity" -> "Dexterity";
+            case "charisma" -> "Charisma";
+            case "constitution" -> "Constitution";
+            case "willpower" -> "Willpower";
+            default -> "stats";
+        };
+    }
+
     private void recordQuestProgress(String defeatedTarget) {
         for (Quest quest : quests.values()) {
             int oldProgress = quest.progress;
             quest.record(defeatedTarget);
             if (quest.progress > oldProgress) {
-                status = quest.title + ": " + quest.progress + "/" + quest.needed + ".";
+                invalidateQuestObjectiveCache();
+                status = quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ".";
                 if (quest.ready()) {
-                    status += " " + quest.readyDialog;
+                    status += " " + quest.activeReadyDialog();
                 }
             }
         }
@@ -2779,6 +8048,7 @@ public final class GameState {
         monster.facingDx = direction[0];
         monster.facingDy = direction[1];
         monster.moveStartTick = worldTick;
+        invalidateQuestObjectiveCache();
     }
 
     private boolean canDungeonMonsterMoveTo(DungeonMonsterRuntime monster, int x, int y) {
@@ -2803,21 +8073,109 @@ public final class GameState {
         return true;
     }
 
+    private void updateQuestMonsterMovement() {
+        ensureActiveQuestMonsterRuntime();
+        for (List<QuestMonsterRuntime> monsters : questMonsterRuntime.values()) {
+            for (QuestMonsterRuntime monster : monsters) {
+                if (worldTick - monster.moveStartTick < QuestMonsterRuntime.MOVE_TICKS || worldTick < monster.nextThinkTick) {
+                    continue;
+                }
+                monster.nextThinkTick = worldTick + 20 + random.nextInt(30);
+                int distanceToPlayer = WorldMap.OVERWORLD_ID.equals(currentMapId)
+                        ? Math.abs(playerX - monster.x) + Math.abs(playerY - monster.y)
+                        : Integer.MAX_VALUE;
+                if (distanceToPlayer > 5 && random.nextDouble() < 0.36) {
+                    continue;
+                }
+                for (int[] direction : questMonsterDirections(monster, distanceToPlayer)) {
+                    int nx = monster.x + direction[0];
+                    int ny = monster.y + direction[1];
+                    if (WorldMap.OVERWORLD_ID.equals(currentMapId) && nx == playerX && ny == playerY) {
+                        moveQuestMonster(monster, nx, ny, direction);
+                        startQuestMonsterBattle(monster);
+                        return;
+                    }
+                    if (!canQuestMonsterMoveTo(monster, nx, ny)) {
+                        continue;
+                    }
+                    moveQuestMonster(monster, nx, ny, direction);
+                    break;
+                }
+            }
+        }
+    }
+
+    private List<int[]> questMonsterDirections(QuestMonsterRuntime monster, int distanceToPlayer) {
+        int[][] baseDirections = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+        List<int[]> directions = new ArrayList<>();
+        if (distanceToPlayer <= 6) {
+            int dx = Integer.compare(playerX, monster.x);
+            int dy = Integer.compare(playerY, monster.y);
+            if (Math.abs(playerX - monster.x) >= Math.abs(playerY - monster.y)) {
+                addNpcDirection(directions, dx, 0);
+                addNpcDirection(directions, 0, dy);
+            } else {
+                addNpcDirection(directions, 0, dy);
+                addNpcDirection(directions, dx, 0);
+            }
+        }
+        int start = random.nextInt(baseDirections.length);
+        for (int i = 0; i < baseDirections.length; i++) {
+            int[] direction = baseDirections[(start + i) % baseDirections.length];
+            addNpcDirection(directions, direction[0], direction[1]);
+        }
+        return directions;
+    }
+
+    private void moveQuestMonster(QuestMonsterRuntime monster, int x, int y, int[] direction) {
+        monster.fromX = monster.x;
+        monster.fromY = monster.y;
+        monster.x = x;
+        monster.y = y;
+        monster.facingDx = direction[0];
+        monster.facingDy = direction[1];
+        monster.moveStartTick = worldTick;
+    }
+
+    private boolean canQuestMonsterMoveTo(QuestMonsterRuntime monster, int x, int y) {
+        char tile = world.tileAt(WorldMap.OVERWORLD_ID, x, y);
+        if (!world.isPassable(WorldMap.OVERWORLD_ID, x, y) || Terrain.connectingRoad(tile) || tile == 'c' || tile == 'u' || tile == 'A') {
+            return false;
+        }
+        if (Math.abs(x - monster.homeX) + Math.abs(y - monster.homeY) > 8) {
+            return false;
+        }
+        if (!tileMatches(tile, questMonsterPreferredTiles(monster.spec))) {
+            return false;
+        }
+        if (WorldMap.OVERWORLD_ID.equals(currentMapId) && x == playerX && y == playerY) {
+            return false;
+        }
+        if (questMonsterAtRuntime(x, y, monster) != null) {
+            return false;
+        }
+        return true;
+    }
+
     private void updateNpcMovement() {
         WeatherCondition weather = currentWeather();
         int minutes = timeOfDayMinutes();
         int day = dayNumber();
         for (Npc npc : npcsForMap(currentMapId)) {
+            if (questNpc(npc)) {
+                continue;
+            }
             NpcRuntime runtime = runtimeFor(npc);
             AmbientNpcAi.Routine routine = AmbientNpcAi.routineFor(npc, world, currentMapId, minutes, weather, day);
             if (worldTick - runtime.moveStartTick < NpcMotion.MOVE_TICKS || worldTick < runtime.nextThinkTick) {
                 continue;
             }
-            runtime.nextThinkTick = worldTick + routine.nextThinkDelay(random);
             int targetDistance = Math.abs(runtime.x - routine.target().x()) + Math.abs(runtime.y - routine.target().y());
             if (targetDistance <= routine.roamRadius() && random.nextDouble() < routine.idleChance()) {
+                runtime.nextThinkTick = worldTick + routine.nextThinkDelay(random);
                 continue;
             }
+            boolean moved = false;
             for (int[] direction : npcMoveDirections(runtime, routine)) {
                 int nx = runtime.x + direction[0];
                 int ny = runtime.y + direction[1];
@@ -2831,16 +8189,31 @@ public final class GameState {
                 runtime.facingDx = direction[0];
                 runtime.facingDy = direction[1];
                 runtime.moveStartTick = worldTick;
+                runtime.nextThinkTick = worldTick + NpcMotion.MOVE_TICKS + npcMovePauseTicks(routine);
+                moved = true;
                 break;
             }
+            if (!moved) {
+                runtime.nextThinkTick = worldTick + routine.nextThinkDelay(random);
+            }
         }
+    }
+
+    private int npcMovePauseTicks(AmbientNpcAi.Routine routine) {
+        int base = switch (routine.activity()) {
+            case PATROLLING, GATHERING, FISHING -> 2;
+            case OPENING_SHOP, ERRAND, RETURNING_HOME -> 4;
+            case SOCIALIZING, WORKING, STUDYING -> 7;
+            case SHELTERING, RESTING, SLEEPING -> 12;
+        };
+        return base + random.nextInt(base + 4);
     }
 
     private List<int[]> npcMoveDirections(NpcRuntime runtime, AmbientNpcAi.Routine routine) {
         int[][] baseDirections = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
         List<int[]> directions = new ArrayList<>();
         int distance = Math.abs(runtime.x - routine.target().x()) + Math.abs(runtime.y - routine.target().y());
-        if (distance > routine.roamRadius()) {
+        if (distance > 0) {
             int dx = Integer.compare(routine.target().x(), runtime.x);
             int dy = Integer.compare(routine.target().y(), runtime.y);
             if (Math.abs(routine.target().x() - runtime.x) >= Math.abs(routine.target().y() - runtime.y)) {
@@ -2850,8 +8223,10 @@ public final class GameState {
                 addNpcDirection(directions, 0, dy);
                 addNpcDirection(directions, dx, 0);
             }
-            addNpcDirection(directions, -dx, 0);
-            addNpcDirection(directions, 0, -dy);
+            if (distance > routine.roamRadius() + 1) {
+                addNpcDirection(directions, -dx, 0);
+                addNpcDirection(directions, 0, -dy);
+            }
         }
         int start = random.nextInt(baseDirections.length);
         for (int i = 0; i < baseDirections.length; i++) {
@@ -2877,7 +8252,9 @@ public final class GameState {
         if (!world.isPassable(npc.mapId(), x, y)) {
             return false;
         }
-        if (Math.abs(x - runtime.homeX) + Math.abs(y - runtime.homeY) > maxDistanceFromHome) {
+        int currentHomeDistance = Math.abs(runtime.x - runtime.homeX) + Math.abs(runtime.y - runtime.homeY);
+        int nextHomeDistance = Math.abs(x - runtime.homeX) + Math.abs(y - runtime.homeY);
+        if (nextHomeDistance > maxDistanceFromHome && nextHomeDistance >= currentHomeDistance) {
             return false;
         }
         if (npc.mapId().equals(currentMapId) && x == playerX && y == playerY) {
@@ -2896,9 +8273,18 @@ public final class GameState {
     }
 
     private List<Npc> npcsForMap(String mapId) {
+        if (npcListCacheTick != worldTick) {
+            npcListCache.clear();
+            npcListCacheTick = worldTick;
+        }
+        List<Npc> cached = npcListCache.get(mapId);
+        if (cached != null) {
+            return cached;
+        }
         List<Npc> npcs = new ArrayList<>();
+        ensureActiveQuestNpcRuntime();
         for (Npc npc : GameData.NPCS) {
-            if (npc.mapId().equals(mapId)) {
+            if (npc.mapId().equals(mapId) && !recruitedCompanionNpc(npc) && !npcRelocatedByQuest(npc)) {
                 npcs.add(npc);
             }
         }
@@ -2908,17 +8294,34 @@ public final class GameState {
         } else if (mapId.startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_")) {
             addAssignedInteriorNpc(npcs, mapId);
         }
-        return npcs;
+        addQuestNpcs(npcs, mapId);
+        List<Npc> snapshot = List.copyOf(npcs);
+        npcListCache.put(mapId, snapshot);
+        return snapshot;
+    }
+
+    private void addQuestNpcs(List<Npc> npcs, String mapId) {
+        for (List<QuestNpcRuntime> runtimes : questNpcRuntime.values()) {
+            for (QuestNpcRuntime runtime : runtimes) {
+                if (runtime.npc.mapId().equals(mapId)) {
+                    npcs.add(runtime.npc);
+                }
+            }
+        }
     }
 
     private void addAssignedVillageNpcs(List<Npc> npcs) {
         if (!isDaytime()) {
             return;
         }
+        List<Actor> traveling = activeAllies();
         for (Map.Entry<String, String> entry : villageBuildingAssignments.entrySet()) {
             CityBuilding building = playerVillageBuildingByKey(entry.getKey());
             Actor ally = allyByName(entry.getValue());
             if (building == null || ally == null || !villageAllies.contains(ally.name)) {
+                continue;
+            }
+            if (traveling.contains(ally)) {
                 continue;
             }
             TilePoint home = buildingNpcHome(building);
@@ -2938,6 +8341,9 @@ public final class GameState {
         if (ally == null || !villageAllies.contains(ally.name)) {
             return;
         }
+        if (activeAllies().contains(ally)) {
+            return;
+        }
         TilePoint home = world.interiorEntryPoint(mapId);
         npcs.add(assignedCompanionNpc(ally, mapId, home.x(), Math.max(1, home.y() - 2), building, true));
     }
@@ -2945,14 +8351,30 @@ public final class GameState {
     private Npc assignedCompanionNpc(Actor ally, String mapId, int x, int y, CityBuilding building, boolean inside) {
         String roleId = villageRoleFor(ally.name);
         VillageManager.WorkerRole role = VillageManager.workerRole(roleId);
+        Npc sourceNpc = npcForAlly(ally);
         List<String> dialog = new ArrayList<>();
+        if (sourceNpc != null) {
+            dialog.addAll(sourceNpc.dialog());
+        }
         dialog.add(ally.name + ": " + (inside ? "Off shift inside " : "Working at ")
                 + VillageManager.buildingLabel(building.style()) + ". Role: " + role.label() + ".");
         dialog.add("Abilities: " + abilityPreview(ally));
         dialog.add("Skills: " + professionPreview(ally));
         dialog.add("Pack: " + actorInventoryPreview(ally));
         dialog.add("Work: " + role.description());
-        return new Npc(mapId, ally.name, ally.sprite, x, y, dialog, null, null, null, 0, ally.professionXp);
+        return new Npc(
+                mapId,
+                ally.name,
+                ally.sprite,
+                x,
+                y,
+                dialog,
+                sourceNpc == null ? null : sourceNpc.questId(),
+                sourceNpc == null ? null : sourceNpc.shopId(),
+                sourceNpc == null ? null : sourceNpc.recruitId(),
+                0,
+                ally.professionXp
+        );
     }
 
     private TilePoint buildingNpcHome(CityBuilding building) {
@@ -3028,7 +8450,10 @@ public final class GameState {
     }
 
     private NpcRuntime runtimeFor(Npc npc) {
-        return npcRuntime.computeIfAbsent(npc, ignored -> new NpcRuntime(npc.x(), npc.y(), Math.max(0, random.nextInt(90))));
+        return npcRuntime.computeIfAbsent(npc, ignored -> {
+            TilePoint home = world.npcHome(npc);
+            return new NpcRuntime(npc.x(), npc.y(), home.x(), home.y(), Math.max(0, random.nextInt(90)));
+        });
     }
 
     private String cleanName(String name, int maxLength) {
@@ -3058,11 +8483,16 @@ public final class GameState {
     private List<String> chooseMonsterGroup(char tile) {
         int count = 1;
         double roll = random.nextDouble();
-        if (roll < config.threeMonsterChance && player.level >= 3) {
+        if (player.level >= 9 && roll < config.threeMonsterChance * 0.33) {
+            count = 5;
+        } else if (player.level >= 6 && roll < config.threeMonsterChance * 0.66) {
+            count = 4;
+        } else if (roll < config.threeMonsterChance && player.level >= 3) {
             count = 3;
         } else if (roll < config.threeMonsterChance + config.twoMonsterChance) {
             count = 2;
         }
+        count = Math.min(MAX_ENEMY_GROUP_SIZE, count);
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             keys.add(chooseMonster(tile));
@@ -3070,8 +8500,22 @@ public final class GameState {
         return keys;
     }
 
+    private List<GameData.MonsterSpec> monsterSpecsForKeys(List<String> keys) {
+        List<GameData.MonsterSpec> specs = new ArrayList<>();
+        for (String key : keys) {
+            GameData.MonsterSpec spec = GameData.MONSTERS.get(key);
+            if (spec != null) {
+                specs.add(spec);
+            }
+        }
+        if (specs.isEmpty()) {
+            return List.of(GameData.MONSTERS.get("slime"));
+        }
+        return specs.size() <= MAX_ENEMY_GROUP_SIZE ? specs : specs.subList(0, MAX_ENEMY_GROUP_SIZE);
+    }
+
     public record NpcMotion(Npc npc, int x, int y, int fromX, int fromY, int moveStartTick, int facingDx, int facingDy) {
-        public static final int MOVE_TICKS = 14;
+        public static final int MOVE_TICKS = 16;
     }
 
     public record DungeonMonsterMotion(
@@ -3126,6 +8570,98 @@ public final class GameState {
     ) {
     }
 
+    public record TravelBanterPrompt(
+            String speaker,
+            String line,
+            List<String> options,
+            List<String> optionTooltips,
+            List<Integer> optionRelationshipDeltas,
+            int expiresAtTick
+    ) {
+        public TravelBanterPrompt(String speaker, String line, List<String> options, int expiresAtTick) {
+            this(speaker, line, options, List.of(), List.of(), expiresAtTick);
+        }
+
+        public TravelBanterPrompt(
+                String speaker,
+                String line,
+                List<String> options,
+                List<String> optionTooltips,
+                int expiresAtTick
+        ) {
+            this(speaker, line, options, optionTooltips, List.of(), expiresAtTick);
+        }
+
+        public TravelBanterPrompt {
+            options = options == null ? List.of() : List.copyOf(options);
+            optionTooltips = optionTooltips == null ? List.of() : List.copyOf(optionTooltips);
+            optionRelationshipDeltas = optionRelationshipDeltas == null ? List.of() : List.copyOf(optionRelationshipDeltas);
+        }
+    }
+
+    public record CompanionMemory(
+            int worldTick,
+            String category,
+            String text
+    ) {
+        public CompanionMemory {
+            category = category == null || category.isBlank() ? "event" : category.strip();
+            text = text == null ? "" : text.replaceAll("\\s+", " ").strip();
+        }
+    }
+
+    private record CompanionApprovalProfile(List<String> likes, List<String> dislikes, String motive) {
+        private CompanionApprovalProfile {
+            likes = likes == null ? List.of() : List.copyOf(likes);
+            dislikes = dislikes == null ? List.of() : List.copyOf(dislikes);
+            motive = motive == null ? "trust" : motive.strip();
+        }
+    }
+
+    private record SoftCompanionRequest(
+            String id,
+            String prompt,
+            List<String> tags,
+            String acceptMemory,
+            String fulfillMemory
+    ) {
+        private SoftCompanionRequest {
+            id = id == null ? "" : id.strip();
+            prompt = prompt == null ? "" : prompt.replaceAll("\\s+", " ").strip();
+            tags = tags == null ? List.of() : List.copyOf(tags);
+            acceptMemory = acceptMemory == null ? "" : acceptMemory.replaceAll("\\s+", " ").strip();
+            fulfillMemory = fulfillMemory == null ? "" : fulfillMemory.replaceAll("\\s+", " ").strip();
+        }
+
+        private String fulfillMemory(String detail) {
+            String cleanedDetail = detail == null ? "" : detail.replaceAll("\\s+", " ").strip();
+            return cleanedDetail.isBlank() ? fulfillMemory : fulfillMemory + " (" + cleanedDetail + ")";
+        }
+    }
+
+    private record CompanionEventReaction(Actor ally, String recruitId, int approvalDelta) {
+    }
+
+    private record PendingCompanionComment(
+            String speaker,
+            String line,
+            List<String> options,
+            List<String> optionTooltips,
+            List<Integer> optionRelationshipDeltas
+    ) {
+        private PendingCompanionComment {
+            speaker = speaker == null ? "" : speaker.strip();
+            line = line == null ? "" : line.replaceAll("\\s+", " ").strip();
+            options = options == null ? List.of() : List.copyOf(options);
+            optionTooltips = optionTooltips == null ? List.of() : List.copyOf(optionTooltips);
+            optionRelationshipDeltas = optionRelationshipDeltas == null ? List.of() : List.copyOf(optionRelationshipDeltas);
+        }
+
+        private TravelBanterPrompt toPrompt(int expiresAtTick) {
+            return new TravelBanterPrompt(speaker, line, options, optionTooltips, optionRelationshipDeltas, expiresAtTick);
+        }
+    }
+
     private static final class NpcRuntime {
         final int homeX;
         final int homeY;
@@ -3138,9 +8674,9 @@ public final class GameState {
         int facingDy = 1;
         int nextThinkTick;
 
-        NpcRuntime(int x, int y, int nextThinkTick) {
-            this.homeX = x;
-            this.homeY = y;
+        NpcRuntime(int x, int y, int homeX, int homeY, int nextThinkTick) {
+            this.homeX = homeX;
+            this.homeY = homeY;
             this.x = x;
             this.y = y;
             this.fromX = x;
@@ -3175,6 +8711,50 @@ public final class GameState {
             this.fromX = x;
             this.fromY = y;
             this.nextThinkTick = nextThinkTick;
+        }
+    }
+
+    private static final class QuestMonsterRuntime {
+        static final int MOVE_TICKS = 18;
+        final String questId;
+        final String id;
+        final GameData.MonsterSpec spec;
+        final int homeX;
+        final int homeY;
+        int x;
+        int y;
+        int fromX;
+        int fromY;
+        int moveStartTick = -MOVE_TICKS;
+        int facingDx;
+        int facingDy = 1;
+        int nextThinkTick;
+
+        QuestMonsterRuntime(String questId, String id, GameData.MonsterSpec spec, int x, int y, int nextThinkTick) {
+            this.questId = questId;
+            this.id = id;
+            this.spec = spec;
+            this.homeX = x;
+            this.homeY = y;
+            this.x = x;
+            this.y = y;
+            this.fromX = x;
+            this.fromY = y;
+            this.nextThinkTick = nextThinkTick;
+        }
+    }
+
+    private static final class QuestNpcRuntime {
+        final String questId;
+        final String id;
+        final Npc npc;
+        final Npc sourceNpc;
+
+        QuestNpcRuntime(String questId, String id, Npc npc, Npc sourceNpc) {
+            this.questId = questId;
+            this.id = id;
+            this.npc = npc;
+            this.sourceNpc = sourceNpc;
         }
     }
 }

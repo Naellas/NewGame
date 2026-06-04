@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.imageio.ImageIO;
 
 public final class AssetStore {
@@ -45,6 +46,10 @@ public final class AssetStore {
 
     public boolean hasSprite(String name) {
         return catalog.findAsset(name) != null;
+    }
+
+    public Set<String> assetNames() {
+        return catalog.allAssetNames();
     }
 
     public BufferedImage effectSprite(String name, int width, int height, int frame) {
@@ -94,6 +99,16 @@ public final class AssetStore {
         return fitted;
     }
 
+    public int effectSpriteFrameCount(String name) {
+        String sheetName = name + "_anim";
+        if (catalog.findAsset(sheetName) == null) {
+            return 1;
+        }
+        BufferedImage sheet = loadSource(sheetName);
+        int frameWidth = Math.max(1, sheet.getHeight());
+        return Math.max(1, sheet.getWidth() / frameWidth);
+    }
+
     public int animatedSpriteFrameCount(String name, String action, int width, int height) {
         if (action == null || action.isBlank()) {
             return 1;
@@ -123,6 +138,33 @@ public final class AssetStore {
         BufferedImage scaled = scale(source, width, height, pixelated(name));
         cache.put(key, scaled);
         return scaled;
+    }
+
+    public BufferedImage imageWithoutBorder(String name, int width, int height) {
+        String key = "inner:" + name + ":" + width + "x" + height;
+        BufferedImage cached = cache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        BufferedImage source = loadSource(name);
+        int inset = Math.max(1, Math.min(6, Math.min(source.getWidth(), source.getHeight()) / 24));
+        if (source.getWidth() <= inset * 2 || source.getHeight() <= inset * 2) {
+            inset = 0;
+        }
+        BufferedImage cropped = inset == 0
+                ? source
+                : source.getSubimage(inset, inset, source.getWidth() - inset * 2, source.getHeight() - inset * 2);
+        BufferedImage scaled = scale(cropped, width, height, pixelated(name));
+        cache.put(key, scaled);
+        return scaled;
+    }
+
+    public String cacheSummary() {
+        return "scaled=" + cache.size()
+                + ", source=" + sourceCache.size()
+                + ", cropped=" + croppedSourceCache.size()
+                + ", animationMetadata=" + animationMetadataCache.size()
+                + ", catalog={" + catalog.summary() + "}";
     }
 
     public BufferedImage cover(String name, int width, int height) {
@@ -169,7 +211,11 @@ public final class AssetStore {
     }
 
     private boolean pixelated(String name) {
-        return name.startsWith("interior_")
+        if (name.endsWith("_dialogue_sprite")) {
+            return false;
+        }
+        return name.startsWith("dungeon")
+                || name.startsWith("interior_")
                 || name.startsWith("npc_")
                 || name.startsWith("class_")
                 || name.startsWith("player")
@@ -189,7 +235,8 @@ public final class AssetStore {
                     "red_dragon", "elder_dragon", "marsh_drake", "mountain_drake",
                     "bandit_cutthroat", "bandit_archer", "bandit_captain",
                     "orc_raider", "orc_berserker", "orc_shaman", "orc_shieldbearer",
-                    "swamp_troll", "frost_troll", "hill_giant", "stone_giant", "fire_giant" -> true;
+                    "swamp_troll", "frost_troll", "hill_giant", "stone_giant", "fire_giant",
+                    "void_knight", "flame_herald", "frost_witch", "shadow_beast", "demon_queen" -> true;
             default -> false;
         };
     }
@@ -296,7 +343,11 @@ public final class AssetStore {
         if (cached != null) {
             return cached > 0 ? cached : null;
         }
-        Path path = assetsRoot.resolve("animations").resolve(sheetName + ".frames");
+        Path asset = catalog.findAsset(sheetName);
+        Path path = asset == null ? null : asset.resolveSibling(sheetName + ".frames");
+        if (path == null || !Files.exists(path)) {
+            path = assetsRoot.resolve("animations").resolve(sheetName + ".frames");
+        }
         if (!Files.exists(path)) {
             animationMetadataCache.put(sheetName, -1);
             return null;

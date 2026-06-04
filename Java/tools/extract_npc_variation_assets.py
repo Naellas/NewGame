@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout, fit
+from universal_cutout import CutoutSettings, fit, universal_cutout
 
 
 MODEL_SRC = Path("assets/source/imagegen-npc-models-pixel-sheet.png")
@@ -38,17 +38,19 @@ def extract_models() -> None:
     if not MODEL_SRC.exists():
         raise FileNotFoundError(f"Missing NPC variation sheet: {MODEL_SRC}")
     source = Image.open(MODEL_SRC).convert("RGBA")
+    settings = CutoutSettings(mode="magenta", padding=8, keep_largest_only=True, spill_passes=8)
     for name, cell in zip(NAMES, cells(source)):
         # Keep these in the same high-detail family as Marla/Ren/Torin.
-        chroma_cutout(cell, "magenta", padding=8, keep_largest_only=True).save(OUT / f"{name}_model.png")
+        universal_cutout(cell, settings).save(OUT / f"{name}_model.png")
 
 
 def extract_portraits() -> None:
     if not PORTRAIT_SRC.exists():
         raise FileNotFoundError(f"Missing NPC portrait sheet: {PORTRAIT_SRC}")
     source = Image.open(PORTRAIT_SRC).convert("RGBA")
+    settings = CutoutSettings(mode="magenta", padding=8, keep_largest_only=True, spill_passes=6)
     for name, cell in zip(NAMES, cells(source)):
-        cutout = chroma_cutout(cell, "magenta", padding=8, keep_largest_only=True)
+        cutout = universal_cutout(cell, settings)
         fit(cutout, 96, 96, bottom_align=False).save(OUT / f"{name}.png")
 
 

@@ -214,11 +214,11 @@ Avoid during optimization:
 
 ### Phase 0 - Guardrails And Measurements
 
-- [ ] Add a small performance note to `SmokeTest` or a separate headless diagnostic that records world-generation time, map count, prop count, and asset-cache counts.
-- [ ] Add a `DebugMetrics` package-private helper for optional timing counters in render/update hot paths.
-- [ ] Add a manual visual checklist covering world view, battle, inventory, village, shop, map, save/load, weather, lighting, and animations.
-- [ ] Keep build verification as `powershell -ExecutionPolicy Bypass -File Java\scripts\build.ps1`.
-- [ ] Keep behavior verification as `powershell -ExecutionPolicy Bypass -File Java\scripts\smoke-test.ps1`.
+- [x] Add a small performance note to `SmokeTest` or a separate headless diagnostic that records world-generation time, map count, prop count, and asset-cache counts.
+- [x] Add a `DebugMetrics` package-private helper for optional timing counters in render/update hot paths.
+- [x] Add a manual visual checklist covering world view, battle, inventory, village, shop, map, save/load, weather, lighting, and animations.
+- [x] Keep build verification as `powershell -ExecutionPolicy Bypass -File Java\scripts\build.ps1`.
+- [x] Keep behavior verification as `powershell -ExecutionPolicy Bypass -File Java\scripts\smoke-test.ps1`.
 
 Acceptance criteria:
 
@@ -226,14 +226,23 @@ Acceptance criteria:
 - No visual or gameplay behavior is intentionally changed.
 - A future optimization can be compared against baseline counts/timings.
 
+Manual visual checklist for any renderer-affecting change:
+
+- World exploration: terrain, roads, water animation, city/village overlays, props, player/NPC sprites, quest markers, clouds, weather, and lighting.
+- Battle: backdrop, party/enemy sprites, action buttons, targeting, status display, floating text, hit flashes, and victory/defeat flow.
+- Inventory and party: pack grid, drag/drop, equipment slots, tooltips, actor selector, and item use.
+- Village: sidebar tabs, building/prop/tile placement previews, assignment panel, storage summary, and interior decoration.
+- Shop and dialog: portrait cards, buy/hire actions, quest dialog options, and close/return behavior.
+- Map and menus: world map markers, pause/settings, save/load, fullscreen, zoom, and keyboard shortcuts.
+
 ### Phase 1 - MapArea Prop Index
 
-- [ ] Add prop-management methods to `MapArea`: `addProp`, `removeProp`, `moveProp`, `propAt`, `propsAt`, and `propsInBounds`.
-- [ ] Maintain both the ordered `props` list and a `Map<TilePoint, List<WorldProp>>` index.
-- [ ] Replace direct `area.props.add(...)` and `area.props.remove(...)` call sites with `MapArea` methods.
-- [ ] Keep `props(String mapId)` returning the ordered list for rendering and compatibility.
-- [ ] Update `WorldMap.propAt(...)` and `WorldMap.propsAt(...)` to delegate to the index.
-- [ ] Add smoke-test checks for prop placement, movement, removal, and indexed lookup.
+- [x] Add prop-management methods to `MapArea`: `addProp`, `removeProp`, `moveProp`, `propAt`, `propsAt`, and `propsInBounds`.
+- [x] Maintain both the ordered `props` list and a `Map<TilePoint, List<WorldProp>>` index.
+- [x] Replace direct `area.props.add(...)` and `area.props.remove(...)` call sites with `MapArea` methods.
+- [x] Keep `props(String mapId)` returning the ordered list for rendering and compatibility.
+- [x] Update `WorldMap.propAt(...)` and `WorldMap.propsAt(...)` to delegate to the index.
+- [x] Add smoke-test checks for prop placement, movement, removal, and indexed lookup.
 
 Acceptance criteria:
 
@@ -243,10 +252,10 @@ Acceptance criteria:
 
 ### Phase 2 - Visible Prop Query
 
-- [ ] Add `WorldMap.propsInBounds(mapId, minX, minY, maxX, maxY)`.
-- [ ] Replace `GamePanel.rebuildVisibleWorldProps(...)` full-map scan with the bounded query.
-- [ ] Keep the current visibility margin and draw-order sort.
-- [ ] Verify dense village/interior scenes retain identical prop layering.
+- [x] Add `WorldMap.propsInBounds(mapId, minX, minY, maxX, maxY)`.
+- [x] Replace `GamePanel.rebuildVisibleWorldProps(...)` full-map scan with the bounded query.
+- [x] Keep the current visibility margin and draw-order sort.
+- [x] Verify dense village/interior scenes retain identical prop layering.
 
 Acceptance criteria:
 
@@ -256,11 +265,11 @@ Acceptance criteria:
 
 ### Phase 3 - Extract Pathfinder
 
-- [ ] Create package-private `Pathfinder`.
-- [ ] Move `nearestPathTarget`, `findPlayerPath`, `heuristic`, and `walkableForPath` logic out of `GamePanel`.
-- [ ] Give `Pathfinder` only the world/passability inputs it needs.
-- [ ] Keep player path state and rendering in `GamePanel`.
-- [ ] Add smoke-test coverage for reachable, blocked, and nearest-walkable path targets.
+- [x] Create package-private `Pathfinder`.
+- [x] Move `nearestPathTarget`, `findPlayerPath`, `heuristic`, and `walkableForPath` logic out of `GamePanel`.
+- [x] Give `Pathfinder` only the world/passability inputs it needs.
+- [x] Keep player path state and rendering in `GamePanel`.
+- [x] Add smoke-test coverage for reachable, blocked, and nearest-walkable path targets.
 
 Acceptance criteria:
 
@@ -300,11 +309,11 @@ Acceptance criteria:
 
 ### Phase 6 - Asset Lookup Manifest
 
-- [ ] Add one-time asset index construction to `AssetCatalog`.
-- [ ] Preserve preferred asset overrides.
-- [ ] Preserve missing-asset fallback behavior.
-- [ ] Add a debug summary for duplicate asset stems and missing lookups.
-- [ ] Consider a generated manifest file later, but keep runtime discovery first.
+- [x] Add one-time asset index construction to `AssetCatalog`.
+- [x] Preserve preferred asset overrides.
+- [x] Preserve missing-asset fallback behavior.
+- [x] Add a debug summary for duplicate asset stems and missing lookups.
+- [x] Consider a generated manifest file later, but keep runtime discovery first.
 
 Acceptance criteria:
 

@@ -303,7 +303,7 @@ def mountain_scrub_pine() -> Pixels:
     return p
 
 
-def water_lilies() -> Pixels:
+def water_lily_pad_cluster() -> Pixels:
     p = blank()
     ellipse(p, 32, 47, 23, 9, (45, 119, 157, 140))
     for cx, cy, rx, ry in ((19, 43, 8, 4), (32, 50, 9, 5), (46, 42, 8, 4)):
@@ -316,7 +316,7 @@ def water_lilies() -> Pixels:
     return p
 
 
-def water_foam_reeds() -> Pixels:
+def water_shore_reeds() -> Pixels:
     p = blank()
     ellipse(p, 32, 51, 22, 7, (38, 111, 148, 120))
     for x in (19, 24, 42, 47):
@@ -564,15 +564,15 @@ def water_driftwood() -> Pixels:
     return p
 
 
-def water_reed_islet() -> Pixels:
+def water_duckweed_patch() -> Pixels:
     p = blank()
-    ellipse(p, 32, 52, 22, 6, (35, 108, 150, 120))
-    ellipse(p, 31, 50, 14, 4, (61, 122, 70, 230))
-    for x in (23, 27, 33, 39, 44):
-        line(p, x, 53, x + 2, 27, (47, 111, 62, 255), 1)
-        rect(p, x, 23, x + 3, 29, (123, 86, 48, 255))
-    line(p, 15, 54, 28, 53, (145, 218, 234, 190), 1)
-    line(p, 37, 47, 54, 49, (145, 218, 234, 190), 1)
+    ellipse(p, 32, 47, 23, 9, (45, 119, 157, 130))
+    for cx, cy, rx, ry in ((17, 44, 4, 2), (23, 49, 5, 3), (31, 42, 4, 2), (39, 50, 5, 3), (47, 44, 4, 2)):
+        ellipse(p, cx, cy, rx, ry, (55, 132, 68, 245))
+        line(p, cx, cy, cx + rx - 1, cy - 1, (28, 91, 53, 255), 1)
+    sparkle(p, [(27, 48), (36, 44), (44, 51)], (104, 178, 88, 220))
+    line(p, 14, 52, 27, 51, (134, 212, 232, 170), 1)
+    line(p, 37, 39, 55, 41, (134, 212, 232, 170), 1)
     return p
 
 
@@ -622,10 +622,9 @@ ASSETS = {
         "deco_mountain_pass_way_cairn": mountain_pass_way_cairn,
     },
     "water": {
-        "deco_water_lilies": water_lilies,
-        "deco_water_foam_reeds": water_foam_reeds,
-        "deco_water_driftwood": water_driftwood,
-        "deco_water_reed_islet": water_reed_islet,
+        "deco_water_lily_pad_cluster": water_lily_pad_cluster,
+        "deco_water_shore_reeds": water_shore_reeds,
+        "deco_water_duckweed_patch": water_duckweed_patch,
     },
     "road": {
         "deco_road_milestone": road_milestone,

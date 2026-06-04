@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from chroma_cutout import chroma_cutout
+from universal_cutout import CutoutSettings, universal_cutout
 
 
 SRC = Path("assets/source/imagegen-monster-expansion-sheet.png")
@@ -22,8 +22,8 @@ GRID_NAMES = (
 def cell_box(width: int, height: int, row: int, col: int) -> tuple[int, int, int, int]:
     cell_w = width / 4
     cell_h = height / 4
-    pad_x = int(cell_w * 0.04)
-    pad_y = int(cell_h * 0.04)
+    pad_x = 96
+    pad_y = 96
     left = max(0, round(col * cell_w) - pad_x)
     top = max(0, round(row * cell_h) - pad_y)
     right = min(width, round((col + 1) * cell_w) + pad_x)
@@ -56,14 +56,21 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     source = Image.open(SRC).convert("RGBA")
     extracted: dict[str, Image.Image] = {}
+    settings = CutoutSettings(
+        mode="green",
+        padding=12,
+        global_key=True,
+        stray_max_gap=96,
+        drop_edge_strays=True,
+        drop_above_strays=True,
+        drop_below_strays=True,
+        drop_small_green_matte=True,
+    )
     for row, names in enumerate(GRID_NAMES):
         for col, name in enumerate(names):
-            cutout = chroma_cutout(
+            cutout = universal_cutout(
                 source.crop(cell_box(source.width, source.height, row, col)),
-                "green",
-                padding=8,
-                stray_max_gap=48,
-                keep_largest_only=True,
+                settings,
             )
             cutout.save(OUT / f"{name}.png")
             extracted[name] = cutout

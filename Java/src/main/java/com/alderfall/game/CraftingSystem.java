@@ -1,10 +1,15 @@
 package com.alderfall.game;
 
+import com.alderfall.game.inventory.Equipment;
+import com.alderfall.game.inventory.Item;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public final class CraftingSystem {
     private static final int[][] GATHER_DIRECTIONS = {
@@ -28,6 +33,27 @@ public final class CraftingSystem {
         }
     }
 
+    public enum RecipeCategory {
+        CONSUMABLE("Consumables"),
+        WEAPON("Weapons"),
+        ARMOR("Armor"),
+        TOOL("Tools"),
+        SEED("Seeds"),
+        ACCESSORY("Accessories"),
+        MATERIAL("Materials"),
+        DECOR("Decor");
+
+        private final String label;
+
+        RecipeCategory(String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return label;
+        }
+    }
+
     public record ItemInfo(String name, String icon, String detail) {
     }
 
@@ -41,6 +67,7 @@ public final class CraftingSystem {
             int ticks,
             String profession,
             Map<String, Integer> professionRequirements,
+            RecipeCategory category,
             String description
     ) {
     }
@@ -50,6 +77,8 @@ public final class CraftingSystem {
             this(label, tile, terrain, "");
         }
     }
+
+    private Map<String, Integer> lastCompletedOutput = Map.of();
 
     public static final Map<String, ItemInfo> CRAFTING_ITEMS = Map.ofEntries(
             Map.entry("wood", new ItemInfo("Wood", "material_wood", "Crafting ingredient from chopped trees.")),
@@ -94,6 +123,18 @@ public final class CraftingSystem {
             Map.entry("clay", new ItemInfo("Clay", "material_clay", "Workable earth used in cooking and alchemy vessels.")),
             Map.entry("coal", new ItemInfo("Coal", "material_coal", "Hot-burning fuel for forgework and field fires.")),
             Map.entry("crystal_dust", new ItemInfo("Crystal Dust", "material_crystal_dust", "Powdered crystal used in refined recipes.")),
+            Map.entry("stone_memory", new ItemInfo("Stone of Memory", "icon_potion_blue", "An old socket stone recovered from the sealed vault beneath Archive City. Its surface shifts with faint lines of script no one remembers writing.")),
+            Map.entry("stone_iron", new ItemInfo("Stone of Iron", "icon_shield", "A heavy socket stone taken from Kharvok the Banner-Bound. It smells faintly of cold steel and battlefield smoke.")),
+            Map.entry("stone_ember", new ItemInfo("Stone of Ember", "icon_potion_red", "A socket stone shaped through Sanctum ember rites. It remains warm even in darkness.")),
+            Map.entry("stone_tides", new ItemInfo("Stone of Tides", "material_seashell", "A wet, dark stone from the depths of Miredepth Cave. If held near the ear, it sounds like a bell ringing underwater.")),
+            Map.entry("stone_hunger", new ItemInfo("Stone of Hunger", "icon_sword", "A mud-caked socket stone recovered from goblin scavengers. It feels hollow, as if something inside it is waiting to be fed.")),
+            Map.entry("stone_roots", new ItemInfo("Stone of Roots", "material_glowroot", "A green-black stone pulled from a corrupted orchard ward. Tiny root patterns move beneath its surface.")),
+            Map.entry("stone_graves", new ItemInfo("Stone of Graves", "icon_potion_blue", "A pale socket stone from Stonegate Crypt. Names appear briefly on its surface, then fade before they can be read.")),
+            Map.entry("stone_frost", new ItemInfo("Stone of Frost", "icon_potion_blue", "A blue-white socket stone found in the Hailback Broodmother's nest. Frost gathers on any container that holds it.")),
+            Map.entry("stone_bells", new ItemInfo("Stone of Bells", "icon_chest", "A quiet stone hidden beneath an old bell foundation. Nearby metal hums softly in its presence.")),
+            Map.entry("stone_ash", new ItemInfo("Stone of Ash", "icon_potion_red", "A blackened socket stone dropped by Sareth, the Cinder Knife. It leaves soot on the hand but never grows smaller.")),
+            Map.entry("stone_oaths", new ItemInfo("Stone of Oaths", "icon_chest", "A socket stone formed at Oathstead's restored oath marker. It is plain compared to the others, but it feels steady in the hand.")),
+            Map.entry("stone_dawn", new ItemInfo("Stone of Dawn", "icon_potion_red", "A socket stone formed from five oath fragments, one from each kingdom. At sunrise, it catches light even underground.")),
             Map.entry("mushroom_spores", new ItemInfo("Mushroom Spores", "material_mushroom_spores", "Fungal reagent gathered from forest and marsh growth.")),
             Map.entry("coconut", new ItemInfo("Coconut", "material_coconut", "Beach forage used for travel food and fresh water.")),
             Map.entry("raw_fish", new ItemInfo("Raw Fish", "material_wild_meat", "Fresh catch ready for a cooking fire.")),
@@ -105,6 +146,24 @@ public final class CraftingSystem {
             Map.entry("stone_axe", new ItemInfo("Stone Axe", "icon_sword", "Tool: improves tree chopping before proper metal tools.")),
             Map.entry("stone_pickaxe", new ItemInfo("Stone Pickaxe", "icon_sword", "Tool: improves mountain mining.")),
             Map.entry("iron_pickaxe", new ItemInfo("Iron Pickaxe", "icon_sword", "Tool: greatly improves mountain mining."))
+    );
+
+    public static final Map<String, String> RECIPE_BOOKS = Map.ofEntries(
+            Map.entry("recipe_book_camp_cookery", "coconut_rations"),
+            Map.entry("recipe_book_fisher_knots", "shell_lure"),
+            Map.entry("recipe_book_iron_blades", "iron_sword"),
+            Map.entry("recipe_book_iron_mail", "iron_mail"),
+            Map.entry("recipe_book_steel_plate", "steel_plate"),
+            Map.entry("recipe_book_oak_bow", "oak_bow"),
+            Map.entry("recipe_book_apothecary_salve", "herbal_salve"),
+            Map.entry("recipe_book_escape_scrolls", "escape_scroll")
+    );
+
+    private static final Set<String> STARTER_RECIPE_KEYS = Set.of(
+            "stone_axe",
+            "stone_pickaxe",
+            "seed_bundle",
+            "campfire_coal"
     );
 
     public static final List<Recipe> RECIPES = List.of(
@@ -282,9 +341,126 @@ public final class CraftingSystem {
             recipe("focus_tea", "Focus Tea", Workstation.ALCHEMY,
                     Map.of("herb_leaf", 1, "flower_blossom", 2, "mushroom_spores", 1), "focus_tea", 1, 85,
                     "A calming infusion that restores a modest amount of MP."),
+            recipe("escape_scroll", "Escape Scroll", Workstation.ALCHEMY,
+                    Map.of("plant_fiber", 2, "crystal_dust", 1, "glowroot", 1), "escape_scroll", 1, 100,
+                    "A one-use dungeon recall scroll that returns the reader to the surface."),
             recipe("potent_tonic", "Potent Tonic", Workstation.ALCHEMY,
                     Map.of("herb_leaf", 2, "venom_sac", 1, "crystal_dust", 1), "potion_large", 1, 130,
-                    "A stronger healing draught refined at an alchemy station.")
+                    "A stronger healing draught refined at an alchemy station."),
+            recipe("upgrade_weapon_uncommon", "Temper Emberglass Saber", Workstation.ANVIL,
+                    Map.of("new_weapon_ashfall_cutlass", 1, "ember_shard", 2, "copper_ore", 3, "coal", 2),
+                    "new_weapon_emberglass_saber__keen", 1, 190,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4, Profession.MINING.id(), 3),
+                    "Lift a common blade into an uncommon, affixed duelist weapon."),
+            recipe("upgrade_weapon_rare", "Archive Thornstaff Binding", Workstation.CARPENTER,
+                    Map.of("new_weapon_stormthread_wand", 1, "magic_wood", 3, "crystal_dust", 3, "silver_ore", 2),
+                    "new_weapon_archive_thornstaff__arcane", 1, 260,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 7, Profession.WOODCUTTING.id(), 5),
+                    "Bind an uncommon focus into a rare staff with a spell-damage affix."),
+            recipe("upgrade_weapon_unique", "Bellringer Reforging", Workstation.ANVIL,
+                    Map.of("new_weapon_lanternfall_bow", 1, "stone_bells", 1, "mithril_ore", 3, "crystal_dust", 4),
+                    "new_weapon_the_bellringer", 1, 360,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 12, Profession.MINING.id(), 9),
+                    "Reforge rare arms into a unique weapon with a real first-critical hook."),
+            recipe("upgrade_weapon_legendary", "Dawn-Crown Brand Rite", Workstation.ANVIL,
+                    Map.of("new_weapon_the_bellringer", 1, "stone_dawn", 1, "adamantite_ore", 4, "mithril_ore", 4),
+                    "new_weapon_dawn_crown_brand", 1, 480,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 16, Profession.MINING.id(), 13),
+                    "Crown a unique weapon into a legendary blade that can deny one lethal blow."),
+            recipe("upgrade_armor_uncommon", "Briarwatch Helm Lining", Workstation.ANVIL,
+                    Map.of("new_armor_mended_linen_hood", 1, "skin", 2, "iron_ore", 2, "herb_leaf", 2),
+                    "new_armor_briarwatch_helm__stout", 1, 180,
+                    Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 4, Profession.CRAFTING.id(), 3),
+                    "Rework common protection into uncommon affixed armor."),
+            recipe("upgrade_armor_rare", "Lanternscale Coat Setting", Workstation.ANVIL,
+                    Map.of("new_armor_cobalt_mail", 1, "scale", 3, "silver_ore", 2, "glowroot", 2),
+                    "new_armor_lanternscale_coat__bulwark", 1, 290,
+                    Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 8, Profession.CRAFTING.id(), 6),
+                    "Set rare scales into a defensive armor upgrade."),
+            recipe("upgrade_armor_unique", "Lyra Mercywrap Stitching", Workstation.ALCHEMY,
+                    Map.of("new_armor_nightwater_mantle", 1, "stone_roots", 1, "flower_blossom", 4, "crystal_dust", 4),
+                    "new_armor_lyra_mercywraps", 1, 370,
+                    Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 12, Profession.CRAFTING.id(), 10),
+                    "Make unique healer armor whose overheal becomes a ward."),
+            recipe("upgrade_armor_legendary", "Worldroot Carapace Growth", Workstation.CARPENTER,
+                    Map.of("new_armor_lyra_mercywraps", 1, "stone_roots", 1, "adamantite_ore", 3, "glowroot", 5),
+                    "new_armor_worldroot_carapace", 1, 480,
+                    Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 16, Profession.WOODCUTTING.id(), 12),
+                    "Grow unique armor into a legendary piece that rewards alternating spell and weapon damage."),
+            recipe("upgrade_accessory_uncommon", "Emberglass Signet Setting", Workstation.ANVIL,
+                    Map.of("new_accessory_tin_luck_ring", 1, "ember_shard", 1, "copper_ore", 2, "crystal_dust", 1),
+                    "new_accessory_emberglass_signet__surgical", 1, 150,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4, Profession.MINING.id(), 3),
+                    "Upgrade a common ring into an uncommon affixed crit accessory."),
+            recipe("upgrade_accessory_rare", "Archive Pageweight Inscription", Workstation.ALCHEMY,
+                    Map.of("new_accessory_stormthread_torque", 1, "crystal_dust", 4, "glowroot", 2, "silver_ore", 2),
+                    "new_accessory_archive_pageweight__focused", 1, 245,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 7, Profession.MINING.id(), 5),
+                    "Inscribe a rare accessory with focused casting stats."),
+            recipe("upgrade_accessory_unique", "Lyra Mercybell Casting", Workstation.ANVIL,
+                    Map.of("new_accessory_nightwater_signet", 1, "stone_bells", 1, "mithril_ore", 3, "flower_blossom", 4),
+                    "new_accessory_lyra_mercybell", 1, 345,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 12, Profession.MINING.id(), 9),
+                    "Cast a unique ring that remembers one desperate victory."),
+            recipe("upgrade_accessory_legendary", "Worldroot Seedstone Vow", Workstation.ALCHEMY,
+                    Map.of("new_accessory_lyra_mercybell", 1, "stone_roots", 1, "adamantite_ore", 3, "crystal_dust", 6),
+                    "new_accessory_worldroot_seedstone", 1, 460,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 16, Profession.MINING.id(), 12),
+                    "Raise a unique accessory into legendary alternating-damage gear."),
+            recipe("reforge_keen_weapon", "Keen Weapon Reforge", Workstation.ANVIL,
+                    Map.of("new_weapon_cobalt_halberd", 1, "crystal_dust", 2, "iron_ore", 3, "ember_shard", 1),
+                    "new_weapon_cobalt_halberd__keen", 1, 190,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 6, Profession.MINING.id(), 5),
+                    "Reforge an uncommon weapon toward crit rate and crit damage."),
+            recipe("reforge_surgical_weapon", "Surgical Weapon Reforge", Workstation.ANVIL,
+                    Map.of("new_weapon_nightwater_trident", 1, "crystal_dust", 4, "silver_ore", 3, "venom_sac", 1),
+                    "new_weapon_nightwater_trident__surgical", 1, 315,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 10, Profession.MINING.id(), 8),
+                    "Tune a rare weapon for high precision and triage pressure."),
+            recipe("reinforce_stout_armor", "Stout Armor Reinforcement", Workstation.ANVIL,
+                    Map.of("new_armor_cobalt_mail", 1, "iron_ore", 4, "skin", 2, "coal", 2),
+                    "new_armor_cobalt_mail__stout", 1, 205,
+                    Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 6, Profession.CRAFTING.id(), 5),
+                    "Reinforce uncommon armor with HP and resistance bracing."),
+            recipe("reinforce_bulwark_armor", "Bulwark Armor Reinforcement", Workstation.ANVIL,
+                    Map.of("new_armor_hearthflame_cuirass", 1, "scale", 3, "mithril_ore", 2, "crystal_dust", 3),
+                    "new_armor_hearthflame_cuirass__bulwark", 1, 335,
+                    Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 10, Profession.CRAFTING.id(), 8),
+                    "Reinforce rare armor into a heavier defensive affix profile."),
+            recipe("attune_focused_accessory", "Focused Accessory Attunement", Workstation.ALCHEMY,
+                    Map.of("new_accessory_cobalt_lens", 1, "glowroot", 2, "crystal_dust", 3, "flower_blossom", 1),
+                    "new_accessory_cobalt_lens__focused", 1, 185,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 6),
+                    "Attune an uncommon accessory toward MP and spell damage."),
+            recipe("attune_mending_accessory", "Mending Accessory Attunement", Workstation.ALCHEMY,
+                    Map.of("new_accessory_hearthflame_chain", 1, "flower_blossom", 4, "glowroot", 2, "crystal_dust", 3),
+                    "new_accessory_hearthflame_chain__mending", 1, 300,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 10),
+                    "Attune a rare accessory toward healing power and recovery stats."),
+            recipe("upgrade_potion_uncommon", "Emberwarm Elixir Batch", Workstation.ALCHEMY,
+                    Map.of("new_potion_minor_redcap_draught", 1, "herb_leaf", 2, "ember_shard", 1),
+                    "new_potion_emberwarm_elixir", 1, 115,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 3),
+                    "Refine common medicine into an uncommon battle elixir."),
+            recipe("upgrade_potion_rare", "Archive Ink Tonic Batch", Workstation.ALCHEMY,
+                    Map.of("new_potion_stormbreath_tonic", 1, "crystal_dust", 3, "glowroot", 1, "flower_blossom", 2),
+                    "new_potion_archive_ink_tonic", 1, 190,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 7),
+                    "Refine uncommon medicine into a rare tonic."),
+            recipe("upgrade_potion_unique", "Lyra Mercy Vial Batch", Workstation.ALCHEMY,
+                    Map.of("new_potion_nightwater_draught", 1, "stone_bells", 1, "flower_blossom", 5, "crystal_dust", 3),
+                    "new_potion_lyra_mercy_vial", 1, 300,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 12),
+                    "Brew a unique potion that makes the first potion of battle stronger."),
+            recipe("upgrade_potion_legendary", "Worldroot Panacea Batch", Workstation.ALCHEMY,
+                    Map.of("new_potion_lyra_mercy_vial", 1, "stone_roots", 1, "glowroot", 5, "adamantite_ore", 2),
+                    "new_potion_worldroot_panacea", 1, 430,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 16, Profession.MINING.id(), 10),
+                    "Brew legendary medicine tied to alternating spell and weapon rhythm."),
+            recipe("ember_socket_stone", "Stone of Ember", Workstation.ALCHEMY,
+                    Map.of("ember_shard", 3, "crystal_dust", 2, "coal", 1), "stone_ember", 1, 170,
+                    Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 3, Profession.MINING.id(), 2),
+                    "Solari's ember rite shapes heat, glass, and ash into a socket stone.")
     );
 
     private ActiveTask activeTask;
@@ -310,9 +486,9 @@ public final class CraftingSystem {
 
     public static Workstation workstationForAsset(String asset) {
         return switch (asset) {
-            case "interior_anvil", "interior_forge" -> Workstation.ANVIL;
-            case "interior_carpenter_table" -> Workstation.CARPENTER;
-            case "interior_oven", "interior_stove", "interior_hearth_pot",
+            case "interior_anvil", "interior_forge", "interior_anvil_tool_rack" -> Workstation.ANVIL;
+            case "interior_carpenter_table", "interior_carpenter_workbench", "interior_sawhorse_planks" -> Workstation.CARPENTER;
+            case "interior_oven", "interior_bakery_oven", "interior_bakery_counter", "interior_stove", "interior_hearth_pot",
                     "interior_cooking_station", "interior_cookpot_stand" -> Workstation.OVEN;
             case "interior_alchemy_station", "interior_mortar_pestle" -> Workstation.ALCHEMY;
             default -> null;
@@ -321,7 +497,9 @@ public final class CraftingSystem {
 
     public static int[] workstationFootprint(String asset) {
         return switch (asset) {
-            case "interior_carpenter_table", "interior_alchemy_station", "interior_cooking_station" -> new int[]{2, 1};
+            case "interior_carpenter_table", "interior_carpenter_workbench", "interior_alchemy_station",
+                    "interior_cooking_station", "interior_sawhorse_planks", "interior_bakery_counter" -> new int[]{2, 1};
+            case "interior_bakery_oven", "interior_anvil_tool_rack" -> new int[]{1, 2};
             default -> new int[]{1, 1};
         };
     }
@@ -330,6 +508,112 @@ public final class CraftingSystem {
         return RECIPES.stream()
                 .filter(recipe -> recipe.workstation() == null || recipe.workstation() == workstation)
                 .toList();
+    }
+
+    public static List<Recipe> sortRecipes(List<Recipe> recipes) {
+        return recipes.stream()
+                .sorted(Comparator.comparingInt((Recipe recipe) -> recipe.category().ordinal())
+                        .thenComparing(Recipe::name))
+                .toList();
+    }
+
+    public static Set<String> starterRecipeKeys() {
+        return STARTER_RECIPE_KEYS;
+    }
+
+    public static boolean isStarterRecipe(String recipeKey) {
+        return STARTER_RECIPE_KEYS.contains(recipeKey);
+    }
+
+    public static String recipeKeyForBookItem(String itemKey) {
+        return RECIPE_BOOKS.getOrDefault(itemKey, "");
+    }
+
+    public static boolean isRecipeBookItem(String itemKey) {
+        return RECIPE_BOOKS.containsKey(itemKey);
+    }
+
+    public static List<Recipe> recipesUsingIngredient(String itemKey) {
+        if (itemKey == null || itemKey.isBlank()) {
+            return List.of();
+        }
+        return RECIPES.stream()
+                .filter(recipe -> !isStarterRecipe(recipe.key()))
+                .filter(recipe -> !isStoryLockedRecipe(recipe.key()))
+                .filter(recipe -> recipe.cost().containsKey(itemKey))
+                .toList();
+    }
+
+    public static List<Recipe> recipesFromBookcase(String mapId, int x, int y) {
+        List<Recipe> readable = RECIPES.stream()
+                .filter(recipe -> !isStarterRecipe(recipe.key()))
+                .filter(recipe -> !isStoryLockedRecipe(recipe.key()))
+                .toList();
+        if (readable.isEmpty()) {
+            return List.of();
+        }
+        int seed = mapId.hashCode() * 31 + x * 928371 + y * 364479;
+        Recipe first = readable.get(Math.floorMod(seed, readable.size()));
+        Recipe second = readable.get(Math.floorMod(seed / 7 + 11, readable.size()));
+        if (first.key().equals(second.key())) {
+            return List.of(first);
+        }
+        return List.of(first, second);
+    }
+
+    public static List<Recipe> recipesTaughtByNpc(Npc npc) {
+        if (npc == null) {
+            return List.of();
+        }
+        String text = (npc.name() + " " + npc.sprite() + " " + (npc.shopId() == null ? "" : npc.shopId())
+                + " " + String.join(" ", npc.dialog())).toLowerCase();
+        Set<RecipeCategory> categories = new HashSet<>();
+        if (hasAny(text, "smith", "blacksmith", "forge", "armorer", "armourer", "weaponsmith", "quartermaster")) {
+            categories.add(RecipeCategory.WEAPON);
+            categories.add(RecipeCategory.ARMOR);
+            categories.add(RecipeCategory.TOOL);
+        }
+        if (hasAny(text, "carpenter", "woodworker", "woodwright", "bowyer", "fletcher", "joiner")) {
+            categories.add(RecipeCategory.WEAPON);
+            categories.add(RecipeCategory.TOOL);
+            categories.add(RecipeCategory.DECOR);
+        }
+        if (hasAny(text, "cook", "baker", "innkeeper", "tavern", "brewer", "chef")) {
+            categories.add(RecipeCategory.CONSUMABLE);
+        }
+        if (hasAny(text, "alchemist", "apothecary", "herbalist", "healer", "physicker", "distiller")) {
+            categories.add(RecipeCategory.CONSUMABLE);
+            categories.add(RecipeCategory.MATERIAL);
+        }
+        if (hasAny(text, "farmer", "gardener", "seedkeeper", "seed keeper", "horticulturist", "beekeeper")) {
+            categories.add(RecipeCategory.SEED);
+            categories.add(RecipeCategory.CONSUMABLE);
+        }
+        if (hasAny(text, "tailor", "weaver", "leatherworker", "tanner", "cobbler", "seamstress")) {
+            categories.add(RecipeCategory.ARMOR);
+            categories.add(RecipeCategory.CONSUMABLE);
+        }
+        if (categories.isEmpty()) {
+            return List.of();
+        }
+        return sortRecipes(RECIPES.stream()
+                .filter(recipe -> !isStarterRecipe(recipe.key()))
+                .filter(recipe -> !isStoryLockedRecipe(recipe.key()))
+                .filter(recipe -> categories.contains(recipe.category()))
+                .toList());
+    }
+
+    private static boolean isStoryLockedRecipe(String recipeKey) {
+        return "ember_socket_stone".equals(recipeKey);
+    }
+
+    private static boolean hasAny(String text, String... needles) {
+        for (String needle : needles) {
+            if (text.contains(needle)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Recipe recipeByKey(String key) {
@@ -392,9 +676,18 @@ public final class CraftingSystem {
     }
 
     public static String grantLoot(Actor actor, List<GameData.MonsterSpec> specs, Random random) {
+        return grantLoot(actor, specs, random, "", 'g', 0);
+    }
+
+    public static String grantLoot(Actor actor, List<GameData.MonsterSpec> specs, Random random,
+                                   String mapKind, char terrain, int dungeonTier) {
         Map<String, Integer> loot = new LinkedHashMap<>();
         for (GameData.MonsterSpec spec : specs) {
             rollMonsterLoot(spec.key(), random, loot);
+        }
+        String contextual = GameData.rollContextualLoot(mapKind, terrain, dungeonTier, specs, random);
+        if (!contextual.isBlank()) {
+            addLoot(loot, contextual, 1);
         }
         for (Map.Entry<String, Integer> entry : loot.entrySet()) {
             actor.addItem(entry.getKey(), entry.getValue());
@@ -425,24 +718,42 @@ public final class CraftingSystem {
         return activeTask == null ? 1 : activeTask.worldTickAdvance;
     }
 
+    public Map<String, Integer> lastCompletedOutput() {
+        return Map.copyOf(lastCompletedOutput);
+    }
+
     public GatherCandidate findGatherTarget(WorldMap world, String mapId, int playerX, int playerY) {
         for (int[] direction : GATHER_DIRECTIONS) {
-            int x = playerX + direction[0];
-            int y = playerY + direction[1];
-            WorldProp prop = world.propAt(mapId, x, y);
-            if (prop != null && isGatherableProp(prop.asset())) {
-                return new GatherCandidate(propGatherLabel(prop.asset()), new TilePoint(x, y), 'P', prop.asset());
+            GatherCandidate candidate = gatherCandidateAt(world, mapId, playerX + direction[0], playerY + direction[1]);
+            if (candidate != null) {
+                return candidate;
             }
-            char tile = world.tileAt(mapId, x, y);
-            if (tile == 'f') {
-                return new GatherCandidate("trees", new TilePoint(x, y), tile);
-            }
-            if (tile == 'm' || tile == 'q') {
-                return new GatherCandidate("mountain stone", new TilePoint(x, y), tile);
-            }
-            if (tile == 'w') {
-                return new GatherCandidate("water", new TilePoint(x, y), tile);
-            }
+        }
+        return null;
+    }
+
+    public GatherCandidate findGatherTarget(WorldMap world, String mapId, int playerX, int playerY, int facingDx, int facingDy) {
+        if (Math.abs(facingDx) + Math.abs(facingDy) != 1) {
+            return findGatherTarget(world, mapId, playerX, playerY);
+        }
+        return gatherCandidateAt(world, mapId, playerX + facingDx, playerY + facingDy);
+    }
+
+    public GatherCandidate findGatherTargetAt(WorldMap world, String mapId, int x, int y) {
+        return gatherCandidateAt(world, mapId, x, y);
+    }
+
+    private GatherCandidate gatherCandidateAt(WorldMap world, String mapId, int x, int y) {
+        WorldProp prop = world.propAt(mapId, x, y);
+        if (prop != null && isGatherableProp(prop.asset())) {
+            return new GatherCandidate(propGatherLabel(prop.asset()), new TilePoint(x, y), 'P', prop.asset());
+        }
+        char tile = world.tileAt(mapId, x, y);
+        if (tile == 'm' || tile == 'q') {
+            return new GatherCandidate("mountain stone", new TilePoint(x, y), tile);
+        }
+        if (tile == 'w') {
+            return new GatherCandidate("water", new TilePoint(x, y), tile);
         }
         return null;
     }
@@ -452,7 +763,7 @@ public final class CraftingSystem {
             return "Already busy: " + activeTask.actionLabel + ".";
         }
         if (candidate == null) {
-            return "Stand next to forest, mountain, water, beach props, or a planter to gather.";
+            return "Stand next to a resource node, mountain, water, beach prop, or planter to gather.";
         }
         Map<String, Integer> output = new LinkedHashMap<>();
         int ticks;
@@ -512,22 +823,76 @@ public final class CraftingSystem {
             ticks = adjustedGatherTicks(propGatherTicks(candidate.asset()), skillLevel);
             label = "Gathering from " + candidate.label();
             addPropGatherOutput(candidate.asset(), output, random);
+            applyToolGatherBonuses(actor, candidate.asset(), output, profession, skillLevel, random);
             applyProfessionGatherBonuses(actor, output, profession, skillLevel, random);
         } else {
             return "Nothing useful to gather here.";
         }
         List<Actor> participants = gatherParticipants(actor, helpers);
         int xp = 8 + output.values().stream().mapToInt(Integer::intValue).sum() * 2;
-        activeTask = new ActiveTask(label, ticks, output, 6, profession, xp, participants);
+        int characterXp = Math.max(1, (int) Math.round((4 + output.values().stream().mapToInt(Integer::intValue).sum()) * 0.80));
+        activeTask = new ActiveTask(label, ticks, output, 6, profession, xp, characterXp, participants);
         return label + " near " + candidate.label() + "...";
     }
 
     private static boolean isGatherableProp(String asset) {
-        return propProfile(asset) != PropProfile.NONE;
+        return gatherablePropProfile(asset) != PropProfile.NONE;
+    }
+
+    public static boolean isDepletableResourceNode(String asset) {
+        String lower = asset == null ? "" : asset.toLowerCase();
+        if (lower.isBlank()) {
+            return false;
+        }
+        return gatherPrimaryMaterialKey(asset) != null
+                || lower.contains("beach_shells")
+                || lower.contains("beach_coconuts")
+                || lower.contains("driftwood")
+                || lower.contains("herb_patch")
+                || lower.contains("mushroom")
+                || lower.contains("reeds")
+                || lower.contains("cattails")
+                || lower.contains("crystal_cluster");
     }
 
     private static String propGatherLabel(String asset) {
         String lower = asset.toLowerCase();
+        String oreKey = typedOreKey(lower);
+        if (oreKey != null) {
+            return switch (oreKey) {
+                case "iron_ore" -> "iron ore";
+                case "copper_ore" -> "copper ore";
+                case "tin_ore" -> "tin ore";
+                case "silver_ore" -> "silver ore";
+                case "gold_ore" -> "gold ore";
+                case "mithril_ore" -> "mithril ore";
+                case "cobalt_ore" -> "cobalt ore";
+                case "adamantite_ore" -> "adamantite ore";
+                case "steel_scrap" -> "steel scrap";
+                case "crystal_dust" -> "crystals";
+                case "coal" -> "coal";
+                default -> "ore";
+            };
+        }
+        String woodKey = typedWoodKey(lower);
+        if (woodKey != null) {
+            return switch (woodKey) {
+                case "oak_wood" -> "oak wood";
+                case "birch_wood" -> "birch wood";
+                case "pine_wood" -> "pine wood";
+                case "willow_wood" -> "willow wood";
+                case "maple_wood" -> "maple wood";
+                case "ash_wood" -> "ash wood";
+                case "elder_wood" -> "elder wood";
+                case "magic_wood" -> "magic wood";
+                case "deadwood" -> "deadwood";
+                case "fruitwood" -> "fruitwood";
+                case "ironwood" -> "ironwood";
+                case "enchanted_bark" -> "enchanted bark";
+                case "glowroot" -> "glowroot";
+                default -> "wood";
+            };
+        }
         if (lower.contains("seed_bowl")) {
             return "seed bowl";
         }
@@ -570,43 +935,13 @@ public final class CraftingSystem {
         if (lower.contains("net")) {
             return "net rack";
         }
-        if (lower.contains("copper")) {
-            return "copper ore";
-        }
-        if (lower.contains("mithril")) {
-            return "mithril ore";
-        }
-        if (lower.contains("cobalt")) {
-            return "cobalt ore";
-        }
-        if (lower.contains("adamantite")) {
-            return "adamantite ore";
-        }
-        if (lower.contains("tin")) {
-            return "tin ore";
-        }
-        if (lower.contains("silver")) {
-            return "silver ore";
-        }
-        if (lower.contains("gold")) {
-            return "gold ore";
-        }
-        if (lower.contains("steel_scrap")) {
-            return "steel scrap";
-        }
-        if (lower.contains("coal")) {
-            return "coal";
-        }
-        if (lower.contains("ore")) {
-            return "ore";
-        }
         if (lower.contains("rock") || lower.contains("stone") || lower.contains("pebble") || lower.contains("cairn")) {
             return "stones";
         }
         if (lower.contains("crystal")) {
             return "crystals";
         }
-        if (lower.contains("tree") || lower.contains("pine") || lower.contains("log") || lower.contains("woodpile")) {
+        if (lower.contains("tree") || lower.contains("pine") || lower.contains("log") || lower.contains("stump") || lower.contains("woodpile")) {
             return "wood";
         }
         if (lower.contains("crate") || lower.contains("barrel") || lower.contains("palisade")) {
@@ -765,34 +1100,7 @@ public final class CraftingSystem {
     }
 
     private static boolean addTypedWoodOutput(String lower, Map<String, Integer> output, Random random) {
-        String woodKey = null;
-        if (lower.contains("oak_harvestable")) {
-            woodKey = "oak_wood";
-        } else if (lower.contains("birch")) {
-            woodKey = "birch_wood";
-        } else if (lower.contains("pine_harvestable")) {
-            woodKey = "pine_wood";
-        } else if (lower.contains("willow")) {
-            woodKey = "willow_wood";
-        } else if (lower.contains("maple")) {
-            woodKey = "maple_wood";
-        } else if (lower.contains("ash_harvestable") || lower.contains("fallen_ash")) {
-            woodKey = "ash_wood";
-        } else if (lower.contains("elder")) {
-            woodKey = "elder_wood";
-        } else if (lower.contains("magical")) {
-            woodKey = "magic_wood";
-        } else if (lower.contains("deadwood")) {
-            woodKey = "deadwood";
-        } else if (lower.contains("fruit")) {
-            woodKey = "fruitwood";
-        } else if (lower.contains("ironwood")) {
-            woodKey = "ironwood";
-        } else if (lower.contains("enchanted_stump")) {
-            woodKey = "enchanted_bark";
-        } else if (lower.contains("glowing_root")) {
-            woodKey = "glowroot";
-        }
+        String woodKey = typedWoodKey(lower);
         if (woodKey == null) {
             return false;
         }
@@ -820,30 +1128,7 @@ public final class CraftingSystem {
     }
 
     private static boolean addTypedOreOutput(String lower, Map<String, Integer> output, Random random) {
-        String oreKey = null;
-        if (lower.contains("iron_vein")) {
-            oreKey = "iron_ore";
-        } else if (lower.contains("copper")) {
-            oreKey = "copper_ore";
-        } else if (lower.contains("coal")) {
-            oreKey = "coal";
-        } else if (lower.contains("mithril")) {
-            oreKey = "mithril_ore";
-        } else if (lower.contains("cobalt")) {
-            oreKey = "cobalt_ore";
-        } else if (lower.contains("adamantite")) {
-            oreKey = "adamantite_ore";
-        } else if (lower.contains("tin")) {
-            oreKey = "tin_ore";
-        } else if (lower.contains("silver")) {
-            oreKey = "silver_ore";
-        } else if (lower.contains("gold")) {
-            oreKey = "gold_ore";
-        } else if (lower.contains("crystal_vein")) {
-            oreKey = "crystal_dust";
-        } else if (lower.contains("steel_scrap")) {
-            oreKey = "steel_scrap";
-        }
+        String oreKey = typedOreKey(lower);
         if (oreKey == null) {
             return false;
         }
@@ -868,6 +1153,131 @@ public final class CraftingSystem {
             addLoot(output, "frost_shard", 1);
         }
         return true;
+    }
+
+    private static String gatherPrimaryMaterialKey(String asset) {
+        String lower = asset == null ? "" : asset.toLowerCase();
+        String woodKey = typedWoodKey(lower);
+        return woodKey == null ? typedOreKey(lower) : woodKey;
+    }
+
+    private static String typedWoodKey(String lower) {
+        if (lower.contains("oak_harvestable")) {
+            return "oak_wood";
+        }
+        if (lower.equals("deco_tree_oak")) {
+            return "oak_wood";
+        }
+        if (lower.contains("birch")) {
+            return "birch_wood";
+        }
+        if (lower.contains("pine_harvestable") || lower.equals("deco_tree_pine") || lower.equals("deco_tree_blue_pine")
+                || lower.equals("deco_snow_pine") || lower.equals("deco_mountain_scrub_pine")
+                || lower.equals("deco_pine_sapling") || lower.equals("deco_forest_pine_cluster")) {
+            return "pine_wood";
+        }
+        if (lower.contains("willow")) {
+            return "willow_wood";
+        }
+        if (lower.contains("maple")) {
+            return "maple_wood";
+        }
+        if (lower.contains("ash_harvestable") || lower.contains("fallen_ash")) {
+            return "ash_wood";
+        }
+        if (lower.contains("elder")) {
+            return "elder_wood";
+        }
+        if (lower.contains("magical")) {
+            return "magic_wood";
+        }
+        if (lower.contains("deadwood")) {
+            return "deadwood";
+        }
+        if (lower.contains("fruit")) {
+            return "fruitwood";
+        }
+        if (lower.contains("ironwood")) {
+            return "ironwood";
+        }
+        if (lower.contains("enchanted_stump")) {
+            return "enchanted_bark";
+        }
+        if (lower.contains("glowing_root")) {
+            return "glowroot";
+        }
+        return null;
+    }
+
+    private static String typedOreKey(String lower) {
+        if (lower.contains("iron_vein")) {
+            return "iron_ore";
+        }
+        if (lower.contains("copper_vein")) {
+            return "copper_ore";
+        }
+        if (lower.contains("coal_deposit")) {
+            return "coal";
+        }
+        if (lower.contains("mithril_vein") || lower.contains("mythril_vein")) {
+            return "mithril_ore";
+        }
+        if (lower.contains("cobalt_vein")) {
+            return "cobalt_ore";
+        }
+        if (lower.contains("adamantite_vein")) {
+            return "adamantite_ore";
+        }
+        if (lower.contains("tin_vein")) {
+            return "tin_ore";
+        }
+        if (lower.contains("silver_vein")) {
+            return "silver_ore";
+        }
+        if (lower.contains("gold_vein")) {
+            return "gold_ore";
+        }
+        if (lower.contains("crystal_vein")) {
+            return "crystal_dust";
+        }
+        if (lower.contains("steel_scrap")) {
+            return "steel_scrap";
+        }
+        return null;
+    }
+
+    private static void applyToolGatherBonuses(Actor actor, String asset, Map<String, Integer> output,
+                                               String profession, int skillLevel, Random random) {
+        if (actor == null || asset == null || asset.isBlank()) {
+            return;
+        }
+        String primary = gatherPrimaryMaterialKey(asset);
+        if (primary == null) {
+            return;
+        }
+        if (Profession.MINING.id().equals(profession)) {
+            boolean ironPick = actor.hasItem("iron_pickaxe");
+            boolean stonePick = ironPick || actor.hasItem("stone_pickaxe");
+            if (ironPick) {
+                addLoot(output, primary, 1);
+                if (random.nextDouble() < 0.25 + skillLevel * 0.025) {
+                    addLoot(output, "stone", 1);
+                }
+            } else if (stonePick && random.nextDouble() < 0.35 + skillLevel * 0.025) {
+                addLoot(output, primary, 1);
+            }
+        } else if (Profession.WOODCUTTING.id().equals(profession)) {
+            boolean axe = actor.hasItem("woodcutter_axe") || "woodcutter_axe".equals(actor.equipment.get("weapon"));
+            boolean stoneAxe = axe || actor.hasItem("stone_axe");
+            if (axe) {
+                addLoot(output, primary, 1);
+                if (random.nextDouble() < 0.35 + skillLevel * 0.02) {
+                    addLoot(output, "plant_fiber", 1);
+                }
+            } else if (stoneAxe && random.nextDouble() < 0.35 + skillLevel * 0.02) {
+                addLoot(output, primary, 1);
+            }
+        }
     }
 
     private static List<Actor> gatherParticipants(Actor actor, List<Actor> helpers) {
@@ -1013,9 +1423,7 @@ public final class CraftingSystem {
         if (lower.contains("crystal") || lower.contains("ice_crystals")) {
             return PropProfile.CRYSTAL;
         }
-        if (lower.contains("ore") || lower.contains("coal") || lower.contains("mithril") || lower.contains("cobalt")
-                || lower.contains("adamantite") || lower.contains("copper") || lower.contains("silver")
-                || lower.contains("gold") || lower.contains("steel_scrap")) {
+        if (typedOreKey(lower) != null) {
             return PropProfile.STONE;
         }
         if (lower.contains("bone") || lower.contains("skull")) {
@@ -1057,6 +1465,71 @@ public final class CraftingSystem {
         return PropProfile.NONE;
     }
 
+    private static PropProfile gatherablePropProfile(String asset) {
+        String lower = asset == null ? "" : asset.toLowerCase();
+        if (lower.isBlank()) {
+            return PropProfile.NONE;
+        }
+        if (typedOreKey(lower) != null) {
+            return PropProfile.STONE;
+        }
+        if (typedWoodKey(lower) != null || lower.contains("harvestable") || isRegularTreeProp(lower)) {
+            return PropProfile.WOOD;
+        }
+        if (lower.contains("beach_coconuts") || lower.contains("coconut")) {
+            return PropProfile.COCONUT;
+        }
+        if (lower.contains("beach_shells") || lower.contains("shell")) {
+            return PropProfile.SHELL;
+        }
+        if (lower.contains("driftwood")) {
+            return PropProfile.DRIFTWOOD;
+        }
+        if (lower.contains("palm_frond") || lower.contains("palm_shade")) {
+            return PropProfile.PALM;
+        }
+        if (lower.contains("crystal_cluster") || lower.contains("ice_crystals")) {
+            return PropProfile.CRYSTAL;
+        }
+        if (lower.contains("mushroom")) {
+            return PropProfile.MUSHROOM;
+        }
+        if (lower.contains("reeds") || lower.contains("cattails") || lower.contains("water_lily")) {
+            return PropProfile.REED;
+        }
+        if (lower.contains("herb_patch") || lower.contains("herb_planter") || lower.contains("seed_bowl")
+                || lower.contains("planting_pot") || lower.contains("sprout_planter")) {
+            return PropProfile.PLANT;
+        }
+        if (lower.contains("flower") || lower.contains("blossom") || lower.contains("daisy")) {
+            return PropProfile.FLOWER;
+        }
+        if (lower.contains("wheat") || lower.contains("hay") || lower.contains("tilled") || lower.contains("garden_vegetables")) {
+            return PropProfile.FARM;
+        }
+        if (lower.contains("bone") || lower.contains("skull")) {
+            return PropProfile.BONE;
+        }
+        if (lower.contains("clay") || lower.contains("pottery")) {
+            return PropProfile.CLAY;
+        }
+        return PropProfile.NONE;
+    }
+
+    private static boolean isRegularTreeProp(String lower) {
+        return lower.equals("deco_tree_oak")
+                || lower.equals("deco_tree_round")
+                || lower.equals("deco_tree_pine")
+                || lower.equals("deco_tree_blue_pine")
+                || lower.equals("deco_tree_young")
+                || lower.equals("deco_snow_pine")
+                || lower.equals("deco_mountain_scrub_pine")
+                || lower.equals("deco_pine_sapling")
+                || lower.equals("deco_forest_pine_cluster")
+                || lower.equals("deco_forest_log")
+                || lower.equals("deco_stump");
+    }
+
     public String beginCraft(Actor actor, Recipe recipe) {
         if (activeTask != null) {
             return "Already busy: " + activeTask.actionLabel + ".";
@@ -1080,8 +1553,17 @@ public final class CraftingSystem {
         int xp = 10 + Math.max(1, recipe.cost().values().stream().mapToInt(Integer::intValue).sum()) * 3;
         int resultAmount = recipe.resultAmount() + craftedOutputBonus(actor, recipe);
         activeTask = new ActiveTask("Crafting " + recipe.name(), ticks, Map.of(recipe.resultKey(), resultAmount), 1,
-                recipe.profession(), xp, List.of(actor));
+                recipe.profession(), xp, 0, List.of(actor));
         return "Crafting " + recipe.name() + "...";
+    }
+
+    public String beginReading(String subject, int ticks) {
+        if (activeTask != null) {
+            return "Already busy: " + activeTask.actionLabel + ".";
+        }
+        String label = subject == null || subject.isBlank() ? "Reading" : "Reading " + subject;
+        activeTask = new ActiveTask(label, Math.max(24, ticks), Map.of(), 5, "", 0, 0, List.of());
+        return label + "...";
     }
 
     private static int craftedOutputBonus(Actor actor, Recipe recipe) {
@@ -1110,21 +1592,34 @@ public final class CraftingSystem {
             return "";
         }
         Map<String, Integer> output = activeTask.output;
+        lastCompletedOutput = Map.copyOf(output);
         String label = lootLabel(output);
         for (Map.Entry<String, Integer> entry : output.entrySet()) {
             actor.addItem(entry.getKey(), entry.getValue());
         }
         List<String> levelNotes = new ArrayList<>();
+        List<String> characterNotes = new ArrayList<>();
         if (activeTask.profession != null && !activeTask.profession.isBlank()) {
             for (int i = 0; i < activeTask.participants.size(); i++) {
                 Actor participant = activeTask.participants.get(i);
                 int xp = i == 0 ? activeTask.professionXp : Math.max(1, activeTask.professionXp / 2);
                 levelNotes.addAll(participant.gainProfessionXp(activeTask.profession, xp));
+                if (activeTask.characterXp > 0) {
+                    int characterXp = i == 0 ? activeTask.characterXp : Math.max(1, activeTask.characterXp / 2);
+                    for (String note : participant.gainXp(characterXp)) {
+                        characterNotes.add(participant.name + ": " + note);
+                    }
+                }
             }
         }
+        int earnedCharacterXp = activeTask.characterXp;
         activeTask = null;
         String levels = levelNotes.isEmpty() ? "" : " Skills improved: " + String.join(", ", levelNotes) + ".";
-        return "Finished: +" + label + "." + levels;
+        String regularXp = earnedCharacterXp <= 0 ? "" : " +" + earnedCharacterXp + " XP.";
+        if (!characterNotes.isEmpty()) {
+            regularXp += " " + String.join(" ", characterNotes);
+        }
+        return "Finished: +" + label + "." + regularXp + levels;
     }
 
     private static Recipe recipe(
@@ -1154,7 +1649,43 @@ public final class CraftingSystem {
             String description
     ) {
         return new Recipe(key, name, workstation, cost, resultKey, resultAmount, ticks,
-                profession, Map.copyOf(professionRequirements), description);
+                profession, Map.copyOf(professionRequirements), categoryForRecipe(key, resultKey, cost), description);
+    }
+
+    private static RecipeCategory categoryForRecipe(String key, String resultKey, Map<String, Integer> cost) {
+        if (resultKey == null) {
+            return RecipeCategory.MATERIAL;
+        }
+        if (resultKey.contains("seed") || key.contains("seed")) {
+            return RecipeCategory.SEED;
+        }
+        if (resultKey.startsWith("village_prop_")) {
+            return RecipeCategory.DECOR;
+        }
+        if (resultKey.endsWith("_axe") || resultKey.endsWith("_pickaxe") || resultKey.contains("pickaxe")
+                || resultKey.contains("woodcutter")) {
+            return RecipeCategory.TOOL;
+        }
+        Item item = GameData.ITEMS.get(resultKey);
+        if (item != null) {
+            return RecipeCategory.CONSUMABLE;
+        }
+        Equipment equipment = GameData.equipment(resultKey);
+        if (equipment != null) {
+            String slot = equipment.slot();
+            if ("weapon".equals(slot)) {
+                return RecipeCategory.WEAPON;
+            }
+            if ("ring".equals(slot) || "necklace".equals(slot) || "belt".equals(slot)) {
+                return RecipeCategory.ACCESSORY;
+            }
+            return RecipeCategory.ARMOR;
+        }
+        if (cost.containsKey("herb_leaf") || cost.containsKey("wild_meat") || cost.containsKey("raw_fish")
+                || cost.containsKey("garden_vegetables") || cost.containsKey("coconut")) {
+            return RecipeCategory.CONSUMABLE;
+        }
+        return RecipeCategory.MATERIAL;
     }
 
     private static String defaultRecipeProfession(Workstation workstation, Map<String, Integer> cost) {
@@ -1376,11 +1907,12 @@ public final class CraftingSystem {
         final int worldTickAdvance;
         final String profession;
         final int professionXp;
+        final int characterXp;
         final List<Actor> participants;
         int remainingTicks;
 
         ActiveTask(String actionLabel, int totalTicks, Map<String, Integer> output, int worldTickAdvance,
-                   String profession, int professionXp, List<Actor> participants) {
+                   String profession, int professionXp, int characterXp, List<Actor> participants) {
             this.actionLabel = actionLabel;
             this.totalTicks = Math.max(1, totalTicks);
             this.remainingTicks = this.totalTicks;
@@ -1388,6 +1920,7 @@ public final class CraftingSystem {
             this.worldTickAdvance = Math.max(1, worldTickAdvance);
             this.profession = profession == null ? "" : profession;
             this.professionXp = Math.max(0, professionXp);
+            this.characterXp = Math.max(0, characterXp);
             this.participants = List.copyOf(participants == null ? List.of() : participants);
         }
     }

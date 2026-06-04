@@ -1,0 +1,322 @@
+[
+  {
+    "name": "interior_carpenter_workbench",
+    "path": "assets/interiors/props/specialized/interior_carpenter_workbench.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      0,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1747,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_bakery_counter",
+    "path": "assets/interiors/props/specialized/interior_bakery_counter.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      1,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1604,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_tavern_counter",
+    "path": "assets/interiors/props/specialized/interior_tavern_counter.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      2,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1450,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_metal_crate",
+    "path": "assets/interiors/props/specialized/interior_metal_crate.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      3,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1543,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_long_table_benches",
+    "path": "assets/interiors/props/specialized/interior_long_table_benches.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      0,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1708,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_sawhorse_planks",
+    "path": "assets/interiors/props/specialized/interior_sawhorse_planks.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      1,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1648,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_storage_counter",
+    "path": "assets/interiors/props/specialized/interior_storage_counter.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      2,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1786,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_low_cupboard",
+    "path": "assets/interiors/props/specialized/interior_low_cupboard.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      3,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1397,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_bakery_oven",
+    "path": "assets/interiors/props/specialized/interior_bakery_oven.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      0,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 1546,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_resident_bed",
+    "path": "assets/interiors/props/specialized/interior_resident_bed.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      1,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 2800,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_traveler_trunk",
+    "path": "assets/interiors/props/specialized/interior_traveler_trunk.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      2,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 2387,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_herb_drying_rack_v",
+    "path": "assets/interiors/props/specialized/interior_herb_drying_rack_v.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      3,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 1224,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_linen_shelf",
+    "path": "assets/interiors/props/specialized/interior_linen_shelf.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      0,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 2215,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_anvil_tool_rack",
+    "path": "assets/interiors/props/specialized/interior_anvil_tool_rack.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      1,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 1632,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_grain_sacks_v",
+    "path": "assets/interiors/props/specialized/interior_grain_sacks_v.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      2,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 1810,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_inn_screen_chest",
+    "path": "assets/interiors/props/specialized/interior_inn_screen_chest.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      3,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 1443,
+    "edge_background_pixels": 0,
+    "components": 1
+  }
+]

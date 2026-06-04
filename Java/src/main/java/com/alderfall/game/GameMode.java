@@ -15,6 +15,7 @@ public enum GameMode {
     VILLAGE,
     BUILDING_ASSIGNMENT,
     SETTLEMENT_BOARD,
+    FAST_TRAVEL,
     SHOP,
     WORLD_MAP,
     PAUSE_MENU,

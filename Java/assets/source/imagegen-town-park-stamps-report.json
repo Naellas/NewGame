@@ -1,0 +1,112 @@
+[
+  {
+    "path": "Java/assets/locations/town_park_accent_green.png",
+    "mode": "magenta",
+    "source_size": [
+      449,
+      449
+    ],
+    "output_size": [
+      449,
+      449
+    ],
+    "visible_bbox": [
+      47,
+      24,
+      425,
+      425
+    ],
+    "visible_pixels": 116685,
+    "edge_background_pixels": 0,
+    "components": 3,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/locations/town_park_accent_snow.png",
+    "mode": "magenta",
+    "source_size": [
+      423,
+      423
+    ],
+    "output_size": [
+      423,
+      423
+    ],
+    "visible_bbox": [
+      30,
+      22,
+      407,
+      401
+    ],
+    "visible_pixels": 116329,
+    "edge_background_pixels": 4,
+    "components": 1,
+    "passed": false
+  },
+  {
+    "path": "Java/assets/locations/town_park_accent_desert.png",
+    "mode": "magenta",
+    "source_size": [
+      453,
+      453
+    ],
+    "output_size": [
+      453,
+      453
+    ],
+    "visible_bbox": [
+      49,
+      24,
+      404,
+      429
+    ],
+    "visible_pixels": 119529,
+    "edge_background_pixels": 0,
+    "components": 1,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/locations/town_park_accent_marsh.png",
+    "mode": "magenta",
+    "source_size": [
+      413,
+      413
+    ],
+    "output_size": [
+      413,
+      413
+    ],
+    "visible_bbox": [
+      22,
+      23,
+      391,
+      390
+    ],
+    "visible_pixels": 102366,
+    "edge_background_pixels": 0,
+    "components": 5,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/locations/town_park_accent_city.png",
+    "mode": "magenta",
+    "source_size": [
+      419,
+      419
+    ],
+    "output_size": [
+      419,
+      419
+    ],
+    "visible_bbox": [
+      33,
+      22,
+      381,
+      397
+    ],
+    "visible_pixels": 110826,
+    "edge_background_pixels": 0,
+    "components": 1,
+    "passed": true
+  }
+]

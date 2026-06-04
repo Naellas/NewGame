@@ -21,10 +21,17 @@ public final class GameConfig {
     public double dungeonEntranceEncounterChance;
     public double twoMonsterChance;
     public double threeMonsterChance;
+    public double monsterLevelScaling = 0.60;
     public int masterVolume = 80;
     public int musicVolume = 70;
     public int sfxVolume = 75;
     public boolean creativeBuildMode = true;
+    public boolean showMapEditorButton = true;
+    public String cameraMode = "smooth";
+    public int cameraSmoothing = 68;
+    public boolean cameraLookAhead = true;
+    public String movementSpeed = "normal";
+    public String weatherQuality = "high";
 
     private GameConfig(
             double wildEncounterChance,
@@ -73,10 +80,17 @@ public final class GameConfig {
             config.dungeonEntranceEncounterChance = readDouble(props, "dungeonEntranceEncounterChance", config.dungeonEntranceEncounterChance);
             config.twoMonsterChance = readDouble(props, "twoMonsterChance", config.twoMonsterChance);
             config.threeMonsterChance = readDouble(props, "threeMonsterChance", config.threeMonsterChance);
+            config.monsterLevelScaling = readDouble(props, "monsterLevelScaling", config.monsterLevelScaling);
             config.masterVolume = readInt(props, "masterVolume", config.masterVolume);
             config.musicVolume = readInt(props, "musicVolume", config.musicVolume);
             config.sfxVolume = readInt(props, "sfxVolume", config.sfxVolume);
             config.creativeBuildMode = readBoolean(props, "creativeBuildMode", config.creativeBuildMode);
+            config.showMapEditorButton = readBoolean(props, "showMapEditorButton", config.showMapEditorButton);
+            config.cameraMode = readChoice(props, "cameraMode", config.cameraMode, "locked", "smooth", "look_ahead", "dead_zone");
+            config.cameraSmoothing = readInt(props, "cameraSmoothing", config.cameraSmoothing);
+            config.cameraLookAhead = readBoolean(props, "cameraLookAhead", config.cameraLookAhead);
+            config.movementSpeed = readChoice(props, "movementSpeed", config.movementSpeed, "relaxed", "normal", "quick");
+            config.weatherQuality = readChoice(props, "weatherQuality", config.weatherQuality, "high", "balanced", "performance");
         } catch (IOException ignored) {
         }
         return config;
@@ -91,10 +105,17 @@ public final class GameConfig {
         props.setProperty("dungeonEntranceEncounterChance", Double.toString(dungeonEntranceEncounterChance));
         props.setProperty("twoMonsterChance", Double.toString(twoMonsterChance));
         props.setProperty("threeMonsterChance", Double.toString(threeMonsterChance));
+        props.setProperty("monsterLevelScaling", Double.toString(monsterLevelScaling));
         props.setProperty("masterVolume", Integer.toString(masterVolume));
         props.setProperty("musicVolume", Integer.toString(musicVolume));
         props.setProperty("sfxVolume", Integer.toString(sfxVolume));
         props.setProperty("creativeBuildMode", Boolean.toString(creativeBuildMode));
+        props.setProperty("showMapEditorButton", Boolean.toString(showMapEditorButton));
+        props.setProperty("cameraMode", cameraMode);
+        props.setProperty("cameraSmoothing", Integer.toString(cameraSmoothing));
+        props.setProperty("cameraLookAhead", Boolean.toString(cameraLookAhead));
+        props.setProperty("movementSpeed", movementSpeed);
+        props.setProperty("weatherQuality", weatherQuality);
         try (var out = Files.newOutputStream(settingsPath)) {
             props.store(out, "Echoes of Alderfall Java settings");
         }
@@ -136,6 +157,20 @@ public final class GameConfig {
             return fallback;
         }
         return Boolean.parseBoolean(value);
+    }
+
+    private static String readChoice(Properties props, String key, String fallback, String... allowed) {
+        String value = props.getProperty(key, fallback);
+        if (value == null) {
+            return fallback;
+        }
+        String normalized = value.trim().toLowerCase();
+        for (String choice : allowed) {
+            if (choice.equals(normalized)) {
+                return normalized;
+            }
+        }
+        return fallback;
     }
 
     public void adjustChance(String key, double delta) {

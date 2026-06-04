@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout
+from universal_cutout import CutoutSettings, universal_cutout
 
 
 SRC = Path("assets/source/imagegen-npc-sheet.png")
@@ -23,8 +23,9 @@ def main() -> None:
         raise FileNotFoundError(f"Missing generated NPC sheet: {SRC}")
     OUT.mkdir(parents=True, exist_ok=True)
     source = Image.open(SRC).convert("RGBA")
+    settings = CutoutSettings(mode="magenta", padding=8, keep_largest_only=True, spill_passes=8)
     for name, box in BOXES.items():
-        chroma_cutout(source.crop(box), "magenta", padding=8, keep_largest_only=True).save(OUT / f"{name}_model.png")
+        universal_cutout(source.crop(box), settings).save(OUT / f"{name}_model.png")
 
 
 if __name__ == "__main__":

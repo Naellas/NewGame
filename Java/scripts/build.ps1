@@ -8,6 +8,9 @@ if (Test-Path out) {
 }
 
 New-Item -ItemType Directory -Force -Path out | Out-Null
-$sources = Get-ChildItem -Recurse -Filter *.java src\main\java | ForEach-Object { $_.FullName }
+$sources = Get-ChildItem -Path src\main\java -Recurse -Filter *.java | Sort-Object FullName | ForEach-Object { $_.FullName }
 javac -d out $sources
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
 Write-Host "Built Java classes into $root\out"

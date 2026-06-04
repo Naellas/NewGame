@@ -6,10 +6,11 @@ from typing import Iterable
 
 from PIL import Image
 
+from asset_paths import animation_dir, find_asset
+
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
-OUT = ASSETS / "animations"
 FRAMES = 6
 
 
@@ -33,7 +34,6 @@ class StripSpec:
 
 
 def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
     specs = [
         knight_attack(),
         mage_cast(),
@@ -44,13 +44,13 @@ def main() -> None:
         spider_attack(),
     ]
     for spec in specs:
-        write_strip(spec)
-        print(f"Wrote {OUT / spec.output}")
+        output = write_strip(spec)
+        print(f"Wrote {output}")
 
 
 def knight_attack() -> StripSpec:
     return StripSpec(
-        source="player/class_knight_model.png",
+        source="class_knight_model.png",
         output="class_knight_model_attack_anim.png",
         body_offsets=((0, 0), (-4, 1), (-8, 2), (14, -2), (8, 0), (0, 0)),
         body_scales=((1.0, 1.0), (1.02, 0.99), (1.03, 0.98), (1.04, 0.98), (1.01, 1.0), (1.0, 1.0)),
@@ -63,7 +63,7 @@ def knight_attack() -> StripSpec:
 
 def mage_cast() -> StripSpec:
     return StripSpec(
-        source="player/class_mage_model.png",
+        source="class_mage_model.png",
         output="class_mage_model_cast_anim.png",
         body_offsets=((0, 0), (0, -3), (1, -7), (-1, -9), (0, -5), (0, 0)),
         body_scales=((1.0, 1.0), (0.99, 1.02), (0.98, 1.04), (0.99, 1.03), (1.0, 1.01), (1.0, 1.0)),
@@ -76,7 +76,7 @@ def mage_cast() -> StripSpec:
 
 def ranger_shoot() -> StripSpec:
     return StripSpec(
-        source="player/class_ranger_model.png",
+        source="class_ranger_model.png",
         output="class_ranger_model_shoot_anim.png",
         body_offsets=((0, 0), (-4, 0), (-9, 1), (-12, 1), (8, -1), (0, 0)),
         body_scales=((1.0, 1.0), (0.99, 1.01), (0.98, 1.02), (0.98, 1.02), (1.02, 0.99), (1.0, 1.0)),
@@ -89,7 +89,7 @@ def ranger_shoot() -> StripSpec:
 
 def cleric_cast() -> StripSpec:
     return StripSpec(
-        source="player/class_cleric_model.png",
+        source="class_cleric_model.png",
         output="class_cleric_model_cast_anim.png",
         body_offsets=((0, 0), (0, -2), (0, -5), (0, -7), (0, -3), (0, 0)),
         body_scales=((1.0, 1.0), (0.99, 1.02), (0.99, 1.03), (1.0, 1.03), (1.0, 1.01), (1.0, 1.0)),
@@ -102,7 +102,7 @@ def cleric_cast() -> StripSpec:
 
 def rogue_attack() -> StripSpec:
     return StripSpec(
-        source="player/class_rogue_model.png",
+        source="class_rogue_model.png",
         output="class_rogue_model_attack_anim.png",
         body_offsets=((0, 0), (-5, 1), (-10, 1), (18, -2), (7, 0), (0, 0)),
         body_scales=((1.0, 1.0), (1.02, 0.99), (1.04, 0.98), (1.04, 0.98), (1.01, 1.0), (1.0, 1.0)),
@@ -115,7 +115,7 @@ def rogue_attack() -> StripSpec:
 
 def skeleton_attack() -> StripSpec:
     return StripSpec(
-        source="monsters/skeleton.png",
+        source="skeleton.png",
         output="skeleton_attack_anim.png",
         body_offsets=((0, 0), (-3, 1), (-8, 2), (18, -1), (7, 0), (0, 0)),
         body_scales=((1.0, 1.0), (1.02, 0.99), (1.03, 0.98), (1.04, 0.98), (1.01, 1.0), (1.0, 1.0)),
@@ -128,7 +128,7 @@ def skeleton_attack() -> StripSpec:
 
 def spider_attack() -> StripSpec:
     return StripSpec(
-        source="monsters/spider.png",
+        source="spider.png",
         output="spider_attack_anim.png",
         body_offsets=((0, 0), (-3, 0), (-6, 1), (10, -1), (4, 0), (0, 0)),
         body_scales=((1.0, 1.0), (1.02, 0.99), (1.04, 0.98), (1.02, 0.99), (1.0, 1.0), (1.0, 1.0)),
@@ -139,13 +139,24 @@ def spider_attack() -> StripSpec:
     )
 
 
-def write_strip(spec: StripSpec) -> None:
-    source = Image.open(ASSETS / spec.source).convert("RGBA")
+def write_strip(spec: StripSpec) -> Path:
+    source = Image.open(asset_source(spec.source)).convert("RGBA")
     frames = [render_frame(source, spec, frame) for frame in range(FRAMES)]
     sheet = Image.new("RGBA", (source.width * FRAMES, source.height), (0, 0, 0, 0))
     for i, frame in enumerate(frames):
         sheet.alpha_composite(frame, (i * source.width, 0))
-    sheet.save(OUT / spec.output)
+    out_dir = animation_dir(ASSETS, Path(spec.output).stem)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    output = out_dir / spec.output
+    sheet.save(output)
+    return output
+
+
+def asset_source(relative_path: str) -> Path:
+    path = ASSETS / relative_path
+    if path.exists():
+        return path
+    return find_asset(ASSETS, Path(relative_path).name)
 
 
 def render_frame(source: Image.Image, spec: StripSpec, frame: int) -> Image.Image:

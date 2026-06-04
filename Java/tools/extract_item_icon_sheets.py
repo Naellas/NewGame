@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout, fit
+from universal_cutout import CutoutSettings, fit, universal_cutout
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,7 +66,10 @@ def split_sheet(path: Path, names: list[str]) -> None:
         right = sheet.width if col == cols - 1 else (col + 1) * cell_w
         bottom = sheet.height if row == rows - 1 else (row + 1) * cell_h
         cell = sheet.crop((left, top, right, bottom))
-        cutout = chroma_cutout(cell, "magenta", padding=4, square=True)
+        cutout = universal_cutout(
+            cell,
+            CutoutSettings(mode="magenta", padding=4, square=True, spill_passes=6),
+        )
         fit(cutout, 64, 64, bottom_align=False, margin=4).save(OUT / f"{name}.png")
 
 

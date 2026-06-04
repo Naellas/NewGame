@@ -1,0 +1,132 @@
+package com.alderfall.game;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
+
+final class Pathfinder {
+    private static final int[][] DIRECTIONS = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    private static final int NORMAL_TILE_COST = 100;
+    private static final int ROAD_TILE_COST = 60;
+
+    private Pathfinder() {
+    }
+
+    static TilePoint nearestTarget(GameState state, int targetX, int targetY) {
+        if (walkable(state, targetX, targetY)) {
+            return new TilePoint(targetX, targetY);
+        }
+        TilePoint best = null;
+        int bestPlayerDistance = Integer.MAX_VALUE;
+        int bestTargetDistance = Integer.MAX_VALUE;
+        for (int radius = 1; radius < 10; radius++) {
+            for (int y = targetY - radius; y <= targetY + radius; y++) {
+                for (int x = targetX - radius; x <= targetX + radius; x++) {
+                    int targetDistance = Math.abs(x - targetX) + Math.abs(y - targetY);
+                    if (targetDistance != radius || !walkable(state, x, y)) {
+                        continue;
+                    }
+                    int playerDistance = Math.abs(x - state.playerX) + Math.abs(y - state.playerY);
+                    if (playerDistance < bestPlayerDistance
+                            || (playerDistance == bestPlayerDistance && targetDistance < bestTargetDistance)) {
+                        best = new TilePoint(x, y);
+                        bestPlayerDistance = playerDistance;
+                        bestTargetDistance = targetDistance;
+                    }
+                }
+            }
+            if (best != null) {
+                return best;
+            }
+        }
+        return null;
+    }
+
+    static List<TilePoint> findPath(GameState state, TilePoint start, TilePoint target) {
+        int width = state.world.width(state.currentMapId);
+        int height = state.world.height(state.currentMapId);
+        if (!inBounds(start.x(), start.y(), width, height) || !inBounds(target.x(), target.y(), width, height)) {
+            return List.of();
+        }
+        int startIndex = index(start.x(), start.y(), width);
+        int targetIndex = index(target.x(), target.y(), width);
+        if (startIndex == targetIndex) {
+            return new ArrayList<>();
+        }
+        int cells = width * height;
+        PriorityQueue<PathNode> frontier = new PriorityQueue<>(Comparator.comparingInt(PathNode::priority));
+        int[] cameFrom = new int[cells];
+        int[] costSoFar = new int[cells];
+        Arrays.fill(cameFrom, -1);
+        Arrays.fill(costSoFar, Integer.MAX_VALUE);
+        frontier.add(new PathNode(startIndex, start.x(), start.y(), 0, heuristic(start.x(), start.y(), target)));
+        costSoFar[startIndex] = 0;
+
+        while (!frontier.isEmpty()) {
+            PathNode currentNode = frontier.poll();
+            int currentIndex = currentNode.index();
+            if (currentIndex == targetIndex) {
+                break;
+            }
+            int currentCost = costSoFar[currentIndex];
+            if (currentNode.cost() != currentCost) {
+                continue;
+            }
+            for (int[] direction : DIRECTIONS) {
+                int nx = currentNode.x() + direction[0];
+                int ny = currentNode.y() + direction[1];
+                if (!inBounds(nx, ny, width, height) || !walkable(state, nx, ny)) {
+                    continue;
+                }
+                int nextIndex = index(nx, ny, width);
+                int newCost = currentCost + movementCost(state, nx, ny);
+                if (newCost < costSoFar[nextIndex]) {
+                    costSoFar[nextIndex] = newCost;
+                    cameFrom[nextIndex] = currentIndex;
+                    frontier.add(new PathNode(nextIndex, nx, ny, newCost, newCost + heuristic(nx, ny, target)));
+                }
+            }
+        }
+
+        if (cameFrom[targetIndex] == -1) {
+            return List.of();
+        }
+        List<TilePoint> path = new ArrayList<>();
+        int current = targetIndex;
+        while (current != startIndex) {
+            path.add(new TilePoint(current % width, current / width));
+            current = cameFrom[current];
+        }
+        Collections.reverse(path);
+        return path;
+    }
+
+    static boolean walkable(GameState state, int x, int y) {
+        return x >= 0
+                && y >= 0
+                && x < state.world.width(state.currentMapId)
+                && y < state.world.height(state.currentMapId)
+                && state.world.isPassable(state.currentMapId, x, y)
+                && state.npcAt(state.currentMapId, x, y) == null
+                && state.blockingQuestObjectiveAt(state.currentMapId, x, y) == null;
+    }
+
+    private static int movementCost(GameState state, int x, int y) {
+        return Terrain.roadLike(state.world.tileAt(state.currentMapId, x, y)) ? ROAD_TILE_COST : NORMAL_TILE_COST;
+    }
+
+    private static boolean inBounds(int x, int y, int width, int height) {
+        return x >= 0 && y >= 0 && x < width && y < height;
+    }
+
+    private static int index(int x, int y, int width) {
+        return y * width + x;
+    }
+
+    private static int heuristic(int x, int y, TilePoint target) {
+        return (Math.abs(x - target.x()) + Math.abs(y - target.y())) * ROAD_TILE_COST;
+    }
+}

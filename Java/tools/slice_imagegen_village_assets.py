@@ -12,15 +12,27 @@ CITY_DIR = ROOT / "assets" / "city"
 
 
 def transparent_light_checker(img: Image.Image) -> Image.Image:
-    return universal_cutout(img, CutoutSettings(mode="light", padding=26, global_key=False))
+    return universal_cutout(img, CutoutSettings(mode="light", padding=26, global_key=False, drop_edge_strays=True))
 
 
 def transparent_dark_sheet(img: Image.Image) -> Image.Image:
-    return universal_cutout(img, CutoutSettings(mode="dark", padding=26, global_key=False))
+    return universal_cutout(img, CutoutSettings(mode="dark", padding=26, global_key=False, drop_edge_strays=True))
 
 
 def transparent_green_key(img: Image.Image) -> Image.Image:
-    return universal_cutout(img, CutoutSettings(mode="green", padding=26, keep_largest_only=True))
+    return universal_cutout(
+        img,
+        CutoutSettings(
+            mode="green",
+            padding=10,
+            global_key=True,
+            stray_max_gap=24,
+            drop_edge_strays=True,
+            drop_above_strays=True,
+            drop_below_strays=True,
+            drop_small_green_matte=True,
+        ),
+    )
 
 
 def crop_cell(sheet: Image.Image, col: int, row: int, cols: int, rows: int) -> Image.Image:
@@ -39,9 +51,18 @@ def crop_cell_bleed(sheet: Image.Image, col: int, row: int, cols: int, rows: int
     return sheet.crop((max(0, x1 - bleed), max(0, y1 - bleed), min(sheet.width, x2 + bleed), min(sheet.height, y2 + bleed)))
 
 
+def output_path(name: str) -> Path:
+    if name.startswith("village_prop_"):
+        return CITY_DIR / "props" / "village" / f"{name}.png"
+    if name.startswith("village_building_") or name.startswith("imagegen_city_"):
+        return CITY_DIR / "buildings" / "village" / f"{name}.png"
+    return CITY_DIR / f"{name}.png"
+
+
 def save(img: Image.Image, name: str) -> None:
-    CITY_DIR.mkdir(parents=True, exist_ok=True)
-    img.save(CITY_DIR / f"{name}.png")
+    path = output_path(name)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    img.save(path)
 
 
 def slice_sheet(path: Path, names: list[str], cols: int, rows: int, transparent=transparent_light_checker, bleed: int = 0) -> None:

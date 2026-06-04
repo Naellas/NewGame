@@ -1,0 +1,322 @@
+[
+  {
+    "name": "interior_table_h_left",
+    "path": "assets/interiors/props/modular_seating/interior_table_h_left.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      0,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1567,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_table_h_middle",
+    "path": "assets/interiors/props/modular_seating/interior_table_h_middle.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      1,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1803,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_table_h_right",
+    "path": "assets/interiors/props/modular_seating/interior_table_h_right.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      2,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1399,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_bench_h",
+    "path": "assets/interiors/props/modular_seating/interior_bench_h.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      3,
+      0
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 2743,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_banquet_table_h",
+    "path": "assets/interiors/props/modular_seating/interior_banquet_table_h.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      0,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 2091,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_stool_table_h",
+    "path": "assets/interiors/props/modular_seating/interior_stool_table_h.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      1,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1585,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_study_desk_h",
+    "path": "assets/interiors/props/modular_seating/interior_study_desk_h.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      2,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1308,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_counter_corner_h",
+    "path": "assets/interiors/props/modular_seating/interior_counter_corner_h.png",
+    "footprint": [
+      96,
+      48
+    ],
+    "cell": [
+      3,
+      1
+    ],
+    "passed": true,
+    "output_size": [
+      96,
+      48
+    ],
+    "visible_pixels": 1065,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_table_v_top",
+    "path": "assets/interiors/props/modular_seating/interior_table_v_top.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      0,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 3127,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_table_v_middle",
+    "path": "assets/interiors/props/modular_seating/interior_table_v_middle.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      1,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 2778,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_table_v_bottom",
+    "path": "assets/interiors/props/modular_seating/interior_table_v_bottom.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      2,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 3033,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_bench_v",
+    "path": "assets/interiors/props/modular_seating/interior_bench_v.png",
+    "footprint": [
+      48,
+      96
+    ],
+    "cell": [
+      3,
+      2
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      96
+    ],
+    "visible_pixels": 3036,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_chair_north_alt",
+    "path": "assets/interiors/props/modular_seating/interior_chair_north_alt.png",
+    "footprint": [
+      48,
+      48
+    ],
+    "cell": [
+      0,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      48
+    ],
+    "visible_pixels": 878,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_chair_south_alt",
+    "path": "assets/interiors/props/modular_seating/interior_chair_south_alt.png",
+    "footprint": [
+      48,
+      48
+    ],
+    "cell": [
+      1,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      48
+    ],
+    "visible_pixels": 821,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_chair_east_alt",
+    "path": "assets/interiors/props/modular_seating/interior_chair_east_alt.png",
+    "footprint": [
+      48,
+      48
+    ],
+    "cell": [
+      2,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      48
+    ],
+    "visible_pixels": 567,
+    "edge_background_pixels": 0,
+    "components": 1
+  },
+  {
+    "name": "interior_chair_west_alt",
+    "path": "assets/interiors/props/modular_seating/interior_chair_west_alt.png",
+    "footprint": [
+      48,
+      48
+    ],
+    "cell": [
+      3,
+      3
+    ],
+    "passed": true,
+    "output_size": [
+      48,
+      48
+    ],
+    "visible_pixels": 569,
+    "edge_background_pixels": 0,
+    "components": 1
+  }
+]

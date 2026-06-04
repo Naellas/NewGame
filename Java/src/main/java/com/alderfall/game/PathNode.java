@@ -1,4 +1,4 @@
 package com.alderfall.game;
 
-record PathNode(TilePoint point, int cost, int priority) {
+record PathNode(int index, int x, int y, int cost, int priority) {
 }

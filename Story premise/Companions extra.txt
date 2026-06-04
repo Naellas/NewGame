@@ -1,0 +1,1845 @@
+Expand the companion questlines so that each companion NPC has a longer personal arc of **7–8 quests**, not only 3–4.
+
+Each companion should feel like they have a full relationship/trust arc before becoming fully loyal to the player. The player should gradually learn their backstory, help them resolve a personal conflict, and then unlock their loyalty / recruitment / upgraded companion state.
+
+Use only the existing objective types where possible:
+
+* defeat
+* gather
+* visit / inspect
+
+Avoid adding complex mechanics unless the existing engine already supports them.
+
+Each companion questline should follow this structure:
+
+1. **First Contact Quest**
+   Introduces the NPC and their local problem.
+
+2. **Practical Help Quest**
+   The player helps with something grounded: supplies, roads, medicine, ledgers, tools, bells, crates, etc.
+
+3. **Investigation Quest**
+   The player inspects objects that reveal the NPC’s deeper personal issue.
+
+4. **Conflict Quest**
+   The player fights enemies connected to the NPC’s past.
+
+5. **Backstory Reveal Quest**
+   The NPC admits something personal: guilt, debt, failure, doubt, betrayal, exile, or shame.
+
+6. **Personal Trial Quest**
+   The player helps them face the core of their problem.
+
+7. **Loyalty Quest**
+   A larger final quest involving a boss, dangerous site, or major decision.
+
+8. **Aftermath Quest / Recruitment Quest**
+   The NPC joins fully, unlocks upgraded dialogue, and comments on Oathstead or the main story.
+
+If the current companion system supports recruitment earlier, use the 8th quest as a **loyalty upgrade** instead of first recruitment.
+
+Each quest should include:
+
+* Quest name
+* Quest giver
+* Location
+* Objective type
+* Objectives
+* Story context
+* Quest start dialogue
+* Completion dialogue
+* Reward or unlock
+* Optional implementation notes
+
+---
+
+# Expanded Companion Questlines
+
+Implement or prepare the following expanded chains.
+
+---
+
+# Seraphine Vale
+
+## Riverside Contract-Breaker and Veilrunner
+
+**Region:** Riverside Reach
+**Locations:** Riverside City, Briarbridge Town, river warehouses, bridge archives
+**Theme:** Freedom from old signatures, debt, contracts, and ownership
+**Combat Role:** Rogue / hidden blades / evasive attacker
+
+## Questline: “The Ink That Binds”
+
+### Quest 1: A Signature in Red
+
+**Type:** visit / inspect
+**Location:** Riverside City
+
+**Objectives:**
+
+* Visit Seraphine near the Riverside counting house.
+* Inspect the suspicious toll ledger.
+* Inspect the locked ledger desk.
+* Inspect the wine-stained noble seal.
+
+**Story Context:**
+The player catches Seraphine breaking into a counting house. She is not stealing coin. She is looking for a contract tied to an old dead river baron.
+
+**Start Dialogue:**
+“Careful. In Riverside, if you stare at a ledger too long, someone charges you rent.”
+
+**Completion Dialogue:**
+“That seal should be dead. Its owner certainly is. Which means someone is making corpses sign paperwork again.”
+
+**Unlock:**
+Next quest: “Bridge Toll Lies”
+
+---
+
+### Quest 2: Bridge Toll Lies
+
+**Type:** gather / visit
+**Location:** Briarbridge Town
+
+**Objectives:**
+
+* Gather 3x Forged Toll Notes.
+* Inspect the bridge guard post.
+* Inspect the empty supply crates.
+* Return to Seraphine.
+
+**Story Context:**
+The forged toll notes reveal that bridge supplies are being redirected through fake debts.
+
+**Start Dialogue:**
+“Numbers lie better than people. People sweat. Ink just sits there looking official.”
+
+**Completion Dialogue:**
+“These are not mistakes. Mistakes are ugly. This is elegant, which makes it expensive.”
+
+---
+
+### Quest 3: The Clerk Who Vanished
+
+**Type:** visit / inspect
+**Location:** Riverside lower market
+
+**Objectives:**
+
+* Visit the missing clerk’s room.
+* Inspect the overturned writing desk.
+* Inspect the burned account book.
+* Inspect the loose floorboard.
+
+**Story Context:**
+A clerk who helped create the false contracts has disappeared. Seraphine suspects the clerk was silenced.
+
+**Start Dialogue:**
+“Clerks do not vanish. They file themselves somewhere inconvenient.”
+
+**Completion Dialogue:**
+“He knew too much and ran too late. That is a common Riverside tragedy.”
+
+---
+
+### Quest 4: Knives in the Warehouse
+
+**Type:** defeat / gather
+**Location:** Riverside river warehouse
+
+**Objectives:**
+
+* Defeat 6x Contract Blades.
+* Gather 4x Torn Contract Pages.
+* Gather 1x Black Ledger Key.
+
+**Story Context:**
+The player and Seraphine raid a warehouse guarded by mercenaries hired to protect the false debt network.
+
+**Start Dialogue:**
+“Try not to bleed on the paperwork. Some of it is evidence. Some of it may be worth more than us.”
+
+**Completion Dialogue:**
+“There it is. My family name, tied up neatly like a pig for market.”
+
+---
+
+### Quest 5: Vale Was Never Free
+
+**Type:** visit / inspect
+**Location:** Old Vale counting room
+
+**Objectives:**
+
+* Visit the ruined Vale counting room.
+* Inspect the family account wall.
+* Inspect the old protection contract.
+* Inspect Seraphine’s father’s broken signet.
+
+**Story Context:**
+Seraphine reveals that her family was trapped by a river baron’s contract. Their debt was supposed to end years ago, but someone kept it alive.
+
+**Start Dialogue:**
+“I usually avoid nostalgia. It has poor manners and knows where I sleep.”
+
+**Completion Dialogue:**
+“My father thought a signature could save us. He was right for one winter. Wrong for everything after.”
+
+---
+
+### Quest 6: The Dead Baron’s Estate
+
+**Type:** defeat / visit
+**Location:** abandoned river estate
+
+**Objectives:**
+
+* Visit the dead baron’s estate.
+* Defeat 8x Estate Cutthroats.
+* Inspect the sealed contract cabinet.
+* Inspect the old family debt register.
+
+**Story Context:**
+The dead baron’s estate is still active on paper. Cultists and criminals are using it as a legal shell.
+
+**Start Dialogue:**
+“The man has been dead twelve years and still owns more people than most living nobles.”
+
+**Completion Dialogue:**
+“The estate is not haunted by a ghost. Worse. It is haunted by administrators.”
+
+---
+
+### Quest 7: The Red Notary
+
+**Type:** defeat / inspect
+**Location:** hidden bridge archive
+
+**Objectives:**
+
+* Visit the hidden bridge archive.
+* Inspect the blood-sealed lockbox.
+* Inspect the contract wall.
+* Defeat boss: The Red Notary.
+
+**Boss:**
+The Red Notary, a demon-touched contract keeper who attacks with spectral chains and summoned debtors.
+
+**Boss Lines:**
+
+* “Every name owes something.”
+* “Obligation survives death.”
+* “Sign, and suffer neatly.”
+
+**Completion Dialogue:**
+“I have dreamed of burning that contract for years. Strange. I thought freedom would smell less like demon smoke.”
+
+---
+
+### Quest 8: No One Owns Vale
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Seraphine at Oathstead.
+* Inspect the camp oath marker.
+* Inspect the burned contract remains.
+* Speak with Seraphine.
+
+**Story Context:**
+Seraphine decides that freedom is not the absence of promises. It is choosing which promises are worth keeping.
+
+**Start Dialogue:**
+“I burned the contract. Not the past, sadly. That is harder to set on fire.”
+
+**Completion Dialogue:**
+“No one owns Vale. But I can choose to stand somewhere. For now, annoyingly, that seems to be here.”
+
+**Reward / Unlock:**
+Seraphine fully joins as a loyal companion. Unlock post-quest dialogue at Oathstead.
+
+---
+
+# Maera Quill
+
+## Archive Star-Route Scholar and Mage
+
+**Region:** Crownlands of Alderfall
+**Locations:** Archive City, Moonspire Town, old observatory, forbidden map vault
+**Theme:** Forbidden truth, star routes, official history being wrong
+**Combat Role:** Mage / ranged magic / knowledge-based utility
+
+## Questline: “Maps the Crown Forbade”
+
+### Quest 1: A Footnote With Teeth
+
+**Type:** visit / inspect
+**Location:** Archive City
+
+**Objectives:**
+
+* Visit Maera in the Archive reading hall.
+* Inspect the censored star map.
+* Inspect the official royal route record.
+* Inspect Maera’s forbidden notes.
+
+**Story Context:**
+Maera believes old star routes contradict the official history of Alderfall’s founding roads.
+
+**Start Dialogue:**
+“If you came to tell me the archives are always right, please stand somewhere flammable.”
+
+**Completion Dialogue:**
+“There. The road existed before the Crown claims it was built. History has been wearing borrowed boots.”
+
+---
+
+### Quest 2: Ink Under Moonlight
+
+**Type:** gather
+**Location:** Moonspire Town
+
+**Objectives:**
+
+* Gather 4x Moonwell Ink.
+* Gather 3x Star Moth Wings.
+* Gather 2x Clean Parchment Rolls.
+
+**Story Context:**
+Maera needs rare materials to restore a star-route chart.
+
+**Start Dialogue:**
+“Official ink refuses to show unofficial roads. Fortunately, the moon has fewer political loyalties.”
+
+**Completion Dialogue:**
+“Good. This ink remembers light properly.”
+
+---
+
+### Quest 3: The Map That Moved
+
+**Type:** visit / inspect
+**Location:** old observatory
+
+**Objectives:**
+
+* Visit the old observatory.
+* Inspect the rotating star device.
+* Inspect the cracked lens.
+* Inspect the sealed northern chart.
+
+**Story Context:**
+The observatory contains a map that shifts when exposed to moonlight. It points toward the Old Gate.
+
+**Start Dialogue:**
+“Maps do not move unless they are wrong, enchanted, or trying to apologize.”
+
+**Completion Dialogue:**
+“The stars remember the road. The Crownlands decided not to.”
+
+---
+
+### Quest 4: The Archivist’s Warning
+
+**Type:** visit / inspect
+**Location:** Archive City
+
+**Objectives:**
+
+* Visit the senior archive registrar.
+* Inspect the disciplinary notice.
+* Inspect Maera’s revoked research seal.
+* Return to Maera.
+
+**Story Context:**
+Maera was once banned from royal research for proving that official histories had been edited.
+
+**Start Dialogue:**
+“If Registrar Pell asks, we are not investigating forbidden records. We are admiring dust.”
+
+**Completion Dialogue:**
+“They called it irresponsible scholarship. That is what cowards call a question with evidence.”
+
+---
+
+### Quest 5: Cultists in the Stacks
+
+**Type:** defeat / gather
+**Location:** restricted archive wing
+
+**Objectives:**
+
+* Defeat 7x Archive Cultists.
+* Gather 5x Stolen Star Pages.
+* Gather 1x Broken Moon Seal.
+
+**Story Context:**
+Demon cultists are also searching for the star routes, suggesting the maps are tied to the portal.
+
+**Start Dialogue:**
+“Wonderful. I was worried this was only academically dangerous.”
+
+**Completion Dialogue:**
+“If cultists want the same map, either I am right or about to become a cautionary lecture.”
+
+---
+
+### Quest 6: The Quill Family Correction
+
+**Type:** visit / inspect
+**Location:** Maera’s family study
+
+**Objectives:**
+
+* Visit the Quill family study.
+* Inspect Maera’s mother’s notes.
+* Inspect the burned correspondence.
+* Inspect the hidden star-route correction.
+
+**Story Context:**
+Maera learns her mother had discovered the same truth and was silenced professionally, not killed. Her family shame was manufactured.
+
+**Start Dialogue:**
+“My mother was not wrong. I need you to understand that before I do something extremely illegal.”
+
+**Completion Dialogue:**
+“She knew. She knew and left me the correction hidden where only a stubborn daughter would look.”
+
+---
+
+### Quest 7: The Forbidden Map Vault
+
+**Type:** defeat / inspect
+**Location:** sealed map vault beneath Archive City
+
+**Objectives:**
+
+* Visit the Forbidden Map Vault.
+* Inspect the five-kingdom star chart.
+* Inspect the erased road.
+* Defeat boss: The Inkbound Warden.
+
+**Boss:**
+The Inkbound Warden, a magical archive guardian corrupted by censorship magic and demon influence.
+
+**Boss Lines:**
+
+* “Unauthorized truth detected.”
+* “Correction is treason.”
+* “The record must remain closed.”
+
+**Completion Dialogue:**
+“The road is real. The Gate is real. And every official map has been lying by omission.”
+
+---
+
+### Quest 8: Properly Footnoted Treason
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp / Archive City
+
+**Objectives:**
+
+* Visit Maera at Oathstead.
+* Inspect the completed star-route map.
+* Inspect the Oathstead map table.
+* Speak with Maera.
+
+**Story Context:**
+Maera chooses to bring her research to Oathstead instead of hiding it in Archive City.
+
+**Start Dialogue:**
+“I have committed treason in three citation styles.”
+
+**Completion Dialogue:**
+“If Alderfall survives, I am rewriting the maps. If it does not, I am haunting the footnotes.”
+
+**Reward / Unlock:**
+Maera fully joins as a loyal companion. Unlocks map / portal-related dialogue.
+
+---
+
+# Cassia Flint
+
+## Highwall Gate Veteran and Ironwall
+
+**Region:** Highwall March
+**Locations:** Highwall City, Ironvale Town, old gatehouse, frost road
+**Theme:** Gate guilt, truth over comfort, soldier’s duty
+**Combat Role:** Tank / shield / defensive fighter
+
+## Questline: “The Gate That Closed”
+
+### Quest 1: The Woman at the Gate
+
+**Type:** visit / inspect
+**Location:** Highwall City gate
+
+**Objectives:**
+
+* Visit Cassia at the Highwall gate.
+* Inspect the dented gate shield.
+* Inspect the old gate winch.
+* Inspect the memorial plaque.
+
+**Story Context:**
+Cassia is a respected veteran, but people still whisper about a gate she closed during a raid years ago.
+
+**Start Dialogue:**
+“Say what you came to say. Gates do not open wider because people mumble at them.”
+
+**Completion Dialogue:**
+“This gate remembers every hand that struck it from the wrong side.”
+
+---
+
+### Quest 2: Frost Road Discipline
+
+**Type:** defeat
+**Location:** Highwall frost road
+
+**Objectives:**
+
+* Defeat 8x Frost Wolves.
+* Defeat 4x Raiders.
+* Return to Cassia.
+
+**Story Context:**
+Cassia tests whether the player can follow a road under pressure.
+
+**Start Dialogue:**
+“You want my time? Earn it on the road. Roads tell the truth about people.”
+
+**Completion Dialogue:**
+“You came back with your weapon and your breath. Good. Most speeches do not manage both.”
+
+---
+
+### Quest 3: The Survivor’s Complaint
+
+**Type:** visit / inspect
+**Location:** Ironvale Town
+
+**Objectives:**
+
+* Visit the old survivor’s house.
+* Inspect the burned family token.
+* Inspect the complaint letter.
+* Inspect the old gate order.
+
+**Story Context:**
+The player learns Cassia closed a gate during a raid, leaving civilians outside. The official record says she followed orders.
+
+**Start Dialogue:**
+“There are stories about me in Ironvale. Some are true. The worst ones are incomplete.”
+
+**Completion Dialogue:**
+“I closed the gate. That part is true. Truth does not get lighter because you add context.”
+
+---
+
+### Quest 4: Orders in Blue Steel
+
+**Type:** gather / visit
+**Location:** abandoned watch office
+
+**Objectives:**
+
+* Gather 4x Torn Command Orders.
+* Inspect the old command desk.
+* Inspect the rusted signal horn.
+* Return to Cassia.
+
+**Story Context:**
+The recovered orders suggest Cassia was commanded to close the gate by a superior who later denied it.
+
+**Start Dialogue:**
+“I do not need comfort. I need the correct facts.”
+
+**Completion Dialogue:**
+“So. He signed it, then buried it. Cowardice with a seal.”
+
+---
+
+### Quest 5: The Captain Who Lied
+
+**Type:** visit / inspect
+**Location:** Highwall officer barracks
+
+**Objectives:**
+
+* Visit retired Captain Varran.
+* Inspect his campaign chest.
+* Inspect the hidden order copy.
+* Return to Cassia.
+
+**Story Context:**
+Cassia confronts evidence that her commander used her as a scapegoat.
+
+**Start Dialogue:**
+“If Varran lied, I want to know. If he did not, I want to know that too.”
+
+**Completion Dialogue:**
+“I wanted the truth clean. It is not. That does not excuse me from carrying it.”
+
+---
+
+### Quest 6: Raiders at Old Flint Gate
+
+**Type:** defeat
+**Location:** Old Flint Gate
+
+**Objectives:**
+
+* Defeat 10x Raiders.
+* Defeat 3x Orc Brutes.
+* Inspect the broken gate chain.
+
+**Story Context:**
+A new raider attack threatens to repeat Cassia’s past. This time, she refuses to abandon civilians.
+
+**Start Dialogue:**
+“Old gate. New blood. I am tired of history having no imagination.”
+
+**Completion Dialogue:**
+“The gate held. More importantly, it opened when it needed to.”
+
+---
+
+### Quest 7: The Ironwall Trial
+
+**Type:** defeat / inspect
+**Location:** Highwall trial yard
+
+**Objectives:**
+
+* Visit the trial yard.
+* Inspect the shield rack.
+* Defeat boss: Varran’s Champion.
+* Inspect the public record stone.
+
+**Boss:**
+Varran’s Champion, a heavily armored soldier sent to protect the false official story.
+
+**Boss Lines:**
+
+* “Highwall survives by obedience.”
+* “A soldier is not paid to question gates.”
+* “Truth weakens walls.”
+
+**Completion Dialogue:**
+“No. Lies weaken walls. Truth just shows where the cracks already were.”
+
+---
+
+### Quest 8: Gate Open, Shield Raised
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Cassia at Oathstead.
+* Inspect the new palisade gate.
+* Inspect Cassia’s repaired shield.
+* Speak with Cassia.
+
+**Story Context:**
+Cassia accepts that duty means judgment, not blind obedience.
+
+**Start Dialogue:**
+“Oathstead’s gate is badly hung. I like it anyway.”
+
+**Completion Dialogue:**
+“I will stand here. Not because I was ordered. Because I looked, judged, and chose.”
+
+**Reward / Unlock:**
+Cassia fully joins as a loyal companion. Unlocks defensive training / Ironwall dialogue if supported.
+
+---
+
+# Lyra Bell
+
+## Belltower Field Healer and Battle Medic
+
+**Region:** Belltower Fenlands
+**Locations:** Belltower City, Mireford Village, Reedwatch Town, field clinic
+**Theme:** Practical mercy, medicine, triage, care that travels
+**Combat Role:** Healer / support / battle medic
+
+## Questline: “Mercy That Travels”
+
+### Quest 1: The Roadside Clinic
+
+**Type:** gather
+**Location:** Belltower City road clinic
+
+**Objectives:**
+
+* Visit Lyra at the roadside clinic.
+* Gather 4x Clean Bandages.
+* Gather 3x Fever Reed.
+* Gather 2x Water Skins.
+
+**Story Context:**
+Lyra is treating travelers in a temporary field clinic. She needs supplies more than sympathy.
+
+**Start Dialogue:**
+“If you are here to help, wash your hands. If you are here to stare, stand where the patients cannot see you.”
+
+**Completion Dialogue:**
+“Good. Mercy travels faster when it has bandages.”
+
+---
+
+### Quest 2: Names on the Cot
+
+**Type:** visit / inspect
+**Location:** field clinic
+
+**Objectives:**
+
+* Inspect the patient ledger.
+* Inspect the empty medicine shelf.
+* Inspect the bloodied travel cloak.
+* Speak with Lyra.
+
+**Story Context:**
+Lyra records every patient’s name, even those who die. She believes forgotten patients become another kind of casualty.
+
+**Start Dialogue:**
+“I write names because pain makes people disappear if no one is careful.”
+
+**Completion Dialogue:**
+“There. They were here. They mattered. That is not enough, but it is not nothing.”
+
+---
+
+### Quest 3: Fever in Mireford
+
+**Type:** gather / visit
+**Location:** Mireford Village
+
+**Objectives:**
+
+* Gather 6x Fever Reed.
+* Gather 3x Marshmint.
+* Deliver medicine to Mireford Village.
+* Return to Lyra.
+
+**Story Context:**
+Mireford’s marsh fever outbreak is worsening. Lyra cannot be everywhere, so the player becomes her hands on the road.
+
+**Start Dialogue:**
+“Fever does not wait for heroics. Take the medicine before someone writes another speech.”
+
+**Completion Dialogue:**
+“Mireford will lose fewer people tonight. Fewer is a holy word, if you ask me.”
+
+---
+
+### Quest 4: The Surgeon’s Scar
+
+**Type:** visit / inspect
+**Location:** old battlefield aid tent
+
+**Objectives:**
+
+* Visit the abandoned aid tent.
+* Inspect the broken surgical kit.
+* Inspect the burned cot.
+* Inspect the torn medic badge.
+
+**Story Context:**
+Lyra once made an impossible triage decision during a battle. She saved soldiers and lost civilians. She still carries the guilt.
+
+**Start Dialogue:**
+“I learned battlefield medicine in a tent that smelled of iron, mud, and choices no one should survive making.”
+
+**Completion Dialogue:**
+“I chose who got the last clean thread. People call that mercy. They were not there.”
+
+---
+
+### Quest 5: Stolen Medicine
+
+**Type:** defeat / gather
+**Location:** marsh raider camp
+
+**Objectives:**
+
+* Defeat 7x Marsh Raiders.
+* Gather 5x Stolen Medicine Crates.
+* Gather 2x Surgical Tools.
+
+**Story Context:**
+Raiders are stealing medicine and selling it upriver. Lyra is furious in a quiet, dangerous way.
+
+**Start Dialogue:**
+“Stealing medicine is murder with extra steps.”
+
+**Completion Dialogue:**
+“These crates will go back on shelves. The raiders can keep their excuses.”
+
+---
+
+### Quest 6: The Patient Who Returned
+
+**Type:** visit / inspect
+**Location:** Reedwatch Town
+
+**Objectives:**
+
+* Visit the recovered soldier.
+* Inspect the old treatment note.
+* Inspect the soldier’s infected wound.
+* Return to Lyra.
+
+**Story Context:**
+A soldier Lyra saved years ago has returned, alive but corrupted by demon infection. He blames her for saving him into suffering.
+
+**Start Dialogue:**
+“Sometimes saving a life means being present for what that life becomes.”
+
+**Completion Dialogue:**
+“He is not wrong to hate me. That does not mean I was wrong to save him.”
+
+---
+
+### Quest 7: Mercy Under Bells
+
+**Type:** defeat / gather
+**Location:** plague hut outside Belltower City
+
+**Objectives:**
+
+* Defeat 6x Bog Beasts.
+* Gather 3x Clean Water Skins.
+* Gather 3x White Reed Blossoms.
+* Inspect the infected shrine bell.
+
+**Story Context:**
+A demon-tainted illness spreads near a bell shrine. Lyra risks herself to treat the infected.
+
+**Start Dialogue:**
+“Bring water, blossoms, and courage. In that order. Courage is useless if the patient dies thirsty.”
+
+**Completion Dialogue:**
+“The bell is clean. The fever broke. I will pretend that was a coincidence if it comforts you.”
+
+---
+
+### Quest 8: A Mercy That Stays
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Lyra at Oathstead.
+* Inspect the new clinic cot.
+* Inspect the medicine shelf.
+* Speak with Lyra.
+
+**Story Context:**
+Lyra joins Oathstead and establishes a traveling clinic network.
+
+**Start Dialogue:**
+“I used to think mercy had to keep moving. Stop too long and you lose someone on the next road.”
+
+**Completion Dialogue:**
+“Maybe mercy can travel from a place that stands. Maybe that is what we build here.”
+
+**Reward / Unlock:**
+Lyra fully joins as a loyal companion. Unlocks clinic / healing support if supported.
+
+---
+
+# Samir Dawn
+
+## Sanctum Dawn Witness and Sunwarden
+
+**Region:** Sanctum Sunrealm
+**Locations:** Sanctum City, Sunmere Village, desert shrines, dawn altar
+**Theme:** Faith sharpened by doubt, refusing bad light
+**Combat Role:** Holy warrior / sun magic / support fighter
+
+## Questline: “Bad Light”
+
+### Quest 1: Dawn Witness
+
+**Type:** visit / inspect
+**Location:** Sanctum City dawn terrace
+
+**Objectives:**
+
+* Visit Samir at the dawn terrace.
+* Inspect the sun mosaic.
+* Inspect the cracked prayer bowl.
+* Inspect the shadow on the wall.
+
+**Story Context:**
+Samir witnessed a dawn that rose wrong: too cold, too pale, and casting shadows toward the sun.
+
+**Start Dialogue:**
+“People think faith is certainty. It is not. Certainty is what people use when faith gets difficult.”
+
+**Completion Dialogue:**
+“That shadow should not exist. Which means my doubt has evidence.”
+
+---
+
+### Quest 2: Water Before Prayer
+
+**Type:** gather
+**Location:** Sunmere Village
+
+**Objectives:**
+
+* Gather 5x Water Skins.
+* Gather 4x Dried Dates.
+* Deliver supplies to Sunmere Village.
+
+**Story Context:**
+Samir refuses to discuss divine signs until thirsty villagers are helped first.
+
+**Start Dialogue:**
+“The sun may be holy, but people still die without water.”
+
+**Completion Dialogue:**
+“Good. Prayer sounds less hollow when no one’s tongue is cracked from thirst.”
+
+---
+
+### Quest 3: The Shrine That Lied
+
+**Type:** visit / inspect
+**Location:** desert shrine
+
+**Objectives:**
+
+* Visit the false dawn shrine.
+* Inspect the mirrored altar.
+* Inspect the burned prayer cloth.
+* Inspect the blackened ward-stone.
+
+**Story Context:**
+The shrine appears bright, but its light is wrong. Samir believes Vaelthara’s corruption can imitate holiness.
+
+**Start Dialogue:**
+“Not all light guides. Some light blinds so the knife can find you.”
+
+**Completion Dialogue:**
+“This is not darkness. This is worse. It is light taught to lie.”
+
+---
+
+### Quest 4: Ember Imp Infestation
+
+**Type:** defeat / gather
+**Location:** shrine road
+
+**Objectives:**
+
+* Defeat 8x Ember Imps.
+* Gather 3x Cracked Sun Charms.
+* Return to Samir.
+
+**Story Context:**
+Ember imps are nesting in old charm posts along the shrine road.
+
+**Start Dialogue:**
+“Small fires become large disasters when everyone assumes someone else will stamp them out.”
+
+**Completion Dialogue:**
+“The road is safer. The charms are damaged, but honest damage can be repaired.”
+
+---
+
+### Quest 5: The Sunwarden’s Doubt
+
+**Type:** visit / inspect
+**Location:** Sanctum inner chapel
+
+**Objectives:**
+
+* Visit the inner chapel.
+* Inspect Samir’s old oath tablet.
+* Inspect the rejected sermon.
+* Inspect the sealed priestly order.
+
+**Story Context:**
+Samir was ordered to declare the false dawn a blessing. He refused and was quietly disgraced.
+
+**Start Dialogue:**
+“I was told obedience is the shadow cast by faith. I have come to dislike that sentence.”
+
+**Completion Dialogue:**
+“They wanted me to praise bad light. I would rather stand in honest dark.”
+
+---
+
+### Quest 6: Pilgrims in the Badlands
+
+**Type:** defeat / visit
+**Location:** badlands caravan path
+
+**Objectives:**
+
+* Visit the lost pilgrim camp.
+* Defeat 6x Desert Raiders.
+* Defeat 4x Ember Imps.
+* Inspect the abandoned prayer flags.
+
+**Story Context:**
+Pilgrims following the false dawn have become lost in the badlands.
+
+**Start Dialogue:**
+“Faith can move feet. That is why liars aim for it first.”
+
+**Completion Dialogue:**
+“Some pilgrims survived. Some did not. We will not call that acceptable because the desert is old.”
+
+---
+
+### Quest 7: The False Dawn
+
+**Type:** defeat / inspect
+**Location:** corrupted dawn altar
+
+**Objectives:**
+
+* Visit the corrupted dawn altar.
+* Inspect the inverted sun symbol.
+* Defeat boss: Azhar of the Wrong Sunrise.
+* Inspect the restored altar.
+
+**Boss:**
+Azhar of the Wrong Sunrise, a demon-touched priest wrapped in false golden light.
+
+**Boss Lines:**
+
+* “Kneel. The light has chosen.”
+* “Doubt is treason against dawn.”
+* “Burn clean. Obey brighter.”
+
+**Completion Dialogue:**
+“The dawn is not proven by brightness. It is proven by what it reveals.”
+
+---
+
+### Quest 8: Light That Answers
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Samir at Oathstead.
+* Inspect the small dawn shrine.
+* Inspect Samir’s repaired oath tablet.
+* Speak with Samir.
+
+**Story Context:**
+Samir brings his faith to Oathstead without surrendering his doubt.
+
+**Start Dialogue:**
+“I thought doubt was a wound in faith. Perhaps it is how faith breathes.”
+
+**Completion Dialogue:**
+“I will stand here. Not because the light ordered me. Because this place answered.”
+
+**Reward / Unlock:**
+Samir fully joins as a loyal companion. Unlocks Sunwarden dialogue / shrine support if supported.
+
+---
+
+# Aria Foxglove
+
+## Oakhaven Road Scout and Ranger
+
+**Region:** Crownlands of Alderfall
+**Locations:** Oakhaven Village, Pineward Village, forest roads, orchard ward
+**Theme:** Being underestimated, roadcraft, quiet protection
+**Combat Role:** Ranger / bow / scout
+
+## Questline: “Foxglove on the Road”
+
+### Quest 1: Small Boots, Long Road
+
+**Type:** visit / inspect
+**Location:** Oakhaven Village
+
+**Objectives:**
+
+* Visit Aria near the village road post.
+* Inspect the road marker.
+* Inspect the hidden snare.
+* Inspect the foxglove flowers.
+
+**Story Context:**
+Aria is dismissed by villagers as a young scout, but she clearly knows the road better than anyone.
+
+**Start Dialogue:**
+“You walked past three snares and one warning mark. Either you are brave or decorative.”
+
+**Completion Dialogue:**
+“Good. You can look down and still see things. Rare skill.”
+
+---
+
+### Quest 2: Missing Road Signs
+
+**Type:** gather / visit
+**Location:** forest road
+
+**Objectives:**
+
+* Gather 5x Broken Road Signs.
+* Inspect 3x scratched tree marks.
+* Return to Aria.
+
+**Story Context:**
+Someone is removing road signs to lead travelers into ambushes.
+
+**Start Dialogue:**
+“Road signs do not wander off. People move them. Usually people with knives.”
+
+**Completion Dialogue:**
+“These scratches are deliberate. Someone wants strangers lost and locals blamed.”
+
+---
+
+### Quest 3: Underestimated on Purpose
+
+**Type:** defeat
+**Location:** forest ambush site
+
+**Objectives:**
+
+* Defeat 6x Bandit Scouts.
+* Defeat 4x Wolves.
+* Return to Aria.
+
+**Story Context:**
+Aria uses her reputation as harmless to draw out bandit scouts.
+
+**Start Dialogue:**
+“They think I am bait. That is rude, but useful.”
+
+**Completion Dialogue:**
+“See? Being underestimated saves time. They explain their whole plan with their feet.”
+
+---
+
+### Quest 4: The Foxglove Trail
+
+**Type:** visit / inspect
+**Location:** Oakhaven woods
+
+**Objectives:**
+
+* Visit the foxglove trail.
+* Inspect 4x foxglove markers.
+* Inspect the old scout cache.
+* Return to Aria.
+
+**Story Context:**
+Aria reveals that foxglove flowers mark safe routes used by old scouts.
+
+**Start Dialogue:**
+“Foxglove is pretty, poisonous, and easy to overlook. I respect that.”
+
+**Completion Dialogue:**
+“My mother planted these markers. She said a good road should remember small people.”
+
+---
+
+### Quest 5: The Scout Who Did Not Return
+
+**Type:** visit / inspect
+**Location:** abandoned scout camp
+
+**Objectives:**
+
+* Visit the abandoned scout camp.
+* Inspect the cold campfire.
+* Inspect the torn green cloak.
+* Inspect the unfinished route map.
+
+**Story Context:**
+Aria’s mother disappeared while scouting a route near a corrupted orchard ward.
+
+**Start Dialogue:**
+“I do not need comfort. I need to know where the trail ended.”
+
+**Completion Dialogue:**
+“She made it this far. Injured, probably. Still marking the road. Stubborn as roots.”
+
+---
+
+### Quest 6: Bandits in Scout Green
+
+**Type:** defeat / gather
+**Location:** Pineward road
+
+**Objectives:**
+
+* Defeat 8x False Scouts.
+* Gather 4x Stolen Scout Badges.
+* Gather 1x Mother’s Route Token.
+
+**Story Context:**
+Bandits have been wearing scout colours to mislead travelers. One carries Aria’s mother’s route token.
+
+**Start Dialogue:**
+“They stole the green. That means they want trust without earning it.”
+
+**Completion Dialogue:**
+“This token was hers. Either they found her body, or they found who took her.”
+
+---
+
+### Quest 7: Rootmaw Crossing
+
+**Type:** defeat / inspect
+**Location:** corrupted orchard crossing
+
+**Objectives:**
+
+* Visit Rootmaw Crossing.
+* Inspect the broken scout marker.
+* Defeat boss: Rootmaw Stag.
+* Inspect the final foxglove marker.
+
+**Boss:**
+Rootmaw Stag, a corrupted forest guardian.
+
+**Boss Lines:**
+
+* No spoken dialogue. Use beast sounds and inspection text.
+* “The creature lowers its antlers. Vines twitch beneath its skin like exposed nerves.”
+
+**Completion Dialogue:**
+“She marked the safe path all the way to the end. Even dying, she was still getting people home.”
+
+---
+
+### Quest 8: A Road With My Name On It
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Aria at Oathstead.
+* Inspect the new road map.
+* Inspect the foxglove planted near the gate.
+* Speak with Aria.
+
+**Story Context:**
+Aria accepts her role as a scout not because others finally respect her, but because she respects the work.
+
+**Start Dialogue:**
+“I used to want them to stop underestimating me. Now I think I will charge extra for it.”
+
+**Completion Dialogue:**
+“Oathstead needs roads that do not lie. I can help with that.”
+
+**Reward / Unlock:**
+Aria fully joins as a loyal companion. Unlocks road scout dialogue / travel support if supported.
+
+---
+
+# Vesper Snowroot
+
+## Snowrest Winter Druid and Grovekeeper
+
+**Region:** Highwall March
+**Locations:** Snowrest Village, Frosthollow Cave, buried grove, winter shrine
+**Theme:** Spring hidden under snow, old roots, grief preserved by winter
+**Combat Role:** Druid / nature magic / control support
+
+## Questline: “Spring Beneath Snow”
+
+### Quest 1: The Green Under White
+
+**Type:** visit / inspect
+**Location:** Snowrest Village
+
+**Objectives:**
+
+* Visit Vesper near the winter shrine.
+* Inspect the snow-covered root circle.
+* Inspect the frozen seed bowl.
+* Inspect Vesper’s branch staff.
+
+**Story Context:**
+Vesper tends a root circle that should be dormant, but something beneath the snow is stirring in pain.
+
+**Start Dialogue:**
+“Step lightly. Snow is only quiet because it is listening.”
+
+**Completion Dialogue:**
+“The roots are awake too early. That is rarely joy.”
+
+---
+
+### Quest 2: Firewood and Feverroot
+
+**Type:** gather
+**Location:** Snowrest outskirts
+
+**Objectives:**
+
+* Gather 5x Firewood Bundles.
+* Gather 4x Feverroot.
+* Gather 2x Winter Moss.
+
+**Story Context:**
+Vesper asks for practical supplies before speaking of omens.
+
+**Start Dialogue:**
+“People ask druids for signs. I ask for firewood. Guess which keeps children alive.”
+
+**Completion Dialogue:**
+“Good. Warmth first, prophecy second.”
+
+---
+
+### Quest 3: The Frozen Burrow
+
+**Type:** defeat / inspect
+**Location:** frozen animal burrows
+
+**Objectives:**
+
+* Defeat 6x Frost Wolves.
+* Inspect 3x frozen burrows.
+* Inspect the black root growth.
+
+**Story Context:**
+Animals are fleeing burrows filled with black roots.
+
+**Start Dialogue:**
+“When animals abandon shelter in winter, something worse than cold has moved in.”
+
+**Completion Dialogue:**
+“The roots are not spreading. They are reaching. That is different, and worse.”
+
+---
+
+### Quest 4: Snowroot Memory
+
+**Type:** visit / inspect
+**Location:** old family grove
+
+**Objectives:**
+
+* Visit Vesper’s family grove.
+* Inspect the snowroot tree.
+* Inspect the carved names.
+* Inspect the buried green charm.
+
+**Story Context:**
+Vesper’s family guarded a grove that preserved spring magic under Highwall snow. The grove failed years ago.
+
+**Start Dialogue:**
+“My family kept spring under the snow. Then one year, spring did not answer.”
+
+**Completion Dialogue:**
+“I thought the grove died because I was too young to save it. Roots may have a crueler truth.”
+
+---
+
+### Quest 5: The Druid Who Buried Spring
+
+**Type:** visit / inspect
+**Location:** hermit cave
+
+**Objectives:**
+
+* Visit the old hermit druid.
+* Inspect the sealed seed chest.
+* Inspect the frost-marked warning.
+* Return to Vesper.
+
+**Story Context:**
+An old druid admits the grove was sealed intentionally to prevent demon corruption from spreading.
+
+**Start Dialogue:**
+“Old druids hide mistakes under wisdom. I would like to dig.”
+
+**Completion Dialogue:**
+“They buried spring to save winter. I hate that I understand.”
+
+---
+
+### Quest 6: Frosthollow Roots
+
+**Type:** defeat / gather
+**Location:** Frosthollow Cave
+
+**Objectives:**
+
+* Defeat 7x Frost Spiders.
+* Gather 4x Frozen Root Shards.
+* Inspect the cave root wall.
+
+**Story Context:**
+The corruption feeding the grove comes from Frosthollow Cave.
+
+**Start Dialogue:**
+“The cave has been drinking from the grove. We are going to make it choke.”
+
+**Completion Dialogue:**
+“These roots still remember green. Barely. Barely is enough.”
+
+---
+
+### Quest 7: The Buried Spring
+
+**Type:** defeat / inspect
+**Location:** buried winter grove
+
+**Objectives:**
+
+* Visit the buried grove.
+* Inspect the sealed spring pool.
+* Defeat boss: The Winterroot Hollow.
+* Inspect the first green shoot.
+
+**Boss:**
+The Winterroot Hollow, a corrupted mass of roots, ice, and old druid magic.
+
+**Boss Lines:**
+
+* “Sleep. Seal. Starve.”
+* “Spring failed.”
+* “Green becomes rot.”
+
+**Completion Dialogue:**
+“It was never dead. Just afraid to grow.”
+
+---
+
+### Quest 8: Snowroot Blooms
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Vesper at Oathstead.
+* Inspect the planted snowroot cutting.
+* Inspect the camp garden.
+* Speak with Vesper.
+
+**Story Context:**
+Vesper brings a snowroot cutting to Oathstead, symbolizing spring carried into uncertain ground.
+
+**Start Dialogue:**
+“I brought a root that survived being buried. It seemed appropriate.”
+
+**Completion Dialogue:**
+“Spring is not gentle. It breaks the ground to arrive.”
+
+**Reward / Unlock:**
+Vesper fully joins as a loyal companion. Unlocks grove / garden dialogue if supported.
+
+---
+
+# Rafiq Glass
+
+## Dunewick Glassstep Duelist and Bladedancer
+
+**Region:** Sanctum Sunrealm
+**Locations:** Dunewick Village, Embermarket Town, badlands dueling yard, glass shrine
+**Theme:** Charm, debt, reputation, second chances
+**Combat Role:** Duelist / fast melee / evasive fighter
+
+## Questline: “Glass Breaks Clean”
+
+### Quest 1: The Duelist in Debt
+
+**Type:** visit / inspect
+**Location:** Dunewick Village
+
+**Objectives:**
+
+* Visit Rafiq near the village well.
+* Inspect the duel notice.
+* Inspect the cracked glass token.
+* Inspect the unpaid debt mark.
+
+**Story Context:**
+Rafiq is a charming duelist with a debt problem and a reputation for running before consequences arrive.
+
+**Start Dialogue:**
+“If you are here to collect, take a number. If you are here to admire, stand closer.”
+
+**Completion Dialogue:**
+“Yes, the debt is mine. No, the story is not as flattering as I usually make it.”
+
+---
+
+### Quest 2: Water and Witnesses
+
+**Type:** gather / visit
+**Location:** Dunewick outskirts
+
+**Objectives:**
+
+* Gather 5x Water Skins.
+* Gather 3x Glassstep Herbs.
+* Deliver supplies to Dunewick elders.
+
+**Story Context:**
+Rafiq wants the village to forgive him, but they need water more than apologies.
+
+**Start Dialogue:**
+“I have apologized beautifully. They remain thirsty. A tragic failure of performance.”
+
+**Completion Dialogue:**
+“They thanked you first. Sensible. You did the useful part.”
+
+---
+
+### Quest 3: The Duel He Ran From
+
+**Type:** visit / inspect
+**Location:** old dueling yard
+
+**Objectives:**
+
+* Visit the old dueling yard.
+* Inspect the broken blade rack.
+* Inspect the blood-marked sand.
+* Inspect the witness stone.
+
+**Story Context:**
+Rafiq once fled a duel after realizing it was rigged. His opponent was killed anyway, and Rafiq was blamed.
+
+**Start Dialogue:**
+“I did not run because I feared losing. I ran because winning had been arranged.”
+
+**Completion Dialogue:**
+“The sand remembers more honestly than people. Unfortunately, sand gives terrible testimony.”
+
+---
+
+### Quest 4: Blades at Embermarket
+
+**Type:** defeat / gather
+**Location:** Embermarket Town
+
+**Objectives:**
+
+* Defeat 6x Hired Duelists.
+* Gather 3x Duel Contracts.
+* Gather 1x Purple Sash Token.
+
+**Story Context:**
+The people who framed Rafiq are still hiring duelists to silence witnesses.
+
+**Start Dialogue:**
+“If we are attacked, please note how unfairly handsome I look under pressure.”
+
+**Completion Dialogue:**
+“These contracts smell of money, perfume, and cowardice. Embermarket’s traditional bouquet.”
+
+---
+
+### Quest 5: The Glass Debt
+
+**Type:** visit / inspect
+**Location:** glassmaker’s house
+
+**Objectives:**
+
+* Visit the glassmaker’s house.
+* Inspect the unpaid glass order.
+* Inspect the cracked mirror.
+* Inspect the letter from Rafiq’s sister.
+
+**Story Context:**
+Rafiq’s debt came from trying to buy his sister’s freedom from a bad marriage contract.
+
+**Start Dialogue:**
+“I prefer lies where I am selfish. They are easier to laugh at.”
+
+**Completion Dialogue:**
+“I bought time. Not freedom. Time is what poor people call hope when sold in pieces.”
+
+---
+
+### Quest 6: Second Chance, Sharp Edge
+
+**Type:** gather / defeat
+**Location:** badlands road
+
+**Objectives:**
+
+* Gather 4x Glasssteel Shards.
+* Defeat 5x Desert Raiders.
+* Return to Rafiq.
+
+**Story Context:**
+Rafiq needs materials to repair his curved blade before facing the person who framed him.
+
+**Start Dialogue:**
+“A second chance should be earned with sweat, danger, and preferably an excellent blade.”
+
+**Completion Dialogue:**
+“There. Sharp again. The sword too.”
+
+---
+
+### Quest 7: The Glassstep Duel
+
+**Type:** defeat / inspect
+**Location:** glass shrine dueling circle
+
+**Objectives:**
+
+* Visit the glass shrine.
+* Inspect the circle of glass.
+* Defeat boss: Nadim of the Shattered Step.
+* Inspect the cleared witness stone.
+
+**Boss:**
+Nadim of the Shattered Step, a duelist who rigged Rafiq’s old duel and now serves badland interests tied to the Demon Queen’s agents.
+
+**Boss Lines:**
+
+* “Charm does not parry.”
+* “You should have kept running.”
+* “A broken reputation cuts deeper.”
+
+**Completion Dialogue:**
+“I wanted applause. Then revenge. Now I mostly want quiet. Disturbing growth.”
+
+---
+
+### Quest 8: Glass Remembers Light
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Rafiq at Oathstead.
+* Inspect his repaired curved blade.
+* Inspect the small glass charm near the oath marker.
+* Speak with Rafiq.
+
+**Story Context:**
+Rafiq accepts that second chances are not granted by reputation. They are built through choices.
+
+**Start Dialogue:**
+“Oathstead is muddy, badly dressed, and honest. I am trying not to take that personally.”
+
+**Completion Dialogue:**
+“I will stay. Not because I deserve it. Because I intend to.”
+
+**Reward / Unlock:**
+Rafiq fully joins as a loyal companion. Unlocks Bladedancer dialogue / duel training if supported.
+
+---
+
+# Calder Reed
+
+## Mireford Bridgewright and Stonebreaker
+
+**Region:** Belltower Fenlands
+**Locations:** Mireford Village, Reedwatch Town, marsh bridges, old causeway
+**Theme:** Load-bearing honesty, bridgecraft, blunt trust
+**Combat Role:** Heavy melee / hammer / breaker
+
+## Questline: “What Holds”
+
+### Quest 1: The Bridge That Complained
+
+**Type:** visit / inspect
+**Location:** Mireford Village bridge
+
+**Objectives:**
+
+* Visit Calder at Mireford bridge.
+* Inspect the cracked bridge beam.
+* Inspect the loose stone footing.
+* Inspect the mudline.
+
+**Story Context:**
+Calder is repairing a bridge that everyone else has ignored until it became dangerous.
+
+**Start Dialogue:**
+“Bridge is talking. Mostly insults. Means it is close to falling.”
+
+**Completion Dialogue:**
+“See that crack? That is what happens when people call maintenance expensive.”
+
+---
+
+### Quest 2: Tools Before Talk
+
+**Type:** gather
+**Location:** Mireford / Reedwatch
+
+**Objectives:**
+
+* Gather 5x Timber.
+* Gather 4x Iron Nails.
+* Gather 3x Rope Coils.
+
+**Story Context:**
+Calder refuses to discuss demons, politics, or prophecy until the bridge has what it needs.
+
+**Start Dialogue:**
+“You want answers? Bring nails. Answers without nails do not hold weight.”
+
+**Completion Dialogue:**
+“Good. Now we can make something less stupid than hope.”
+
+---
+
+### Quest 3: The Weight Test
+
+**Type:** visit / inspect
+**Location:** repaired marsh bridge
+
+**Objectives:**
+
+* Inspect the repaired beam.
+* Inspect the rope supports.
+* Inspect the stone anchors.
+* Return to Calder.
+
+**Story Context:**
+Calder teaches the player how bridges fail: slowly, honestly, and usually because warnings were ignored.
+
+**Start Dialogue:**
+“Everything breaks. Good craft just tells you before it kills someone.”
+
+**Completion Dialogue:**
+“This will hold. Not forever. Nothing does. But long enough if people keep caring.”
+
+---
+
+### Quest 4: Stones From the Old Causeway
+
+**Type:** gather / defeat
+**Location:** old causeway
+
+**Objectives:**
+
+* Gather 6x Causeway Stones.
+* Defeat 5x Bog Beasts.
+* Return to Calder.
+
+**Story Context:**
+The old causeway stones are needed for stronger bridge repairs, but the marsh has become hostile.
+
+**Start Dialogue:**
+“Old stones are better than new lies. Heavy, though. Bring a strong back or a weak ego.”
+
+**Completion Dialogue:**
+“These stones were set by people who expected grandchildren. That is proper arrogance.”
+
+---
+
+### Quest 5: The Bridge He Lost
+
+**Type:** visit / inspect
+**Location:** collapsed flood bridge
+
+**Objectives:**
+
+* Visit the collapsed flood bridge.
+* Inspect the broken support stone.
+* Inspect the memorial plank.
+* Inspect the old work order.
+
+**Story Context:**
+Calder once signed off on a bridge repair that failed during a flood. People died. He has never forgiven himself.
+
+**Start Dialogue:**
+“I built this. Then it fell. Both facts matter.”
+
+**Completion Dialogue:**
+“I missed the mud shift under the west footing. Small mistake. Big river. Dead people.”
+
+---
+
+### Quest 6: Blame Has Bad Mortar
+
+**Type:** visit / inspect
+**Location:** Mireford records hut
+
+**Objectives:**
+
+* Inspect the flood repair ledger.
+* Inspect the missing supply entry.
+* Inspect the sealed village complaint.
+
+**Story Context:**
+Records show Calder was denied proper materials by local officials, but he signed the repair anyway because people needed the bridge open.
+
+**Start Dialogue:**
+“Do not look for proof to make me innocent. Look for proof to make the bridge make sense.”
+
+**Completion Dialogue:**
+“They shorted the stone. I signed anyway. There. Truth has two ugly hands.”
+
+---
+
+### Quest 7: The Stonebreaker’s Span
+
+**Type:** defeat / inspect
+**Location:** demon-damaged causeway bridge
+
+**Objectives:**
+
+* Visit the damaged causeway bridge.
+* Defeat 8x Bog Beasts.
+* Defeat boss: The Mudjaw Breaker.
+* Inspect the restored central support.
+
+**Boss:**
+The Mudjaw Breaker, a huge marsh beast that smashes bridge supports.
+
+**Boss Lines:**
+
+* Beast has no speech.
+* Use combat text: “The creature strikes the support stone. The bridge groans.”
+
+**Completion Dialogue:**
+“Bridge held. So did we. I will not make poetry of it.”
+
+---
+
+### Quest 8: What Holds
+
+**Type:** visit / inspect
+**Location:** Oathstead Camp
+
+**Objectives:**
+
+* Visit Calder at Oathstead.
+* Inspect the reinforced camp gate.
+* Inspect the new bridge plank.
+* Speak with Calder.
+
+**Story Context:**
+Calder joins Oathstead because he believes the settlement is trying to become something load-bearing.
+
+**Start Dialogue:**
+“This camp leans. Badly. But it leans toward standing.”
+
+**Completion Dialogue:**
+“I can build here. Not perfect. Strong enough. That is most of life.”
+
+**Reward / Unlock:**
+Calder fully joins as a loyal companion. Unlocks construction / bridgework / Stonebreaker dialogue if supported.

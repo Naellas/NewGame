@@ -221,6 +221,15 @@ final class AmbientNpcAi {
 
     private static TilePoint workTarget(Npc npc, WorldMap world, String mapId, Archetype archetype, int dayNumber) {
         int hash = stableHash(npc.name(), mapId, dayNumber);
+        TilePoint assignedWork = world.npcWorkTarget(npc, mapId);
+        TilePoint prop = propTarget(npc, world, mapId, assignedWork == null ? home(npc, world) : assignedWork,
+                hash, workPropKeywords(archetype));
+        if (prop != null && (assignedWork == null || Math.floorMod(hash, 4) != 0)) {
+            return prop;
+        }
+        if (assignedWork != null && world.isPassable(mapId, assignedWork.x(), assignedWork.y())) {
+            return assignedWork;
+        }
         return switch (archetype) {
             case GUARD, SCOUT, NIGHT_WATCH -> patrolTarget(npc, world, mapId, dayNumber);
             case FISHER -> waterTarget(npc, world, mapId, hash);
@@ -236,6 +245,16 @@ final class AmbientNpcAi {
 
     private static TilePoint patrolTarget(Npc npc, WorldMap world, String mapId, int dayNumber) {
         int hash = stableHash(npc.name(), mapId, dayNumber);
+        TilePoint patrolProp = propTarget(npc, world, mapId, home(npc, world), hash,
+                "signpost", "notice", "banner", "watch", "gate", "portal", "training_dummy", "street_lamp");
+        if (patrolProp != null) {
+            return patrolProp;
+        }
+        TilePoint patrolBuilding = buildingTarget(world, mapId, home(npc, world), hash,
+                "barracks", "watchtower", "bell_tower", "hall", "arena");
+        if (patrolBuilding != null) {
+            return patrolBuilding;
+        }
         int step = Math.floorMod(hash, 4);
         int distance = 4 + Math.floorMod(hash / 7, 4);
         int dx = switch (step) {
@@ -253,6 +272,16 @@ final class AmbientNpcAi {
 
     private static TilePoint socialTarget(Npc npc, WorldMap world, String mapId, int dayNumber) {
         int hash = stableHash(npc.name(), mapId, dayNumber);
+        TilePoint socialProp = propTarget(npc, world, mapId, home(npc, world), hash,
+                "fountain", "bench", "market", "kiosk", "signpost", "notice", "flower", "well", "street_lamp", "town_portal");
+        if (socialProp != null && Math.floorMod(hash, 3) != 0) {
+            return socialProp;
+        }
+        TilePoint socialBuilding = buildingTarget(world, mapId, home(npc, world), hash,
+                "inn", "restaurant", "shop", "hall", "guild", "house", "row");
+        if (socialBuilding != null) {
+            return socialBuilding;
+        }
         int dx = signed(hash, 3);
         int dy = signed(hash / 7, 3);
         if (Math.abs(dx) + Math.abs(dy) < 2) {
@@ -280,6 +309,127 @@ final class AmbientNpcAi {
         return offsetTarget(npc, world, mapId, hash, signed(hash, 5), signed(hash / 3, 2), 8);
     }
 
+    private static String[] workPropKeywords(Archetype archetype) {
+        return switch (archetype) {
+            case MERCHANT -> new String[]{"market", "cart", "crate", "barrel", "kiosk", "wagon", "produce", "notice_board"};
+            case COOK -> new String[]{"oven", "clay_oven", "cook", "bakery", "produce", "grain", "table", "barrel"};
+            case CRAFTER -> new String[]{"anvil", "tool", "sawhorse", "woodpile", "log", "workbench", "forge", "crate"};
+            case SCHOLAR -> new String[]{"kiosk", "notice", "signpost", "books", "archive", "crystal", "table"};
+            case GUARD, SCOUT, NIGHT_WATCH ->
+                    new String[]{"signpost", "banner", "watch", "gate", "portal", "training_dummy", "street_lamp"};
+            case HEALER -> new String[]{"fountain", "flower", "herb", "plant", "shrine", "sun", "well"};
+            case FORAGER -> new String[]{"seedling", "compost", "flower", "bush", "reeds", "mushroom", "woodpile", "herb"};
+            case FISHER -> new String[]{"fish", "net", "water", "reed", "lily", "dock", "barrel"};
+            case MINER -> new String[]{"ore", "anvil", "crate", "barrel", "lantern", "stone", "tool"};
+            case TAILOR, LEATHERWORKER -> new String[]{"wash_line", "basket", "crate", "barrel", "rack", "cloth"};
+            case CITIZEN -> new String[]{"fountain", "bench", "flower", "market", "signpost", "notice", "well"};
+        };
+    }
+
+    private static TilePoint propTarget(Npc npc, WorldMap world, String mapId, TilePoint center, int hash, String... keywords) {
+        TilePoint home = home(npc, world);
+        TilePoint best = null;
+        int bestScore = Integer.MIN_VALUE;
+        for (WorldProp prop : world.props(mapId)) {
+            if (!propMatches(prop.asset(), keywords)) {
+                continue;
+            }
+            TilePoint spot = propInteractionSpot(world, mapId, prop, hash);
+            if (spot == null) {
+                continue;
+            }
+            int centerDistance = Math.abs(spot.x() - center.x()) + Math.abs(spot.y() - center.y());
+            int homeDistance = Math.abs(spot.x() - home.x()) + Math.abs(spot.y() - home.y());
+            if (centerDistance > 14 && homeDistance > 16) {
+                continue;
+            }
+            int score = 120 - centerDistance * 5 - homeDistance * 2
+                    + Math.floorMod(hash + prop.asset().hashCode() + prop.x() * 17 + prop.y() * 31, 29);
+            if (score > bestScore) {
+                bestScore = score;
+                best = spot;
+            }
+        }
+        return best;
+    }
+
+    private static boolean propMatches(String asset, String... keywords) {
+        if (asset == null) {
+            return false;
+        }
+        String lower = asset.toLowerCase();
+        for (String keyword : keywords) {
+            if (lower.contains(keyword)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static TilePoint propInteractionSpot(WorldMap world, String mapId, WorldProp prop, int hash) {
+        int[][] spots = {{0, 1}, {-1, 0}, {1, 0}, {0, -1}, {-1, 1}, {1, 1}, {-1, -1}, {1, -1}};
+        int start = Math.floorMod(hash + prop.x() * 3 + prop.y() * 5, spots.length);
+        for (int i = 0; i < spots.length; i++) {
+            int[] spot = spots[(start + i) % spots.length];
+            int x = prop.x() + spot[0];
+            int y = prop.y() + spot[1];
+            if (world.isPassable(mapId, x, y) && world.propAt(mapId, x, y) == null) {
+                return new TilePoint(x, y);
+            }
+        }
+        return world.isPassable(mapId, prop.x(), prop.y()) ? new TilePoint(prop.x(), prop.y()) : null;
+    }
+
+    private static TilePoint buildingTarget(WorldMap world, String mapId, TilePoint center, int hash, String... styles) {
+        TilePoint best = null;
+        int bestScore = Integer.MIN_VALUE;
+        for (CityBuilding building : world.cityBuildings(mapId)) {
+            if (!styleMatches(building.style(), styles)) {
+                continue;
+            }
+            TilePoint spot = buildingDoorSpot(world, mapId, building, hash);
+            if (spot == null) {
+                continue;
+            }
+            int distance = Math.abs(spot.x() - center.x()) + Math.abs(spot.y() - center.y());
+            if (distance > 18) {
+                continue;
+            }
+            int score = 80 - distance * 4 + Math.floorMod(hash + building.key().hashCode(), 31);
+            if (score > bestScore) {
+                bestScore = score;
+                best = spot;
+            }
+        }
+        return best;
+    }
+
+    private static boolean styleMatches(String style, String... styles) {
+        for (String wanted : styles) {
+            if (wanted.equals(style)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static TilePoint buildingDoorSpot(WorldMap world, String mapId, CityBuilding building, int hash) {
+        List<TilePoint> doors = world.cityBuildingDoorTiles(building);
+        int start = doors.isEmpty() ? 0 : Math.floorMod(hash, doors.size());
+        for (int i = 0; i < doors.size(); i++) {
+            TilePoint door = doors.get((start + i) % doors.size());
+            int[][] spots = {{0, 1}, {-1, 1}, {1, 1}, {0, 2}, {-1, 2}, {1, 2}};
+            for (int[] spot : spots) {
+                int x = door.x() + spot[0];
+                int y = door.y() + spot[1];
+                if (world.isPassable(mapId, x, y)) {
+                    return new TilePoint(x, y);
+                }
+            }
+        }
+        return null;
+    }
+
     private static TilePoint offsetTarget(Npc npc, WorldMap world, String mapId, int hash, int dx, int dy, int maxDistance) {
         TilePoint home = home(npc, world);
         int distance = Math.max(1, Math.abs(dx) + Math.abs(dy));
@@ -291,11 +441,12 @@ final class AmbientNpcAi {
     }
 
     private static TilePoint home(Npc npc, WorldMap world) {
-        TilePoint home = new TilePoint(npc.x(), npc.y());
-        if (world.isPassable(npc.mapId(), npc.x(), npc.y())) {
-            return home;
+        TilePoint assignedHome = world.npcHome(npc);
+        if (world.isPassable(npc.mapId(), assignedHome.x(), assignedHome.y())) {
+            return assignedHome;
         }
-        return closestPassableNear(world, npc.mapId(), npc.x(), npc.y(), home, 5, stableHash(npc.name(), npc.mapId(), 0));
+        TilePoint fallback = new TilePoint(npc.x(), npc.y());
+        return closestPassableNear(world, npc.mapId(), assignedHome.x(), assignedHome.y(), fallback, 5, stableHash(npc.name(), npc.mapId(), 0));
     }
 
     private static TilePoint closestPassableNear(WorldMap world, String mapId, int targetX, int targetY, TilePoint fallback, int radius, int hash) {

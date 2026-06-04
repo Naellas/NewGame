@@ -5,15 +5,14 @@ from shutil import copy2
 
 from PIL import Image, ImageDraw, ImageFont
 
+from asset_paths import animation_dir, find_asset
+from universal_cutout import CutoutSettings, universal_cutout
+
 
 ROOT = Path("assets")
 SOURCE_OUT = ROOT / "source" / "walk15"
-ANIM_OUT = ROOT / "animations"
-PLAYER_OUT = ROOT / "player"
-NPC_OUT = ROOT / "npcs"
 PREVIEW_OUT = SOURCE_OUT / "preview-walk15-contact-sheet.png"
 FRAMES = 18
-KEY = (255, 0, 255)
 
 
 GENERATED_ROOT = Path.home() / ".codex" / "generated_images" / "019e7c67-4711-7b71-bdf1-e8ab8b1ab8af"
@@ -188,188 +187,24 @@ SHEETS = [
 
 
 def remove_key(image: Image.Image) -> Image.Image:
-    out = image.convert("RGBA")
-    px = out.load()
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = px[x, y]
-            magenta_distance = abs(r - KEY[0]) + abs(g - KEY[1]) + abs(b - KEY[2])
-            if a == 0 or magenta_distance < 120 or (r > 190 and b > 170 and g < 100):
-                px[x, y] = (0, 0, 0, 0)
-    return out
+    return universal_cutout(
+        image,
+        CutoutSettings(mode="magenta", padding=0, trim=False, global_key=True, clear_strays=False, clean_spill=False),
+    )
 
 
-def chroma_cutout_frame(image: Image.Image, pad: int = 2) -> Image.Image:
-    out = remove_key(image)
-    out = remove_connected_background(out)
-    px = out.load()
-    source = out.copy().load()
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = source[x, y]
-            if a == 0:
-                continue
-            purple_spill = r > g + 18 and b > g + 28 and b >= r - 36 and g < 92
-            if purple_spill and touches_transparency(source, out.width, out.height, x, y, radius=1):
-                px[x, y] = (r, g, b, 0)
-    out = clear_edge_fragments(out)
-    return trim(out, pad)
-
-
-def remove_connected_background(image: Image.Image) -> Image.Image:
-    out = image.convert("RGBA")
-    px = out.load()
-    width, height = out.size
-    seen = [[False for _ in range(width)] for _ in range(height)]
-    stack: list[tuple[int, int]] = []
-    for x in range(width):
-        stack.append((x, 0))
-        stack.append((x, height - 1))
-    for y in range(height):
-        stack.append((0, y))
-        stack.append((width - 1, y))
-
-    while stack:
-        x, y = stack.pop()
-        if not (0 <= x < width and 0 <= y < height) or seen[y][x]:
-            continue
-        seen[y][x] = True
-        r, g, b, a = px[x, y]
-        if a != 0 and not is_background_key((r, g, b)):
-            continue
-        if a != 0:
-            px[x, y] = (r, g, b, 0)
-        stack.append((x + 1, y))
-        stack.append((x - 1, y))
-        stack.append((x, y + 1))
-        stack.append((x, y - 1))
-    return out
-
-
-def is_background_key(rgb: tuple[int, int, int]) -> bool:
-    r, g, b = rgb
-    return r > 120 and b > 112 and g < 96 and r >= g + 48 and b >= g + 42 and abs(r - b) < 150
-
-
-def clear_edge_fragments(image: Image.Image) -> Image.Image:
-    out = image.convert("RGBA")
-    px = out.load()
-    width, height = out.size
-    seen = [[False for _ in range(width)] for _ in range(height)]
-    components: list[dict[str, object]] = []
-
-    for y in range(height):
-        for x in range(width):
-            if seen[y][x] or px[x, y][3] == 0:
-                continue
-            stack = [(x, y)]
-            seen[y][x] = True
-            pixels: list[tuple[int, int]] = []
-            min_x = max_x = x
-            min_y = max_y = y
-            red = green = blue = 0
-            while stack:
-                cx, cy = stack.pop()
-                pixels.append((cx, cy))
-                cr, cg, cb, _ = px[cx, cy]
-                red += cr
-                green += cg
-                blue += cb
-                min_x = min(min_x, cx)
-                max_x = max(max_x, cx)
-                min_y = min(min_y, cy)
-                max_y = max(max_y, cy)
-                for oy in (-1, 0, 1):
-                    for ox in (-1, 0, 1):
-                        if ox == 0 and oy == 0:
-                            continue
-                        nx = cx + ox
-                        ny = cy + oy
-                        if not (0 <= nx < width and 0 <= ny < height):
-                            continue
-                        if seen[ny][nx] or px[nx, ny][3] == 0:
-                            continue
-                        seen[ny][nx] = True
-                        stack.append((nx, ny))
-            components.append({
-                "pixels": pixels,
-                "box": (min_x, min_y, max_x + 1, max_y + 1),
-                "center_gap": abs(((min_x + max_x + 1) / 2.0) - (width / 2.0)),
-                "average": (red // len(pixels), green // len(pixels), blue // len(pixels)),
-            })
-
-    if not components:
-        return out
-
-    key_blocks = {id(component) for component in components if is_key_block(component)}
-    main_candidates = [component for component in components if id(component) not in key_blocks]
-    if not main_candidates:
-        for component in components:
-            for x, y in component["pixels"]:  # type: ignore[union-attr]
-                r, g, b, _ = px[x, y]
-                px[x, y] = (r, g, b, 0)
-        return out
-
-    main = max(main_candidates, key=lambda c: (len(c["pixels"]), -c["center_gap"]))  # type: ignore[arg-type]
-    main_box = main["box"]  # type: ignore[assignment]
-    assert isinstance(main_box, tuple)
-    keep: set[int] = {id(main)}
-    max_gap = max(6, width // 12)
-    for component in components:
-        if component is main:
-            continue
-        if id(component) in key_blocks:
-            continue
-        box = component["box"]
-        assert isinstance(box, tuple)
-        count = len(component["pixels"])  # type: ignore[arg-type]
-        center_x = (box[0] + box[2]) / 2.0
-        touches_side = box[0] <= 1 or box[2] >= width - 1 or box[1] <= 1
-        gap = max(
-            0,
-            max(main_box[0], box[0]) - min(main_box[2], box[2]),
-            max(main_box[1], box[1]) - min(main_box[3], box[3]),
-        )
-        central = width * 0.25 <= center_x <= width * 0.75
-        if not touches_side and (gap <= max_gap or (central and count >= 6)):
-            keep.add(id(component))
-
-    for component in components:
-        if id(component) in keep and id(component) not in key_blocks:
-            continue
-        for x, y in component["pixels"]:  # type: ignore[union-attr]
-            r, g, b, _ = px[x, y]
-            px[x, y] = (r, g, b, 0)
-    return out
-
-
-def is_key_block(component: dict[str, object]) -> bool:
-    pixels = component["pixels"]
-    box = component["box"]
-    average = component["average"]
-    assert isinstance(pixels, list)
-    assert isinstance(box, tuple)
-    assert isinstance(average, tuple)
-    count = len(pixels)
-    area = max(1, (box[2] - box[0]) * (box[3] - box[1]))
-    fill_ratio = count / area
-    r, g, b = average
-    dark_key = g < 70 and r <= 150 and b <= 170 and r >= g + 8 and b >= g + 8
-    return count > 160 and fill_ratio > 0.68 and dark_key
-
-
-def touches_transparency(px, width: int, height: int, x: int, y: int, radius: int = 1) -> bool:
-    for oy in range(-radius, radius + 1):
-        for ox in range(-radius, radius + 1):
-            if ox == 0 and oy == 0:
-                continue
-            nx = x + ox
-            ny = y + oy
-            if nx < 0 or ny < 0 or nx >= width or ny >= height:
-                return True
-            if px[nx, ny][3] == 0:
-                return True
-    return False
+def universal_cutout_frame(image: Image.Image, pad: int = 2) -> Image.Image:
+    return universal_cutout(
+        image,
+        CutoutSettings(
+            mode="magenta",
+            padding=pad,
+            global_key=True,
+            stray_max_gap=24,
+            drop_edge_strays=True,
+            spill_passes=6,
+        ),
+    )
 
 
 def alpha_bbox(image: Image.Image) -> tuple[int, int, int, int] | None:
@@ -588,7 +423,7 @@ def slice_character_row(row_sheet: Image.Image) -> list[Image.Image]:
     for left, right in col_bounds:
         left, right = padded_bounds(left, right, row_sheet.width, overlap)
         cell = row_sheet.crop((left, 0, right, row_sheet.height))
-        frames.append(chroma_cutout_frame(cell, pad=2))
+        frames.append(universal_cutout_frame(cell, pad=2))
     return frames
 
 
@@ -602,9 +437,11 @@ def save_strip(sprite: str, direction: str, frames: list[Image.Image]) -> Path:
         fitted_frames.append(fitted)
         strip.alpha_composite(fitted, (index * frame_w, 0))
     name = f"{sprite}_{direction}_walk_anim"
-    out_path = ANIM_OUT / f"{name}.png"
+    out_dir = animation_dir(ROOT, name)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{name}.png"
     strip.save(out_path)
-    (ANIM_OUT / f"{name}.frames").write_text(str(FRAMES), encoding="utf-8")
+    (out_dir / f"{name}.frames").write_text(str(FRAMES), encoding="utf-8")
     save_static_if_broken(sprite, direction, fitted_frames[0])
     return out_path
 
@@ -639,11 +476,11 @@ def save_static_if_broken(sprite: str, direction: str, frame: Image.Image) -> No
 
 
 def static_sprite_path(sprite: str, direction: str) -> Path | None:
-    for root in (PLAYER_OUT, NPC_OUT):
-        path = root / f"{sprite}_{direction}.png"
-        if path.exists():
-            return path
-    return None
+    filename = f"{sprite}_{direction}.png"
+    try:
+        return find_asset(ROOT, filename)
+    except FileNotFoundError:
+        return None
 
 
 def strip_scale(frames: list[Image.Image], width: int, height: int) -> float:
@@ -704,7 +541,6 @@ def render_preview(paths: list[Path]) -> None:
 
 def main() -> None:
     SOURCE_OUT.mkdir(parents=True, exist_ok=True)
-    ANIM_OUT.mkdir(parents=True, exist_ok=True)
     outputs: list[Path] = []
     for label, filename, direction, names in SHEETS:
         source = source_path(label, filename)
@@ -713,7 +549,7 @@ def main() -> None:
         for row_sheet, name in zip(rows, names, strict=True):
             outputs.append(save_strip(name, direction, slice_character_row(row_sheet)))
     render_preview(outputs)
-    print(f"Wrote {len(outputs)} animation strips to {ANIM_OUT}")
+    print(f"Wrote {len(outputs)} animation strips to owner animation folders")
     print(f"Wrote preview to {PREVIEW_OUT}")
 
 

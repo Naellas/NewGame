@@ -5,9 +5,19 @@ import java.util.Map;
 import java.util.Set;
 
 public final class Terrain {
+    public static final char DIRT_ROAD = 'r';
+    public static final char VILLAGE_ROAD = 'T';
+    public static final char COBBLESTONE_ROAD = 'K';
+
     public static final Set<Character> PASSABLE = Set.of(
-            'g', 'f', 's', 'n', 'v', 'b', 'P', 'q', 'A', 'B', 'r', 'c', 'u', 'd', 'p', 'j', 'l', 'a', 'y', 't', 'i', 'e', 'z',
+            'g', 'f', 's', 'n', 'v', 'b', 'P', 'q', 'A', 'B', 'r', 'T', 'K', 'c', 'u', 'd', 'p', 'j', 'l', 'a', 'y', 't', 'i', 'e', 'z',
             'C', 'G', 'V', 'U', 'D', 'F', 'M', 'R', 'S', 'L'
+    );
+    public static final Set<Character> ROAD_LIKE = Set.of(
+            'r', 'T', 'K', 'q', 'B', 'c', 'p', 'j', 'l', 'a', 'C', 'G', 'V', 'U'
+    );
+    public static final Set<Character> CONNECTING_ROAD = Set.of(
+            'r', 'T', 'K', 'q', 'B', 'c', 'u', 'd'
     );
 
     private static final Map<Character, String> NAMES = Map.ofEntries(
@@ -25,6 +35,8 @@ public final class Terrain {
             Map.entry('B', "Bridge"),
             Map.entry('w', "Water"),
             Map.entry('r', "Road"),
+            Map.entry('T', "Unmaintained Road"),
+            Map.entry('K', "Cobblestone Road"),
             Map.entry('c', "City Gate"),
             Map.entry('u', "Village"),
             Map.entry('d', "Dungeon"),
@@ -68,6 +80,8 @@ public final class Terrain {
             Map.entry('B', "water"),
             Map.entry('w', "water"),
             Map.entry('r', "road"),
+            Map.entry('T', "road_unmaintained"),
+            Map.entry('K', "road_cobblestone"),
             Map.entry('c', "city"),
             Map.entry('u', "village"),
             Map.entry('d', "dungeon_floor"),
@@ -111,6 +125,8 @@ public final class Terrain {
             Map.entry('B', new Color(172, 123, 67)),
             Map.entry('w', new Color(46, 135, 189)),
             Map.entry('r', new Color(217, 179, 111)),
+            Map.entry('T', new Color(156, 118, 70)),
+            Map.entry('K', new Color(139, 132, 116)),
             Map.entry('c', new Color(215, 191, 130)),
             Map.entry('u', new Color(185, 173, 118)),
             Map.entry('d', new Color(59, 51, 72)),
@@ -156,5 +172,17 @@ public final class Terrain {
 
     public static boolean passable(char tile) {
         return PASSABLE.contains(tile);
+    }
+
+    public static boolean roadLike(char tile) {
+        return ROAD_LIKE.contains(tile);
+    }
+
+    public static boolean connectingRoad(char tile) {
+        return CONNECTING_ROAD.contains(tile);
+    }
+
+    public static boolean texturedRoad(char tile) {
+        return tile == DIRT_ROAD || tile == VILLAGE_ROAD || tile == COBBLESTONE_ROAD || tile == 'q';
     }
 }

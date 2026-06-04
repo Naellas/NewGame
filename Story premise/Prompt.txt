@@ -1,0 +1,1037 @@
+You are working on an existing Java 2D RPG project called **Echoes of Alderfall**.
+
+Your task is to implement the new main story questline into the existing quest system.
+
+Important: do not rewrite the whole game. First inspect the existing project structure, quest classes, NPC system, objective system, dialogue system, map/location data, item system, enemy/boss system, and save/progress system. Reuse existing patterns wherever possible.
+
+The current quest system supports these objective types:
+
+* defeat
+* gather
+* visit / inspect
+
+The game already contains the setting of Alderfall, with five kingdoms and several existing cities, towns, villages, caves, ruins, camps, and crypts.
+
+The main story should be called:
+
+**The Twelve Socket Stones**
+
+The player has survived the Demon Queen’s “mercy” and must rebuild trust across Alderfall, gather proof of the Demon Queen’s return, collect twelve socket stones, activate an ancient portal, and eventually confront the Demon Queen.
+
+All main story NPCs must have a **red exclamation mark** above their heads instead of the normal quest marker.
+
+Implement this in a clean, data-driven way if the existing architecture allows it. Avoid hardcoding unless the current project is already hardcoded.
+
+Main goals:
+
+1. Add / update main story quests.
+2. Add required main story NPCs.
+3. Add twelve socket stone items.
+4. Add conditional story item drops.
+5. Add boss encounters where supported by the existing enemy system.
+6. Add portal activation flow.
+7. Add Oathstead Camp progression hooks if the existing settlement system supports them.
+8. Ensure quest progression can be saved and loaded.
+9. Ensure existing quests and systems are not broken.
+
+---
+
+# Existing World Context
+
+The game is set in **Alderfall**, a fractured fantasy realm.
+
+There are five kingdoms:
+
+1. **Riverside Reach**
+
+   * Seat city: Riverside City
+   * Themes: river barons, bridge keeps, market roads, marsh fever, trade routes.
+
+2. **Highwall March**
+
+   * Seat city: Highwall City
+   * Themes: frost roads, watchtowers, border patrols, iron defenses, raider pressure.
+
+3. **Crownlands of Alderfall**
+
+   * Seat city: Archive City
+   * Themes: old oath seats, oak villages, royal records, hidden histories, broken archives.
+
+4. **Belltower Fenlands**
+
+   * Seat city: Belltower City
+   * Themes: marsh bells, reed causeways, fogbound ports, waterways, planked villages.
+
+5. **Sanctum Sunrealm**
+
+   * Seat city: Sanctum City
+   * Themes: desert shrines, sunsteppe towns, badlands caravans, ember magic, old ward-stones.
+
+Important locations:
+
+Major cities:
+
+* Riverside City
+* Archive City
+* Highwall City
+* Belltower City
+* Sanctum City
+
+Towns:
+
+* Briarbridge Town
+* Ironvale Town
+* Moonspire Town
+* Reedwatch Town
+* Embermarket Town
+
+Villages / settlement:
+
+* Oathstead Camp
+* Oakhaven Village
+* Snowrest Village
+* Dunewick Village
+* Mireford Village
+* Foxbarrow Village
+* Pineward Village
+* Elderford Village
+* Glimmerfen Village
+* Sunmere Village
+* Redcairn Village
+
+Adventure / hostile sites:
+
+* Stonegate Crypt
+* Miredepth Cave
+* Frosthollow Cave
+* Blackvault Ruins
+* Redcap Goblin Camp
+* Crowhook Bandit Camp
+* graveyards
+* farmland patches
+* raider camps
+* bandit camps
+
+---
+
+# Main Story NPCs
+
+Create or update these main story NPCs.
+
+Each of these NPCs should use the main story marker:
+
+**red exclamation mark**
+
+Main NPCs:
+
+1. **Maelis**
+
+   * Location: Oathstead Camp
+   * Role: settlement leader and first main story guide.
+
+2. **Selene**
+
+   * Location: Archive City
+   * Role: royal archivist and keeper of hidden histories.
+
+3. **Odrick**
+
+   * Location: Ironvale Town or Highwall City
+   * Role: veteran commander and roadwatch leader.
+
+4. **Solari**
+
+   * Location: Sanctum City
+   * Role: sun priestess and keeper of ember rites.
+
+5. **Ysra**
+
+   * Location: Belltower City
+   * Role: Bellwarden of the marshes.
+
+6. **Mirella**
+
+   * Location: Riverside City
+   * Role: river noble, negotiator, and trade authority.
+
+Additional main story NPCs:
+
+7. **Elder Rowan**
+
+   * Location: Oakhaven Village or Pineward Village
+   * Role: explains the corrupted orchard ward.
+
+8. **Gravekeeper Hollis**
+
+   * Location: Stonegate Crypt or nearby graveyard
+   * Role: starts the crypt / restless dead quest.
+
+9. **Captain Elric Snowrest**
+
+   * Location: Snowrest Village
+   * Role: starts the frost road quest.
+
+10. **Bellwright Nessa**
+
+* Location: Reedwatch Town or Glimmerfen Village
+* Role: starts the bell repair quest.
+
+11. **Ash-Scribe Damar**
+
+* Location: Redcairn Village or Blackvault Ruins entrance
+* Role: starts the Blackvault demon mark quest.
+
+---
+
+# Socket Stone Items
+
+Add these twelve main story items:
+
+1. Stone of Memory
+2. Stone of Iron
+3. Stone of Ember
+4. Stone of Tides
+5. Stone of Hunger
+6. Stone of Roots
+7. Stone of Graves
+8. Stone of Frost
+9. Stone of Bells
+10. Stone of Ash
+11. Stone of Oaths
+12. Stone of Dawn
+
+These should be quest / key items if the item system supports that.
+
+They should not be sellable, droppable, or consumable unless the existing system has no distinction.
+
+---
+
+# Questline Structure
+
+Implement the main story in quest chains. Use existing quest objective types only:
+
+* defeat
+* gather
+* visit / inspect
+
+If the existing system has dialogue steps, use them. If not, represent dialogue with visit objectives.
+
+---
+
+## ACT I — The Queen’s Mercy
+
+### Quest: Wake Among Ashes
+
+Quest giver: Maelis
+Location: Oathstead Camp
+Type: visit / inspect
+
+Objectives:
+
+* Visit Maelis at Oathstead Camp.
+* Inspect the burned road shrine.
+* Inspect the broken ward-stone near camp.
+* Return to Maelis.
+
+Story result:
+
+* Maelis realizes the attack was not a normal monster raid.
+* Unlock next quest: Proof in the Road Dust.
+
+---
+
+### Quest: Proof in the Road Dust
+
+Quest giver: Maelis
+Type: gather
+
+Objectives:
+
+* Gather 3x Demon Ash.
+* Gather 2x Broken Ward Fragments.
+* Gather 1x Charred Banner.
+
+Story result:
+
+* Maelis sends the player to Archive City.
+* Unlock next quest: Oathstead Must Stand.
+* Unlock Selene in Archive City as a main story NPC if not already active.
+
+---
+
+### Quest: Oathstead Must Stand
+
+Quest giver: Maelis
+Type: gather / defeat
+
+Objectives:
+
+* Gather 5x Crates.
+* Gather 5x Wheat.
+* Defeat 6x Wolves near the camp road.
+
+Story result:
+
+* Oathstead Camp becomes the player’s official base.
+* If settlement stages exist, set Oathstead to Stage 1 or Stage 2.
+* Unlock Archive City main story quest chain.
+
+---
+
+## ACT II — The Broken Records
+
+### Quest: Names Under Dust
+
+Quest giver: Selene
+Location: Archive City
+Type: visit / inspect
+
+Objectives:
+
+* Inspect the Burned Royal Ledger.
+* Inspect the sealed oath cabinet.
+* Inspect the missing section of the Demon War records.
+
+Story result:
+
+* Player learns that the Demon Queen was once fought using twelve socket stones.
+* Unlock next quest: The Stolen Index.
+
+---
+
+### Quest: The Stolen Index
+
+Quest giver: Selene
+Type: defeat / gather
+
+Objectives:
+
+* Defeat 8x Bandits at Crowhook Bandit Camp.
+* Gather 4x Stolen Archive Pages.
+* Return to Selene.
+
+Story result:
+
+* Selene reconstructs part of the old portal record.
+* Unlock next quest: The First Socket.
+
+---
+
+### Quest: The First Socket
+
+Quest giver: Selene
+Type: visit / inspect
+
+Objectives:
+
+* Visit the Old Oath Vault below Archive City.
+* Inspect the royal socket mural.
+* Inspect the empty stone pedestal.
+
+Reward:
+
+* Give player: Stone of Memory.
+
+Story result:
+
+* Player learns that twelve stones were distributed across Alderfall.
+* Unlock main regional stone quest chains.
+
+---
+
+## ACT III — Regional Trust Chains
+
+## Highwall March Quest Chain
+
+### Quest: Watchtower Without Bells
+
+Quest giver: Odrick
+Location: Ironvale Town or Highwall City
+Type: visit / inspect
+
+Objectives:
+
+* Visit the frozen watchtower.
+* Inspect the dead campfire.
+* Inspect the broken signal bell.
+* Inspect the blood marks near the palisade.
+
+Unlock next quest: Raiders at the Pass.
+
+---
+
+### Quest: Raiders at the Pass
+
+Quest giver: Odrick
+Type: defeat
+
+Objectives:
+
+* Defeat 10x Raiders near Highwall Pass.
+* Defeat 3x Orc Brutes.
+* Return to Odrick.
+
+Unlock next quest: Frosthollow Standard.
+
+---
+
+### Quest: Frosthollow Standard
+
+Quest giver: Odrick
+Type: defeat
+
+Boss:
+
+* Kharvok the Banner-Bound
+
+Location:
+
+* Frosthollow Cave
+
+Objectives:
+
+* Enter Frosthollow Cave.
+* Defeat Kharvok the Banner-Bound.
+* Return to Odrick.
+
+Reward:
+
+* Stone of Iron.
+
+Important:
+
+* Stone of Iron should only drop / be awarded if this quest is active or completed.
+* Do not allow the player to obtain it before the quest.
+
+Boss design:
+
+* Armored war demon.
+* Uses melee attacks.
+* Summons raiders and orcs if the enemy system supports adds.
+* Uses a banner mechanic if possible. If not possible, represent it as a stronger phase or additional enemies.
+
+---
+
+## Sanctum Sunrealm Quest Chain
+
+### Quest: Shrine Without Shadow
+
+Quest giver: Solari
+Location: Sanctum City
+Type: visit / inspect
+
+Objectives:
+
+* Visit the Sunken Shrine.
+* Inspect the cracked sun altar.
+* Inspect the dead caravan camels.
+* Inspect the old ward-stone.
+
+Unlock next quest: Caravan of Glass.
+
+---
+
+### Quest: Caravan of Glass
+
+Quest giver: Solari
+Type: gather / defeat
+
+Objectives:
+
+* Defeat 6x Ember Imps.
+* Gather 4x Shrine Crates.
+* Gather 2x Sun Oil Flasks.
+* Return to Solari.
+
+Unlock next quest: The Ember Socket Rite.
+
+---
+
+### Quest: The Ember Socket Rite
+
+Quest giver: Solari
+Type: gather / visit
+
+Objectives:
+
+* Gather 3x Ember Crystal.
+* Gather 2x Sunsteppe Glass.
+* Gather 1x Demon Ash.
+* Visit the Sanctum forge shrine.
+
+Reward:
+
+* Stone of Ember.
+
+Implementation:
+
+* If crafting exists, add a recipe unlocked by Solari.
+* If crafting does not exist, award the Stone of Ember after the player gathers the ingredients and visits the forge shrine.
+
+---
+
+## Belltower Fenlands Quest Chain
+
+### Quest: The Bell That Rang Alone
+
+Quest giver: Ysra
+Location: Belltower City
+Type: visit / inspect
+
+Objectives:
+
+* Visit the marsh bell tower.
+* Inspect the bell rope.
+* Inspect the muddy footprints.
+* Inspect the reed shrine.
+
+Unlock next quest: Medicine for Mireford.
+
+---
+
+### Quest: Medicine for Mireford
+
+Quest giver: Ysra
+Type: gather
+
+Objectives:
+
+* Gather 6x Fever Reed.
+* Gather 3x Clean Water Skins.
+* Deliver them to Mireford Village.
+* Return to Ysra.
+
+Unlock next quest: Miredepth Below.
+
+---
+
+### Quest: Miredepth Below
+
+Quest giver: Ysra
+Type: defeat
+
+Boss:
+
+* Velmora, the Bell-Drowned
+
+Location:
+
+* Miredepth Cave
+
+Objectives:
+
+* Enter Miredepth Cave.
+* Defeat Velmora, the Bell-Drowned.
+* Return to Ysra.
+
+Reward:
+
+* Stone of Tides.
+
+Important:
+
+* Stone of Tides should only appear / be awarded after this quest is active.
+
+Boss design:
+
+* Drowned wraith-beast with bells and reed charms.
+* Uses fog / water attacks if possible.
+* Summons drowned villagers if enemy adds are supported.
+
+---
+
+## Riverside Reach Quest Chain
+
+### Quest: The Toll Ledger
+
+Quest giver: Mirella
+Location: Riverside City
+Type: visit / inspect
+
+Objectives:
+
+* Visit Briarbridge Town.
+* Inspect the toll ledger.
+* Inspect the empty supply crates.
+* Inspect the bridge guard post.
+
+Unlock next quest: Redcap Trade.
+
+---
+
+### Quest: Redcap Trade
+
+Quest giver: Mirella
+Type: defeat / gather
+
+Objectives:
+
+* Defeat 8x Redcap Goblins at Redcap Goblin Camp.
+* Gather 5x Stolen Supply Crates.
+* Return to Mirella.
+
+Unlock next quest: Glowing Thing in the Mud.
+
+---
+
+### Quest: Glowing Thing in the Mud
+
+Quest giver: Mirella
+Type: defeat / gather
+
+Objectives:
+
+* Defeat Redcap Goblin scavengers.
+* Gather 1x Mud-Caked Socket Stone from goblin corpses.
+
+Reward:
+
+* Stone of Hunger.
+
+Important:
+
+* Goblins must not drop the Stone of Hunger before this quest is accepted.
+* If the loot system supports conditional drops, implement a conditional drop tied to quest state.
+* If not, award the stone when the quest objective completes.
+
+---
+
+# Additional Socket Stone Quests
+
+## Stone of Roots
+
+Quest giver: Elder Rowan
+Location: Oakhaven Village or Pineward Village
+Quest: The Orchard Ward
+Type: visit / inspect / defeat
+
+Objectives:
+
+* Inspect 3x corrupted trees.
+* Inspect the old orchard ward.
+* Defeat 7x corrupted wolves.
+* Defeat boss: Rootmaw Stag.
+
+Reward:
+
+* Stone of Roots.
+
+Boss:
+
+* Rootmaw Stag.
+* Corrupted forest guardian.
+
+---
+
+## Stone of Graves
+
+Quest giver: Gravekeeper Hollis
+Location: Stonegate Crypt or nearby graveyard
+Quest: Names on Cold Stone
+Type: visit / inspect / defeat
+
+Objectives:
+
+* Inspect 5x tombstones.
+* Inspect the crypt door.
+* Defeat 10x Restless Dead.
+* Defeat boss: The Nameless Warden.
+
+Reward:
+
+* Stone of Graves.
+
+Boss:
+
+* The Nameless Warden.
+* Crypt guardian / undead knight.
+
+---
+
+## Stone of Frost
+
+Quest giver: Captain Elric Snowrest
+Location: Snowrest Village
+Quest: The Cold Road
+Type: gather / defeat
+
+Objectives:
+
+* Gather 5x Firewood Bundles.
+* Gather 3x Medicine Crates.
+* Defeat 8x Frost Wolves.
+* Defeat boss: Hailback Broodmother.
+
+Reward:
+
+* Stone of Frost.
+
+Boss:
+
+* Hailback Broodmother.
+* Giant frost spider.
+
+---
+
+## Stone of Bells
+
+Quest giver: Bellwright Nessa
+Location: Reedwatch Town or Glimmerfen Village
+Quest: The Missing Bell Rope
+Type: gather / visit / inspect
+
+Objectives:
+
+* Inspect the bell winch.
+* Gather 4x Reed Fiber.
+* Gather 2x Iron Hooks.
+* Inspect the old bell foundation.
+
+Reward:
+
+* Stone of Bells.
+
+Implementation:
+
+* The stone should be found under the bell foundation after the repair objectives are complete.
+
+---
+
+## Stone of Ash
+
+Quest giver: Ash-Scribe Damar
+Location: Redcairn Village or Blackvault Ruins entrance
+Quest: The Blackvault Mark
+Type: visit / inspect / defeat
+
+Objectives:
+
+* Visit Blackvault Ruins.
+* Inspect 3x skull wards.
+* Inspect the black altar.
+* Defeat 6x Ember Imps.
+* Defeat boss: Sareth, the Cinder Knife.
+
+Reward:
+
+* Stone of Ash.
+
+Boss:
+
+* Sareth, the Cinder Knife.
+* Fast demon assassin.
+* Uses ember imps as adds if supported.
+
+Important:
+
+* Stone of Ash should only drop / be awarded if this quest is active.
+
+---
+
+## Stone of Oaths
+
+Quest giver: Maelis
+Location: Oathstead Camp
+Quest: A Camp Worth Defending
+Type: gather / visit / inspect / defeat
+
+Objectives:
+
+* Gather 10x Timber.
+* Gather 8x Stone.
+* Gather 5x Food Supplies.
+* Inspect the central oath marker.
+* Defeat demon raid attacking Oathstead.
+* Defeat boss: Morvane the Mercy-Taker.
+
+Reward:
+
+* Stone of Oaths.
+
+Boss:
+
+* Morvane the Mercy-Taker.
+* Demon sent by the Demon Queen to punish the player for building hope.
+
+Implementation:
+
+* If the settlement system supports stages, this quest should upgrade Oathstead to a defended settlement or equivalent stage.
+* If NPC allies / villagers can assist in combat, use them.
+* If not, represent the raid as a sequence of defeat objectives.
+
+---
+
+## Stone of Dawn
+
+Quest giver: Maelis
+Location: Oathstead Camp
+Quest: The Kingdoms Answer
+Type: visit
+
+Objectives:
+
+* Visit Riverside City and speak with Mirella.
+* Visit Highwall City and speak with Odrick.
+* Visit Archive City and speak with Selene.
+* Visit Belltower City and speak with Ysra.
+* Visit Sanctum City and speak with Solari.
+* Return to Maelis.
+
+Reward:
+
+* Stone of Dawn.
+
+Unlock condition:
+
+* This quest should only become available after the player has collected the other major regional stones or completed enough kingdom trust chains.
+* Recommended condition: player has Stone of Memory, Stone of Iron, Stone of Ember, Stone of Tides, Stone of Hunger, Stone of Roots, Stone of Graves, Stone of Frost, Stone of Bells, Stone of Ash, and Stone of Oaths.
+
+---
+
+# Portal Quest
+
+## Quest: The Twelve Stones of the Gate
+
+Quest giver:
+
+* Maelis at Oathstead Camp
+
+Location:
+
+* The Old Gate of Alderfall
+
+Type:
+
+* visit / inspect
+
+Objectives:
+
+* Collect all 12 socket stones.
+* Visit the Old Gate of Alderfall.
+* Inspect the central portal frame.
+* Inspect all 12 empty sockets.
+* Insert the socket stones.
+
+Required stones:
+
+* Stone of Memory
+* Stone of Iron
+* Stone of Ember
+* Stone of Tides
+* Stone of Hunger
+* Stone of Roots
+* Stone of Graves
+* Stone of Frost
+* Stone of Bells
+* Stone of Ash
+* Stone of Oaths
+* Stone of Dawn
+
+Implementation:
+
+* Add a new world location if not already present: The Old Gate of Alderfall.
+* Add an inactive portal object.
+* The portal should become activatable only when the player has all twelve socket stones and the quest is active.
+* If interaction objects exist, make the portal an inspect / interact object.
+* If cutscenes exist, trigger a short portal activation scene.
+* If cutscenes do not exist, show dialogue boxes.
+
+Portal activation dialogue:
+
+Vaelthara:
+“So. The little survivor gathers stones and calls it courage.”
+
+Player:
+“I survived you once.”
+
+Vaelthara:
+“No. I permitted your breathing. There is a difference.”
+
+Maelis:
+“You should have killed them.”
+
+Vaelthara:
+“I know.”
+
+After this, unlock the final dungeon:
+
+The Hollow Throne.
+
+---
+
+# Final Dungeon And Boss
+
+## Final Dungeon: The Hollow Throne
+
+If the project supports dungeons / maps, add or register a final dungeon map called:
+
+**The Hollow Throne**
+
+Possible areas:
+
+* The Mercy Hall
+* The Court of Ash
+* The Road of Failed Oaths
+* The Throne Without Sky
+
+If creating a full dungeon is too large for the current structure, add at least one final boss arena map.
+
+---
+
+## Final Boss: Vaelthara, Demon Queen of Mercy
+
+Location:
+
+* The Hollow Throne
+
+Boss phases if supported:
+
+Phase 1: The Queen’s Mercy
+
+* Vaelthara fights alone.
+* Uses dark flame / melee / teleport-style behavior if supported.
+
+Phase 2: The Twelve Broken Oaths
+
+* Summons corrupted symbols / adds from the five kingdoms.
+* If complex mechanics are not supported, spawn waves of demons.
+
+Phase 3: No More Mercy
+
+* Vaelthara becomes stronger.
+* Add final wave or arena hazard if supported.
+
+If boss phases are not supported:
+
+* Implement Vaelthara as a high-health boss.
+* Spawn additional enemies at health thresholds if possible.
+* Otherwise, use a strong single boss encounter.
+
+On victory:
+
+* Mark main story complete.
+* Show ending dialogue.
+* Return the player to Oathstead Camp or unlock post-game state.
+
+Ending text:
+
+“Alderfall was never saved by crowns. It was saved by people who kept their promises.”
+
+---
+
+# Quest Unlock Flow
+
+Recommended progression:
+
+1. Wake Among Ashes
+2. Proof in the Road Dust
+3. Oathstead Must Stand
+4. Names Under Dust
+5. The Stolen Index
+6. The First Socket
+7. Regional trust chains unlock:
+
+   * Odrick / Highwall
+   * Solari / Sanctum
+   * Ysra / Belltower
+   * Mirella / Riverside
+   * Additional stone NPCs
+8. A Camp Worth Defending
+9. The Kingdoms Answer
+10. The Twelve Stones of the Gate
+11. The Hollow Throne / Vaelthara fight
+12. Main story complete
+
+---
+
+# Technical Requirements
+
+Please implement this carefully.
+
+Before making changes:
+
+1. Inspect the existing codebase.
+2. Identify how quests are currently defined.
+3. Identify how NPCs are created and placed.
+4. Identify how quest markers work.
+5. Identify how items and inventory work.
+6. Identify how enemy drops work.
+7. Identify how maps / locations are registered.
+8. Identify how save data tracks quest progress.
+
+Then implement using the existing architecture.
+
+Do not delete or break existing quests.
+
+Do not rename existing classes unless absolutely necessary.
+
+Add comments where new story content is registered.
+
+Prefer adding new content files / data entries if the project uses data-driven registration.
+
+If the project is hardcoded, add helper methods to keep the main story readable.
+
+---
+
+# Red Main Story Exclamation Mark
+
+Implement support for main story quest markers if not already present.
+
+Expected behavior:
+
+* Normal side quests can keep the current marker.
+* Main story NPCs should show a red exclamation mark.
+* If the NPC has an active main story quest available, show red `!`.
+* If the NPC is waiting for quest completion turn-in, show red `?` if the game supports that, otherwise keep red `!`.
+* If only normal side quests are available, use the normal marker.
+
+Try to implement this with a quest category or quest type:
+
+Example:
+
+* QuestType.MAIN_STORY
+* QuestCategory.MAIN
+* isMainStory = true
+
+Use whichever style best matches the existing project.
+
+---
+
+# Conditional Drops
+
+Implement conditional drops for story stones where needed.
+
+Required conditional drops / rewards:
+
+* Stone of Iron from Kharvok only during / after “Frosthollow Standard.”
+* Stone of Hunger from Redcap Goblin scavengers only during “Glowing Thing in the Mud.”
+* Stone of Ash from Sareth only during / after “The Blackvault Mark.”
+* Stone of Tides from Velmora only during / after “Miredepth Below.”
+
+If the enemy loot system does not support conditional drops, complete the quest by awarding the item directly after the defeat objective is completed.
+
+---
+
+# Acceptance Criteria
+
+The implementation is successful if:
+
+1. The player can start the main story at Oathstead Camp with Maelis.
+2. Main story NPCs display red exclamation marks.
+3. The quest chains unlock in the correct order.
+4. The player can obtain all twelve socket stones.
+5. Socket stones cannot be obtained too early through normal enemy drops.
+6. The Old Gate of Alderfall only activates when all twelve stones are collected.
+7. The final Demon Queen encounter can be reached.
+8. Completing the final encounter marks the main story as completed.
+9. The game still compiles and runs.
+10. Existing quests, NPCs, maps, and items still work.
+
+After implementation, provide a summary of:
+
+* Files changed.
+* New classes / data entries added.
+* How the red main story marker was implemented.
+* How the twelve stones are tracked.
+* Any limitations or TODOs caused by missing engine features.
+* How to test the full questline from a new save.

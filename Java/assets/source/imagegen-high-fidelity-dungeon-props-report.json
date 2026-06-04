@@ -1,0 +1,90 @@
+[
+  {
+    "path": "Java/assets/cutout_tests/end_results/high_fidelity_dungeon_props/dungeon_prop_relic_crate.png",
+    "mode": "magenta",
+    "source_size": [
+      538,
+      538
+    ],
+    "output_size": [
+      538,
+      538
+    ],
+    "visible_bbox": [
+      59,
+      28,
+      506,
+      510
+    ],
+    "visible_pixels": 157823,
+    "edge_background_pixels": 0,
+    "components": 3,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/cutout_tests/end_results/high_fidelity_dungeon_props/dungeon_prop_chain_stand.png",
+    "mode": "magenta",
+    "source_size": [
+      575,
+      575
+    ],
+    "output_size": [
+      575,
+      575
+    ],
+    "visible_bbox": [
+      95,
+      30,
+      509,
+      545
+    ],
+    "visible_pixels": 122423,
+    "edge_background_pixels": 0,
+    "components": 1,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/cutout_tests/end_results/high_fidelity_dungeon_props/dungeon_prop_lantern_stand.png",
+    "mode": "magenta",
+    "source_size": [
+      609,
+      609
+    ],
+    "output_size": [
+      609,
+      609
+    ],
+    "visible_bbox": [
+      182,
+      32,
+      427,
+      577
+    ],
+    "visible_pixels": 62702,
+    "edge_background_pixels": 0,
+    "components": 1,
+    "passed": true
+  },
+  {
+    "path": "Java/assets/cutout_tests/end_results/high_fidelity_dungeon_props/dungeon_prop_rune_pillar.png",
+    "mode": "magenta",
+    "source_size": [
+      605,
+      605
+    ],
+    "output_size": [
+      605,
+      605
+    ],
+    "visible_bbox": [
+      137,
+      32,
+      468,
+      573
+    ],
+    "visible_pixels": 110564,
+    "edge_background_pixels": 0,
+    "components": 1,
+    "passed": true
+  }
+]

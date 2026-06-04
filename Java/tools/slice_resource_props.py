@@ -2,7 +2,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from universal_cutout import CutoutSettings, universal_cutout
+from universal_cutout import CutoutSettings, clean_spill_edges, scrub_transparent_rgb, universal_cutout
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,7 +38,17 @@ PROPS = [
 
 
 def chroma_to_alpha(img: Image.Image) -> Image.Image:
-    return universal_cutout(img, CutoutSettings(mode="magenta", padding=8, trim=False))
+    return universal_cutout(
+        img,
+        CutoutSettings(
+            mode="magenta",
+            padding=8,
+            trim=False,
+            stray_max_gap=48,
+            drop_above_strays=True,
+            drop_below_strays=True,
+        ),
+    )
 
 
 def cropped_cell(sheet: Image.Image, index: int) -> Image.Image:
@@ -48,13 +58,26 @@ def cropped_cell(sheet: Image.Image, index: int) -> Image.Image:
     left = round(sheet.width * col / cols)
     top = round(sheet.height * row / rows)
     right = round(sheet.width * (col + 1) / cols)
-    bottom = round(sheet.height * (row + 1) / rows)
-    return universal_cutout(sheet.crop((left, top, right, bottom)), CutoutSettings(mode="magenta", padding=8))
+    bottom = min(sheet.height, round(sheet.height * (row + 1) / rows) + 48)
+    return universal_cutout(
+        sheet.crop((left, top, right, bottom)),
+        CutoutSettings(
+            mode="magenta",
+            padding=10,
+            spill_passes=6,
+            stray_max_gap=48,
+            drop_above_strays=True,
+            above_stray_gap=16,
+            drop_below_strays=True,
+            below_stray_gap=16,
+        ),
+    )
 
 
 def save_icon(image: Image.Image, path: Path) -> None:
     icon = image.copy()
     icon.thumbnail((96, 96), Image.Resampling.LANCZOS)
+    icon = scrub_transparent_rgb(clean_spill_edges(icon, "magenta", 4))
     out = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
     out.alpha_composite(icon, ((96 - icon.width) // 2, (96 - icon.height) // 2))
     out.save(path)
@@ -70,8 +93,7 @@ def main() -> None:
         if icon_name is not None:
             icon_path = ROOT / "assets" / icon_folder / f"{icon_name}.png"
             icon_path.parent.mkdir(parents=True, exist_ok=True)
-            if not icon_path.exists():
-                save_icon(image, icon_path)
+            save_icon(image, icon_path)
 
 
 if __name__ == "__main__":

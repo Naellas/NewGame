@@ -4,14 +4,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import (
-    clean_spill_edges,
-    detect_key_kind,
-    remove_boundary_spill,
-    remove_connected_key,
-    remove_key_pixels,
-    trim_alpha,
-)
+from asset_paths import character_dir
+from universal_cutout import CutoutSettings, trim_alpha, universal_cutout
 
 
 SOURCE = Path("assets/source")
@@ -21,7 +15,7 @@ DIRECTIONS = ("down", "up", "left", "right")
 SHEETS = [
     (
         SOURCE / "imagegen-player-class-directional-sheet.png",
-        Path("assets/player"),
+        Path("assets/player/base"),
         [
             "player_model",
             "class_knight_model",
@@ -132,14 +126,17 @@ def vertical_overlap(a: tuple[int, int, int, int], b: tuple[int, int, int, int])
 
 
 def clean_key(image: Image.Image) -> Image.Image:
-    key = detect_key_kind(image)
-    out = remove_connected_key(image, key)
-    out = remove_key_pixels(out, key)
-    out = clean_spill_edges(out, key)
-    out = remove_boundary_spill(out, key)
-    out = clean_spill_edges(out, key, passes=1)
-    out = remove_boundary_spill(out, key, passes=1)
-    return out
+    return universal_cutout(
+        image,
+        CutoutSettings(
+            mode="magenta",
+            padding=0,
+            trim=False,
+            global_key=True,
+            clear_strays=False,
+            spill_passes=8,
+        ),
+    )
 
 
 def extract_sprite(source: Image.Image, bounds: tuple[int, int, int, int], padding: int) -> Image.Image:
@@ -197,18 +194,19 @@ def extract_sheet(path: Path, out_dir: Path, names: list[str]) -> None:
     if not path.exists():
         raise FileNotFoundError(f"Missing directional sheet: {path}")
     source = Image.open(path).convert("RGBA")
-    out_dir.mkdir(parents=True, exist_ok=True)
     cell_w = source.width // len(DIRECTIONS)
     cell_h = source.height // len(names)
     padding = max(36, min(cell_w, cell_h) // 4)
     for row, name in enumerate(names):
+        target_dir = character_dir(Path("assets"), name, out_dir)
+        target_dir.mkdir(parents=True, exist_ok=True)
         for col, direction in enumerate(DIRECTIONS):
             left = col * cell_w
             top = row * cell_h
             right = source.width if col == len(DIRECTIONS) - 1 else (col + 1) * cell_w
             bottom = source.height if row == len(names) - 1 else (row + 1) * cell_h
             sprite = extract_sprite(source, (left, top, right, bottom), padding)
-            sprite.save(out_dir / f"{name}_{direction}.png")
+            sprite.save(target_dir / f"{name}_{direction}.png")
 
 
 def main() -> None:

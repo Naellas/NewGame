@@ -5,15 +5,47 @@ import java.util.Map;
 
 public final class MonsterAbilities {
     private static final Map<String, List<MonsterAbility>> ABILITIES = Map.ofEntries(
-            ability("slime", new MonsterAbility("Slime Splash", 5, 0.36, "acid", List.of(new MonsterAbilityStatus("weak", 0.30)))),
-            ability("wolf", new MonsterAbility("Hamstring Bite", 8, 0.34, "fang", List.of(new MonsterAbilityStatus("weak", 0.45)))),
+            ability("slime",
+                    new MonsterAbility("Slime Splash", 5, 0.36, "acid", List.of(new MonsterAbilityStatus("weak", 0.30))),
+                    new MonsterAbility("Split Skin", 0, 0.26, MonsterAbility.Kind.BUFF, "acid", 4, 0.52,
+                            List.of(new MonsterAbilityStatus("shield", "self", 1.0, 8), new MonsterAbilityStatus("regeneration", "self", 1.0, 3)))),
+            ability("sheep",
+                    new MonsterAbility("Panic Kick", 7, 0.32, "impact", List.of(new MonsterAbilityStatus("weak", 0.25))),
+                    new MonsterAbility("Fleece Guard", 0, 0.20, MonsterAbility.Kind.BUFF, "ward", 4, 0.45,
+                            List.of(new MonsterAbilityStatus("shield", "self", 1.0, 6)))),
+            ability("doe",
+                    new MonsterAbility("Startled Hoof", 8, 0.34, "impact", List.of(new MonsterAbilityStatus("vulnerable", 0.28))),
+                    new MonsterAbility("Forest Sprint", 0, 0.22, MonsterAbility.Kind.BUFF, "dust", 3, null,
+                            List.of(new MonsterAbilityStatus("haste", "self")))),
+            ability("mountain_goat",
+                    new MonsterAbility("Cliff Bash", 10, 0.36, "impact", List.of(new MonsterAbilityStatus("vulnerable", 0.32))),
+                    new MonsterAbility("Surefoot Brace", 0, 0.22, MonsterAbility.Kind.BUFF, "ward", 3, null,
+                            List.of(new MonsterAbilityStatus("fortified", "self")))),
+            ability("wolf",
+                    new MonsterAbility("Hamstring Bite", 8, 0.34, "fang", List.of(new MonsterAbilityStatus("weak", 0.45))),
+                    new MonsterAbility("Pack Howl", 0, 0.22, MonsterAbility.Kind.BUFF, "sonic", 3, null,
+                            List.of(new MonsterAbilityStatus("haste", "self")))),
             ability("frost_wolf",
-                    new MonsterAbility("Rime Bite", 12, 0.42, "frost", List.of(new MonsterAbilityStatus("weak", 0.60)))),
+                    new MonsterAbility("Rime Bite", 12, 0.42, "frost", List.of(new MonsterAbilityStatus("weak", 0.60))),
+                    new MonsterAbility("White Hide", 0, 0.24, MonsterAbility.Kind.BUFF, "frost", 4, 0.58,
+                            List.of(new MonsterAbilityStatus("fortified", "self"), new MonsterAbilityStatus("shield", "self", 1.0, 8)))),
             ability("meadow_wolf",
-                    new MonsterAbility("Pack Snap", 9, 0.36, "fang", List.of(new MonsterAbilityStatus("vulnerable", 0.30)))),
-            ability("bat", new MonsterAbility("Shriek", 6, 0.35, "sonic", List.of(new MonsterAbilityStatus("weak", 0.35)))),
+                    new MonsterAbility("Pack Snap", 9, 0.36, "fang", List.of(new MonsterAbilityStatus("vulnerable", 0.30))),
+                    new MonsterAbility("Low Circle", 0, 0.20, MonsterAbility.Kind.BUFF, "dust", 3, null,
+                            List.of(new MonsterAbilityStatus("haste", "self")))),
+            ability("stag",
+                    new MonsterAbility("Crown Rush", 14, 0.38, "fang", List.of(new MonsterAbilityStatus("vulnerable", 0.36))),
+                    new MonsterAbility("Proud Stand", 0, 0.22, MonsterAbility.Kind.BUFF, "ward", 4, 0.55,
+                            List.of(new MonsterAbilityStatus("fortified", "self"), new MonsterAbilityStatus("shield", "self", 1.0, 8)))),
+            ability("bat",
+                    new MonsterAbility("Shriek", 6, 0.35, "sonic", List.of(new MonsterAbilityStatus("weak", 0.35))),
+                    new MonsterAbility("Darting Wings", 0, 0.22, MonsterAbility.Kind.BUFF, "dust", 3, null,
+                            List.of(new MonsterAbilityStatus("haste", "self")))),
             ability("crypt_bat", new MonsterAbility("Grave Shriek", 9, 0.38, "sonic", List.of(new MonsterAbilityStatus("weak", 0.45)))),
-            ability("skeleton", new MonsterAbility("Bone Rattle", 7, 0.35, "bone", List.of(new MonsterAbilityStatus("vulnerable", 0.30)))),
+            ability("skeleton",
+                    new MonsterAbility("Bone Rattle", 7, 0.35, "bone", List.of(new MonsterAbilityStatus("vulnerable", 0.30))),
+                    new MonsterAbility("Grave Guard", 0, 0.22, MonsterAbility.Kind.BUFF, "ward", 4, 0.50,
+                            List.of(new MonsterAbilityStatus("fortified", "self"), new MonsterAbilityStatus("shield", "self", 1.0, 7)))),
             ability("goblin", new MonsterAbility("Dirty Trick", 9, 0.36, "dust", List.of(new MonsterAbilityStatus("weak", 0.35)))),
             ability("goblin_scout", new MonsterAbility("Knife Feint", 8, 0.38, "slash", List.of(new MonsterAbilityStatus("vulnerable", 0.25)))),
             ability("goblin_archer",
@@ -119,7 +151,9 @@ public final class MonsterAbilities {
                     new MonsterAbility("Sand Veil", 11, 0.44, "dust", List.of(new MonsterAbilityStatus("weak", 0.60))),
                     new MonsterAbility("Burrow Strike", 18, 0.30, MonsterAbility.Kind.DAMAGE, "fang", 3, null, List.of(new MonsterAbilityStatus("vulnerable", 0.40)))),
             ability("glass_scorpion",
-                    new MonsterAbility("Glass Sting", 16, 0.44, "poison", List.of(new MonsterAbilityStatus("poison", 0.65)))),
+                    new MonsterAbility("Glass Sting", 16, 0.44, "poison", List.of(new MonsterAbilityStatus("poison", 0.65))),
+                    new MonsterAbility("Mirror Carapace", 0, 0.24, MonsterAbility.Kind.BUFF, "ward", 4, 0.58,
+                            List.of(new MonsterAbilityStatus("shield", "self", 1.0, 10), new MonsterAbilityStatus("fortified", "self")))),
             ability("ice_golem",
                     new MonsterAbility("Glacier Slam", 24, 0.42, "frost", List.of(new MonsterAbilityStatus("weak", 0.80))),
                     new MonsterAbility("Icebound Shell", 0, 0.30, MonsterAbility.Kind.BUFF, "ward", 4, 0.65,
@@ -151,12 +185,15 @@ public final class MonsterAbilities {
                             List.of(new MonsterAbilityStatus("fortified", "self"), new MonsterAbilityStatus("shield", "self", 1.0, 12)))),
             ability("fire_giant",
                     new MonsterAbility("Cinder Maul", 33, 0.44, "fire",
-                            List.of(new MonsterAbilityStatus("burn", 0.70), new MonsterAbilityStatus("vulnerable", 0.35)))),
+                            List.of(new MonsterAbilityStatus("burn", 0.70), new MonsterAbilityStatus("vulnerable", 0.35))),
+                    new MonsterAbility("Heat Shimmer", 0, 0.22, MonsterAbility.Kind.BUFF, "fire", 4, 0.62,
+                            List.of(new MonsterAbilityStatus("haste", "self"), new MonsterAbilityStatus("shield", "self", 1.0, 12)))),
             ability("reed_serpent",
                     new MonsterAbility("Reed Coil", 15, 0.42, "acid",
                             List.of(new MonsterAbilityStatus("weak", 0.40), new MonsterAbilityStatus("poison", 0.45)))),
             ability("river_eel",
-                    new MonsterAbility("Current Lash", 11, 0.38, "acid", List.of(new MonsterAbilityStatus("weak", 0.40)))),
+                    new MonsterAbility("Current Lash", 11, 0.38, "acid", List.of(new MonsterAbilityStatus("weak", 0.40))),
+                    new MonsterAbility("Numbing Coil", 13, 0.34, "sonic", List.of(new MonsterAbilityStatus("vulnerable", 0.38)))),
             ability("ash_scorpion",
                     new MonsterAbility("Cinder Sting", 18, 0.44, "fire",
                             List.of(new MonsterAbilityStatus("burn", 0.55), new MonsterAbilityStatus("poison", 0.35)))),
@@ -171,6 +208,26 @@ public final class MonsterAbilities {
     );
 
     private MonsterAbilities() {
+    }
+
+    public static List<MonsterAbility> eliteAbilitiesFor(GameData.MonsterSpec monsterSpec) {
+        int strikePower = Math.max(12, monsterSpec.attack() + 6);
+        int shieldPower = Math.max(9, monsterSpec.defense() + 8);
+        String strikeEffect = switch (monsterSpec.species()) {
+            case "dragon", "elemental" -> "fire";
+            case "undead" -> "shadow";
+            case "insect", "reptile", "plant" -> "poison";
+            case "bat" -> "sonic";
+            case "giant", "orc" -> "cleave";
+            default -> "slash";
+        };
+        return List.of(
+                new MonsterAbility("Exploit Opening", strikePower, 0.36, strikeEffect,
+                        List.of(new MonsterAbilityStatus("vulnerable", 0.55))),
+                new MonsterAbility("Elite Focus", 0, 0.24, MonsterAbility.Kind.BUFF, "ward", 4, 0.62,
+                        List.of(new MonsterAbilityStatus("shield", "self", 1.0, shieldPower),
+                                new MonsterAbilityStatus("haste", "self")))
+        );
     }
 
     public static List<MonsterAbility> forMonster(GameData.MonsterSpec monsterSpec) {

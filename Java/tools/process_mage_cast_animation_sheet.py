@@ -8,12 +8,13 @@ from PIL import Image
 
 sys.path.append(str(Path(__file__).resolve().parent))
 
+from asset_paths import animation_dir
 from universal_cutout import CutoutSettings, clean_spill_edges, universal_cutout
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets" / "source" / "imagegen-mage-cast-sheet-10.png"
-OUT = ROOT / "assets" / "animations" / "class_mage_model_cast_anim.png"
+OUT = animation_dir(ROOT / "assets", "class_mage_model_cast_anim") / "class_mage_model_cast_anim.png"
 FRAMES = 10
 FRAME_W = 387
 FRAME_H = 757

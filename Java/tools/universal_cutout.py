@@ -28,6 +28,15 @@ class CutoutSettings:
     stray_min_pixels: int = 18
     stray_max_gap: int | None = None
     keep_largest_only: bool = False
+    drop_edge_strays: bool = False
+    edge_stray_margin: int = 1
+    drop_above_strays: bool = False
+    above_stray_gap: int = 16
+    drop_below_strays: bool = False
+    below_stray_gap: int = 16
+    drop_small_green_matte: bool = False
+    small_green_matte_max_pixels: int = 64
+    scrub_transparent_rgb: bool = True
     trim: bool = True
 
 
@@ -110,6 +119,18 @@ def is_green_key(rgb: Rgb) -> bool:
     return g > 150 and g >= r + 50 and g >= b + 50 and max(r, b) < 170
 
 
+def is_screen_green_matte(rgb: Rgb) -> bool:
+    r, g, b = rgb
+    if g > 205 and r < 120 and b < 120:
+        return True
+    return 112 <= g and r <= 58 and b <= 48 and g >= r + 72 and g >= b + 70
+
+
+def is_green_matte_candidate(rgb: Rgb) -> bool:
+    r, g, b = rgb
+    return g > 80 and g >= r + 22 and g >= b + 30 and r < 145 and b < 100
+
+
 def is_dark_key(rgb: Rgb) -> bool:
     r, g, b = rgb
     return r < 28 and g < 45 and b < 62
@@ -171,7 +192,15 @@ def is_background_pixel(rgb: Rgb, mode: str, samples: list[Rgb]) -> bool:
     if mode == "magenta":
         return is_magenta_key(rgb)
     if mode == "green":
-        return is_green_key(rgb)
+        if samples:
+            r, g, b = rgb
+            for sr, sg, sb in samples:
+                dist = abs(r - sr) + abs(g - sg) + abs(b - sb)
+                channel_close = abs(r - sr) < 78 and abs(g - sg) < 88 and abs(b - sb) < 72
+                green_screen_bias = g >= r + 32 and g >= b + 45 and r < 120 and b < 90
+                if green_screen_bias and dist < 138 and channel_close:
+                    return True
+        return is_screen_green_matte(rgb)
     if mode == "dark":
         return is_dark_key(rgb)
     if mode == "light":
@@ -243,7 +272,13 @@ def remove_key_pixels(image: Image.Image, key_kind: str | None = None) -> Image.
     for y in range(out.height):
         for x in range(out.width):
             r, g, b, a = px[x, y]
-            if a > 0 and is_background_pixel((r, g, b), mode, samples):
+            if a == 0:
+                continue
+            if mode == "green":
+                key_pixel = is_screen_green_matte((r, g, b))
+            else:
+                key_pixel = is_background_pixel((r, g, b), mode, samples)
+            if key_pixel:
                 px[x, y] = (r, g, b, 0)
     return out
 
@@ -253,7 +288,7 @@ def is_spill(color: Color, key_kind: str) -> bool:
     if a == 0:
         return False
     if key_kind == "green":
-        return g > 150 and g >= r + 50 and g >= b + 50 and max(r, b) < 170
+        return is_screen_green_matte((r, g, b))
     if key_kind == "dark":
         return max(r, g, b) < 68 and touches_key_bias((r, g, b), key_kind)
     if key_kind == "light":
@@ -415,6 +450,91 @@ def clear_stray_components(
     return out
 
 
+def clear_edge_stray_components(image: Image.Image, margin: int = 1) -> Image.Image:
+    out = image.convert("RGBA")
+    px = out.load()
+    components = alpha_components(out)
+    if not components:
+        return out
+    main = max(components, key=len)
+    for component in components:
+        if component is main:
+            continue
+        if component_touches_side_or_top(component, out.size, margin):
+            clear_component(px, component)
+    return out
+
+
+def component_touches_side_or_top(component: list[tuple[int, int]], size: tuple[int, int], margin: int) -> bool:
+    width, _ = size
+    for x, y in component:
+        if x <= margin or x >= width - 1 - margin or y <= margin:
+            return True
+    return False
+
+
+def clear_above_stray_components(image: Image.Image, min_gap: int = 16) -> Image.Image:
+    out = image.convert("RGBA")
+    px = out.load()
+    components = alpha_components(out)
+    if not components:
+        return out
+    main = max(components, key=len)
+    main_box = component_box(main)
+    for component in components:
+        if component is main:
+            continue
+        box = component_box(component)
+        if box[3] <= main_box[1] - min_gap:
+            clear_component(px, component)
+    return out
+
+
+def clear_below_stray_components(image: Image.Image, min_gap: int = 16) -> Image.Image:
+    out = image.convert("RGBA")
+    px = out.load()
+    components = alpha_components(out)
+    if not components:
+        return out
+    main = max(components, key=len)
+    main_box = component_box(main)
+    for component in components:
+        if component is main:
+            continue
+        box = component_box(component)
+        if box[1] >= main_box[3] + min_gap:
+            clear_component(px, component)
+    return out
+
+
+def clear_small_green_matte_components(image: Image.Image, max_pixels: int = 64) -> Image.Image:
+    out = image.convert("RGBA")
+    px = out.load()
+    width, height = out.size
+    seen = bytearray(width * height)
+    for y in range(height):
+        for x in range(width):
+            index = y * width + x
+            if seen[index] or px[x, y][3] <= 8 or not is_green_matte_candidate(px[x, y][:3]):
+                continue
+            component: list[tuple[int, int]] = []
+            q: deque[tuple[int, int]] = deque([(x, y)])
+            seen[index] = 1
+            while q:
+                cx, cy = q.popleft()
+                component.append((cx, cy))
+                for ny in range(max(0, cy - 1), min(height, cy + 2)):
+                    for nx in range(max(0, cx - 1), min(width, cx + 2)):
+                        next_index = ny * width + nx
+                        if seen[next_index] or px[nx, ny][3] <= 8 or not is_green_matte_candidate(px[nx, ny][:3]):
+                            continue
+                        seen[next_index] = 1
+                        q.append((nx, ny))
+            if len(component) <= max_pixels:
+                clear_component(px, component)
+    return out
+
+
 def component_box(component: list[tuple[int, int]]) -> tuple[int, int, int, int]:
     return (
         min(x for x, _ in component),
@@ -436,12 +556,18 @@ def trim_alpha(image: Image.Image, padding: int = 8) -> Image.Image:
     if bbox is None:
         return out
     left, top, right, bottom = bbox
-    return out.crop((
+    crop_box = (
         max(0, left - padding),
         max(0, top - padding),
         min(out.width, right + padding),
         min(out.height, bottom + padding),
-    ))
+    )
+    cropped = out.crop(crop_box)
+    target_width = max(1, right - left + padding * 2)
+    target_height = max(1, bottom - top + padding * 2)
+    framed = Image.new("RGBA", (target_width, target_height), (0, 0, 0, 0))
+    framed.alpha_composite(cropped, (crop_box[0] - left + padding, crop_box[1] - top + padding))
+    return framed
 
 
 def square_trim(image: Image.Image, padding_ratio: float = 0.06) -> Image.Image:
@@ -480,6 +606,17 @@ def fit(image: Image.Image, width: int, height: int, bottom_align: bool = True, 
     return canvas
 
 
+def scrub_transparent_rgb(image: Image.Image, alpha_threshold: int = 0) -> Image.Image:
+    out = image.convert("RGBA")
+    px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if a <= alpha_threshold:
+                px[x, y] = (0, 0, 0, 0)
+    return out
+
+
 def universal_cutout(image: Image.Image, settings: CutoutSettings | None = None) -> Image.Image:
     settings = settings or CutoutSettings()
     out = image.convert("RGBA")
@@ -500,35 +637,23 @@ def universal_cutout(image: Image.Image, settings: CutoutSettings | None = None)
             max_gap=settings.stray_max_gap,
             keep_largest_only=settings.keep_largest_only,
         )
+    if settings.drop_edge_strays:
+        out = clear_edge_stray_components(out, settings.edge_stray_margin)
+    if settings.drop_above_strays:
+        out = clear_above_stray_components(out, settings.above_stray_gap)
+    if settings.drop_below_strays:
+        out = clear_below_stray_components(out, settings.below_stray_gap)
+    if settings.drop_small_green_matte and mode == "green":
+        out = clear_small_green_matte_components(out, settings.small_green_matte_max_pixels)
     if settings.clean_spill and mode not in {"alpha"}:
         out = clean_spill_edges(out, mode, 1)
     if settings.square:
-        return square_trim(out)
-    return trim_alpha(out, settings.padding) if settings.trim else out
-
-
-def chroma_cutout(
-    image: Image.Image,
-    key_kind: str | None = None,
-    padding: int = 8,
-    square: bool = False,
-    stray_max_gap: int | None = None,
-    keep_largest_only: bool = False,
-) -> Image.Image:
-    mode = key_kind or "auto"
-    settings = CutoutSettings(
-        mode=mode,  # type: ignore[arg-type]
-        padding=padding,
-        square=square,
-        stray_max_gap=stray_max_gap,
-        keep_largest_only=keep_largest_only,
-    )
-    return universal_cutout(image, settings)
-
-
-def save_chroma_cutout(source: Image.Image, out_path: Path, key_kind: str | None = None, padding: int = 8) -> None:
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    chroma_cutout(source, key_kind, padding).save(out_path)
+        out = square_trim(out)
+    elif settings.trim:
+        out = trim_alpha(out, settings.padding)
+    if settings.scrub_transparent_rgb:
+        out = scrub_transparent_rgb(out)
+    return out
 
 
 def cut_sheet(
@@ -538,6 +663,10 @@ def cut_sheet(
     rows: int,
     names: list[str] | None = None,
     bleed: int = 0,
+    bleed_left: int | None = None,
+    bleed_top: int | None = None,
+    bleed_right: int | None = None,
+    bleed_bottom: int | None = None,
     settings: CutoutSettings | None = None,
 ) -> list[Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -547,7 +676,18 @@ def cut_sheet(
     for index, name in enumerate(names[:total]):
         col = index % cols
         row = index // cols
-        cell = crop_cell(source, col, row, cols, rows, bleed)
+        cell = crop_cell(
+            source,
+            col,
+            row,
+            cols,
+            rows,
+            bleed,
+            bleed_left=bleed_left,
+            bleed_top=bleed_top,
+            bleed_right=bleed_right,
+            bleed_bottom=bleed_bottom,
+        )
         out = universal_cutout(cell, settings)
         path = out_dir / f"{name}.png"
         out.save(path)
@@ -555,16 +695,32 @@ def cut_sheet(
     return outputs
 
 
-def crop_cell(sheet: Image.Image, col: int, row: int, cols: int, rows: int, bleed: int = 0) -> Image.Image:
+def crop_cell(
+    sheet: Image.Image,
+    col: int,
+    row: int,
+    cols: int,
+    rows: int,
+    bleed: int = 0,
+    *,
+    bleed_left: int | None = None,
+    bleed_top: int | None = None,
+    bleed_right: int | None = None,
+    bleed_bottom: int | None = None,
+) -> Image.Image:
+    left_bleed = bleed if bleed_left is None else bleed_left
+    top_bleed = bleed if bleed_top is None else bleed_top
+    right_bleed = bleed if bleed_right is None else bleed_right
+    bottom_bleed = bleed if bleed_bottom is None else bleed_bottom
     x1 = round(col * sheet.width / cols)
     y1 = round(row * sheet.height / rows)
     x2 = round((col + 1) * sheet.width / cols)
     y2 = round((row + 1) * sheet.height / rows)
     return sheet.crop((
-        max(0, x1 - bleed),
-        max(0, y1 - bleed),
-        min(sheet.width, x2 + bleed),
-        min(sheet.height, y2 + bleed),
+        max(0, x1 - left_bleed),
+        max(0, y1 - top_bleed),
+        min(sheet.width, x2 + right_bleed),
+        min(sheet.height, y2 + bottom_bleed),
     ))
 
 
@@ -600,7 +756,7 @@ def count_edge_background(image: Image.Image, mode: str) -> int:
                 continue
             if not touches_transparency(px, out.width, out.height, x, y, radius=1):
                 continue
-            if is_background_pixel((r, g, b), mode, samples) or is_spill((r, g, b, a), mode):
+            if is_background_pixel((r, g, b), mode, samples):
                 count += 1
     return count
 
@@ -623,6 +779,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--rows", type=int)
     parser.add_argument("--names", help="Comma-separated output names or a text file with one name per line.")
     parser.add_argument("--bleed", type=int, default=0)
+    parser.add_argument("--bleed-left", type=int)
+    parser.add_argument("--bleed-top", type=int)
+    parser.add_argument("--bleed-right", type=int)
+    parser.add_argument("--bleed-bottom", type=int)
     parser.add_argument("--padding", type=int, default=8)
     parser.add_argument("--square", action="store_true")
     parser.add_argument("--no-connected", action="store_true")
@@ -631,6 +791,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--keep-largest-only", action="store_true")
     parser.add_argument("--stray-max-gap", type=int)
     parser.add_argument("--no-strays", action="store_true")
+    parser.add_argument("--drop-edge-strays", action="store_true")
+    parser.add_argument("--edge-stray-margin", type=int, default=1)
+    parser.add_argument("--drop-above-strays", action="store_true")
+    parser.add_argument("--above-stray-gap", type=int, default=16)
+    parser.add_argument("--drop-below-strays", action="store_true")
+    parser.add_argument("--below-stray-gap", type=int, default=16)
+    parser.add_argument("--drop-small-green-matte", action="store_true")
+    parser.add_argument("--small-green-matte-max-pixels", type=int, default=64)
     parser.add_argument("--no-spill-clean", action="store_true")
     parser.add_argument("--report", type=Path)
     return parser
@@ -651,11 +819,31 @@ def main() -> None:
         clear_strays=not args.no_strays,
         stray_max_gap=args.stray_max_gap,
         keep_largest_only=args.keep_largest_only,
+        drop_edge_strays=args.drop_edge_strays,
+        edge_stray_margin=args.edge_stray_margin,
+        drop_above_strays=args.drop_above_strays,
+        above_stray_gap=args.above_stray_gap,
+        drop_below_strays=args.drop_below_strays,
+        below_stray_gap=args.below_stray_gap,
+        drop_small_green_matte=args.drop_small_green_matte,
+        small_green_matte_max_pixels=args.small_green_matte_max_pixels,
     )
     source = Image.open(args.input).convert("RGBA")
     reports: list[dict[str, object]] = []
     if args.cols and args.rows:
-        outputs = cut_sheet(source, args.out, args.cols, args.rows, parse_names(args.names), args.bleed, settings)
+        outputs = cut_sheet(
+            source,
+            args.out,
+            args.cols,
+            args.rows,
+            parse_names(args.names),
+            args.bleed,
+            args.bleed_left,
+            args.bleed_top,
+            args.bleed_right,
+            args.bleed_bottom,
+            settings,
+        )
         for path in outputs:
             report = quality_report(Image.open(path).convert("RGBA"), args.mode if args.mode != "auto" else None)
             reports.append({"path": path.as_posix(), **asdict(report), "passed": report.passed})

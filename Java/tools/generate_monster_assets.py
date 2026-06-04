@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout
+from universal_cutout import CutoutSettings, universal_cutout
 
 
 SRC = Path("assets/source/monster_sheet_new.png")
@@ -39,11 +39,9 @@ def main() -> None:
             top = max(0, row * cell_h - margin_top)
             right = source.width if col == 4 else min(source.width, (col + 1) * cell_w + margin_right)
             bottom = source.height if row == 1 else min(source.height, (row + 1) * cell_h + margin_bottom)
-            chroma_cutout(
+            universal_cutout(
                 source.crop((left, top, right, bottom)),
-                "magenta",
-                padding=8,
-                keep_largest_only=True,
+                CutoutSettings(mode="magenta", padding=8, keep_largest_only=True, spill_passes=8),
             ).save(OUT / f"{name}.png")
 
 

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout, fit
+from universal_cutout import CutoutSettings, clean_spill_edges, fit, scrub_transparent_rgb, universal_cutout
 
 
 MODEL_SRC = Path("assets/source/imagegen-new-npc-class-models.png")
@@ -30,10 +30,12 @@ def scale_model_to_reference(image: Image.Image, reference_height: int = 875) ->
     scale = reference_height / max(1, source.height)
     width = max(1, round(source.width * scale))
     height = max(1, round(source.height * scale))
-    return source.resize((width, height), Image.Resampling.LANCZOS)
+    resized = source.resize((width, height), Image.Resampling.NEAREST)
+    cleaned = clean_spill_edges(resized, "magenta", 8)
+    return scrub_transparent_rgb(cleaned)
 
 
-def cells(source: Image.Image) -> list[Image.Image]:
+def cells(source: Image.Image, bleed: int = 48) -> list[Image.Image]:
     cell_w = source.width // 5
     cell_h = source.height // 2
     inset = max(4, min(cell_w, cell_h) // 80)
@@ -41,10 +43,10 @@ def cells(source: Image.Image) -> list[Image.Image]:
     for index in range(len(NAMES)):
         col = index % 5
         row = index // 5
-        left = col * cell_w + inset
-        top = row * cell_h + inset
-        right = (col + 1) * cell_w - inset
-        bottom = (row + 1) * cell_h - inset
+        left = max(0, col * cell_w + inset - bleed)
+        top = max(0, row * cell_h + inset - bleed)
+        right = min(source.width, (col + 1) * cell_w - inset + bleed)
+        bottom = min(source.height, (row + 1) * cell_h - inset + bleed)
         out.append(source.crop((left, top, right, bottom)))
     return out
 
@@ -53,8 +55,17 @@ def extract_models() -> None:
     if not MODEL_SRC.exists():
         raise FileNotFoundError(f"Missing NPC class model sheet: {MODEL_SRC}")
     source = Image.open(MODEL_SRC).convert("RGBA")
-    for name, cell in zip(NAMES, cells(source)):
-        cutout = chroma_cutout(cell, "magenta", padding=8, stray_max_gap=24)
+    settings = CutoutSettings(
+        mode="magenta",
+        padding=12,
+        spill_passes=8,
+        stray_max_gap=96,
+        drop_edge_strays=True,
+        drop_above_strays=True,
+        drop_below_strays=True,
+    )
+    for name, cell in zip(NAMES, cells(source, bleed=48)):
+        cutout = universal_cutout(cell, settings)
         scale_model_to_reference(cutout).save(OUT / f"{name}_model.png")
 
 
@@ -62,8 +73,9 @@ def extract_portraits() -> None:
     if not PORTRAIT_SRC.exists():
         raise FileNotFoundError(f"Missing NPC class portrait sheet: {PORTRAIT_SRC}")
     source = Image.open(PORTRAIT_SRC).convert("RGBA")
-    for name, cell in zip(NAMES, cells(source)):
-        cutout = chroma_cutout(cell, "magenta", padding=8, stray_max_gap=16)
+    settings = CutoutSettings(mode="magenta", padding=8, spill_passes=6, stray_max_gap=16)
+    for name, cell in zip(NAMES, cells(source, bleed=0)):
+        cutout = universal_cutout(cell, settings)
         fit(cutout, 96, 96, bottom_align=False).save(OUT / f"{name}.png")
 
 

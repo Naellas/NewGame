@@ -245,8 +245,9 @@ public final class VillageManager {
             new PlaceableAsset("deco_grass_pond", "Grass Pond", 48, VillageCost.free(), "Water"),
             new PlaceableAsset("deco_imagen_mossy_pond", "Mossy Pond", 48, VillageCost.free(), "Water"),
             new PlaceableAsset("deco_reeds", "Reeds", 38, VillageCost.of(0, Map.of("plant_fiber", 1)), "Water"),
-            new PlaceableAsset("deco_water_lilies", "Water Lilies", 38, VillageCost.of(0, Map.of("flower_blossom", 1)), "Water"),
-            new PlaceableAsset("deco_water_reed_islet", "Reed Islet", 42, VillageCost.of(0, Map.of("plant_fiber", 1)), "Water"),
+            new PlaceableAsset("deco_water_lily_pad_cluster", "Lily Pad Cluster", 38, VillageCost.of(0, Map.of("flower_blossom", 1)), "Water"),
+            new PlaceableAsset("deco_water_shore_reeds", "Shore Reeds", 42, VillageCost.of(0, Map.of("plant_fiber", 1)), "Water"),
+            new PlaceableAsset("deco_water_duckweed_patch", "Duckweed Patch", 36, VillageCost.of(0, Map.of("plant_fiber", 1)), "Water"),
             new PlaceableAsset("deco_soft_water_lily_white", "White Lily", 34, VillageCost.of(0, Map.of("flower_blossom", 1)), "Water"),
             new PlaceableAsset("deco_soft_water_cattails", "Cattails", 38, VillageCost.of(0, Map.of("plant_fiber", 1)), "Water"),
             new PlaceableAsset("deco_water_driftwood", "Water Driftwood", 38, VillageCost.of(0, Map.of("wood", 1)), "Water"),
@@ -285,6 +286,7 @@ public final class VillageManager {
             new PlaceableAsset("village_prop_hay_bales", "Hay Bales", 40, VillageCost.free(), "Farm"),
             new PlaceableAsset("village_prop_produce_basket", "Produce Basket", 38, VillageCost.free(), "Farm"),
             new PlaceableAsset("village_prop_water_trough", "Water Trough", 42, VillageCost.of(0, Map.of("wood", 1)), "Farm"),
+            new PlaceableAsset("village_fence_auto", "Pasture Fence", 40, VillageCost.of(0, Map.of("wood", 1)), "Farm"),
             new PlaceableAsset("village_prop_fence_segment", "Fence Segment", 40, VillageCost.of(0, Map.of("wood", 1)), "Farm"),
             new PlaceableAsset("village_prop_farm_tools", "Farm Tools", 40, VillageCost.of(0, Map.of("wood", 1)), "Farm"),
             new PlaceableAsset("village_prop_beehive", "Beehive", 38, VillageCost.of(5, Map.of("wood", 1)), "Farm"),
@@ -305,58 +307,100 @@ public final class VillageManager {
     );
 
     private static final List<PlaceableAsset> INTERIOR_ASSETS = List.of(
-            new PlaceableAsset("interior_bed_vertical", "Bed", 48, VillageCost.free()),
-            new PlaceableAsset("interior_round_table", "Round Table", 48, VillageCost.free()),
-            new PlaceableAsset("interior_side_table", "Side Table", 48, VillageCost.free()),
-            new PlaceableAsset("interior_tabletop_place_setting", "Place Setting", 48, VillageCost.free()),
-            new PlaceableAsset("interior_tabletop_meal", "Meal Setting", 48, VillageCost.free()),
-            new PlaceableAsset("interior_tabletop_candle", "Candle Centerpiece", 48, VillageCost.free()),
-            new PlaceableAsset("interior_flower_vase", "Flower Vase", 48, VillageCost.free()),
-            new PlaceableAsset("interior_herb_pot", "Herb Pot", 48, VillageCost.free()),
-            new PlaceableAsset("interior_flower_pot", "Flower Pot", 48, VillageCost.free()),
-            new PlaceableAsset("interior_floor_leafy_plant", "Leafy Plant", 48, VillageCost.free()),
-            new PlaceableAsset("interior_floor_sapling_pot", "Sapling Pot", 48, VillageCost.free()),
-            new PlaceableAsset("interior_floor_bushy_planter", "Bushy Planter", 48, VillageCost.free()),
-            new PlaceableAsset("interior_floor_reed_pot", "Reed Pot", 48, VillageCost.free()),
-            new PlaceableAsset("interior_floor_flower_planter", "Flower Planter", 48, VillageCost.free()),
-            new PlaceableAsset("interior_seed_bowl", "Seed Bowl", 48, VillageCost.free()),
-            new PlaceableAsset("interior_planting_pot", "Planting Pot", 48, VillageCost.free()),
-            new PlaceableAsset("interior_sprout_planter", "Sprout Planter", 48, VillageCost.free()),
-            new PlaceableAsset("interior_herb_planter", "Herb Planter", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_flower_pot", "Wall Flower Pot", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_ivy_planter", "Wall Ivy Planter", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_sconce_lamp", "Wall Sconce", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_window_small", "Small Window", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_window_wide", "Wide Window", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_plant_shelf", "Plant Shelf", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_herb_rack", "Wall Herb Rack", 48, VillageCost.free()),
-            new PlaceableAsset("interior_wall_crystal_ornament", "Wall Crystal", 48, VillageCost.free()),
-            new PlaceableAsset("interior_vine_trellis", "Vine Trellis", 48, VillageCost.free()),
-            new PlaceableAsset("interior_rug_runner", "Rug Runner", 48, VillageCost.free()),
-            new PlaceableAsset("interior_aquarium_table", "Aquarium Table", 48, VillageCost.free()),
-            new PlaceableAsset("interior_bookshelf", "Bookshelf", 48, VillageCost.free()),
-            new PlaceableAsset("interior_crates", "Crates", 48, VillageCost.free()),
-            new PlaceableAsset("interior_anvil", "Anvil", 48, VillageCost.free()),
-            new PlaceableAsset("interior_forge", "Forge", 48, VillageCost.free()),
-            new PlaceableAsset("interior_carpenter_table", "Carpenter Table", 48, VillageCost.free()),
-            new PlaceableAsset("interior_alchemy_station", "Alchemy Station", 48, VillageCost.free()),
-            new PlaceableAsset("interior_mortar_pestle", "Mortar & Pestle", 48, VillageCost.free()),
-            new PlaceableAsset("interior_cooking_station", "Cooking Station", 48, VillageCost.free()),
-            new PlaceableAsset("interior_cookpot_stand", "Cookpot Stand", 48, VillageCost.free()),
-            new PlaceableAsset("interior_herb_drying_rack", "Herb Drying Rack", 48, VillageCost.free()),
-            new PlaceableAsset("interior_oven", "Oven", 48, VillageCost.free()),
-            new PlaceableAsset("interior_stove", "Stove", 48, VillageCost.free()),
-            new PlaceableAsset("interior_shop_counter", "Counter", 48, VillageCost.free()),
-            new PlaceableAsset("interior_tavern_bar", "Tavern Bar", 48, VillageCost.free()),
-            new PlaceableAsset("interior_hearth_pot", "Hearth Pot", 48, VillageCost.free())
+            new PlaceableAsset("interior_bed_vertical", "Bed", 48, VillageCost.of(8, Map.of("wood", 2, "skin", 1)), "Beds"),
+            new PlaceableAsset("interior_resident_bed", "Resident Bed", 48, VillageCost.of(10, Map.of("wood", 2, "skin", 1)), "Beds"),
+            new PlaceableAsset("interior_round_table", "Round Table", 48, VillageCost.of(6, Map.of("wood", 2)), "Tables"),
+            new PlaceableAsset("interior_side_table", "Side Table", 48, VillageCost.of(4, Map.of("wood", 1)), "Tables"),
+            new PlaceableAsset("interior_table_h_left", "Table Left", 48, VillageCost.of(3, Map.of("wood", 1)), "Tables"),
+            new PlaceableAsset("interior_table_h_middle", "Table Middle", 48, VillageCost.of(3, Map.of("wood", 1)), "Tables"),
+            new PlaceableAsset("interior_table_h_right", "Table Right", 48, VillageCost.of(3, Map.of("wood", 1)), "Tables"),
+            new PlaceableAsset("interior_table_v_top", "Table Top", 48, VillageCost.of(3, Map.of("wood", 1)), "Tables"),
+            new PlaceableAsset("interior_table_v_middle", "Table Middle", 48, VillageCost.of(3, Map.of("wood", 1)), "Tables"),
+            new PlaceableAsset("interior_table_v_bottom", "Table Bottom", 48, VillageCost.of(3, Map.of("wood", 1)), "Tables"),
+            new PlaceableAsset("interior_banquet_table_h", "Banquet Table", 48, VillageCost.of(10, Map.of("wood", 3)), "Tables"),
+            new PlaceableAsset("interior_stool_table_h", "Stool Table", 48, VillageCost.of(6, Map.of("wood", 2)), "Tables"),
+            new PlaceableAsset("interior_long_table_benches", "Long Table", 48, VillageCost.of(12, Map.of("wood", 4)), "Tables"),
+            new PlaceableAsset("interior_study_desk_h", "Study Desk", 48, VillageCost.of(9, Map.of("wood", 2, "plant_fiber", 1)), "Tables"),
+            new PlaceableAsset("interior_aquarium_table", "Aquarium Table", 48, VillageCost.of(12, Map.of("wood", 2, "crystal_dust", 1)), "Tables"),
+            new PlaceableAsset("interior_chair_north", "Chair North", 48, VillageCost.of(3, Map.of("wood", 1)), "Seating"),
+            new PlaceableAsset("interior_chair_south", "Chair South", 48, VillageCost.of(3, Map.of("wood", 1)), "Seating"),
+            new PlaceableAsset("interior_chair_east", "Chair East", 48, VillageCost.of(3, Map.of("wood", 1)), "Seating"),
+            new PlaceableAsset("interior_chair_west", "Chair West", 48, VillageCost.of(3, Map.of("wood", 1)), "Seating"),
+            new PlaceableAsset("interior_chair_north_alt", "Padded Chair North", 48, VillageCost.of(5, Map.of("wood", 1, "skin", 1)), "Seating"),
+            new PlaceableAsset("interior_chair_south_alt", "Padded Chair South", 48, VillageCost.of(5, Map.of("wood", 1, "skin", 1)), "Seating"),
+            new PlaceableAsset("interior_chair_east_alt", "Padded Chair East", 48, VillageCost.of(5, Map.of("wood", 1, "skin", 1)), "Seating"),
+            new PlaceableAsset("interior_chair_west_alt", "Padded Chair West", 48, VillageCost.of(5, Map.of("wood", 1, "skin", 1)), "Seating"),
+            new PlaceableAsset("interior_bench_h", "Bench Horizontal", 48, VillageCost.of(4, Map.of("wood", 2)), "Seating"),
+            new PlaceableAsset("interior_bench_v", "Bench Vertical", 48, VillageCost.of(4, Map.of("wood", 2)), "Seating"),
+            new PlaceableAsset("interior_tabletop_place_setting", "Place Setting", 48, VillageCost.of(2, Map.of("stone", 1)), "Decorations"),
+            new PlaceableAsset("interior_tabletop_meal", "Meal Setting", 48, VillageCost.of(2, Map.of("trail_rations", 1)), "Decorations"),
+            new PlaceableAsset("interior_tabletop_candle", "Candle Centerpiece", 48, VillageCost.of(3, Map.of("coal", 1)), "Decorations"),
+            new PlaceableAsset("interior_flower_vase", "Flower Vase", 48, VillageCost.of(4, Map.of("flower_blossom", 1)), "Decorations"),
+            new PlaceableAsset("interior_seed_bowl", "Seed Bowl", 48, VillageCost.of(2, Map.of("herb_seed", 1)), "Decorations"),
+            new PlaceableAsset("interior_mortar_pestle", "Mortar & Pestle", 48, VillageCost.of(5, Map.of("stone", 1)), "Workstations"),
+            new PlaceableAsset("interior_herb_pot", "Herb Pot", 48, VillageCost.of(3, Map.of("herb_leaf", 1)), "Planters"),
+            new PlaceableAsset("interior_flower_pot", "Flower Pot", 48, VillageCost.of(3, Map.of("flower_blossom", 1)), "Planters"),
+            new PlaceableAsset("interior_floor_leafy_plant", "Leafy Plant", 48, VillageCost.of(3, Map.of("plant_fiber", 1)), "Plants"),
+            new PlaceableAsset("interior_floor_sapling_pot", "Sapling Pot", 48, VillageCost.of(3, Map.of("wood", 1)), "Planters"),
+            new PlaceableAsset("interior_floor_bushy_planter", "Bushy Planter", 48, VillageCost.of(4, Map.of("plant_fiber", 2)), "Planters"),
+            new PlaceableAsset("interior_floor_reed_pot", "Reed Pot", 48, VillageCost.of(3, Map.of("plant_fiber", 1)), "Planters"),
+            new PlaceableAsset("interior_floor_flower_planter", "Flower Planter", 48, VillageCost.of(4, Map.of("flower_blossom", 2)), "Planters"),
+            new PlaceableAsset("interior_planting_pot", "Planting Pot", 48, VillageCost.of(3, Map.of("plant_fiber", 1)), "Planters"),
+            new PlaceableAsset("interior_sprout_planter", "Sprout Planter", 48, VillageCost.of(4, Map.of("herb_seed", 1, "plant_fiber", 1)), "Planters"),
+            new PlaceableAsset("interior_herb_planter", "Herb Planter", 48, VillageCost.of(4, Map.of("herb_leaf", 1, "wood", 1)), "Planters"),
+            new PlaceableAsset("interior_vine_trellis", "Vine Trellis", 48, VillageCost.of(5, Map.of("wood", 1, "plant_fiber", 2)), "Plants"),
+            new PlaceableAsset("interior_wall_flower_pot", "Wall Flower Pot", 48, VillageCost.of(4, Map.of("flower_blossom", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_wall_ivy_planter", "Wall Ivy Planter", 48, VillageCost.of(4, Map.of("plant_fiber", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_wall_sconce_lamp", "Wall Sconce", 48, VillageCost.of(6, Map.of("iron_ore", 1, "coal", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_wall_window_small", "Small Window", 48, VillageCost.of(6, Map.of("wood", 1, "crystal_dust", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_wall_window_wide", "Wide Window", 48, VillageCost.of(9, Map.of("wood", 2, "crystal_dust", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_wall_plant_shelf", "Plant Shelf", 48, VillageCost.of(5, Map.of("wood", 1, "plant_fiber", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_wall_herb_rack", "Wall Herb Rack", 48, VillageCost.of(5, Map.of("wood", 1, "herb_leaf", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_wall_crystal_ornament", "Wall Crystal", 48, VillageCost.of(7, Map.of("crystal_dust", 1)), "Wall-mounted"),
+            new PlaceableAsset("interior_rug_runner", "Rug Runner", 48, VillageCost.of(5, Map.of("plant_fiber", 2)), "Floor"),
+            new PlaceableAsset("interior_rug_red", "Red Rug", 48, VillageCost.of(5, Map.of("plant_fiber", 2)), "Floor"),
+            new PlaceableAsset("interior_rug_teal", "Teal Rug", 48, VillageCost.of(5, Map.of("plant_fiber", 2)), "Floor"),
+            new PlaceableAsset("interior_bookshelf", "Bookshelf", 48, VillageCost.of(8, Map.of("wood", 2, "plant_fiber", 1)), "Storage"),
+            new PlaceableAsset("interior_crates", "Crates", 48, VillageCost.of(3, Map.of("wood", 1)), "Storage"),
+            new PlaceableAsset("interior_barrels", "Barrels", 48, VillageCost.of(3, Map.of("wood", 1)), "Storage"),
+            new PlaceableAsset("interior_traveler_trunk", "Traveler Trunk", 48, VillageCost.of(6, Map.of("wood", 2)), "Storage"),
+            new PlaceableAsset("interior_metal_crate", "Metal Crate", 48, VillageCost.of(7, Map.of("iron_ore", 1)), "Storage"),
+            new PlaceableAsset("interior_linen_shelf", "Linen Shelf", 48, VillageCost.of(6, Map.of("wood", 1, "plant_fiber", 2)), "Storage"),
+            new PlaceableAsset("interior_grain_sacks_v", "Grain Sacks", 48, VillageCost.of(4, Map.of("trail_rations", 1)), "Storage"),
+            new PlaceableAsset("interior_inn_screen_chest", "Screen Chest", 48, VillageCost.of(8, Map.of("wood", 2, "skin", 1)), "Storage"),
+            new PlaceableAsset("interior_low_cupboard", "Low Cupboard", 48, VillageCost.of(5, Map.of("wood", 2)), "Storage"),
+            new PlaceableAsset("interior_storage_counter", "Storage Counter", 48, VillageCost.of(7, Map.of("wood", 2)), "Storage"),
+            new PlaceableAsset("interior_anvil", "Anvil", 48, VillageCost.of(8, Map.of("iron_ore", 2)), "Workstations"),
+            new PlaceableAsset("interior_forge", "Forge", 48, VillageCost.of(12, Map.of("stone", 3, "iron_ore", 1)), "Workstations"),
+            new PlaceableAsset("interior_anvil_tool_rack", "Anvil Tool Rack", 48, VillageCost.of(10, Map.of("wood", 1, "iron_ore", 2)), "Workstations"),
+            new PlaceableAsset("interior_carpenter_table", "Carpenter Table", 48, VillageCost.of(8, Map.of("wood", 3)), "Workstations"),
+            new PlaceableAsset("interior_carpenter_workbench", "Carpenter Workbench", 48, VillageCost.of(10, Map.of("wood", 4)), "Workstations"),
+            new PlaceableAsset("interior_sawhorse_planks", "Sawhorse Planks", 48, VillageCost.of(6, Map.of("wood", 3)), "Workstations"),
+            new PlaceableAsset("interior_alchemy_station", "Alchemy Station", 48, VillageCost.of(10, Map.of("herb_leaf", 2, "crystal_dust", 1)), "Workstations"),
+            new PlaceableAsset("interior_cooking_station", "Cooking Station", 48, VillageCost.of(7, Map.of("wood", 1, "stone", 1)), "Workstations"),
+            new PlaceableAsset("interior_cookpot_stand", "Cookpot Stand", 48, VillageCost.of(5, Map.of("iron_ore", 1)), "Workstations"),
+            new PlaceableAsset("interior_herb_drying_rack", "Herb Drying Rack", 48, VillageCost.of(5, Map.of("wood", 1, "herb_leaf", 1)), "Workstations"),
+            new PlaceableAsset("interior_herb_drying_rack_v", "Herb Drying Rack V", 48, VillageCost.of(5, Map.of("wood", 1, "herb_leaf", 1)), "Workstations"),
+            new PlaceableAsset("interior_oven", "Oven", 48, VillageCost.of(9, Map.of("stone", 3)), "Workstations"),
+            new PlaceableAsset("interior_bakery_oven", "Bakery Oven", 48, VillageCost.of(12, Map.of("stone", 4)), "Workstations"),
+            new PlaceableAsset("interior_stove", "Stove", 48, VillageCost.of(9, Map.of("stone", 2, "iron_ore", 1)), "Workstations"),
+            new PlaceableAsset("interior_shop_counter", "Counter", 48, VillageCost.of(6, Map.of("wood", 2)), "Misc"),
+            new PlaceableAsset("interior_tavern_counter", "Tavern Counter", 48, VillageCost.of(8, Map.of("wood", 3)), "Misc"),
+            new PlaceableAsset("interior_bakery_counter", "Bakery Counter", 48, VillageCost.of(8, Map.of("wood", 2, "stone", 1)), "Misc"),
+            new PlaceableAsset("interior_counter_corner_h", "Counter Corner", 48, VillageCost.of(5, Map.of("wood", 1)), "Misc"),
+            new PlaceableAsset("interior_tavern_bar", "Tavern Bar", 48, VillageCost.of(10, Map.of("wood", 4)), "Misc"),
+            new PlaceableAsset("interior_hearth_pot", "Hearth Pot", 48, VillageCost.of(5, Map.of("stone", 1, "iron_ore", 1)), "Misc")
     );
 
     private static final List<TilePlan> TILES = List.of(
+            new TilePlan('i', "Interior Floor", VillageCost.free(), "Plain interior floor for custom rooms."),
+            new TilePlan('o', "Interior Wall", VillageCost.free(), "Interior wall tiles for dividing rooms."),
             new TilePlan('A', "Farmland", VillageCost.of(0, Map.of("wood", 1)), "Tilled ground that improves farmer output."),
             new TilePlan('g', "Grass", VillageCost.free(), "Open meadow tiles for paths, yards, and future builds."),
             new TilePlan('f', "Forest", VillageCost.of(0, Map.of("wood", 1)), "Managed tree growth for forester output."),
             new TilePlan('P', "Beach", VillageCost.of(0, Map.of("seashell", 1)), "Warm sand tiles for shore paths and beach props."),
-            new TilePlan('r', "Dirt Road", VillageCost.of(0, Map.of("stone", 1)), "Simple village road for layout and access."),
+            new TilePlan('T', "Worn Road", VillageCost.of(0, Map.of("stone", 1)), "Unmaintained village road for layout and access."),
+            new TilePlan('K', "Cobblestone Road", VillageCost.of(0, Map.of("stone", 2)), "Durable paved road that connects like any other road."),
             new TilePlan('q', "Gravel", VillageCost.of(0, Map.of("stone", 1)), "Packed gravel for mine yards, camp edges, and rough paths."),
             new TilePlan('V', "Packed Earth", VillageCost.free(), "Warm worn ground for yards, commons, and work areas."),
             new TilePlan('U', "Plank Walk", VillageCost.of(0, Map.of("wood", 1)), "Raised plank paths for damp village edges and tidy crossings."),
@@ -381,6 +425,7 @@ public final class VillageManager {
     private static final Map<String, BuildingPlan> BUILDING_BY_STYLE = indexBuildings();
     private static final Map<String, PlaceableAsset> OUTDOOR_BY_ASSET = indexAssets(OUTDOOR_ASSETS);
     private static final Map<String, PlaceableAsset> INTERIOR_BY_ASSET = indexAssets(INTERIOR_ASSETS);
+    private static final List<String> INTERIOR_ASSET_CATEGORIES = indexInteriorAssetCategories();
     private static final Map<Character, TilePlan> TILE_BY_CHAR = indexTiles();
     private static final Map<String, WorkerRole> ROLE_BY_ID = indexRoles();
 
@@ -409,6 +454,23 @@ public final class VillageManager {
 
     public static List<PlaceableAsset> interiorAssets() {
         return INTERIOR_ASSETS;
+    }
+
+    public static List<String> interiorAssetCategories() {
+        return INTERIOR_ASSET_CATEGORIES;
+    }
+
+    public static List<PlaceableAsset> interiorAssets(String category) {
+        if (category == null || category.isBlank() || "All".equals(category)) {
+            return INTERIOR_ASSETS;
+        }
+        String selected = INTERIOR_ASSET_CATEGORIES.contains(category) ? category : "All";
+        if ("All".equals(selected)) {
+            return INTERIOR_ASSETS;
+        }
+        return INTERIOR_ASSETS.stream()
+                .filter(asset -> asset.category().equals(selected))
+                .toList();
     }
 
     public static List<TilePlan> tilePlans() {
@@ -463,7 +525,11 @@ public final class VillageManager {
     }
 
     public static PlaceableAsset outdoorAsset(String asset) {
-        return OUTDOOR_BY_ASSET.getOrDefault(asset, OUTDOOR_ASSETS.get(0));
+        PlaceableAsset exact = OUTDOOR_BY_ASSET.get(asset);
+        if (exact != null) {
+            return exact;
+        }
+        return new PlaceableAsset(asset, generatedAssetLabel(asset), 48, VillageCost.free(), editorCategoryForAsset(asset));
     }
 
     public static PlaceableAsset interiorAsset(String asset) {
@@ -480,6 +546,53 @@ public final class VillageManager {
 
     public static String buildingLabel(String style) {
         return buildingPlan(style).label();
+    }
+
+    private static String generatedAssetLabel(String asset) {
+        if (asset == null || asset.isBlank()) {
+            return "Prop";
+        }
+        String cleaned = asset
+                .replace("city_prop_", "")
+                .replace("village_prop_", "")
+                .replace("location_", "")
+                .replace("deco_", "")
+                .replace("player_village_", "")
+                .replace('_', ' ')
+                .strip();
+        if (cleaned.isBlank()) {
+            return "Prop";
+        }
+        StringBuilder result = new StringBuilder();
+        for (String part : cleaned.split("\\s+")) {
+            if (part.isBlank()) {
+                continue;
+            }
+            if (!result.isEmpty()) {
+                result.append(' ');
+            }
+            result.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+        }
+        return result.toString();
+    }
+
+    private static String editorCategoryForAsset(String asset) {
+        if (asset == null) {
+            return "Props";
+        }
+        if (asset.startsWith("city_")) {
+            return "City Props";
+        }
+        if (asset.startsWith("village_") || asset.startsWith("player_village_")) {
+            return "Village Props";
+        }
+        if (asset.startsWith("location_")) {
+            return "Location Props";
+        }
+        if (asset.startsWith("deco_")) {
+            return "Nature Props";
+        }
+        return "Props";
     }
 
     public static int[] buildingSize(String style) {
@@ -624,6 +737,26 @@ public final class VillageManager {
             result.put(asset.asset(), asset);
         }
         return Map.copyOf(result);
+    }
+
+    private static List<String> indexInteriorAssetCategories() {
+        Map<String, Boolean> result = new LinkedHashMap<>();
+        result.put("All", true);
+        result.put("Workstations", true);
+        result.put("Plants", true);
+        result.put("Wall-mounted", true);
+        result.put("Planters", true);
+        result.put("Tables", true);
+        result.put("Seating", true);
+        result.put("Misc", true);
+        result.put("Decorations", true);
+        result.put("Floor", true);
+        result.put("Storage", true);
+        result.put("Beds", true);
+        for (PlaceableAsset asset : INTERIOR_ASSETS) {
+            result.put(asset.category(), true);
+        }
+        return List.copyOf(result.keySet());
     }
 
     private static BuildingPlan building(

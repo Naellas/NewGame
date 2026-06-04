@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout, fit
+from universal_cutout import CutoutSettings, fit, universal_cutout
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -74,7 +74,10 @@ def split_props() -> dict[str, Image.Image]:
         right = sheet.width if col == cols - 1 else (col + 1) * cell_w
         bottom = sheet.height if row == rows - 1 else (row + 1) * cell_h
         cell = sheet.crop((left, top, right, bottom))
-        cutout = chroma_cutout(cell, "magenta", padding=12, stray_max_gap=18)
+        cutout = universal_cutout(
+            cell,
+            CutoutSettings(mode="magenta", padding=12, stray_max_gap=18, spill_passes=6),
+        )
         fitted = fit(cutout, 128, 128, bottom_align=True, margin=4)
         fitted.save(BEACH_OUT / f"{name}.png")
         props[name] = fitted

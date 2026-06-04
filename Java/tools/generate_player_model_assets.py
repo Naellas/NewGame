@@ -4,11 +4,12 @@ from pathlib import Path
 
 from PIL import Image
 
-from chroma_cutout import chroma_cutout, fit
+from asset_paths import player_dir
+from universal_cutout import CutoutSettings, fit, universal_cutout
 
 
 SRC = Path("assets/source/imagegen-player-model-sheet.png")
-OUT = Path("assets/player")
+ASSETS = Path("assets")
 
 NAMES = (
     "player_model",
@@ -74,30 +75,31 @@ def write_world_sprites(models: dict[str, Image.Image]) -> None:
         "class_rogue": ("class_rogue_model", 144, 160),
     }
     for name, (model_name, width, height) in specs.items():
-        fit(models[model_name], width, height, bottom_align=True, margin=4).save(OUT / f"{name}.png")
+        out_dir = player_dir(ASSETS, name)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        fit(models[model_name], width, height, bottom_align=True, margin=4).save(out_dir / f"{name}.png")
 
 
 def main() -> None:
     if not SRC.exists():
         raise FileNotFoundError(f"Missing generated player model sheet: {SRC}")
-    OUT.mkdir(parents=True, exist_ok=True)
     source = Image.open(SRC).convert("RGBA")
     cell_w = source.width // len(NAMES)
     models: dict[str, Image.Image] = {}
     for index, name in enumerate(NAMES):
         left = index * cell_w
         right = source.width if index == len(NAMES) - 1 else (index + 1) * cell_w
-        models[name] = chroma_cutout(
+        models[name] = universal_cutout(
             source.crop((left, 0, right, source.height)),
-            "magenta",
-            padding=8,
-            keep_largest_only=True,
+            CutoutSettings(mode="magenta", padding=8, keep_largest_only=True, spill_passes=8),
         )
 
     models["class_rogue_model"] = make_rogue(models["class_ranger_model"])
 
     for name, image in models.items():
-        image.save(OUT / f"{name}.png")
+        out_dir = player_dir(ASSETS, name)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        image.save(out_dir / f"{name}.png")
     write_world_sprites(models)
 
 
