@@ -1,4 +1,12 @@
-package com.alderfall.game;
+package com.alderfall.game.map;
+
+import com.alderfall.game.CityBuilding;
+import com.alderfall.game.GameData;
+import com.alderfall.game.Npc;
+import com.alderfall.game.Terrain;
+import com.alderfall.game.TilePoint;
+import com.alderfall.game.VillageManager;
+import com.alderfall.game.WorldProp;
 
 import java.util.Arrays;
 import java.util.ArrayDeque;
@@ -620,12 +628,7 @@ public final class WorldMap {
     }
 
     private void connectPlayerVillageBuildingPath(CityBuilding building) {
-        MapArea area = maps.get(PLAYER_VILLAGE_ID);
-        if (area == null || building == null) {
-            return;
-        }
-        connectSettlementBuildingPaths(area, List.of(building), Terrain.DIRT_ROAD);
-        applyRoadMaterialSegments(area, Terrain.VILLAGE_ROAD, building.key().hashCode() + 1901, 62);
+        // Player village buildings sit in clearings; do not auto-paint blocky access roads.
     }
 
     public boolean removePlayerVillageBuilding(CityBuilding building) {
@@ -1704,6 +1707,7 @@ public final class WorldMap {
         addLocationProps(overworld);
         overworld.landmarks.put(new TilePoint(183, 248), "The Old Gate of Alderfall");
         overworld.addProp(new WorldProp(183, 248, GameData.STORY_PORTAL_ASSET, 88));
+        OverworldLandmarkPropGenerator.addDiscoverabilityProps(overworld);
         maps.put(OVERWORLD_ID, overworld);
 
         addCity("city_riverside", "Riverside City", 82, 105, "riverside");
@@ -1755,7 +1759,7 @@ public final class WorldMap {
             addTownProps(area, variant);
         }
         maps.put(id, area);
-        interiorNpcs.put(id, placeInquiryNpcs(id, buildings, variant));
+        interiorNpcs.put(id, placeInquiryNpcs(id, buildings, variant, town ? 5 : 6));
         for (int dy = -2; dy <= 2; dy++) {
             for (int dx = -2; dx <= 2; dx++) {
                 if (Math.abs(dx) + Math.abs(dy) <= 3) {
@@ -1774,12 +1778,10 @@ public final class WorldMap {
         MapArea area = new MapArea(id, label, "village", villageTiles(variant));
         List<CityBuilding> buildings = villageBuildingTemplates(id, variant);
         cityBuildings.put(id, buildings);
-        connectSettlementBuildingPaths(area, buildings, Terrain.DIRT_ROAD);
-        applyRoadMaterialSegments(area, Terrain.VILLAGE_ROAD, id.hashCode() + 1901, 62);
         addVillageProps(area, variant);
         addTownParks(area, variant, 1 + Math.floorMod(id.hashCode(), 2));
         maps.put(id, area);
-        interiorNpcs.put(id, placeInquiryNpcs(id, buildings, variant));
+        interiorNpcs.put(id, placeInquiryNpcs(id, buildings, variant, 4));
         for (int dy = -2; dy <= 2; dy++) {
             for (int dx = -2; dx <= 2; dx++) {
                 if (Math.abs(dx) + Math.abs(dy) <= 3) {
@@ -1794,10 +1796,12 @@ public final class WorldMap {
         addSettlementSite(id, label, "Village", ox, oy);
     }
 
-    private List<Npc> placeInquiryNpcs(String mapId, List<CityBuilding> buildings, String variant) {
+    private List<Npc> placeInquiryNpcs(String mapId, List<CityBuilding> buildings, String variant, int desiredCount) {
         List<Npc> npcs = new ArrayList<>();
-        int step = Math.max(1, buildings.size() / 3);
-        for (int i = 0; i < buildings.size() && npcs.size() < 3; i += step) {
+        Set<TilePoint> occupied = new HashSet<>();
+        int targetCount = Math.max(1, desiredCount);
+        int step = Math.max(1, buildings.size() / targetCount);
+        for (int i = 0; i < buildings.size() && npcs.size() < targetCount; i += step) {
             CityBuilding building = buildings.get(i);
             List<TilePoint> doors = cityBuildingDoorTiles(building);
             if (doors.isEmpty()) {
@@ -1806,12 +1810,13 @@ public final class WorldMap {
             TilePoint door = doors.get(Math.floorMod(mapId.hashCode() + i, doors.size()));
             int x = door.x();
             int y = door.y() + 1;
-            if (!isPassable(mapId, x, y)) {
+            TilePoint point = new TilePoint(x, y);
+            if (!isPassable(mapId, x, y) || !occupied.add(point)) {
                 continue;
             }
             String buildingKey = building.key() == null ? building.x1() + "_" + building.y1() : building.key();
             int roll = Math.floorMod(mapId.hashCode() + buildingKey.hashCode() + i * 37, 4);
-            String name = switch (roll) {
+            String role = switch (roll) {
                 case 0 -> "Street Guide";
                 case 1 -> "Local Clerk";
                 case 2 -> "Doorward";
@@ -1824,13 +1829,45 @@ public final class WorldMap {
                 default -> "npc_merchant";
             };
             String place = label(mapId);
-            npcs.add(new Npc(mapId, name + " " + (npcs.size() + 1), sprite, x, y, List.of(
-                    name + ": I keep track of the doors and stories around " + place + ".",
+            String name = settlementNpcName(mapId, variant, buildingKey, roll, npcs.size());
+            npcs.add(new Npc(mapId, name, sprite, x, y, List.of(
+                    role + ": I keep track of the doors and stories around " + place + ".",
                     "Places: Ask me about nearby buildings if you want the useful version, not the signboard version.",
                     "Work: The " + variant + " streets teach you where to look before they teach you what it means."
             ), null, null));
         }
         return npcs;
+    }
+
+    private String settlementNpcName(String mapId, String variant, String buildingKey, int roleRoll, int index) {
+        int seed = Math.abs((mapId + ":" + variant + ":" + buildingKey + ":" + roleRoll + ":" + index).hashCode());
+        String[] givenNames = settlementGivenNames(variant);
+        String[] bynames = settlementBynames(variant);
+        String given = givenNames[Math.floorMod(seed, givenNames.length)];
+        String byname = bynames[Math.floorMod(seed / 17, bynames.length)];
+        return given + " " + byname;
+    }
+
+    private String[] settlementGivenNames(String variant) {
+        return switch (variant) {
+            case "snow" -> new String[]{"Asta", "Borin", "Elric", "Fenna", "Hald", "Ivara", "Noll", "Pem", "Siv", "Torr"};
+            case "desert", "sanctum" -> new String[]{"Amal", "Bahir", "Dima", "Farid", "Imani", "Jalen", "Nura", "Rafi", "Safa", "Toma"};
+            case "marsh", "belltower" -> new String[]{"Bessa", "Corso", "Fen", "Jun", "Lysa", "Merrit", "Pella", "Reed", "Vell", "Ysra"};
+            case "archive" -> new String[]{"Aren", "Dain", "Hollis", "Ilyen", "Maera", "Miri", "Pela", "Ren", "Sel", "Vannis"};
+            case "highwall" -> new String[]{"Berta", "Cass", "Halen", "Korr", "Lysa", "Odrick", "Rook", "Tarin", "Vesh", "Yaro"};
+            default -> new String[]{"Aster", "Bran", "Cala", "Dain", "Edda", "Finch", "Hale", "Liora", "Mira", "Sori"};
+        };
+    }
+
+    private String[] settlementBynames(String variant) {
+        return switch (variant) {
+            case "snow" -> new String[]{"Snowmark", "Frostlane", "Cairnstep", "Hearthwatch", "Passkeep", "Whitebough"};
+            case "desert", "sanctum" -> new String[]{"Sunwater", "Glassroad", "Wellward", "Ashmarket", "Dunebell", "Saltwake"};
+            case "marsh", "belltower" -> new String[]{"Reedwake", "Fenlight", "Bellwater", "Mistbridge", "Lanternrun", "Willowmark"};
+            case "archive" -> new String[]{"Inkmargin", "Dusthall", "Mapkeep", "Stonepage", "Quillward", "Booklane"};
+            case "highwall" -> new String[]{"Gatewake", "Ironpost", "Watchroad", "Shieldbell", "Bannerhold", "Stonewatch"};
+            default -> new String[]{"Oaklane", "Greenroad", "Hearthfield", "Mossward", "Briarstep", "Willowbend"};
+        };
     }
 
     private void addPlayerCamp(String id, String label, int ox, int oy, String variant) {
@@ -2908,7 +2945,6 @@ public final class WorldMap {
             organicFill(grid, 5, 7, 5, 4, 'v', 307);
             organicFill(grid, 22, 12, 5, 4, 'v', 311);
         }
-        addVillageRoadNetwork(grid, Terrain.DIRT_ROAD);
         addVillageClearings(grid, variant);
         rect(grid, 13, 8, 15, 10, villagePlazaTile(variant));
         if ("snow".equals(variant)) {
@@ -2924,6 +2960,7 @@ public final class WorldMap {
             rect(grid, 3, 9, 4, 10, 'w');
             rect(grid, 23, 11, 24, 12, 'w');
         }
+        addVillageRoadNetwork(grid, Terrain.DIRT_ROAD);
         return grid;
     }
 
@@ -2947,6 +2984,7 @@ public final class WorldMap {
         rect(grid, 0, 9, 35, 10, road);
         rect(grid, 7, 15, 14, 15, road);
         rect(grid, 14, 15, 22, 15, road);
+        rect(grid, 4, 21, 24, 21, road);
     }
 
     private void connectSettlementBuildingPaths(MapArea area, List<CityBuilding> buildings, char roadTile) {
@@ -6320,12 +6358,13 @@ public final class WorldMap {
                     "A city is only stone unless someone remembers what happened inside it."
             ), null, null));
             default -> {
-                npcs.add(new Npc(mapId, Math.floorMod(seed, 2) == 0 ? "Townsperson" : "Householder",
+                npcs.add(new Npc(mapId, interiorResidentName(mapId, theme, seed, 0),
                         Math.floorMod(seed, 2) == 0 ? "npc_citizen_man" : "npc_citizen_woman", x - 1, y, List.of(
                         "Come in, but mind the floorboards.",
                         "Every house in Alderfall has a packed bag by the door now."
                 ), null, null));
-                npcs.add(new Npc(mapId, "Resident", Math.floorMod(seed, 2) == 0 ? "npc_citizen_woman" : "npc_citizen_man",
+                npcs.add(new Npc(mapId, interiorResidentName(mapId, theme, seed, 1),
+                        Math.floorMod(seed, 2) == 0 ? "npc_citizen_woman" : "npc_citizen_man",
                         x + 2, y + 1, List.of(
                         "The bed is made, the trunk is packed, and the window sticks in rain.",
                         "A home is mostly chores that learned your name."
@@ -6333,6 +6372,20 @@ public final class WorldMap {
             }
         }
         return npcs;
+    }
+
+    private String interiorResidentName(String mapId, String theme, int seed, int index) {
+        int nameSeed = Math.abs((mapId + ":" + theme + ":" + seed + ":" + index).hashCode());
+        String[] givenNames = {
+                "Alda", "Bryn", "Cala", "Donn", "Elia", "Fenn", "Galen", "Hara",
+                "Iven", "Jora", "Kell", "Lysa", "Marn", "Niva", "Oren", "Pella"
+        };
+        String[] bynames = {
+                "Hearthlow", "Doorwick", "Warmstep", "Trunkwell", "Ashroom", "Windowmere",
+                "Fieldcot", "Lowbench", "Candlemark", "Stonefloor", "Mosslint", "Roadrest"
+        };
+        return givenNames[Math.floorMod(nameSeed, givenNames.length)] + " "
+                + bynames[Math.floorMod(nameSeed / 19, bynames.length)];
     }
 
     private void addLocationProps(MapArea area) {

@@ -1,5 +1,6 @@
 package com.alderfall.game;
 
+import com.alderfall.game.map.WorldMap;
 import java.util.List;
 
 public final class Quest {

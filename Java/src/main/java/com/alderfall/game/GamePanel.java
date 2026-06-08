@@ -1,5 +1,6 @@
 package com.alderfall.game;
 
+import com.alderfall.game.map.WorldTransition;
 import com.alderfall.game.camera.CameraController;
 import com.alderfall.game.camera.CameraMode;
 import com.alderfall.game.camera.CameraView;
@@ -10,6 +11,9 @@ import com.alderfall.game.inventory.InventoryDropKind;
 import com.alderfall.game.inventory.InventoryDropZone;
 import com.alderfall.game.inventory.Item;
 import com.alderfall.game.inventory.ItemRarity;
+import com.alderfall.game.map.WorldMap;
+import com.alderfall.game.map.WorldMapOverlayRenderer;
+import com.alderfall.game.map.WorldMapViewport;
 import com.alderfall.game.render.WorldMapTerrainCache;
 import java.awt.BasicStroke;
 import java.awt.AlphaComposite;
@@ -65,100 +69,13 @@ public final class GamePanel extends JPanel {
             {"CON", "constitution"},
             {"WIL", "willpower"}
     };
-    private static final Map<Character, String> MUSIC_BY_TERRAIN = Map.ofEntries(
-            Map.entry('g', "zone_grasslands"),
-            Map.entry('r', "zone_grasslands"),
-            Map.entry('f', "zone_forest"),
-            Map.entry('s', "zone_desert"),
-            Map.entry('n', "zone_tundra"),
-            Map.entry('v', "zone_marsh"),
-            Map.entry('b', "zone_badlands"),
-            Map.entry('P', "zone_water"),
-            Map.entry('~', "zone_water"),
-            Map.entry('m', "zone_mountains"),
-            Map.entry('q', "zone_mountains"),
-            Map.entry('B', "zone_water"),
-            Map.entry('w', "zone_water"),
-            Map.entry('c', "town_village"),
-            Map.entry('u', "town_village"),
-            Map.entry('d', "dungeon_crypt")
-    );
-    private static final Map<String, List<String>> MUSIC_PALETTES = Map.ofEntries(
-            Map.entry("zone_grasslands", List.of("zone_grasslands", "zone_grasslands_ambient")),
-            Map.entry("zone_forest", List.of("zone_forest", "zone_forest_ambient")),
-            Map.entry("zone_desert", List.of("zone_desert", "zone_desert_ambient")),
-            Map.entry("zone_marsh", List.of("zone_marsh", "zone_marsh_ambient")),
-            Map.entry("zone_mountains", List.of("zone_mountains", "zone_mountains_ambient")),
-            Map.entry("zone_tundra", List.of("zone_tundra", "zone_tundra_ambient")),
-            Map.entry("zone_badlands", List.of("zone_badlands", "zone_badlands_ambient")),
-            Map.entry("zone_water", List.of("zone_water", "zone_water_ambient")),
-            Map.entry("town_village", List.of("town_village")),
-            Map.entry("dungeon_crypt", List.of("dungeon_crypt")),
-            Map.entry("battle_standard", List.of("battle_standard")),
-            Map.entry("battle_boss", List.of("battle_boss"))
-    );
-    private static final Set<GameMode> WORLD_MUSIC_MODES = Set.of(
-            GameMode.EXPLORE,
-            GameMode.DIALOG,
-            GameMode.QUEST_LOG,
-            GameMode.SKILLS,
-            GameMode.INVENTORY,
-            GameMode.CRAFTING,
-            GameMode.PARTY,
-            GameMode.VILLAGE,
-            GameMode.BUILDING_ASSIGNMENT,
-            GameMode.SETTLEMENT_BOARD,
-            GameMode.FAST_TRAVEL,
-            GameMode.SHOP,
-            GameMode.WORLD_MAP
-    );
-    private static final Set<String> BOSS_MUSIC_KEYS = new HashSet<>(Set.of(
-            "acid_broodmother",
-            "bandit_captain",
-            "bone_knight",
-            "crypt_revenant",
-            "elder_wraith",
-            "elder_dragon",
-            "fire_giant",
-            "frost_troll",
-            "goblin_king",
-            "goblin_warlord",
-            "hill_giant",
-            "ice_golem",
-            "orc_champion",
-            "stone_giant",
-            "swamp_troll"
-    ));
-    private static final Set<String> PHYSICAL_CLASS_NAMES = Set.of(
-            "Knight",
-            "Rogue",
-            "Ironwall",
-            "Bladedancer",
-            "Veilrunner",
-            "Sunwarden",
-            "Stonebreaker",
-            "Nightblade"
-    );
-    private static final Set<String> RANGED_CLASS_NAMES = Set.of("Ranger");
-    private static final Set<String> MAGIC_CLASS_NAMES = Set.of(
-            "Mage",
-            "Cleric",
-            "Battle Medic",
-            "Wildspeaker",
-            "Thornbinder",
-            "Grovekeeper"
-    );
     private static final int PLAYER_MOVE_FRAMES = 6;
     private static final double ROAD_MOVE_FRAME_MULTIPLIER = 0.68;
     private static final int MIN_ROAD_MOVE_FRAMES = 3;
     private static final int WALK_CYCLE_FRAMES_PER_TILE = 4;
     private static final int WALK_ANIMATION_FRAMES = 18;
-    private static final int BIOME_MUSIC_FULL_BLEND_TICKS = Math.max(1, 18_000 / GameConfig.FPS_MS);
-    private static final int BIOME_TUNE_CROSSFADE_TICKS = Math.max(1, 12_000 / GameConfig.FPS_MS);
-    private static final int BIOME_TUNE_ROTATION_TICKS = Math.max(1, 50_000 / GameConfig.FPS_MS);
     private static final int CLOUD_LAYER_COUNT = 96;
     private static final double WEATHER_VISIBILITY_EPSILON = 0.01;
-    private static final Color WORLD_VOID_COLOR = new Color(5, 6, 9);
     private static final Color DEFAULT_SHADOW_LIGHT = new Color(255, 205, 130);
     private static final Color BIOME_TINT_TUNDRA = new Color(212, 235, 255);
     private static final Color BIOME_TINT_DESERT = new Color(255, 215, 145);
@@ -186,19 +103,13 @@ public final class GamePanel extends JPanel {
     private static final int[] CLOUD_SEEDS = createCloudSeeds();
     private static final DateTimeFormatter SAVE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
             .withZone(ZoneId.systemDefault());
-    private final GameState state;
+    final GameState state;
     private final AssetStore assets;
-    private final SaveSystem saves;
-    private final MusicManager music;
-    private final SoundManager sounds;
+    private final BattleRenderer battleRenderer;
+    final SaveSystem saves;
+    private final GameAudioController audio;
     private final WeatherSystem weather;
-
-    private record WorldMapViewport(int screenX, int screenY, int screenW, int screenH,
-                                    double worldX, double worldY, double worldW, double worldH) {
-        static WorldMapViewport full() {
-            return new WorldMapViewport(0, 0, 1, 1, 0.0, 0.0, WorldMap.COLS, WorldMap.ROWS);
-        }
-    }
+    private final WorldRenderer worldRenderer;
 
     private final CameraController cameraController = new CameraController();
     private final RenderMetrics renderMetrics = RenderMetrics.create();
@@ -209,7 +120,7 @@ public final class GamePanel extends JPanel {
     private final List<UiSlider> sliders = new ArrayList<>();
     private final List<TooltipZone> tooltipZones = new ArrayList<>();
     private boolean uiHidden;
-    private boolean battleVfxDebug;
+    boolean battleVfxDebug;
     private int frame;
     private int lastCamX;
     private int lastCamY;
@@ -222,7 +133,7 @@ public final class GamePanel extends JPanel {
     private final WorldMapTerrainCache worldMapTerrainCache = new WorldMapTerrainCache();
     private Rectangle worldMapBounds = new Rectangle();
     private WorldMapViewport worldMapViewport = WorldMapViewport.full();
-    private double worldMapZoom = WORLD_MAP_MIN_ZOOM;
+    double worldMapZoom = WORLD_MAP_MIN_ZOOM;
     private double worldMapCenterX = WorldMap.START_POSITION.x() + 0.5;
     private double worldMapCenterY = WorldMap.START_POSITION.y() + 0.5;
     private int worldMapQuestFocusIndex;
@@ -245,8 +156,8 @@ public final class GamePanel extends JPanel {
     private String followerTrailMapId = WorldMap.OVERWORLD_ID;
     private int playerWalkAnimationTileStart;
     private int playerWalkAnimationTiles;
-    private int playerFacingDx;
-    private int playerFacingDy = 1;
+    int playerFacingDx;
+    int playerFacingDy = 1;
     private int queuedMoveDx;
     private int queuedMoveDy;
     private boolean moveUpHeld;
@@ -272,17 +183,6 @@ public final class GamePanel extends JPanel {
     private double shadowWorldOffsetX;
     private double shadowWorldOffsetY;
     private TilePoint playerPathDestination;
-    private int lastBattleEffectTimer;
-    private String lastBattleEffectSignature = "";
-    private int lastGatherSoundCycle = -1;
-    private String lastGatherSoundSignature = "";
-    private String worldMusicKey = "";
-    private String worldMusicTrack = "";
-    private String previousWorldMusicTrack = "";
-    private int worldMusicDwellTicks;
-    private int worldMusicTrackTicks;
-    private int worldMusicPaletteIndex;
-    private boolean worldMusicBiomeChanging;
     private Runnable fullscreenToggle = () -> {
     };
     private Point hoverPoint;
@@ -299,23 +199,23 @@ public final class GamePanel extends JPanel {
     private TilePoint pendingTalkPartyTile;
     private CityBuilding pendingEnterBuilding;
     private TilePoint pendingPortalTile;
-    private int inventoryItemScroll;
-    private int craftingRecipeScroll;
+    int inventoryItemScroll;
+    int craftingRecipeScroll;
     private int craftingRecipeCategoryIndex;
-    private int shopItemScroll;
-    private int saveListScroll;
+    int shopItemScroll;
+    int saveListScroll;
     private int villageListScroll;
     private int battleLogScroll;
     private Rectangle battleLogBounds = new Rectangle();
     private final List<String> statusLog = new ArrayList<>();
     private int statusLogScroll;
     private Rectangle statusLogBounds = new Rectangle();
-    private int dialogOptionScroll;
+    int dialogOptionScroll;
     private Rectangle dialogOptionScrollBounds = new Rectangle();
     private String dialogOptionScrollKey = "";
-    private boolean questLogCompletedTab;
-    private int questLogScroll;
-    private String selectedQuestLogId = "";
+    boolean questLogCompletedTab;
+    int questLogScroll;
+    String selectedQuestLogId = "";
     private String trackedQuestId = "";
     private boolean questDetailTimelineTab;
     private String lastLoggedStatus = "";
@@ -325,17 +225,18 @@ public final class GamePanel extends JPanel {
     private String lastInteriorAssetCategory = "";
     private String villageBuildSearch = "";
     private String lastVillageBuildSearch = "";
-    private boolean villageSearchFocused;
+    boolean villageSearchFocused;
     private Rectangle villageSearchBounds = new Rectangle();
-    private boolean saveListCurrentCharacterOnly = true;
+    boolean saveListCurrentCharacterOnly = true;
     private String pendingOverwriteSaveId = "";
     private String pendingOverwriteSaveName = "";
-    private String selectedLoadCharacterId = "";
+    String selectedLoadCharacterId = "";
     private boolean importingCharacter;
     private final List<InventoryDragZone> inventoryDragZones = new ArrayList<>();
     private final List<InventoryDropZone> inventoryDropZones = new ArrayList<>();
     private final List<AbilityDragZone> abilityDragZones = new ArrayList<>();
     private final List<AbilityDropZone> abilityDropZones = new ArrayList<>();
+    private final List<PartyPortraitZone> partyPortraitZones = new ArrayList<>();
     private InventoryDrag inventoryDrag;
     private Point inventoryDragStart;
     private Point inventoryDragPoint;
@@ -348,11 +249,11 @@ public final class GamePanel extends JPanel {
     private Rectangle pressedButtonBounds;
     private String pressedButtonLabel;
     private UiSlider activeSlider;
-    private int partySkillScroll;
-    private int partyLoadoutScroll;
-    private Rectangle partyLoadoutBounds = new Rectangle();
-    private int skillTreeScroll;
-    private SkillTab activeSkillTab = SkillTab.SURVIVAL;
+    int partySkillScroll;
+    int partyLoadoutScroll;
+    Rectangle partyLoadoutBounds = new Rectangle();
+    int skillTreeScroll;
+    SkillTab activeSkillTab = SkillTab.SURVIVAL;
     private String activeProfessionId = Profession.WOODCUTTING.id();
     private final List<PlacementPulse> placementPulses = new ArrayList<>();
 
@@ -368,8 +269,7 @@ public final class GamePanel extends JPanel {
         CHANCE,
         DIFFICULTY,
         VOLUME,
-        CAMERA,
-        ZOOM
+        CAMERA
     }
 
     private enum MovementSpeed {
@@ -388,7 +288,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private enum SkillTab {
+    enum SkillTab {
         SURVIVAL("Survival"),
         CLASS("Class"),
         PROFESSIONS("Professions"),
@@ -414,6 +314,9 @@ public final class GamePanel extends JPanel {
     }
 
     private record AbilityDropZone(Rectangle bounds, int slot, boolean remove) {
+    }
+
+    private record PartyPortraitZone(Rectangle bounds, Actor actor) {
     }
 
     private record BuildingVisualLayout(
@@ -476,8 +379,8 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private static final class LoadFolder {
-        private final String characterId;
+    static final class LoadFolder {
+        final String characterId;
         private final String name;
         private final String className;
         private final long latestSavedAtMillis;
@@ -501,15 +404,58 @@ public final class GamePanel extends JPanel {
         this.javaRoot = javaRoot;
         this.state = new GameState(GameConfig.loadWithSettings(javaRoot));
         this.assets = new AssetStore(javaRoot.resolve("assets"));
+        this.battleRenderer = new BattleRenderer(assets);
         this.saves = new SaveSystem(javaRoot);
-        this.music = new MusicManager(javaRoot.resolve("assets").resolve("music"));
-        this.sounds = new SoundManager(javaRoot.resolve("assets").resolve("sfx"));
+        MusicManager music = new MusicManager(javaRoot.resolve("assets").resolve("music"));
+        SoundManager sounds = new SoundManager(javaRoot.resolve("assets").resolve("sfx"));
+        this.audio = new GameAudioController(state, music, sounds);
         this.weather = new WeatherSystem(state);
+        this.worldRenderer = new WorldRenderer(assets, new WorldRenderer.TerrainPainter() {
+            @Override
+            public char visibleTerrainTile(char tile, int wx, int wy) {
+                return GamePanel.this.visibleTerrainTile(tile, wx, wy);
+            }
+
+            @Override
+            public String terrainImageName(char terrainTile, int wx, int wy) {
+                return GamePanel.this.terrainImageName(terrainTile, wx, wy);
+            }
+
+            @Override
+            public void drawTerrainEdges(Graphics2D g, char terrainTile, int wx, int wy, int px, int py) {
+                GamePanel.this.drawTerrainEdges(g, terrainTile, wx, wy, px, py);
+            }
+
+            @Override
+            public void drawWaterAnimation(Graphics2D g, int wx, int wy, int px, int py, int tileSize) {
+                GamePanel.this.drawWaterAnimation(g, wx, wy, px, py, tileSize);
+            }
+
+            @Override
+            public void drawHouseTile(Graphics2D g, char tile, int wx, int wy, int px, int py) {
+                GamePanel.this.drawHouseTile(g, tile, wx, wy, px, py);
+            }
+        }, GamePanel.this::drawWorldProp, new WorldRenderer.LightingPainter() {
+            @Override
+            public void drawBiomeLightTints(Graphics2D g, int camX, int camY, int visibleCols, int visibleRows, int tileSize) {
+                GamePanel.this.drawBiomeLightTints(g, camX, camY, visibleCols, visibleRows, tileSize);
+            }
+
+            @Override
+            public void drawLightTileSpill(Graphics2D g, int camX, int camY, int visibleCols, int visibleRows, int tileSize) {
+                GamePanel.this.drawLightTileSpill(g, camX, camY, visibleCols, visibleRows, tileSize);
+            }
+
+            @Override
+            public void drawWorldVignette(Graphics2D g) {
+                GamePanel.this.drawWorldVignette(g);
+            }
+        });
         setPreferredSize(new Dimension(GameConfig.WIDTH, GameConfig.HEIGHT));
         setBackground(new Color(15, 17, 24));
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
-        addKeyListener(new Keys());
+        addKeyListener(new GameKeyboardController(this));
         Mouse mouse = new Mouse();
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
@@ -522,9 +468,7 @@ public final class GamePanel extends JPanel {
             if (state.mode == GameMode.BATTLE && state.battle != null) {
                 state.tickBattle();
             }
-            updateMusic();
-            updateBattleSoundEffects();
-            updateGatherSoundEffects();
+            audio.update(frame);
             syncStatusLog();
             repaint();
         });
@@ -537,7 +481,7 @@ public final class GamePanel extends JPanel {
         if (status.isBlank() || status.equals(lastLoggedStatus)) {
             return;
         }
-        statusLog.add(status);
+        statusLog.add(TravelLogNarrator.narrate(state, status));
         while (statusLog.size() > MAX_STATUS_LOG_ENTRIES) {
             statusLog.remove(0);
         }
@@ -560,6 +504,7 @@ public final class GamePanel extends JPanel {
         tooltipZones.clear();
         abilityDragZones.clear();
         abilityDropZones.clear();
+        partyPortraitZones.clear();
         int renderAttempts = 0;
         do {
             Graphics2D bufferGraphics = backBuffer.createGraphics(this, viewWidth(), viewHeight());
@@ -613,7 +558,6 @@ public final class GamePanel extends JPanel {
                 }
                 if (!uiHidden && visibleMode == GameMode.EXPLORE) {
                     drawTrackedQuestHud(g);
-                    drawTravelPartyHud(g);
                 }
                 if (!uiHidden && visibleMode == GameMode.DIALOG) {
                     drawDialog(g);
@@ -658,6 +602,9 @@ public final class GamePanel extends JPanel {
         if (!uiHidden && visibleGameplayMode() != GameMode.DIALOG) {
             drawHoverTooltip(g);
         }
+        if (state.dialogueVideoActive()) {
+            drawDialogueVideoOverlay(g);
+        }
     }
 
     private GameMode visibleGameplayMode() {
@@ -671,160 +618,6 @@ public final class GamePanel extends JPanel {
             return state.saveMenuReturnMode == GameMode.PAUSE_MENU ? state.pauseReturnMode : state.saveMenuReturnMode;
         }
         return state.mode;
-    }
-
-    private record MusicCue(String track, String bedTrack, float presence) {
-    }
-
-    private void updateMusic() {
-        music.setVolume(effectiveMusicVolume());
-        MusicCue cue = desiredMusicCue();
-        if (cue == null || cue.track() == null) {
-            music.stop();
-        } else {
-            music.blend(cue.track(), cue.bedTrack(), cue.presence());
-        }
-        music.update();
-    }
-
-    private MusicCue desiredMusicCue() {
-        if (state.mode == GameMode.MAIN_MENU || state.mode == GameMode.CLASS_SELECT) {
-            return null;
-        }
-        if (state.mode == GameMode.PAUSE_MENU) {
-            return trackForMode(state.pauseReturnMode);
-        }
-        if (state.mode == GameMode.SETTINGS) {
-            return trackForMode(state.settingsReturnMode == GameMode.PAUSE_MENU ? state.pauseReturnMode : state.settingsReturnMode);
-        }
-        if (state.mode == GameMode.SAVE_MENU) {
-            return trackForMode(state.saveMenuReturnMode == GameMode.PAUSE_MENU ? state.pauseReturnMode : state.saveMenuReturnMode);
-        }
-        if (state.mode == GameMode.BATTLE && state.battle != null) {
-            return new MusicCue(battleMusicTrack(), null, 1.0f);
-        }
-        if (WORLD_MUSIC_MODES.contains(state.mode)) {
-            return worldMusicCue();
-        }
-        return null;
-    }
-
-    private MusicCue trackForMode(GameMode mode) {
-        if (mode == GameMode.BATTLE && state.battle != null) {
-            return new MusicCue(battleMusicTrack(), null, 1.0f);
-        }
-        if (mode == GameMode.MAIN_MENU || mode == GameMode.CLASS_SELECT) {
-            return null;
-        }
-        return worldMusicCue();
-    }
-
-    private float effectiveMusicVolume() {
-        return (state.config.masterVolume / 100.0f) * (state.config.musicVolume / 100.0f);
-    }
-
-    private float effectiveSfxVolume() {
-        return (state.config.masterVolume / 100.0f) * (state.config.sfxVolume / 100.0f);
-    }
-
-    private void updateBattleSoundEffects() {
-        sounds.setVolume(effectiveSfxVolume());
-        if (state.mode != GameMode.BATTLE || state.battle == null || state.battle.effectTimer <= 0 || !state.battle.effectReleased()) {
-            lastBattleEffectTimer = 0;
-            lastBattleEffectSignature = "";
-            return;
-        }
-        Battle battle = state.battle;
-        String kind = battle.effectKind == null ? "strike" : battle.effectKind;
-        String source = battle.effectSource == null ? "" : battle.effectSource.name;
-        String target = battle.effectTarget == null ? "" : battle.effectTarget.name;
-        String signature = kind + ":" + source + ":" + target;
-        if (battle.effectTimer > lastBattleEffectTimer || !signature.equals(lastBattleEffectSignature)) {
-            sounds.play(effectSoundName(kind));
-        }
-        lastBattleEffectTimer = battle.effectTimer;
-        lastBattleEffectSignature = signature;
-    }
-
-    private void updateGatherSoundEffects() {
-        sounds.setVolume(effectiveSfxVolume());
-        CraftingSystem.GatherCandidate candidate = state.activeGatherCandidate;
-        if (!state.crafting.active() || candidate == null || !state.currentMapId.equals(state.activeGatherMapId)) {
-            lastGatherSoundCycle = -1;
-            lastGatherSoundSignature = "";
-            return;
-        }
-        String tool = gatherToolKind(candidate);
-        TilePoint tile = candidate.tile();
-        String signature = state.activeGatherMapId + ":" + tile.x() + ":" + tile.y() + ":" + tool;
-        int cycle = frame / 24;
-        double phase = (frame % 24) / 24.0;
-        double strike = Math.sin(phase * Math.PI);
-        if (strike > 0.90 && (cycle != lastGatherSoundCycle || !signature.equals(lastGatherSoundSignature))) {
-            sounds.play(gatherSoundName(tool));
-            lastGatherSoundCycle = cycle;
-            lastGatherSoundSignature = signature;
-        }
-    }
-
-    private MusicCue worldMusicCue() {
-        String key = worldMusicKeyForCurrentPosition();
-        List<String> palette = MUSIC_PALETTES.getOrDefault(key, List.of(key));
-        if (!key.equals(worldMusicKey)) {
-            previousWorldMusicTrack = worldMusicTrack;
-            worldMusicKey = key;
-            worldMusicPaletteIndex = Math.floorMod(key.hashCode() + state.dayNumber(), palette.size());
-            worldMusicTrack = palette.get(worldMusicPaletteIndex);
-            worldMusicDwellTicks = 0;
-            worldMusicTrackTicks = 0;
-            worldMusicBiomeChanging = previousWorldMusicTrack != null && !previousWorldMusicTrack.isBlank();
-        } else {
-            worldMusicDwellTicks++;
-            worldMusicTrackTicks++;
-            if (palette.size() > 1 && worldMusicTrackTicks >= BIOME_TUNE_ROTATION_TICKS) {
-                previousWorldMusicTrack = worldMusicTrack;
-                worldMusicPaletteIndex = (worldMusicPaletteIndex + 1) % palette.size();
-                worldMusicTrack = palette.get(worldMusicPaletteIndex);
-                worldMusicTrackTicks = 0;
-                worldMusicBiomeChanging = false;
-            }
-        }
-
-        float presence = 1.0f;
-        if (previousWorldMusicTrack != null && !previousWorldMusicTrack.isBlank()) {
-            int fadeTicks = worldMusicBiomeChanging ? BIOME_MUSIC_FULL_BLEND_TICKS : BIOME_TUNE_CROSSFADE_TICKS;
-            int elapsedTicks = worldMusicBiomeChanging ? worldMusicDwellTicks : worldMusicTrackTicks;
-            presence = Math.max(0.0f, Math.min(1.0f, elapsedTicks / (float) fadeTicks));
-            if (presence >= 1.0f) {
-                previousWorldMusicTrack = "";
-                worldMusicBiomeChanging = false;
-            }
-        }
-        return new MusicCue(worldMusicTrack, previousWorldMusicTrack, presence);
-    }
-
-    private String worldMusicKeyForCurrentPosition() {
-        String kind = state.world.kind(state.currentMapId);
-        if ("city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
-            return "town_village";
-        }
-        if ("dungeon".equals(kind)) {
-            return "dungeon_crypt";
-        }
-        char tile = state.world.tileAt(state.currentMapId, state.playerX, state.playerY);
-        return MUSIC_BY_TERRAIN.getOrDefault(tile, "zone_grasslands");
-    }
-
-    private String battleMusicTrack() {
-        if (state.battle.monsterSpecs.size() >= 3) {
-            return "battle_boss";
-        }
-        for (GameData.MonsterSpec spec : state.battle.monsterSpecs) {
-            if (BOSS_MUSIC_KEYS.contains(spec.key())) {
-                return "battle_boss";
-            }
-        }
-        return "battle_standard";
     }
 
     private void drawTitleBackground(Graphics2D g, boolean showCast) {
@@ -1056,62 +849,42 @@ public final class GamePanel extends JPanel {
         lastVisibleRows = visibleRows;
         weather.refreshRenderMetrics();
         renderMetrics.sample("world.visibleTiles", (long) visibleCols * visibleRows);
+        WorldRenderer.PropContext propContext = new WorldRenderer.PropContext(
+                state,
+                camX,
+                camY,
+                visibleCols,
+                visibleRows,
+                tileSize,
+                state.zoom
+        );
         long propsStarted = renderMetrics.start();
-        rebuildVisibleWorldProps(camX, camY, visibleCols, visibleRows);
+        worldRenderer.rebuildNearbyProps(propContext, nearbyWorldProps);
         renderMetrics.record("world.propsInBounds", propsStarted);
         renderMetrics.sample("world.nearbyProps", nearbyWorldProps.size());
 
         Graphics2D worldGraphics = (Graphics2D) g.create();
         worldGraphics.setClip(0, 0, gameAreaWidth(), worldViewportHeight);
         worldGraphics.translate(-cameraOffsetX, -cameraOffsetY);
-        for (int sy = 0; sy < visibleRows; sy++) {
-            for (int sx = 0; sx < visibleCols; sx++) {
-                int wx = camX + sx;
-                int wy = camY + sy;
-                int px = sx * tileSize;
-                int py = sy * tileSize;
-                if (wx < 0 || wy < 0 || wx >= mapWidth || wy >= mapHeight) {
-                    worldGraphics.setColor(WORLD_VOID_COLOR);
-                    worldGraphics.fillRect(px, py, tileSize, tileSize);
-                    continue;
-                }
-                char tile = state.world.tileAt(state.currentMapId, wx, wy);
-                char terrainTile = visibleTerrainTile(tile, wx, wy);
-                String terrainImage = terrainImageName(terrainTile, wx, wy);
-                if ("dungeon".equals(mapKind) && terrainImage.startsWith("dungeon")) {
-                    worldGraphics.setColor(new Color(22, 23, 30));
-                    worldGraphics.fillRect(px, py, tileSize, tileSize);
-                    worldGraphics.drawImage(assets.imageWithoutBorder(terrainImage, tileSize, tileSize), px, py, null);
-                } else {
-                    worldGraphics.drawImage(assets.image(terrainImage, tileSize, tileSize), px, py, null);
-                }
-                drawTerrainEdges(worldGraphics, terrainTile, wx, wy, px, py);
-                if (terrainTile == 'w' || terrainTile == '~') {
-                    drawWaterAnimation(worldGraphics, wx, wy, px, py, tileSize);
-                }
-                if ("interior".equals(mapKind)) {
-                    drawHouseTile(worldGraphics, tile, wx, wy, px, py);
-                } else if (tile == 'h') {
-                    worldGraphics.setColor(new Color(72, 47, 36, 96));
-                    worldGraphics.fillRect(px + scaled(6), py + scaled(8), tileSize - scaled(12), tileSize - scaled(10));
-                } else if (tile == 'x' || tile == 'o') {
-                    worldGraphics.setColor(new Color(40, 38, 45, 120));
-                    worldGraphics.fillRect(px, py, tileSize, tileSize);
-                }
-                String landmark = state.world.landmarkAt(state.currentMapId, wx, wy);
-                if (landmark != null) {
-                    worldGraphics.setColor(new Color(255, 245, 174));
-                    worldGraphics.fillOval(px + scaled(19), py + scaled(4), scaled(10), scaled(10));
-                }
-            }
-        }
+        worldRenderer.drawTerrainBase(worldGraphics, new WorldRenderer.TerrainContext(
+                state,
+                camX,
+                camY,
+                visibleCols,
+                visibleRows,
+                mapWidth,
+                mapHeight,
+                tileSize,
+                state.zoom,
+                mapKind
+        ));
 
         rebuildWorldLights(camX, camY, visibleCols, visibleRows, tileSize);
         renderMetrics.sample("world.activeLights", activeWorldLights.size());
         shadowWorldOffsetX = camX * (double) tileSize;
         shadowWorldOffsetY = camY * (double) tileSize;
         drawFieldConnectors(worldGraphics, camX, camY);
-        drawGroundPropOverlays(worldGraphics, camX, camY);
+        worldRenderer.drawGroundPropOverlays(worldGraphics, propContext, nearbyWorldProps);
         drawMountainMassifOverlays(worldGraphics, camX, camY);
         drawRoadConnectors(worldGraphics, camX, camY);
         drawSettlementSurfaceSeams(worldGraphics, camX, camY);
@@ -1120,16 +893,8 @@ public final class GamePanel extends JPanel {
         drawVillageBuildingPlacementPreview(worldGraphics, camX, camY, tileSize);
         drawSettlementOverlays(worldGraphics, camX, camY);
 
-        visibleWorldProps.clear();
-        for (WorldProp prop : nearbyWorldProps) {
-            if (!isGroundProp(prop.asset()) && isWorldPropVisible(prop, camX, camY, visibleCols, visibleRows)) {
-                visibleWorldProps.add(prop);
-            }
-        }
+        worldRenderer.drawVisibleProps(worldGraphics, propContext, nearbyWorldProps, visibleWorldProps);
         renderMetrics.sample("world.visibleProps", visibleWorldProps.size());
-        for (WorldProp prop : visibleWorldProps) {
-            drawWorldProp(worldGraphics, prop, camX, camY, tileSize);
-        }
         drawFallingGatheredProp(worldGraphics, camX, camY, tileSize);
         drawQuestInteractibles(worldGraphics, camX, camY);
         drawQuestObjectives(worldGraphics, camX, camY);
@@ -1233,7 +998,15 @@ public final class GamePanel extends JPanel {
         if (weather.effectsVisibleOnCurrentMap()) {
             drawCloudLayer(worldGraphics, camX, camY);
         }
-        drawWorldLighting(worldGraphics, camX, camY, visibleCols, visibleRows, tileSize);
+        worldRenderer.drawLighting(worldGraphics, new WorldRenderer.LightingContext(
+                camX,
+                camY,
+                visibleCols,
+                visibleRows,
+                tileSize,
+                gameAreaWidth(),
+                viewHeight()
+        ));
         worldGraphics.dispose();
         drawTravelBanterPrompt(g, camX, camY, tileSize, cameraOffsetX, cameraOffsetY);
         long atmosphereStarted = renderMetrics.start();
@@ -1244,24 +1017,6 @@ public final class GamePanel extends JPanel {
         shadowWorldOffsetX = 0.0;
         shadowWorldOffsetY = 0.0;
         renderMetrics.record("world", worldStarted);
-    }
-
-    private void rebuildVisibleWorldProps(int camX, int camY, int visibleCols, int visibleRows) {
-        nearbyWorldProps.clear();
-        for (WorldProp prop : state.world.propsInTileOrder(
-                state.currentMapId,
-                camX - 4,
-                camY - 4,
-                camX + visibleCols + 4,
-                camY + visibleRows + 4
-        )) {
-            nearbyWorldProps.add(prop);
-        }
-    }
-
-    private boolean isWorldPropVisible(WorldProp prop, int camX, int camY, int visibleCols, int visibleRows) {
-        return prop.x() >= camX && prop.y() >= camY
-                && prop.x() < camX + visibleCols && prop.y() < camY + visibleRows;
     }
 
     private void drawNpcQuestMarker(Graphics2D g, int markerCenterX, int spriteTopY, char marker, Quest quest) {
@@ -1935,7 +1690,20 @@ public final class GamePanel extends JPanel {
                 || asset.equals("deco_road_milestone")
                 || asset.equals("deco_imagen_signpost")
                 || asset.equals("deco_imagen_milestone")
-                || asset.equals("deco_imagen_road_camp");
+                || asset.equals("deco_imagen_road_camp")
+                || isDiscoverabilityOutdoorProp(asset);
+    }
+
+    private boolean isDiscoverabilityOutdoorProp(String asset) {
+        return asset.equals("deco_imagen_shrine_stone")
+                || asset.equals("deco_forest_shrine_stone")
+                || asset.equals("deco_imagen_green_rune_stone")
+                || asset.equals("deco_imagen_tundra_rune_stone")
+                || asset.equals("deco_imagen_stone_stack")
+                || asset.equals("deco_mountain_cairn")
+                || asset.equals("deco_mountain_pass_way_cairn")
+                || asset.equals("location_ruin_standing_stones")
+                || asset.equals("deco_tree_elder_harvestable");
     }
 
     private boolean isInteriorWallDecorAsset(String asset) {
@@ -2517,27 +2285,42 @@ public final class GamePanel extends JPanel {
                 || asset.contains("steel_scrap");
     }
 
+    private static final int CONTEXT_MENU_MARGIN = 8;
+    private static final int CONTEXT_MENU_RADIUS = 8;
+    private static final int CONTEXT_MENU_PADDING_X = 8;
+    private static final int CONTEXT_MENU_TITLE_X = 10;
+    private static final int CONTEXT_MENU_TITLE_Y = 18;
+    private static final int CONTEXT_MENU_BUTTON_TOP = 28;
+    private static final int CONTEXT_MENU_BUTTON_HEIGHT = 26;
+    private static final int CONTEXT_MENU_ROW_STEP = 30;
+
     private void drawWorldContextMenu(Graphics2D g) {
-        if (state.mode != GameMode.EXPLORE || contextMenuPoint == null
-                || (contextMenuTile == null && contextMenuSettlement == null && contextMenuBuilding == null)) {
+        boolean partyOverlayMenu = (state.mode == GameMode.EXPLORE || state.mode == GameMode.PARTY || state.mode == GameMode.SKILLS)
+                && contextMenuPartyMember != null
+                && contextMenuTile == null
+                && contextMenuSettlement == null
+                && contextMenuBuilding == null;
+        if (contextMenuPoint == null
+                || (!partyOverlayMenu && state.mode != GameMode.EXPLORE)
+                || (!partyOverlayMenu && contextMenuTile == null && contextMenuSettlement == null && contextMenuBuilding == null)) {
             return;
         }
         Rectangle bounds = contextMenuBounds();
-        CraftingSystem.GatherCandidate target = contextMenuSettlement == null && contextMenuBuilding == null
+        CraftingSystem.GatherCandidate target = contextMenuTile != null && contextMenuSettlement == null && contextMenuBuilding == null
                 ? state.gatherTargetAtTile(contextMenuTile.x(), contextMenuTile.y())
                 : null;
         Actor partyMember = contextMenuSettlement == null && contextMenuBuilding == null ? contextMenuPartyMember : null;
-        Npc npc = contextMenuSettlement == null && contextMenuBuilding == null
+        Npc npc = contextMenuTile != null && contextMenuSettlement == null && contextMenuBuilding == null
                 && partyMember == null
                 ? state.npcAt(state.currentMapId, contextMenuTile.x(), contextMenuTile.y())
                 : null;
-        WorldProp portal = contextMenuSettlement == null && contextMenuBuilding == null
+        WorldProp portal = contextMenuTile != null && contextMenuSettlement == null && contextMenuBuilding == null
                 ? townPortalNearTile(contextMenuTile)
                 : null;
-        WorldProp bookshelf = contextMenuSettlement == null && contextMenuBuilding == null
+        WorldProp bookshelf = contextMenuTile != null && contextMenuSettlement == null && contextMenuBuilding == null
                 ? state.readableBookshelfAtTile(contextMenuTile.x(), contextMenuTile.y())
                 : null;
-        CraftingSystem.Workstation workstation = contextMenuSettlement == null && contextMenuBuilding == null
+        CraftingSystem.Workstation workstation = contextMenuTile != null && contextMenuSettlement == null && contextMenuBuilding == null
                 ? state.workstationAtTile(contextMenuTile.x(), contextMenuTile.y())
                 : null;
         Composite oldComposite = g.getComposite();
@@ -2546,12 +2329,12 @@ public final class GamePanel extends JPanel {
 
         g.setComposite(AlphaComposite.SrcOver.derive(0.92f));
         g.setColor(new Color(12, 16, 22, 238));
-        g.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, scaled(8), scaled(8));
+        g.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, CONTEXT_MENU_RADIUS, CONTEXT_MENU_RADIUS);
         g.setColor(new Color(220, 210, 170, 220));
-        g.setStroke(new BasicStroke(scaledStroke(1.4f)));
-        g.drawRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, scaled(8), scaled(8));
+        g.setStroke(new BasicStroke(1.4f));
+        g.drawRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, CONTEXT_MENU_RADIUS, CONTEXT_MENU_RADIUS);
 
-        g.setFont(new Font("SansSerif", Font.BOLD, Math.max(10, scaled(12))));
+        g.setFont(new Font("SansSerif", Font.BOLD, 12));
         g.setColor(new Color(241, 236, 216));
         String title = contextMenuSettlement != null
                 ? contextMenuSettlement.label()
@@ -2562,11 +2345,35 @@ public final class GamePanel extends JPanel {
                 : bookshelf != null ? "Bookshelf"
                 : workstation != null ? workstation.label()
                 : target == null ? "Location" : "Gather " + target.label();
-        drawClippedString(g, title, bounds.x + scaled(10), bounds.y + scaled(18), bounds.width - scaled(20));
+        drawClippedString(g, title, bounds.x + CONTEXT_MENU_TITLE_X, bounds.y + CONTEXT_MENU_TITLE_Y,
+                bounds.width - CONTEXT_MENU_TITLE_X * 2);
 
-        int buttonY = bounds.y + scaled(28);
+        int buttonY = bounds.y + CONTEXT_MENU_BUTTON_TOP;
+        if (partyOverlayMenu) {
+            Actor selected = contextMenuPartyMember;
+            if (state.activeAllies().contains(selected)) {
+                actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                        bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
+                        "Talk to " + selected.name, () -> {
+                            clearContextMenu();
+                            if (!state.talkToPartyAlly(selected)) {
+                                state.status = selected.name + " is not ready to talk right now.";
+                            }
+                        }, new Color(52, 56, 78), new Color(126, 154, 220), true);
+                buttonY += CONTEXT_MENU_ROW_STEP;
+            }
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
+                    "Character", () -> openCharacterForPartyMember(selected),
+                    new Color(46, 53, 42), new Color(122, 164, 96), true);
+            g.setFont(oldFont);
+            g.setStroke(oldStroke);
+            g.setComposite(oldComposite);
+            return;
+        }
         if (contextMenuSettlement != null) {
-            actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                     "Enter " + contextMenuSettlement.label(), () -> {
                         WorldMap.SettlementSite settlement = contextMenuSettlement;
                         clearContextMenu();
@@ -2585,7 +2392,8 @@ public final class GamePanel extends JPanel {
         }
         if (contextMenuBuilding != null) {
             if (contextMenuTile != null) {
-                actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+                actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                        bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                         "Go to tile", () -> {
                             TilePoint tile = contextMenuTile;
                             clearContextMenu();
@@ -2597,9 +2405,10 @@ public final class GamePanel extends JPanel {
                             pendingPortalTile = null;
                             setPlayerPathDestination(tile.x(), tile.y());
                         }, new Color(35, 39, 54), new Color(86, 98, 128), true);
-                buttonY += scaled(30);
+                buttonY += CONTEXT_MENU_ROW_STEP;
             }
-            actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                     "Enter " + state.generatedBuildingName(contextMenuBuilding), () -> {
                         CityBuilding building = contextMenuBuilding;
                         clearContextMenu();
@@ -2608,8 +2417,9 @@ public final class GamePanel extends JPanel {
                         pendingPortalTile = null;
                         startEnterBuilding(building);
                     }, new Color(46, 53, 42), new Color(122, 164, 96), true);
-            buttonY += scaled(30);
-            actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+            buttonY += CONTEXT_MENU_ROW_STEP;
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                     "Inspect", () -> {
                         CityBuilding building = contextMenuBuilding;
                         String mapId = state.currentMapId;
@@ -2624,7 +2434,8 @@ public final class GamePanel extends JPanel {
             g.setComposite(oldComposite);
             return;
         }
-        actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+        actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                 portal == null ? "Go to location" : "Use portal", () -> {
                     TilePoint tile = contextMenuTile;
                     WorldProp selectedPortal = portal;
@@ -2641,9 +2452,10 @@ public final class GamePanel extends JPanel {
                         startUsePortal(selectedPortal);
                     }
                 }, new Color(35, 39, 54), new Color(86, 98, 128), true);
-        buttonY += scaled(30);
+        buttonY += CONTEXT_MENU_ROW_STEP;
         if (partyMember != null) {
-            actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                     "Talk to " + partyMember.name, () -> {
                         Actor selected = partyMember;
                         TilePoint selectedTile = contextMenuTile;
@@ -2655,10 +2467,16 @@ public final class GamePanel extends JPanel {
                         pendingCraftTile = null;
                         startTalkToPartyMember(selected, selectedTile);
                     }, new Color(52, 56, 78), new Color(126, 154, 220), true);
-            buttonY += scaled(30);
+            buttonY += CONTEXT_MENU_ROW_STEP;
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
+                    "Character", () -> openCharacterForPartyMember(partyMember),
+                    new Color(46, 53, 42), new Color(122, 164, 96), true);
+            buttonY += CONTEXT_MENU_ROW_STEP;
         }
         if (npc != null) {
-            actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                     "Talk to " + state.npcDisplayName(npc), () -> {
                         Npc selectedNpc = npc;
                         clearContextMenu();
@@ -2668,10 +2486,11 @@ public final class GamePanel extends JPanel {
                         pendingCraftTile = null;
                         startTalkToNpc(selectedNpc);
                     }, new Color(62, 50, 31), new Color(174, 135, 66), true);
-            buttonY += scaled(30);
+            buttonY += CONTEXT_MENU_ROW_STEP;
         }
         if (bookshelf != null) {
-            actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                     "Read", () -> {
                         TilePoint tile = contextMenuTile;
                         clearContextMenu();
@@ -2680,10 +2499,11 @@ public final class GamePanel extends JPanel {
                         pendingCraftTile = null;
                         startReadAtLocation(tile);
                     }, new Color(50, 44, 70), new Color(136, 118, 190), true);
-            buttonY += scaled(30);
+            buttonY += CONTEXT_MENU_ROW_STEP;
         }
         if (workstation != null) {
-            actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+            actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                    bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                     "Craft at " + workstation.label(), () -> {
                         TilePoint tile = contextMenuTile;
                         clearContextMenu();
@@ -2692,9 +2512,10 @@ public final class GamePanel extends JPanel {
                         pendingReadTile = null;
                         startCraftAtLocation(tile);
                     }, new Color(46, 53, 42), new Color(122, 164, 96), true);
-            buttonY += scaled(30);
+            buttonY += CONTEXT_MENU_ROW_STEP;
         }
-        actionButton(g, bounds.x + scaled(8), buttonY, bounds.width - scaled(16), scaled(26),
+        actionButton(g, bounds.x + CONTEXT_MENU_PADDING_X, buttonY,
+                bounds.width - CONTEXT_MENU_PADDING_X * 2, CONTEXT_MENU_BUTTON_HEIGHT,
                 target == null ? "Gather here" : "Gather " + target.label(), () -> {
                     TilePoint tile = contextMenuTile;
                     clearContextMenu();
@@ -2717,16 +2538,20 @@ public final class GamePanel extends JPanel {
                 ? state.workstationAtTile(contextMenuTile.x(), contextMenuTile.y())
                 : null;
         boolean hasPartyMember = contextMenuSettlement == null && contextMenuBuilding == null && contextMenuPartyMember != null;
+        boolean partyOverlayMenu = contextMenuTile == null && hasPartyMember;
+        boolean partyMemberCanTalk = hasPartyMember && state.activeAllies().contains(contextMenuPartyMember);
         boolean hasNpc = contextMenuSettlement == null && contextMenuBuilding == null && contextMenuTile != null
                 && contextMenuPartyMember == null
                 && state.npcAt(state.currentMapId, contextMenuTile.x(), contextMenuTile.y()) != null;
-        int width = contextMenuSettlement != null ? scaled(252)
-                : contextMenuBuilding != null ? scaled(238)
-                : workstation != null || hasPartyMember || hasNpc ? scaled(216)
-                : scaled(174);
-        int actionCount = contextMenuSettlement != null ? 1 : contextMenuBuilding != null ? 2 + (contextMenuTile == null ? 0 : 1) : 2;
-        if (hasPartyMember) {
-            actionCount++;
+        int width = contextMenuSettlement != null ? 252
+                : contextMenuBuilding != null ? 238
+                : workstation != null || hasPartyMember || hasNpc ? 216
+                : 174;
+        int actionCount = partyOverlayMenu
+                ? 1 + (partyMemberCanTalk ? 1 : 0)
+                : contextMenuSettlement != null ? 1 : contextMenuBuilding != null ? 2 + (contextMenuTile == null ? 0 : 1) : 2;
+        if (hasPartyMember && contextMenuTile != null) {
+            actionCount += 2;
         }
         if (hasNpc) {
             actionCount++;
@@ -2737,12 +2562,36 @@ public final class GamePanel extends JPanel {
         if (workstation != null) {
             actionCount++;
         }
-        int height = scaled(32 + actionCount * 30);
-        int x = contextMenuPoint == null ? scaled(16) : contextMenuPoint.x + scaled(8);
-        int y = contextMenuPoint == null ? scaled(16) : contextMenuPoint.y + scaled(8);
-        x = clamp(x, scaled(8), Math.max(scaled(8), gameAreaWidth() - width - scaled(8)));
-        y = clamp(y, scaled(8), Math.max(scaled(8), worldViewportHeight() - height - scaled(8)));
+        int height = 32 + actionCount * CONTEXT_MENU_ROW_STEP;
+        int x = contextMenuPoint == null ? 16 : contextMenuPoint.x + CONTEXT_MENU_MARGIN;
+        int y = contextMenuPoint == null ? 16 : contextMenuPoint.y + CONTEXT_MENU_MARGIN;
+        int clampW = state.mode == GameMode.EXPLORE && !partyOverlayMenu ? gameAreaWidth() : viewWidth();
+        int clampH = state.mode == GameMode.EXPLORE && !partyOverlayMenu ? worldViewportHeight() : viewHeight();
+        x = clamp(x, CONTEXT_MENU_MARGIN, Math.max(CONTEXT_MENU_MARGIN, clampW - width - CONTEXT_MENU_MARGIN));
+        y = clamp(y, CONTEXT_MENU_MARGIN, Math.max(CONTEXT_MENU_MARGIN, clampH - height - CONTEXT_MENU_MARGIN));
         return new Rectangle(x, y, width, height);
+    }
+
+    private void openCharacterForPartyMember(Actor actor) {
+        if (actor == null) {
+            clearContextMenu();
+            return;
+        }
+        List<Actor> members = state.partyMembers();
+        int index = members.indexOf(actor);
+        if (index < 0) {
+            clearContextMenu();
+            state.status = actor.name + " is not in the current party.";
+            return;
+        }
+        clearContextMenu();
+        state.selectPartyScreenActor(index);
+        partySkillScroll = 0;
+        partyLoadoutScroll = 0;
+        if (state.mode != GameMode.PARTY) {
+            state.mode = GameMode.PARTY;
+        }
+        repaint();
     }
 
     private void startNavigateToSettlement(WorldMap.SettlementSite settlement) {
@@ -5340,6 +5189,9 @@ public final class GamePanel extends JPanel {
                 if (!Terrain.connectingRoad(tile)) {
                     continue;
                 }
+                if (isSettlementRoadNode(tile)) {
+                    continue;
+                }
                 int px = sx * ts;
                 int py = sy * ts;
                 if (tile == 'B') {
@@ -5368,6 +5220,10 @@ public final class GamePanel extends JPanel {
         if (texturedRoads) {
             drawTexturedRoadJunctionFillers(g, camX, camY, "village".equals(mapKind) || "city".equals(mapKind));
         }
+    }
+
+    private boolean isSettlementRoadNode(char tile) {
+        return tile == 'c' || tile == 'u' || tile == 'd';
     }
 
     private void drawTexturedRoadTile(Graphics2D g, int wx, int wy, int px, int py, char tile, boolean settlementRoad) {
@@ -6714,16 +6570,6 @@ public final class GamePanel extends JPanel {
         return (float) Math.max(0.38, Math.min(1.0, daylight * 0.62 + horizonBoost));
     }
 
-    private void drawWorldLighting(Graphics2D g, int camX, int camY, int visibleCols, int visibleRows, int tileSize) {
-        Graphics2D light = (Graphics2D) g.create();
-        light.setClip(0, 0, gameAreaWidth(), viewHeight());
-        light.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        drawBiomeLightTints(light, camX, camY, visibleCols, visibleRows, tileSize);
-        drawLightTileSpill(light, camX, camY, visibleCols, visibleRows, tileSize);
-        drawWorldVignette(light);
-        light.dispose();
-    }
-
     private void rebuildWorldLights(int camX, int camY, int visibleCols, int visibleRows, int tileSize) {
         activeWorldLights.clear();
         for (WorldProp prop : nearbyWorldProps) {
@@ -7322,29 +7168,6 @@ public final class GamePanel extends JPanel {
         g.fillRect(0, 0, width, height);
         g.setPaint(oldPaint);
         g.setComposite(oldComposite);
-    }
-
-    private void drawGroundPropOverlays(Graphics2D g, int camX, int camY) {
-        int ts = tileSize();
-        int inset = scaled(2);
-        for (WorldProp prop : nearbyWorldProps) {
-            if (!isGroundProp(prop.asset())) {
-                continue;
-            }
-            if (!isWorldPropVisible(prop, camX, camY, lastVisibleCols, lastVisibleRows)) {
-                continue;
-            }
-            int px = (prop.x() - camX) * ts - inset;
-            int py = (prop.y() - camY) * ts - inset;
-            g.drawImage(assets.image(prop.asset(), ts + inset * 2, ts + inset * 2), px, py, null);
-        }
-    }
-
-    private boolean isGroundProp(String asset) {
-        return asset.equals("location_farmland_tilled")
-                || asset.equals("location_graveyard_dirt")
-                || asset.equals("location_graveyard_path")
-                || asset.equals("location_dungeon_approach_path");
     }
 
     private boolean castsPropShadow(String asset) {
@@ -8391,38 +8214,64 @@ public final class GamePanel extends JPanel {
         g.drawString(p.className, x, y);
         g.setFont(new Font("SansSerif", Font.PLAIN, 15));
         g.setColor(new Color(198, 202, 211));
-        g.drawString("Level " + p.level + "   Gold " + p.gold, x, y + 28);
-        bar(g, x, y + 52, p.hp, p.maxHp, new Color(190, 76, 82), "HP");
-        bar(g, x, y + 86, p.mp, p.maxMp, new Color(84, 129, 205), "MP");
-        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        g.setColor(new Color(198, 202, 211));
-        String partyLine = state.activeAllies().isEmpty()
-                ? "Party: no allies"
-                : "Party: " + String.join(", ", state.activeAllies().stream().map(ally -> ally.name).toList());
-        if (!state.stationedAllies().isEmpty()) {
-            partyLine += " | Village: " + state.stationedAllies().size();
-        }
-        wrap(g, partyLine, x, y + 122, GameConfig.SIDEBAR_WIDTH - 56, 17);
+        g.drawString("Gold " + p.gold, x, y + 28);
 
-        g.setFont(new Font("SansSerif", Font.BOLD, 16));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Environment", x, y + 158);
-        g.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        g.setColor(new Color(198, 202, 211));
-        drawClippedString(g, "Day " + state.dayNumber() + "  " + state.timeLabel() + "  " + state.dayPhaseLabel(), x, y + 183, GameConfig.SIDEBAR_WIDTH - 56);
-        drawClippedString(g, "Weather: " + state.weatherLabel() + " over " + Terrain.name(state.currentBiomeTile()), x, y + 205, GameConfig.SIDEBAR_WIDTH - 56);
-        drawClippedString(g, state.windLabel(), x, y + 227, GameConfig.SIDEBAR_WIDTH - 56);
-
-        g.setFont(new Font("SansSerif", Font.BOLD, 16));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Position", x, y + 252);
-        g.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        g.setColor(new Color(198, 202, 211));
-        drawClippedString(g, state.world.label(state.currentMapId), x, y + 277, GameConfig.SIDEBAR_WIDTH - 56);
-        drawClippedString(g, state.playerX + ", " + state.playerY + "  " + Terrain.name(state.world.tileAt(state.currentMapId, state.playerX, state.playerY)), x, y + 299, GameConfig.SIDEBAR_WIDTH - 56);
-
-        int logH = Math.max(132, Math.min(188, viewHeight() - 840));
+        boolean shortSidebar = viewHeight() < 850;
+        int contentW = GameConfig.SIDEBAR_WIDTH - 56;
+        int gap = shortSidebar ? 8 : 12;
+        int buttonH = shortSidebar ? 26 : 30;
+        int rowGap = shortSidebar ? 6 : 8;
+        int logH = shortSidebar ? 100 : Math.max(132, Math.min(188, viewHeight() - 840));
         int logY = viewHeight() - logH - 24;
+        int miniH = shortSidebar ? 104 : 138;
+        int envH = shortSidebar ? 62 : 72;
+        int posH = shortSidebar ? 44 : 54;
+        int fullscreenH = shortSidebar ? 24 : 28;
+        int actionRowsH = buttonH * 3 + rowGap * 2;
+        int travelY = y + 46;
+        int reservedBelowTravel = actionRowsH + miniH + envH + posH + fullscreenH + gap * 6;
+        int travelMax = shortSidebar ? 206 : 236;
+        int travelMin = Math.min(150, travelMax);
+        int travelH = clamp(logY - travelY - reservedBelowTravel, travelMin, travelMax);
+        drawTravelPartyHud(g, x, travelY, contentW, travelH);
+
+        int actionY = travelY + travelH + gap;
+        int halfW = (contentW - 8) / 2;
+        sidebarButton(g, x, actionY, halfW, buttonH, "Quest Log", state::toggleQuestLog);
+        sidebarButton(g, x + halfW + 8, actionY, halfW, buttonH, "World Map", state::toggleWorldMap);
+        sidebarButton(g, x, actionY + buttonH + rowGap, halfW, buttonH, "Craft", state::toggleCrafting);
+        sidebarButton(g, x + halfW + 8, actionY + buttonH + rowGap, halfW, buttonH, "Character (" + characterPointBadge() + ")", state::toggleParty);
+        sidebarButton(g, x, actionY + (buttonH + rowGap) * 2, halfW, buttonH, "Inventory", state::toggleInventory);
+        sidebarButton(g, x + halfW + 8, actionY + (buttonH + rowGap) * 2, halfW, buttonH, "Village", state::toggleVillage);
+
+        int miniY = actionY + actionRowsH + gap;
+        drawMiniMap(g, x, miniY, contentW, miniH);
+
+        int envY = miniY + miniH + gap + (shortSidebar ? 0 : 2);
+        g.setFont(new Font("SansSerif", Font.BOLD, shortSidebar ? 14 : 16));
+        g.setColor(new Color(230, 225, 206));
+        g.drawString("Environment", x, envY + 14);
+        g.setFont(new Font("SansSerif", Font.PLAIN, shortSidebar ? 12 : 14));
+        g.setColor(new Color(198, 202, 211));
+        int lineH = shortSidebar ? 16 : 19;
+        drawClippedString(g, "Day " + state.dayNumber() + "  " + state.timeLabel() + "  " + state.dayPhaseLabel(), x, envY + 14 + lineH, contentW);
+        drawClippedString(g, "Weather: " + state.weatherLabel() + " over " + Terrain.name(state.currentBiomeTile()), x, envY + 14 + lineH * 2, contentW);
+        drawClippedString(g, state.windLabel(), x, envY + 14 + lineH * 3, contentW);
+
+        int posY = envY + envH;
+        g.setFont(new Font("SansSerif", Font.BOLD, shortSidebar ? 14 : 16));
+        g.setColor(new Color(230, 225, 206));
+        g.drawString("Position", x, posY + 14);
+        g.setFont(new Font("SansSerif", Font.PLAIN, shortSidebar ? 12 : 14));
+        g.setColor(new Color(198, 202, 211));
+        drawClippedString(g, state.world.label(state.currentMapId), x, posY + 14 + lineH, contentW);
+        drawClippedString(g, state.playerX + ", " + state.playerY + "  " + Terrain.name(state.world.tileAt(state.currentMapId, state.playerX, state.playerY)), x, posY + 14 + lineH * 2, contentW);
+
+        int fullscreenY = posY + posH + gap;
+        if (fullscreenY + fullscreenH < logY - gap) {
+            sidebarButton(g, x + halfW + 8, fullscreenY, halfW, fullscreenH, "Fullscreen", fullscreenToggle);
+        }
+
         drawStatusLog(g, left + 22, logY, GameConfig.SIDEBAR_WIDTH - 44, logH);
         if (state.crafting.active()) {
             int progressX = left + 34;
@@ -8435,33 +8284,6 @@ public final class GamePanel extends JPanel {
             g.setColor(new Color(231, 222, 196));
             g.drawRoundRect(progressX, progressY, progressW, 12, 8, 8);
         }
-
-        int actionY = 342;
-        sidebarButton(g, left + 28, actionY, 246, 30, "Talk / Enter", state::interact);
-        sidebarButton(g, left + 28, actionY + 38, 246, 30, "Quest Log", state::toggleQuestLog);
-        sidebarButton(g, left + 28, actionY + 76, 246, 30, "World Map", state::toggleWorldMap);
-        sidebarButton(g, left + 28, actionY + 114, 116, 30, "Gather", () -> state.gatherNearby(playerFacingDx, playerFacingDy));
-        sidebarButton(g, left + 158, actionY + 114, 116, 30, "Craft", state::toggleCrafting);
-        sidebarButton(g, left + 28, actionY + 152, 246, 30, "Character (" + characterPointBadge() + ")", state::toggleParty);
-        sidebarButton(g, left + 28, actionY + 190, 116, 30, "Inventory", state::toggleInventory);
-        sidebarButton(g, left + 158, actionY + 190, 116, 30, "Village", state::toggleVillage);
-
-        int miniY = actionY + 240;
-        drawMiniMap(g, left + 28, miniY, 246, 138);
-        g.setFont(new Font("SansSerif", Font.BOLD, 13));
-        g.setColor(new Color(230, 225, 206));
-        int zoomY = miniY + 158;
-        g.drawString("Zoom", left + 28, zoomY + 12);
-        sidebarButton(g, left + 100, zoomY - 6, 34, 26, "-", () -> state.adjustZoom(-10));
-        sidebarButton(g, left + 240, zoomY - 6, 34, 26, "+", () -> state.adjustZoom(10));
-        Rectangle zoomTrack = new Rectangle(left + 144, zoomY + 3, 86, 8);
-        Rectangle zoomBounds = new Rectangle(left + 138, zoomY - 8, 98, 30);
-        registerSlider(zoomBounds, zoomTrack, SliderKind.ZOOM, "zoom");
-        drawSliderTrack(g, zoomTrack, (state.zoom - 70) / 80.0, sliderHovered(zoomBounds), sliderActive(SliderKind.ZOOM, "zoom"), 9);
-        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        g.setColor(new Color(198, 202, 211));
-        g.drawString(state.zoom + "%", left + 28, zoomY + 36);
-        sidebarButton(g, left + 158, zoomY + 24, 116, 28, "Fullscreen", fullscreenToggle);
     }
 
     private int characterPointBadge() {
@@ -8675,7 +8497,9 @@ public final class GamePanel extends JPanel {
             }
             titleX = x + contentX;
         }
-        int titleFontSize = zone.accent() == null ? 15 : Math.max(15, Math.min(22, settlementHoverNameFontSize() + 2));
+        int titleFontSize = portraitIcon && zone.accent() != null
+                ? Math.max(15, Math.min(22, settlementHoverNameFontSize() + 2))
+                : 15;
         tip.setFont(new Font("SansSerif", Font.BOLD, titleFontSize));
         tip.setColor(zone.accent() == null ? new Color(246, 224, 151) : accent);
         tip.drawString(zone.title(), titleX, y + 26);
@@ -8684,6 +8508,52 @@ public final class GamePanel extends JPanel {
         int maxLines = Math.max(1, (height - (bodyY - y) - 14) / 17);
         drawTooltipBody(tip, zone.body(), x + bodyX, bodyY, bodyWidth, 17, maxLines);
         tip.dispose();
+    }
+
+    private void drawDialogueVideoOverlay(Graphics2D g) {
+        GameState.DialogueVideoPrompt prompt = state.activeDialogueVideo();
+        if (prompt == null) {
+            return;
+        }
+        int width = Math.min(720, Math.max(420, gameAreaWidth() - 160));
+        int height = 280;
+        int x = gameAreaCenteredX(width);
+        int y = Math.max(80, (viewHeight() - height) / 2);
+        g.setColor(new Color(0, 0, 0, 168));
+        g.fillRect(0, 0, viewWidth(), viewHeight());
+        g.setColor(new Color(8, 11, 18, 244));
+        g.fillRoundRect(x, y, width, height, 8, 8);
+        g.setColor(new Color(145, 166, 214, 180));
+        g.drawRoundRect(x, y, width, height, 8, 8);
+
+        int frameX = x + 28;
+        int frameY = y + 28;
+        int frameW = 168;
+        int frameH = height - 56;
+        g.setColor(new Color(16, 22, 34, 238));
+        g.fillRoundRect(frameX, frameY, frameW, frameH, 8, 8);
+        g.setColor(new Color(91, 107, 148, 190));
+        g.drawRoundRect(frameX, frameY, frameW, frameH, 8, 8);
+        g.setFont(new Font("SansSerif", Font.BOLD, 42));
+        g.setColor(new Color(238, 239, 244));
+        FontMetrics playMetrics = g.getFontMetrics();
+        String play = "PLAY";
+        g.drawString(play, frameX + (frameW - playMetrics.stringWidth(play)) / 2, frameY + frameH / 2 + 14);
+
+        int textX = frameX + frameW + 28;
+        int textW = width - (textX - x) - 28;
+        g.setFont(new Font("SansSerif", Font.BOLD, 22));
+        g.setColor(new Color(246, 240, 220));
+        drawClippedString(g, prompt.title(), textX, y + 54, textW);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        g.setColor(new Color(219, 224, 236));
+        drawWrapped(g, prompt.caption(), textX, y + 88, textW, 22, 4);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g.setColor(new Color(145, 153, 174));
+        drawClippedString(g, prompt.assetPath(), textX, y + height - 58, textW);
+        g.setFont(new Font("SansSerif", Font.BOLD, 13));
+        g.setColor(new Color(194, 203, 226));
+        drawClippedString(g, "Enter, E, Space, Escape, or click to continue", textX, y + height - 28, textW);
     }
 
     private int xOffsetForTooltipBody(TooltipZone zone, int iconBox) {
@@ -8766,6 +8636,17 @@ public final class GamePanel extends JPanel {
     private Color statusColorForToken(String token, Color fallback) {
         String label = token.replaceAll("[^A-Za-z]", "").toLowerCase();
         Color labelColor = switch (label) {
+            case "common" -> rarityColor(ItemRarity.COMMON);
+            case "uncommon" -> rarityColor(ItemRarity.UNCOMMON);
+            case "rare" -> rarityColor(ItemRarity.RARE);
+            case "unique" -> rarityColor(ItemRarity.UNIQUE);
+            case "legendary" -> rarityColor(ItemRarity.LEGENDARY);
+            case "type", "stats", "requirements", "description", "effect", "stack", "equip", "use", "utility", "recovery", "crafting" -> new Color(246, 224, 151);
+            case "weapon", "armor", "accessory", "consumable", "material", "property", "affix" -> new Color(194, 203, 226);
+            case "atk", "str" -> new Color(255, 190, 124);
+            case "def", "con", "wil" -> new Color(176, 205, 222);
+            case "int", "spell" -> new Color(194, 169, 255);
+            case "dex", "cha" -> new Color(255, 226, 116);
             case "target" -> new Color(134, 196, 255);
             case "strike", "damage", "guard" -> new Color(255, 190, 124);
             case "restores", "healing", "heal", "hp" -> new Color(126, 232, 154);
@@ -9211,7 +9092,7 @@ public final class GamePanel extends JPanel {
         int y = 0;
         int w = gameAreaWidth();
         int h = viewHeight();
-        drawBattleBackdrop(g, battle, x, y, w, h);
+        battleRenderer.drawBackdrop(g, battle, x, y, w, h);
         g.setColor(new Color(124, 112, 83));
         g.setStroke(new BasicStroke(2f));
         g.drawRect(x, y, w - 1, h - 1);
@@ -9344,35 +9225,6 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void drawBattleBackdrop(Graphics2D g, Battle battle, int x, int y, int w, int h) {
-        g.drawImage(assets.cover(battle.backdrop, w, h), x, y, null);
-        g.setPaint(new GradientPaint(x, y, new Color(8, 10, 16, 70), x, y + h, new Color(8, 10, 16, 218)));
-        g.fillRect(x, y, w, h);
-        g.setPaint(null);
-        g.setColor(new Color(20, 18, 18, 92));
-        g.fillRect(x, y + h - 300, w, 300);
-    }
-
-    private String battleBackdropName() {
-        char terrain = state.world.tileAt(state.currentMapId, state.playerX, state.playerY);
-        if ("dungeon".equals(state.world.kind(state.currentMapId)) || terrain == 'd') {
-            if (state.currentMapId.contains("blackvault")) {
-                return "battle_dungeon_crypt_backdrop";
-            }
-            if (state.currentMapId.contains("miredepth") || state.currentMapId.contains("frosthollow")) {
-                return "battle_dungeon_cavern_backdrop";
-            }
-            return "battle_dungeon_hall_backdrop";
-        }
-        return switch (terrain) {
-            case 'n' -> "battle_snow_backdrop";
-            case 's', 'b' -> "battle_desert_backdrop";
-            case 'm', 'q' -> "battle_mountain_backdrop";
-            case 'g', 'r', 'B' -> "battle_plains_backdrop";
-            default -> "battle_forest_backdrop";
-        };
-    }
-
     private void drawBattleActionBar(Graphics2D g, Battle battle, int x, int y, int w, int h) {
         g.setColor(new Color(12, 14, 22, 224));
         g.fillRoundRect(x, y, w, h, 8, 8);
@@ -9445,7 +9297,7 @@ public final class GamePanel extends JPanel {
         int lunge = active && !stripAnimating ? battle.playerLunge : 0;
         int shake = active && !stripAnimating ? battle.playerOffset : 0;
         int bob = actor.alive() && !stripAnimating ? (int) Math.round(Math.sin((frame + battle.partyMembers().indexOf(actor) * 8) * 0.18) * 3.0) : 0;
-        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleActorPose(battle, actor, false);
+        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleRenderer.actorPose(battle, actor, false);
         int drawX = slot[0] + lunge + shake + pose.xOffset();
         int drawY = slot[1] + bob - (stripAnimating ? 0 : battle.castOffset(actor)) + pose.yOffset();
         int renderY = drawY - renderExtraH;
@@ -9453,7 +9305,7 @@ public final class GamePanel extends JPanel {
             buttons.add(new UiButton(new Rectangle(drawX - 18, drawY - 10, spriteW + 36, spriteH + cardH + 22), "party-target:" + actor.name, () -> state.selectBattlePartyMember(battle.partyMembers().indexOf(actor))));
         }
         drawShadow(g, drawX + 22, drawY + spriteH - 28, spriteW - 44, 24);
-        drawBattleActorSprite(
+        battleRenderer.drawActorSprite(
                 g,
                 battleActorImage(battle, actor, actorSprite, renderedAction, spriteW, renderH),
                 drawX,
@@ -9515,7 +9367,7 @@ public final class GamePanel extends JPanel {
         int lunge = stripAnimating ? 0 : battle.enemyLunge(foe);
         int shake = foe.alive() && !stripAnimating ? battle.monsterOffset : 0;
         int bob = foe.alive() && !stripAnimating ? (int) Math.round(Math.sin((frame + index * 10) * 0.16) * 3.0) : 0;
-        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleActorPose(battle, foe, true);
+        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleRenderer.actorPose(battle, foe, true);
         int drawX = slot[0] + (baseSpriteW - spriteW) / 2 + shake - lunge + pose.xOffset();
         int drawY = slot[1] + (baseSpriteH - spriteH) + bob - (stripAnimating ? 0 : battle.castOffset(foe)) + pose.yOffset();
         int renderY = drawY - renderExtraH;
@@ -9524,7 +9376,7 @@ public final class GamePanel extends JPanel {
         }
         float fade = Math.max(0.0f, Math.min(1.0f, battle.enemyFade(foe) / 255.0f));
         drawShadow(g, drawX + 30, drawY + spriteH - 30, spriteW - 60, 26);
-        drawBattleActorSprite(
+        battleRenderer.drawActorSprite(
                 g,
                 battleActorImage(battle, foe, foe.sprite, renderedAction, spriteW, renderH),
                 drawX,
@@ -9560,7 +9412,7 @@ public final class GamePanel extends JPanel {
         int lunge = stripAnimating ? 0 : battle.enemyLunge(foe);
         int shake = foe.alive() && !stripAnimating ? battle.monsterOffset : 0;
         int bob = foe.alive() && !stripAnimating ? (int) Math.round(Math.sin((frame + Math.max(0, battle.enemies().indexOf(foe)) * 10) * 0.16) * 3.0) : 0;
-        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleActorPose(battle, foe, true);
+        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleRenderer.actorPose(battle, foe, true);
         int drawX = slot[0] + (baseSpriteW - spriteW) / 2 + shake - lunge + pose.xOffset();
         int drawY = slot[1] + (baseSpriteH - spriteH) + bob - (stripAnimating ? 0 : battle.castOffset(foe)) + pose.yOffset();
         drawY -= renderExtraH;
@@ -9664,31 +9516,6 @@ public final class GamePanel extends JPanel {
         };
     }
 
-    private BattleActorPose battleActorPose(Battle battle, Actor actor, boolean enemySide) {
-        BattleActionAnimation animation = battle.activeAnimation();
-        if (animation == null || actor == null || !animation.involves(actor)) {
-            return BattleActorPose.REST;
-        }
-        int direction = enemySide ? -1 : 1;
-        boolean source = actor == animation.source;
-        String kind = animation.effectKind == null ? "strike" : animation.effectKind;
-        String className = actor.className == null ? "" : actor.className;
-        if (source) {
-            return sourceBattlePose(animation, className, kind, direction);
-        }
-        if (animation.stage() != BattleActionAnimation.Stage.IMPACT) {
-            return BattleActorPose.REST;
-        }
-        double impact = Math.sin(animation.impactProgress() * Math.PI);
-        return new BattleActorPose(
-                (int) Math.round(-direction * impact * 14.0),
-                (int) Math.round(-impact * 4.0),
-                direction * impact * 0.045,
-                1.0 + impact * 0.035,
-                1.0 - impact * 0.025
-        );
-    }
-
     private BufferedImage battleActorImage(Battle battle, Actor actor, String sprite, String action, int width, int height) {
         int frameCount = assets.animatedSpriteFrameCount(sprite, action, width, height);
         int animationFrame = battleActorAnimationFrame(battle, actor, frameCount);
@@ -9720,10 +9547,10 @@ public final class GamePanel extends JPanel {
         if ("item".equals(kind)) {
             return "item";
         }
-        if ("volley".equals(kind) || "pierce".equals(kind) || isRangedClass(actor.className)) {
+        if ("volley".equals(kind) || "pierce".equals(kind) || battleRenderer.isRangedClass(actor.className)) {
             return "shoot";
         }
-        if (physicalBattleEffect(kind) || isPhysicalClass(actor.className)) {
+        if (battleRenderer.physicalEffect(kind) || battleRenderer.isPhysicalClass(actor.className)) {
             return "attack";
         }
         return "cast";
@@ -9742,119 +9569,6 @@ public final class GamePanel extends JPanel {
             case DONE -> 0.0;
         };
         return Math.min(frameCount - 1, Math.max(0, (int) Math.floor(progress * frameCount)));
-    }
-
-    private BattleActorPose sourceBattlePose(BattleActionAnimation animation, String className, String kind, int direction) {
-        boolean physical = physicalBattleEffect(kind) || isPhysicalClass(className);
-        boolean ranged = isRangedClass(className) || "volley".equals(kind) || "pierce".equals(kind);
-        boolean magic = !physical || isMagicClass(className) || magicalBattleEffect(kind);
-        return switch (animation.stage()) {
-            case CAST -> {
-                double p = animation.castProgress();
-                if (ranged) {
-                    yield new BattleActorPose(
-                            (int) Math.round(-direction * p * 10.0),
-                            (int) Math.round(-Math.sin(p * Math.PI) * 5.0),
-                            -direction * (0.08 + p * 0.05),
-                            0.98,
-                            1.04
-                    );
-                }
-                if (physical) {
-                    double coil = Math.sin(p * Math.PI);
-                    yield new BattleActorPose(
-                            (int) Math.round(-direction * coil * 12.0),
-                            (int) Math.round(coil * 4.0),
-                            -direction * coil * 0.085,
-                            1.03,
-                            0.98
-                    );
-                }
-                double weave = Math.sin(p * Math.PI * 4.0);
-                yield new BattleActorPose(
-                        (int) Math.round(weave * 4.0),
-                        (int) Math.round(-Math.sin(p * Math.PI) * 12.0),
-                        weave * 0.06,
-                        1.0 - Math.sin(p * Math.PI) * 0.02,
-                        1.0 + Math.sin(p * Math.PI) * 0.05
-                );
-            }
-            case TRAVEL -> {
-                double p = animation.travelProgress();
-                if (physical) {
-                    double thrust = Math.sin(p * Math.PI);
-                    yield new BattleActorPose(
-                            (int) Math.round(direction * (10.0 + thrust * 18.0)),
-                            (int) Math.round(-thrust * 3.0),
-                            direction * thrust * 0.08,
-                            1.04,
-                            0.98
-                    );
-                }
-                double settle = 1.0 - p;
-                yield new BattleActorPose(
-                        (int) Math.round(Math.sin(p * Math.PI * 2.0) * 3.0),
-                        (int) Math.round(-settle * 6.0),
-                        Math.sin(p * Math.PI * 2.0) * 0.025,
-                        1.0,
-                        1.0 + settle * 0.025
-                );
-            }
-            case IMPACT -> {
-                double p = 1.0 - animation.impactProgress();
-                if (physical) {
-                    yield new BattleActorPose(
-                            (int) Math.round(direction * p * 12.0),
-                            0,
-                            direction * p * 0.04,
-                            1.0,
-                            1.0
-                    );
-                }
-                yield new BattleActorPose(0, (int) Math.round(-p * 4.0), 0.0, 1.0, 1.0);
-            }
-            case DONE -> BattleActorPose.REST;
-        };
-    }
-
-    private boolean physicalBattleEffect(String kind) {
-        return switch (kind) {
-            case "strike", "impact", "bash", "slash", "cleave", "fang", "claw", "volley", "pierce" -> true;
-            default -> false;
-        };
-    }
-
-    private boolean isPhysicalClass(String className) {
-        return PHYSICAL_CLASS_NAMES.contains(className);
-    }
-
-    private boolean isRangedClass(String className) {
-        return RANGED_CLASS_NAMES.contains(className);
-    }
-
-    private boolean isMagicClass(String className) {
-        return MAGIC_CLASS_NAMES.contains(className);
-    }
-
-    private boolean magicalBattleEffect(String kind) {
-        return switch (kind) {
-            case "heal", "regeneration", "shield", "ward", "fire", "burn", "ember", "water", "spark", "radiant",
-                    "holy", "lightning", "arcane", "rune", "void", "dark", "chaos", "frost", "poison", "acid", "web",
-                    "thorn", "nature", "shadow", "sonic", "bone", "dust", "howl", "item" -> true;
-            default -> false;
-        };
-    }
-
-    private void drawBattleActorSprite(Graphics2D g, BufferedImage image, int x, int y, int width, int height, BattleActorPose pose, float alpha) {
-        Graphics2D spriteG = (Graphics2D) g.create();
-        spriteG.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0.0f, Math.min(1.0f, alpha))));
-        double pivotX = x + width / 2.0;
-        double pivotY = y + height * 0.86;
-        spriteG.translate(pivotX, pivotY);
-        spriteG.rotate(pose.rotation());
-        spriteG.scale(pose.scaleX(), pose.scaleY());
-        spriteG.drawImage(image, (int) Math.round(-width / 2.0), (int) Math.round(-height * 0.86), width, height, null);
-        spriteG.dispose();
     }
 
     private void drawStatusIcons(Graphics2D g, Battle battle, Actor actor, int x, int y) {
@@ -10888,20 +10602,72 @@ public final class GamePanel extends JPanel {
         g.setColor(new Color(207, 211, 222));
         drawWrapped(g, companionPresenceLine(npc), textX, panelY + 100, textW, 18, 1);
 
-        g.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        g.setColor(new Color(224, 226, 234));
-        drawWrapped(g, state.activeNpcDialogLine(), textX, panelY + 128, textW, 24, 2);
+        int dialogueBottom = drawCompanionDialogueLine(
+                g,
+                state.activeNpcDialogLineParts(),
+                textX,
+                panelY + 124,
+                textW,
+                npcAccent
+        );
 
         Quest quest = state.questForNpc(npc);
 
         List<DialogOption> options = dialogOptions(npc, quest);
-        int optionsY = panelY + 188;
+        int optionsY = Math.max(panelY + 214, dialogueBottom + 18);
         g.setColor(new Color(196, 198, 205));
         g.setFont(new Font("SansSerif", Font.BOLD, 13));
         g.drawString("Conversation options", textX, optionsY - 12);
         int listW = Math.min(textW, 780);
         int listH = Math.max(126, panelY + panelH - optionsY - 28);
         drawDialogOptionList(g, options, textX, optionsY, listW, listH);
+    }
+
+    private int drawCompanionDialogueLine(
+            Graphics2D g,
+            DialogueLibrary.DialogueLine line,
+            int x,
+            int y,
+            int w,
+            Color accent
+    ) {
+        String narration = line == null ? "" : line.narration();
+        String speech = line == null ? "" : line.speech();
+        if (speech.isBlank() && narration.isBlank()) {
+            speech = "...";
+        }
+        int blockH = 80;
+        int gap = 22;
+        boolean split = !narration.isBlank() && w >= 720;
+        if (split) {
+            int narrationW = Math.max(230, Math.min(360, (w - gap) * 38 / 100));
+            int speechX = x + narrationW + gap;
+            int speechW = Math.max(260, w - narrationW - gap);
+            g.setFont(new Font("SansSerif", Font.ITALIC, 14));
+            g.setColor(new Color(184, 191, 205));
+            drawWrapped(g, narration, x, y + 18, narrationW, 19, 3);
+            drawCompanionSpeechBox(g, speech, speechX, y - 6, speechW, blockH, accent);
+            return y + blockH;
+        }
+        if (!narration.isBlank()) {
+            g.setFont(new Font("SansSerif", Font.ITALIC, 14));
+            g.setColor(new Color(184, 191, 205));
+            drawWrapped(g, narration, x, y, w, 18, 2);
+            y += 42;
+        }
+        drawCompanionSpeechBox(g, speech, x, y - 6, w, blockH - 16, accent);
+        return y + blockH - 16;
+    }
+
+    private void drawCompanionSpeechBox(Graphics2D g, String speech, int x, int y, int w, int h, Color accent) {
+        g.setColor(new Color(9, 13, 22, 178));
+        g.fillRoundRect(x, y, w, h, 8, 8);
+        g.setColor(new Color(accent.getRed(), accent.getGreen(), accent.getBlue(), 150));
+        g.drawRoundRect(x, y, w, h, 8, 8);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 17));
+        g.setColor(new Color(238, 239, 244));
+        String spoken = speech == null || speech.isBlank() ? "..." : "\"" + speech + "\"";
+        drawWrapped(g, spoken, x + 14, y + 27, w - 28, 22, 3);
     }
 
     private void drawDialogOptionList(Graphics2D g, List<DialogOption> options, int x, int y, int w, int h) {
@@ -11285,7 +11051,7 @@ public final class GamePanel extends JPanel {
         if (text.contains("farmer") || text.contains("hedge") || text.contains("grove")) {
             return "Forager";
         }
-        return "Townsperson";
+        return "Local resident";
     }
 
     private String npcSkillSummary(Npc npc) {
@@ -11660,7 +11426,7 @@ public final class GamePanel extends JPanel {
         return count;
     }
 
-    private List<Quest> questLogEntries(boolean completed) {
+    List<Quest> questLogEntries(boolean completed) {
         List<Quest> entries = new ArrayList<>();
         for (Quest quest : state.quests.values()) {
             if (completed) {
@@ -11723,7 +11489,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private Quest selectedQuestLogQuest(List<Quest> quests) {
+    Quest selectedQuestLogQuest(List<Quest> quests) {
         for (Quest quest : quests) {
             if (quest.id.equals(selectedQuestLogId)) {
                 return quest;
@@ -11778,48 +11544,56 @@ public final class GamePanel extends JPanel {
         drawRightAligned(g, quest.progress + "/" + quest.activeNeeded(), x + w - 16, y + h - 12);
     }
 
-    private void drawTravelPartyHud(Graphics2D g) {
+    private void drawTravelPartyHud(Graphics2D g, int x, int y, int w, int h) {
         List<Actor> party = state.partyMembers();
         if (party.isEmpty()) {
             return;
         }
-        int w = Math.min(560, Math.max(420, gameAreaWidth() - 60));
-        int memberW = Math.max(92, Math.min(126, (w - 22) / Math.max(1, party.size())));
-        int hotbarH = 48;
-        int panelH = 138;
-        int x = 24;
-        int y = viewHeight() - panelH - 24;
         g.setColor(new Color(8, 11, 17, 214));
-        g.fillRoundRect(x, y, w, panelH, 8, 8);
+        g.fillRoundRect(x, y, w, h, 8, 8);
         g.setColor(new Color(82, 92, 116, 190));
-        g.drawRoundRect(x, y, w, panelH, 8, 8);
+        g.drawRoundRect(x, y, w, h, 8, 8);
+
+        g.setFont(new Font("SansSerif", Font.BOLD, 13));
+        g.setColor(new Color(230, 225, 206));
+        g.drawString("Travel", x + 10, y + 18);
 
         List<GameState.WorldAbilityOption> options = state.worldAbilityOptions();
-        int buttonX = x + 10;
-        int buttonY = y + 10;
-        int visible = Math.min(5, options.size());
+        int buttonY = y + 26;
+        int buttonGap = 6;
+        int columns = 2;
+        int buttonW = (w - 20 - buttonGap) / columns;
+        int buttonH = 34;
+        int visible = Math.min(4, options.size());
         for (int i = 0; i < visible; i++) {
             GameState.WorldAbilityOption option = options.get(i);
-            int bw = Math.min(104, Math.max(82, (w - 22) / 5 - 6));
+            int col = i % columns;
+            int row = i / columns;
             int index = i;
-            drawWorldAbilityButton(g, option, index, buttonX, buttonY, bw, 38);
-            buttonX += bw + 6;
+            drawWorldAbilityButton(g, option, index,
+                    x + 10 + col * (buttonW + buttonGap),
+                    buttonY + row * (buttonH + buttonGap),
+                    buttonW,
+                    buttonH);
         }
         if (visible == 0) {
             g.setFont(new Font("SansSerif", Font.PLAIN, 12));
             g.setColor(new Color(145, 154, 174));
-            g.drawString("Prepare smoke, ward, grove, step, or call abilities to use them while travelling.", buttonX, buttonY + 19);
+            drawWrapped(g, "Prepare travel-ready abilities in the loadout tab.", x + 10, buttonY + 16, w - 20, 15, 2);
         }
 
         int chipX = x + 10;
-        int chipY = y + hotbarH + 2;
+        int chipY = buttonY + buttonH * 2 + buttonGap + 4;
         for (String effect : List.of("travel_speed", "gather_focus", "encounter_ward", "encounter_lure", "battle_advantage")) {
             int remaining = state.worldAbilityRemaining(effect);
             if (remaining <= 0) {
                 continue;
             }
             String label = state.worldAbilityLabel(effect) + " " + remaining;
-            int chipW = Math.max(86, g.getFontMetrics().stringWidth(label) + 18);
+            int chipW = Math.min(w - 20, Math.max(72, g.getFontMetrics().stringWidth(label) + 18));
+            if (chipX + chipW > x + w - 10) {
+                break;
+            }
             g.setColor(new Color(38, 58, 50, 225));
             g.fillRoundRect(chipX, chipY, chipW, 20, 7, 7);
             g.setColor(new Color(130, 207, 153));
@@ -11830,11 +11604,20 @@ public final class GamePanel extends JPanel {
             chipX += chipW + 6;
         }
 
-        int memberY = y + 82;
-        int memberX = x + 10;
-        for (Actor actor : party) {
-            drawTravelPartyMember(g, actor, memberX, memberY, memberW, 48);
-            memberX += memberW + 6;
+        int memberY = chipY + 26;
+        int memberAreaH = Math.max(72, y + h - memberY - 10);
+        int members = Math.max(1, party.size());
+        int memberGap = 6;
+        int memberCols = members == 1 ? 1 : 2;
+        int memberRows = (members + memberCols - 1) / memberCols;
+        int memberW = (w - 20 - memberGap * (memberCols - 1)) / memberCols;
+        int memberH = Math.max(32, (memberAreaH - memberGap * (memberRows - 1)) / memberRows);
+        for (int i = 0; i < party.size(); i++) {
+            Actor actor = party.get(i);
+            int col = i % memberCols;
+            int row = i / memberCols;
+            int memberX = x + 10 + col * (memberW + memberGap);
+            drawTravelPartyMember(g, actor, memberX, memberY + row * (memberH + memberGap), memberW, memberH, members == 1);
         }
     }
 
@@ -11882,7 +11665,7 @@ public final class GamePanel extends JPanel {
     private String shortWorldAbilityLabel(String label) {
         return switch (label) {
             case "Swift Travel" -> "Speed";
-            case "Gather Focus" -> "Gather";
+            case "Gather Focus" -> "Forage";
             case "Quiet Road" -> "Quiet";
             case "Challenge Call" -> "Lure";
             case "Opening Advantage" -> "Edge";
@@ -11890,19 +11673,58 @@ public final class GamePanel extends JPanel {
         };
     }
 
-    private void drawTravelPartyMember(Graphics2D g, Actor actor, int x, int y, int w, int h) {
+    private void drawTravelPartyMember(Graphics2D g, Actor actor, int x, int y, int w, int h, boolean large) {
+        Rectangle bounds = new Rectangle(x, y, w, h);
+        boolean compact = !large && h < 44;
         g.setColor(new Color(24, 28, 38, 232));
         g.fillRoundRect(x, y, w, h, 8, 8);
         g.setColor(new Color(82, 92, 116));
         g.drawRoundRect(x, y, w, h, 8, 8);
-        g.drawImage(assets.spriteFit(actor.worldSprite, 32, 40), x + 5, y + 4, null);
-        g.setFont(new Font("SansSerif", Font.BOLD, 11));
+        partyPortraitZones.add(new PartyPortraitZone(bounds, actor));
+        int portraitW = large ? Math.min(76, Math.max(50, w / 3)) : compact ? Math.min(42, Math.max(34, w / 3 + 4)) : Math.min(54, Math.max(42, w / 3 + 8));
+        int portraitH = Math.max(compact ? 28 : 36, h + (large ? 4 : compact ? -4 : 4));
+        int portraitY = y + Math.max(2, h - portraitH - 2);
+        g.drawImage(assets.spriteFit(dialoguePortraitSprite(actor), portraitW, portraitH), x + 4, portraitY, null);
+        int textX = x + portraitW + 10;
+        int textW = Math.max(34, w - portraitW - 16);
+        g.setFont(new Font("SansSerif", Font.BOLD, large ? 12 : compact ? 9 : 10));
         g.setColor(new Color(235, 236, 240));
-        drawClippedString(g, actor.name, x + 42, y + 14, w - 48);
-        drawMiniResourceBar(g, x + 42, y + 20, w - 50, 8, actor.hp, actor.maxHp, new Color(205, 85, 101));
-        drawMiniResourceBar(g, x + 42, y + 33, w - 50, 8, actor.mp, actor.maxMp, new Color(91, 137, 214));
-        tooltipZones.add(new TooltipZone(new Rectangle(x, y, w, h), actor.name,
-                "HP " + actor.hp + "/" + actor.maxHp + "\nMP " + actor.mp + "/" + actor.maxMp));
+        drawClippedString(g, actor.name, textX, y + (large ? 18 : compact ? 13 : 14), textW);
+        int barY = y + (large ? 28 : compact ? 18 : 20);
+        int barH = large ? 9 : compact ? 6 : 8;
+        int barGap = large ? 14 : compact ? 9 : 13;
+        drawMiniResourceBar(g, textX, barY, textW, barH, actor.hp, actor.maxHp, new Color(205, 85, 101));
+        drawMiniResourceBar(g, textX, barY + barGap, textW, barH, actor.mp, actor.maxMp, new Color(91, 137, 214));
+        tooltipZones.add(new TooltipZone(bounds, actor.name, partyMemberTooltip(actor),
+                "sprite:" + dialoguePortraitSprite(actor), new Color(126, 154, 220)));
+    }
+
+    private String partyMemberTooltip(Actor actor) {
+        actor.sanitizeAbilityLoadout();
+        String prepared = actor.activeAbilities().isEmpty()
+                ? "none"
+                : String.join(", ", actor.activeAbilities().stream().map(Ability::name).toList());
+        return "HP " + actor.hp + "/" + actor.maxHp + "   MP " + actor.mp + "/" + actor.maxMp
+                + "\nATK " + actor.attack + "   Armor " + actor.defense + "   DR " + actor.damageReductionBonus + "%"
+                + "\nSTR " + actor.strength + "   INT " + actor.intelligence + "   DEX " + actor.dexterity
+                + "\nCON " + actor.constitution + "   WIL " + actor.willpower + "   CHA " + actor.charisma
+                + "\nCrit " + percent(actor.criticalChanceAgainst(null, null))
+                + "   Crit Dmg " + Math.round(actor.criticalMultiplier(null) * 100.0) + "%"
+                + "\nDodge " + percent(actor.dodgeChanceAgainst(null))
+                + "   Parry " + percent(actor.parryChanceAgainst(null))
+                + "\nPrepared: " + prepared;
+    }
+
+    private String percent(double chance) {
+        return Math.round(chance * 100.0) + "%";
+    }
+
+    private String dialoguePortraitSprite(Actor actor) {
+        if (actor == null) {
+            return state.player.worldSprite;
+        }
+        String sprite = actor.sprite + "_dialogue_sprite";
+        return assets.hasSprite(sprite) ? sprite : actor.worldSprite;
     }
 
     private void drawMiniResourceBar(Graphics2D g, int x, int y, int w, int h, int value, int max, Color fill) {
@@ -11929,7 +11751,7 @@ public final class GamePanel extends JPanel {
         return quest != null && quest.id.equals(trackedQuestId) && quest.accepted && !quest.completed;
     }
 
-    private void toggleTrackedQuest(Quest quest) {
+    void toggleTrackedQuest(Quest quest) {
         if (quest == null || quest.completed) {
             return;
         }
@@ -12611,20 +12433,14 @@ public final class GamePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.BOLD, 28));
         g.setColor(new Color(244, 239, 220));
         g.drawString("Inventory", panelX + 36, panelY + 48);
-        int selectorX = panelX + 286;
-        int selectorY = panelY + 24;
-        int selectorW = panelW - 326;
+        int selectorX = panelX + 36;
+        int selectorY = panelY + 64;
+        int selectorW = panelW - 72;
         int selectorH = inventoryPartySelectorHeight();
-        int summaryW = Math.max(180, selectorX - (panelX + 36) - 22);
-        g.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        g.setColor(new Color(198, 202, 211));
-        drawClippedString(g, actor.className + "  Lv " + actor.level + "   ATK " + actor.attack + "   DEF " + actor.defense
-                + "   Skill " + actor.skillPoints + "   Stat " + actor.statPoints, panelX + 36, panelY + 76, summaryW);
-        drawClippedString(g, "Professions: " + professionSummary(actor), panelX + 36, panelY + 98, summaryW);
         drawInventoryPartySelector(g, selectorX, selectorY, selectorW);
 
         int modelX = panelX + 36;
-        int modelY = Math.max(panelY + 124, selectorY + selectorH + 28);
+        int modelY = selectorY + selectorH + 20;
         int modelW = 430;
         int contentBottom = panelY + panelH - 106;
         int contentH = Math.max(320, contentBottom - modelY);
@@ -12744,10 +12560,11 @@ public final class GamePanel extends JPanel {
             g.setColor(new Color(176, 182, 196));
             g.drawString(key, bounds.x + 8, bounds.y + 14);
         }
-        tooltipZones.add(new TooltipZone(bounds, GameData.itemName(itemKey), inventoryTooltip(itemKey, count)));
+        tooltipZones.add(new TooltipZone(bounds, GameData.itemName(itemKey), inventoryTooltip(itemKey, count),
+                null, rarityColorForItem(itemKey)));
     }
 
-    private List<CraftingSystem.Recipe> displayedCraftingRecipes() {
+    List<CraftingSystem.Recipe> displayedCraftingRecipes() {
         CraftingSystem.Workstation workstation = state.currentWorkstation();
         List<CraftingSystem.Recipe> recipes = state.learnedCraftingRecipes();
         if (workstation != null) {
@@ -12947,17 +12764,46 @@ public final class GamePanel extends JPanel {
 
         g.setColor(new Color(12, 14, 21, 150));
         int spriteW = 190;
-        int spriteH = Math.min(330, Math.max(240, h - 196));
+        int spriteH = Math.min(300, Math.max(220, h - 250));
         int spriteX = x + (w - spriteW) / 2;
         int spriteY = y + 96;
         int shadowW = 142;
-        int shadowY = Math.min(y + h - 74, spriteY + spriteH - 30);
+        int statsH = 106;
+        int statsY = y + h - statsH - 18;
+        int shadowY = Math.min(statsY - 30, spriteY + spriteH - 30);
         g.fillOval(x + (w - shadowW) / 2, shadowY, shadowW, 34);
         g.drawImage(assets.spriteFit(actor.worldSprite, spriteW, spriteH), spriteX, spriteY, null);
 
         for (String slot : GameData.EQUIPMENT_SLOTS) {
             drawInventorySlot(g, actor, slot, inventorySlotBounds(slot, x, y, w));
         }
+        drawInventoryCharacterStats(g, actor, x + 20, statsY, w - 40, statsH);
+    }
+
+    private void drawInventoryCharacterStats(Graphics2D g, Actor actor, int x, int y, int w, int h) {
+        g.setColor(new Color(13, 17, 25, 210));
+        g.fillRoundRect(x, y, w, h, 8, 8);
+        g.setColor(new Color(82, 92, 116, 190));
+        g.drawRoundRect(x, y, w, h, 8, 8);
+        g.setFont(new Font("SansSerif", Font.BOLD, 12));
+        g.setColor(new Color(246, 224, 151));
+        g.drawString("Stats", x + 12, y + 18);
+
+        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        int leftX = x + 12;
+        int rightX = x + Math.max(190, w / 2);
+        g.setColor(new Color(226, 229, 236));
+        drawClippedString(g, "Lv " + actor.level + "   HP " + actor.hp + "/" + actor.maxHp + "   MP " + actor.mp + "/" + actor.maxMp,
+                leftX, y + 40, Math.max(120, rightX - leftX - 14));
+        drawClippedString(g, "ATK " + actor.attack + "   DEF " + actor.defense,
+                rightX, y + 40, Math.max(80, x + w - rightX - 12));
+        g.setColor(new Color(186, 192, 205));
+        drawClippedString(g, "Skill " + actor.skillPoints + "   Stat " + actor.statPoints + "   Prof " + actor.professionSkillPoints,
+                leftX, y + 62, Math.max(120, rightX - leftX - 14));
+        drawClippedString(g, actor.className,
+                rightX, y + 62, Math.max(80, x + w - rightX - 12));
+        g.setColor(new Color(176, 182, 196));
+        drawClippedString(g, "Professions: " + professionSummary(actor), leftX, y + 86, w - 24);
     }
 
     private Rectangle inventorySlotBounds(String slot, int x, int y, int w) {
@@ -13004,7 +12850,8 @@ public final class GamePanel extends JPanel {
             g.drawString(empty, bounds.x + (bounds.width - metrics.stringWidth(empty)) / 2, bounds.y + 41);
         }
         if (equipment != null) {
-            tooltipZones.add(new TooltipZone(bounds, equipment.name(), equipmentTooltip(equipment)));
+            tooltipZones.add(new TooltipZone(bounds, equipment.name(), equipmentTooltip(equipment),
+                    null, rarityColor(equipment.rarity())));
         }
     }
 
@@ -13027,30 +12874,92 @@ public final class GamePanel extends JPanel {
     private String inventoryTooltip(String itemKey, int count) {
         Equipment equipment = GameData.equipment(itemKey);
         if (equipment != null) {
-            return equipmentTooltip(equipment) + " Count: " + count
-                    + ". Click or press the visible number key to equip the selected ally. Drag onto the matching character slot to equip.";
+            return equipmentTooltip(equipment)
+                    + "\n\nStack\nCount: " + count
+                    + "\n\nEquip\nClick or press the visible number key to equip the selected ally. Drag onto the matching character slot.";
         }
         Item item = GameData.ITEMS.get(itemKey);
-        String benefit = item == null ? "" : itemBenefit(item);
         if (CraftingSystem.isCraftingOnlyItem(itemKey)) {
-            benefit = CraftingSystem.itemDetail(itemKey);
+            return "Type\nMaterial\n\nDescription\n" + CraftingSystem.itemDetail(itemKey)
+                    + "\n\nStack\nCount: " + count
+                    + "\n\nCrafting\nUsed for recipes, upgrades, and workstation projects.";
         }
-        if (item == null && CraftingSystem.isCraftingOnlyItem(itemKey)) {
-            return benefit + " Count: " + count + ". Used for crafting.";
+        if (item == null) {
+            return "Type\nField provision\n\nStack\nCount: " + count;
         }
-        return benefit + " Count: " + count
-                + ". Click or press the visible number key to use. Drag onto the character model to use.";
+        return itemTooltip(item)
+                + "\n\nStack\nCount: " + count
+                + "\n\nUse\nClick or press the visible number key to use. Drag onto the character model.";
     }
 
     private String equipmentTooltip(Equipment equipment) {
         String stats = String.join("  ", equipment.statLines());
-        String line = stats.isBlank()
-                ? equipment.rarityLine() + " " + slotLabel(equipment.slot())
-                : equipment.rarityLine() + " " + slotLabel(equipment.slot()) + "   " + stats;
-        if (equipment.hasUniqueEffect()) {
-            return line + " " + equipment.description() + " Unique: " + equipment.uniqueEffect();
+        StringBuilder tooltip = new StringBuilder();
+        tooltip.append("Type\n")
+                .append(equipment.rarityLine()).append(" ").append(slotLabel(equipment.slot()));
+        if (!stats.isBlank()) {
+            tooltip.append("\n\nStats\n").append(stats);
         }
-        return line + " " + equipment.description();
+        tooltip.append("\n\nRequirements\n").append(equipment.levelRangeLine());
+        String description = layeredEquipmentDescription(equipment);
+        if (!description.isBlank()) {
+            tooltip.append("\n\nDescription\n").append(description);
+        }
+        if (equipment.hasUniqueEffect()) {
+            tooltip.append("\n\nEffect\n").append(effectLayerLabel(equipment)).append(": ").append(equipment.uniqueEffect());
+        }
+        return tooltip.toString();
+    }
+
+    private String itemTooltip(Item item) {
+        StringBuilder tooltip = new StringBuilder();
+        tooltip.append("Type\n").append(item.rarityLine()).append(" Consumable");
+        if ("escape_scroll".equals(item.key())) {
+            tooltip.append("\n\nUtility\nEscapes a dungeon instantly.");
+        } else if (item.heal() > 0 || item.mp() > 0) {
+            tooltip.append("\n\nRecovery\n");
+            if (item.heal() > 0 && item.mp() > 0) {
+                tooltip.append("Restores ").append(item.heal()).append(" HP and ").append(item.mp()).append(" MP.");
+            } else if (item.heal() > 0) {
+                tooltip.append("Restores ").append(item.heal()).append(" HP.");
+            } else {
+                tooltip.append("Restores ").append(item.mp()).append(" MP.");
+            }
+        } else {
+            tooltip.append("\n\nUtility\nField provision.");
+        }
+        if (item.effectDescription() != null && !item.effectDescription().isBlank()) {
+            tooltip.append("\n\nEffect\n").append(item.effectDescription());
+        }
+        return tooltip.toString();
+    }
+
+    private String effectLayerLabel(Equipment equipment) {
+        if (equipment.uniqueEffect().startsWith("Affix:")) {
+            return "Affix";
+        }
+        if (equipment.rarity().ordinal() >= ItemRarity.UNIQUE.ordinal()) {
+            return equipment.rarityLine() + " property";
+        }
+        return "Effect";
+    }
+
+    private String layeredEquipmentDescription(Equipment equipment) {
+        String description = equipment.description() == null ? "" : equipment.description().strip();
+        description = removeLeadingSentence(description, equipment.rarityLine());
+        description = removeLeadingSentence(description, "Requires level");
+        return description;
+    }
+
+    private String removeLeadingSentence(String text, String prefix) {
+        if (text == null || prefix == null || !text.regionMatches(true, 0, prefix, 0, prefix.length())) {
+            return text == null ? "" : text;
+        }
+        int period = text.indexOf('.');
+        if (period < 0 || period + 1 >= text.length()) {
+            return "";
+        }
+        return text.substring(period + 1).stripLeading();
     }
 
     private void drawInventoryDragGhost(Graphics2D g) {
@@ -13079,7 +12988,7 @@ public final class GamePanel extends JPanel {
         List<Actor> members = state.partyMembers();
         int cols = Math.min(5, Math.max(1, members.size()));
         int cardW = (w - Math.max(0, cols - 1) * 8) / cols;
-        int cardH = members.size() > 5 ? 40 : 64;
+        int cardH = members.size() > 5 ? 38 : 52;
         Actor selected = state.partyScreenActor();
         for (int i = 0; i < members.size(); i++) {
             Actor member = members.get(i);
@@ -13092,15 +13001,15 @@ public final class GamePanel extends JPanel {
             g.fillRoundRect(cardX, cardY, cardW, cardH, 8, 8);
             g.setColor(active ? new Color(103, 151, 117) : new Color(82, 92, 116));
             g.drawRoundRect(cardX, cardY, cardW, cardH, 8, 8);
-            int spriteW = cardH <= 44 ? 28 : 38;
-            int spriteH = cardH <= 44 ? 34 : 50;
+            int spriteW = cardH <= 44 ? 28 : 34;
+            int spriteH = cardH <= 44 ? 34 : 44;
             g.drawImage(assets.spriteFit(member.worldSprite, spriteW, spriteH), cardX + 8, cardY + 4, null);
             g.setFont(new Font("SansSerif", Font.BOLD, 13));
             g.setColor(new Color(235, 236, 240));
-            g.drawString(shortText(member.name, cardH <= 44 ? 10 : 13), cardX + spriteW + 18, cardY + (cardH <= 44 ? 17 : 25));
+            g.drawString(shortText(member.name, cardH <= 44 ? 10 : 13), cardX + spriteW + 18, cardY + (cardH <= 44 ? 17 : 21));
             g.setFont(new Font("SansSerif", Font.PLAIN, 12));
             g.setColor(new Color(176, 182, 196));
-            g.drawString(shortText(member.className, 10), cardX + spriteW + 18, cardY + (cardH <= 44 ? 32 : 43));
+            g.drawString(shortText(member.className + "  Lv " + member.level, 14), cardX + spriteW + 18, cardY + (cardH <= 44 ? 32 : 38));
             int index = i;
             buttons.add(new UiButton(new Rectangle(cardX, cardY, cardW, cardH), "inventory-member:" + member.name, () -> {
                 state.selectPartyScreenActor(index);
@@ -13116,7 +13025,7 @@ public final class GamePanel extends JPanel {
         int members = Math.max(1, state.partyMembers().size());
         int cols = Math.min(5, members);
         int rows = (members + cols - 1) / cols;
-        int cardH = members > 5 ? 40 : 64;
+        int cardH = members > 5 ? 38 : 52;
         return rows * cardH + Math.max(0, rows - 1) * 6;
     }
 
@@ -13144,7 +13053,9 @@ public final class GamePanel extends JPanel {
             g.fillRoundRect(x + 34, memberY, 198, 58, 8, 8);
             g.setColor(selected ? new Color(103, 151, 117) : new Color(82, 92, 116));
             g.drawRoundRect(x + 34, memberY, 198, 58, 8, 8);
-            g.drawImage(assets.spriteFit(member.worldSprite, 40, 50), x + 44, memberY + 4, null);
+            Rectangle memberBounds = new Rectangle(x + 34, memberY, 198, 58);
+            partyPortraitZones.add(new PartyPortraitZone(memberBounds, member));
+            g.drawImage(assets.spriteFit(dialoguePortraitSprite(member), 40, 50), x + 44, memberY + 4, null);
             g.setFont(new Font("SansSerif", Font.BOLD, 14));
             g.setColor(new Color(235, 236, 240));
             g.drawString((i + 1) + ". " + member.name, x + 96, memberY + 23);
@@ -13152,7 +13063,7 @@ public final class GamePanel extends JPanel {
             g.setColor(new Color(176, 182, 196));
             g.drawString(member.className + "  Lv " + member.level, x + 96, memberY + 42);
             int index = i;
-            buttons.add(new UiButton(new Rectangle(x + 34, memberY, 198, 58), "party-member:" + member.name, () -> {
+            buttons.add(new UiButton(memberBounds, "party-member:" + member.name, () -> {
                 state.selectPartyScreenActor(index);
                 partySkillScroll = 0;
                 partyLoadoutScroll = 0;
@@ -13163,7 +13074,9 @@ public final class GamePanel extends JPanel {
 
         int detailX = x + 242;
         int contentRight = x + w - 34;
-        g.drawImage(assets.spriteFit(actor.worldSprite, 92, 120), detailX, y + 96, null);
+        Rectangle detailPortraitBounds = new Rectangle(detailX, y + 96, 92, 120);
+        partyPortraitZones.add(new PartyPortraitZone(detailPortraitBounds, actor));
+        g.drawImage(assets.spriteFit(dialoguePortraitSprite(actor), 92, 120), detailX, y + 96, null);
         g.setFont(new Font("SansSerif", Font.BOLD, 22));
         g.setColor(new Color(246, 224, 151));
         g.drawString(actor.name + " the " + actor.className, detailX + 112, y + 122);
@@ -13760,7 +13673,7 @@ public final class GamePanel extends JPanel {
         villageListScroll = 0;
     }
 
-    private boolean handleVillageSearchKey(KeyEvent event) {
+    boolean handleVillageSearchKey(KeyEvent event) {
         int code = event.getKeyCode();
         if (!villageSearchApplies()) {
             villageSearchFocused = false;
@@ -14985,14 +14898,21 @@ public final class GamePanel extends JPanel {
         renderMetrics.record("worldMap.terrain", terrainStarted);
         Shape oldClip = g.getClip();
         g.setClip(mapX, mapY, mapW, mapH);
-        drawWorldMapGrid(g, worldMapViewport);
+        WorldMapOverlayRenderer.drawGrid(g, worldMapViewport);
         if (state.worldMapKingdoms) {
-            drawKingdomLabels(g, worldMapViewport);
+            WorldMapOverlayRenderer.drawKingdomLabels(g, worldMapViewport, state.world.kingdoms());
         }
         for (WorldMap.SettlementSite settlement : state.world.settlementSites()) {
             if (worldMapVisible(worldMapViewport, settlement.x(), settlement.y(), 8.0)) {
                 int dx = settlement.x() > worldMapViewport.worldX() + worldMapViewport.worldW() * 0.68 ? -78 : 12;
-                drawSettlementMapMarker(g, worldMapViewport, settlement, dx, -9);
+                WorldMap.Kingdom kingdom = kingdomById(settlement.kingdomId());
+                boolean playerSettlement = state.world.isPlayerSettlement(settlement);
+                Rectangle markerBounds = WorldMapOverlayRenderer.drawSettlementMarker(
+                        g, worldMapViewport, settlement, kingdom, playerSettlement, dx, -9);
+                Color markerColor = playerSettlement ? new Color(255, 226, 128)
+                        : kingdom == null ? new Color(245, 214, 117) : new Color(kingdom.colorRgb());
+                tooltipZones.add(new TooltipZone(markerBounds, settlement.label(),
+                        settlementTooltip(settlement, kingdom), null, markerColor));
             }
         }
         long objectivesStarted = renderMetrics.start();
@@ -15003,7 +14923,8 @@ public final class GamePanel extends JPanel {
             TilePoint marker = worldMapObjectivePosition(objective);
             if (marker != null && showQuestObjective(objective)
                     && worldMapVisible(worldMapViewport, marker.x(), marker.y(), 6.0)) {
-                drawQuestMapMarker(g, worldMapViewport, objective, marker);
+                WorldMapOverlayRenderer.drawQuestMarker(g, worldMapViewport, objective.kind(), objective.title(),
+                        marker, objectiveColor(objective.kind(), 255));
             }
         }
         if (WorldMap.OVERWORLD_ID.equals(state.currentMapId)) {
@@ -15021,7 +14942,8 @@ public final class GamePanel extends JPanel {
         actionButton(g, sideX, y + 18, 136, 30, state.worldMapKingdoms ? "Kingdoms On" : "Kingdoms Off",
                 state::toggleWorldMapKingdoms, new Color(57, 71, 102), new Color(110, 127, 160), true);
         drawWorldMapControls(g, sideX, y + 56, legendW);
-        drawWorldMapLegend(g, sideX, y + 168, legendW);
+        WorldMapOverlayRenderer.drawLegend(g, sideX, y + 168, legendW,
+                state.worldMapKingdoms, state.world.kingdoms());
         sidebarButton(g, sideX, y + h - 54, 116, 30, "Close", state::toggleWorldMap);
         renderMetrics.record("worldMap", worldMapStarted);
     }
@@ -15047,47 +14969,23 @@ public final class GamePanel extends JPanel {
     }
 
     private int worldMapScreenX(WorldMapViewport viewport, double wx) {
-        return viewport.screenX() + (int) Math.round((wx - viewport.worldX()) * viewport.screenW() / viewport.worldW());
+        return WorldMapOverlayRenderer.screenX(viewport, wx);
     }
 
     private int worldMapScreenY(WorldMapViewport viewport, double wy) {
-        return viewport.screenY() + (int) Math.round((wy - viewport.worldY()) * viewport.screenH() / viewport.worldH());
+        return WorldMapOverlayRenderer.screenY(viewport, wy);
     }
 
     private double worldMapWorldX(WorldMapViewport viewport, int screenX) {
-        return viewport.worldX() + (screenX - viewport.screenX()) * viewport.worldW() / viewport.screenW();
+        return WorldMapOverlayRenderer.worldX(viewport, screenX);
     }
 
     private double worldMapWorldY(WorldMapViewport viewport, int screenY) {
-        return viewport.worldY() + (screenY - viewport.screenY()) * viewport.worldH() / viewport.screenH();
+        return WorldMapOverlayRenderer.worldY(viewport, screenY);
     }
 
     private boolean worldMapVisible(WorldMapViewport viewport, int wx, int wy, double margin) {
-        return wx >= viewport.worldX() - margin
-                && wy >= viewport.worldY() - margin
-                && wx <= viewport.worldX() + viewport.worldW() + margin
-                && wy <= viewport.worldY() + viewport.worldH() + margin;
-    }
-
-    private void drawWorldMapGrid(Graphics2D g, WorldMapViewport viewport) {
-        double tileW = viewport.screenW() / viewport.worldW();
-        double tileH = viewport.screenH() / viewport.worldH();
-        double minTile = Math.min(tileW, tileH);
-        if (minTile < 5.0) {
-            return;
-        }
-        int step = minTile >= 18.0 ? 1 : minTile >= 10.0 ? 5 : 10;
-        g.setColor(new Color(255, 255, 255, minTile >= 18.0 ? 42 : 30));
-        for (int wx = Math.max(0, (int) Math.ceil(viewport.worldX() / step) * step);
-             wx <= Math.min(WorldMap.COLS, (int) Math.ceil(viewport.worldX() + viewport.worldW())); wx += step) {
-            int sx = worldMapScreenX(viewport, wx);
-            g.drawLine(sx, viewport.screenY(), sx, viewport.screenY() + viewport.screenH());
-        }
-        for (int wy = Math.max(0, (int) Math.ceil(viewport.worldY() / step) * step);
-             wy <= Math.min(WorldMap.ROWS, (int) Math.ceil(viewport.worldY() + viewport.worldH())); wy += step) {
-            int sy = worldMapScreenY(viewport, wy);
-            g.drawLine(viewport.screenX(), sy, viewport.screenX() + viewport.screenW(), sy);
-        }
+        return WorldMapOverlayRenderer.visible(viewport, wx, wy, margin);
     }
 
     private void drawWorldMapControls(Graphics2D g, int x, int y, int width) {
@@ -15109,7 +15007,7 @@ public final class GamePanel extends JPanel {
         drawClippedString(g, "Wheel zooms, drag pans, click centers.", x, y + 101, width);
     }
 
-    private void adjustWorldMapZoom(int direction) {
+    void adjustWorldMapZoom(int direction) {
         zoomWorldMapAt(null, direction > 0 ? WORLD_MAP_ZOOM_STEP : 1.0 / WORLD_MAP_ZOOM_STEP);
     }
 
@@ -15135,13 +15033,13 @@ public final class GamePanel extends JPanel {
         worldMapCenterY = clampWorldMapCenter(worldMapCenterY, WorldMap.ROWS / worldMapZoom, WorldMap.ROWS);
     }
 
-    private void resetWorldMapZoom() {
+    void resetWorldMapZoom() {
         worldMapZoom = WORLD_MAP_MIN_ZOOM;
         TilePoint position = currentWorldMapPosition();
         centerWorldMapOn(position.x() + 0.5, position.y() + 0.5);
     }
 
-    private void focusWorldMapOnPlayer() {
+    void focusWorldMapOnPlayer() {
         TilePoint position = currentWorldMapPosition();
         if (worldMapZoom < 2.0) {
             worldMapZoom = 2.0;
@@ -15158,7 +15056,7 @@ public final class GamePanel extends JPanel {
         return false;
     }
 
-    private void focusNextWorldMapQuest() {
+    void focusNextWorldMapQuest() {
         List<GameState.QuestObjective> objectives = state.activeQuestObjectives().stream()
                 .filter(this::showQuestObjective)
                 .filter(objective -> worldMapObjectivePosition(objective) != null)
@@ -15183,7 +15081,7 @@ public final class GamePanel extends JPanel {
         worldMapCenterY = clampWorldMapCenter(wy, WorldMap.ROWS / worldMapZoom, WorldMap.ROWS);
     }
 
-    private void panWorldMap(double deltaX, double deltaY) {
+    void panWorldMap(double deltaX, double deltaY) {
         worldMapCenterX = clampWorldMapCenter(worldMapCenterX + deltaX, WorldMap.COLS / worldMapZoom, WorldMap.COLS);
         worldMapCenterY = clampWorldMapCenter(worldMapCenterY + deltaY, WorldMap.ROWS / worldMapZoom, WorldMap.ROWS);
     }
@@ -15208,100 +15106,8 @@ public final class GamePanel extends JPanel {
         return null;
     }
 
-    private void drawKingdomLabels(Graphics2D g, WorldMapViewport viewport) {
-        for (WorldMap.Kingdom kingdom : state.world.kingdoms()) {
-            if (!worldMapVisible(viewport, kingdom.centerX(), kingdom.centerY(), 12.0)) {
-                continue;
-            }
-            int px = worldMapScreenX(viewport, kingdom.centerX() + 0.5);
-            int py = worldMapScreenY(viewport, kingdom.centerY() + 0.5);
-            drawMapLabel(g, kingdom.name(), px - 36, py, new Color(245, 246, 236));
-        }
-    }
-
     private String shortSettlementLabel(String label) {
-        return label.replace(" City", "").replace(" Town", "").replace(" Village", "");
-    }
-
-    private void drawSettlementMapMarker(Graphics2D g, WorldMapViewport viewport,
-                                         WorldMap.SettlementSite settlement, int labelDx, int labelDy) {
-        int px = worldMapScreenX(viewport, settlement.x() + 0.5);
-        int py = worldMapScreenY(viewport, settlement.y() + 0.5);
-        WorldMap.Kingdom kingdom = kingdomById(settlement.kingdomId());
-        boolean playerSettlement = state.world.isPlayerSettlement(settlement);
-        Color color = playerSettlement ? new Color(255, 226, 128)
-                : kingdom == null ? new Color(245, 214, 117) : new Color(kingdom.colorRgb());
-        g.setColor(new Color(8, 10, 16, 166));
-        g.fillOval(px - 7, py - 7, 15, 15);
-        g.setColor(color);
-        if (playerSettlement) {
-            g.fillOval(px - 5, py - 5, 11, 11);
-        } else {
-            g.fillRect(px - 4, py - 4, 9, 9);
-        }
-        g.setColor(new Color(245, 246, 236, 220));
-        if (playerSettlement) {
-            g.drawOval(px - 6, py - 6, 13, 13);
-        } else {
-            g.drawRect(px - 5, py - 5, 11, 11);
-        }
-        String label = shortSettlementLabel(settlement.label());
-        drawMapLabel(g, label, px + labelDx, py + labelDy, color);
-        Rectangle markerBounds = new Rectangle(Math.min(px - 8, px + labelDx - 8), Math.min(py - 16, py + labelDy - 18), 150, 28);
-        tooltipZones.add(new TooltipZone(markerBounds, settlement.label(), settlementTooltip(settlement, kingdom), null, color));
-    }
-
-    private void drawMapMarker(Graphics2D g, WorldMapViewport viewport, int wx, int wy, String label, int labelDx, int labelDy) {
-        int px = worldMapScreenX(viewport, wx + 0.5);
-        int py = worldMapScreenY(viewport, wy + 0.5);
-        g.setColor(new Color(245, 214, 117));
-        g.fillRect(px - 3, py - 3, 7, 7);
-        drawMapLabel(g, label, px + labelDx, py + labelDy, new Color(245, 214, 117));
-    }
-
-    private void drawQuestMapMarker(Graphics2D g, WorldMapViewport viewport, GameState.QuestObjective objective, TilePoint marker) {
-        int px = worldMapScreenX(viewport, marker.x() + 0.5);
-        int py = worldMapScreenY(viewport, marker.y() + 0.5);
-        Color color = objectiveColor(objective.kind(), 255);
-        g.setColor(new Color(0, 0, 0, 155));
-        g.fillOval(px - 8, py - 9, 17, 17);
-        g.setColor(color);
-        g.fillOval(px - 6, py - 7, 13, 13);
-        Polygon tail = new Polygon(new int[]{px - 4, px + 4, px}, new int[]{py + 2, py + 2, py + 10}, 3);
-        g.fillPolygon(tail);
-        g.setColor(new Color(245, 246, 236));
-        g.drawOval(px - 7, py - 8, 15, 15);
-        g.drawPolygon(tail);
-        g.setColor(new Color(18, 20, 24));
-        g.setFont(new Font("SansSerif", Font.BOLD, 9));
-        String glyph = switch (objective.kind()) {
-            case GATHER -> "G";
-            case DELIVER -> "D";
-            case VISIT -> "V";
-            case SEARCH -> "S";
-            case TALK -> "T";
-            case ASK_AROUND -> "?";
-            case REPORT -> "R";
-            case ESCORT -> "E";
-            case RESCUE -> "!";
-            case DEFEND -> "P";
-            case CHOICE -> "C";
-            case DEFEAT -> "B";
-        };
-        FontMetrics metrics = g.getFontMetrics();
-        g.drawString(glyph, px - metrics.stringWidth(glyph) / 2, py + 3);
-        drawMapLabel(g, objective.title(), px + 13, py - 10, new Color(245, 246, 236));
-    }
-
-    private void drawMapLabel(Graphics2D g, String label, int x, int y, Color color) {
-        g.setFont(new Font("SansSerif", Font.BOLD, 11));
-        FontMetrics metrics = g.getFontMetrics();
-        int textW = metrics.stringWidth(label);
-        int textH = metrics.getHeight();
-        g.setColor(new Color(8, 10, 16, 188));
-        g.fillRoundRect(x - 4, y - textH + 4, textW + 8, textH + 2, 6, 6);
-        g.setColor(color);
-        g.drawString(label, x, y);
+        return WorldMapOverlayRenderer.shortSettlementLabel(label);
     }
 
     private WorldMap.Kingdom kingdomById(String kingdomId) {
@@ -15412,95 +15218,6 @@ public final class GamePanel extends JPanel {
             }
         }
         return WorldMap.START_POSITION;
-    }
-
-    private void drawWorldMapLegend(Graphics2D g, int x, int y, int width) {
-        g.setFont(new Font("SansSerif", Font.BOLD, 15));
-        g.setColor(new Color(244, 239, 220));
-        g.drawString("Legend", x, y);
-        int rowY = y + 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('g'), "Meadow");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('f'), "Oldwood");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('s'), "Sunsteppe");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('n'), "Frostfield");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('v'), "Marsh");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('b'), "Badlands");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('P'), "Beach");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('m'), "Mountain");
-        rowY += 24;
-        drawLegendSwatch(g, x, rowY, width, Terrain.color('w'), "Water");
-        rowY += 34;
-        drawLegendSettlement(g, x, rowY, "Settlement");
-        rowY += 26;
-        drawLegendQuest(g, x, rowY, new Color(112, 220, 128), "Gather");
-        rowY += 26;
-        drawLegendQuest(g, x, rowY, new Color(114, 191, 255), "Visit");
-        rowY += 26;
-        drawLegendQuest(g, x, rowY, new Color(233, 89, 83), "Battle");
-        rowY += 26;
-        drawLegendPlayer(g, x, rowY, "You");
-        if (state.worldMapKingdoms) {
-            rowY += 34;
-            g.setFont(new Font("SansSerif", Font.BOLD, 15));
-            g.setColor(new Color(244, 239, 220));
-            g.drawString("Kingdoms", x, rowY);
-            rowY += 24;
-            for (WorldMap.Kingdom kingdom : state.world.kingdoms()) {
-                drawLegendSwatch(g, x, rowY, width, new Color(kingdom.colorRgb()), kingdom.name());
-                rowY += 22;
-            }
-        }
-    }
-
-    private void drawLegendSwatch(Graphics2D g, int x, int y, int width, Color color, String label) {
-        g.setColor(color);
-        g.fillRect(x, y - 12, 16, 16);
-        g.setColor(new Color(18, 23, 32));
-        g.drawRect(x, y - 12, 16, 16);
-        drawLegendText(g, x + 24, y + 1, width - 24, label);
-    }
-
-    private void drawLegendSettlement(Graphics2D g, int x, int y, String label) {
-        g.setColor(new Color(245, 214, 117));
-        g.fillRect(x + 5, y - 9, 8, 8);
-        drawLegendText(g, x + 24, y, 92, label);
-    }
-
-    private void drawLegendQuest(Graphics2D g, int x, int y, Color color, String label) {
-        g.setColor(new Color(0, 0, 0, 155));
-        g.fillOval(x + 2, y - 16, 16, 16);
-        g.setColor(color);
-        g.fillOval(x + 4, y - 14, 12, 12);
-        g.fillPolygon(new Polygon(new int[]{x + 7, x + 13, x + 10}, new int[]{y - 5, y - 5, y + 1}, 3));
-        g.setColor(new Color(245, 246, 236));
-        g.drawOval(x + 3, y - 15, 14, 14);
-        drawLegendText(g, x + 24, y, 92, label);
-    }
-
-    private void drawLegendPlayer(Graphics2D g, int x, int y, String label) {
-        g.setColor(new Color(255, 245, 174));
-        g.fillOval(x + 4, y - 12, 11, 11);
-        g.setColor(Color.BLACK);
-        g.drawOval(x + 4, y - 12, 11, 11);
-        drawLegendText(g, x + 24, y, 92, label);
-    }
-
-    private void drawLegendText(Graphics2D g, int x, int y, int width, String label) {
-        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        g.setColor(new Color(210, 213, 222));
-        FontMetrics metrics = g.getFontMetrics();
-        String display = label;
-        while (metrics.stringWidth(display) > width && display.length() > 4) {
-            display = display.substring(0, display.length() - 4) + "...";
-        }
-        g.drawString(display, x, y);
     }
 
     private void drawPauseMenu(Graphics2D g) {
@@ -15941,7 +15658,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private List<LoadFolder> loadFoldersByLatestSave() {
+    List<LoadFolder> loadFoldersByLatestSave() {
         Map<String, LoadFolder> folders = new LinkedHashMap<>();
         for (SaveSystem.SaveSummary summary : saves.listSaves()) {
             folders.computeIfAbsent(summary.characterId(), key -> new LoadFolder(summary)).include(summary);
@@ -15949,7 +15666,7 @@ public final class GamePanel extends JPanel {
         return new ArrayList<>(folders.values());
     }
 
-    private List<SaveSystem.SaveSummary> selectedLoadFolderSaves() {
+    List<SaveSystem.SaveSummary> selectedLoadFolderSaves() {
         if (selectedLoadCharacterId.isBlank()) {
             return List.of();
         }
@@ -15964,7 +15681,7 @@ public final class GamePanel extends JPanel {
         return latest.name() + "'s Saves";
     }
 
-    private void selectLoadFolder(String characterId) {
+    void selectLoadFolder(String characterId) {
         selectedLoadCharacterId = characterId == null ? "" : characterId;
         saveListScroll = 0;
     }
@@ -16556,7 +16273,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private boolean handleMovementKeyPressed(int code) {
+    boolean handleMovementKeyPressed(int code) {
         int[] direction = movementDirectionForKey(code);
         if (direction == null) {
             return false;
@@ -16570,7 +16287,7 @@ public final class GamePanel extends JPanel {
         return true;
     }
 
-    private boolean handleMovementKeyReleased(int code) {
+    boolean handleMovementKeyReleased(int code) {
         if (movementDirectionForKey(code) == null) {
             return false;
         }
@@ -16612,7 +16329,7 @@ public final class GamePanel extends JPanel {
         lastHeldMoveDy = 0;
     }
 
-    private void syncPlayerAnimationToState() {
+    void syncPlayerAnimationToState() {
         clearPlayerPath();
         clearQueuedMove();
         playerMoveMapId = state.currentMapId;
@@ -16628,7 +16345,7 @@ public final class GamePanel extends JPanel {
         resetCameraToPlayer();
     }
 
-    private void saveGame() {
+    void saveGame() {
         try {
             if (state.pendingSaveName.isBlank() || state.mode != GameMode.SAVE_MENU) {
                 state.setPendingSaveName(nextDefaultSaveName());
@@ -16644,7 +16361,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void openSaveMenuForSaving() {
+    void openSaveMenuForSaving() {
         state.openSaveMenu(true);
         selectedLoadCharacterId = "";
         importingCharacter = false;
@@ -16653,14 +16370,14 @@ public final class GamePanel extends JPanel {
         saveListScroll = 0;
     }
 
-    private void openLoadMenu() {
+    void openLoadMenu() {
         state.openSaveMenu(false);
         selectedLoadCharacterId = "";
         importingCharacter = false;
         saveListScroll = 0;
     }
 
-    private void openImportMenu() {
+    void openImportMenu() {
         state.openSaveMenu(false);
         selectedLoadCharacterId = "";
         importingCharacter = true;
@@ -16668,7 +16385,7 @@ public final class GamePanel extends JPanel {
         saveListScroll = 0;
     }
 
-    private void closeSaveMenuOrLoadFolder() {
+    void closeSaveMenuOrLoadFolder() {
         if (!state.saveMenuCanSave && !selectedLoadCharacterId.isBlank()) {
             selectedLoadCharacterId = "";
             saveListScroll = 0;
@@ -16728,7 +16445,7 @@ public final class GamePanel extends JPanel {
         state.status = "Confirm overwrite for " + summary.saveName() + ".";
     }
 
-    private void confirmOverwriteSave() {
+    void confirmOverwriteSave() {
         if (!hasPendingOverwrite()) {
             return;
         }
@@ -16753,16 +16470,16 @@ public final class GamePanel extends JPanel {
         return message == null || message.isBlank() ? ex.getClass().getSimpleName() : message;
     }
 
-    private void cancelOverwrite() {
+    void cancelOverwrite() {
         pendingOverwriteSaveId = "";
         pendingOverwriteSaveName = "";
     }
 
-    private boolean hasPendingOverwrite() {
+    boolean hasPendingOverwrite() {
         return pendingOverwriteSaveId != null && !pendingOverwriteSaveId.isBlank();
     }
 
-    private void loadGame() {
+    void loadGame() {
         try {
             if (!saves.load(state)) {
                 state.status = "No Java save found.";
@@ -16775,7 +16492,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void loadGame(String saveId) {
+    void loadGame(String saveId) {
         try {
             if (!saves.load(state, saveId)) {
                 state.status = "No Java save found.";
@@ -16788,7 +16505,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void loadOrImportGame(String saveId) {
+    void loadOrImportGame(String saveId) {
         if (importingCharacter) {
             importCharacter(saveId);
         } else {
@@ -17018,9 +16735,8 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void exitGame() {
-        music.shutdown();
-        sounds.shutdown();
+    void exitGame() {
+        audio.shutdown();
         java.awt.Window window = SwingUtilities.getWindowAncestor(this);
         if (window != null) {
             window.dispose();
@@ -17029,393 +16745,7 @@ public final class GamePanel extends JPanel {
     }
 
     public void shutdown() {
-        music.shutdown();
-        sounds.shutdown();
-    }
-
-    private final class Keys extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent event) {
-            int code = event.getKeyCode();
-            if (state.mode == GameMode.MAIN_MENU) {
-                if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_N) {
-                    state.openClassSelect();
-                } else if ((code == KeyEvent.VK_L || code == KeyEvent.VK_F9) && saves.exists()) {
-                    openLoadMenu();
-                } else if (code == KeyEvent.VK_I && saves.exists()) {
-                    openImportMenu();
-                } else if (code == KeyEvent.VK_S) {
-                    state.openSettings();
-                } else if (code == KeyEvent.VK_ESCAPE) {
-                    exitGame();
-                }
-                repaint();
-                return;
-            }
-            if (state.mode == GameMode.CLASS_SELECT) {
-                if (handleClassSelectTextInput(event)) {
-                    repaint();
-                    return;
-                }
-                if (code == KeyEvent.VK_1) {
-                    state.chooseClass("Knight");
-                    syncPlayerAnimationToState();
-                } else if (code == KeyEvent.VK_2) {
-                    state.chooseClass("Mage");
-                    syncPlayerAnimationToState();
-                } else if (code == KeyEvent.VK_3) {
-                    state.chooseClass("Ranger");
-                    syncPlayerAnimationToState();
-                } else if (code == KeyEvent.VK_4) {
-                    state.chooseClass("Cleric");
-                    syncPlayerAnimationToState();
-                } else if (code == KeyEvent.VK_5) {
-                    state.chooseClass("Rogue");
-                    syncPlayerAnimationToState();
-                } else if (code == KeyEvent.VK_F9) {
-                    loadGame();
-                } else if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
-                    if (state.pendingPlayerName.length() > 0 && code == KeyEvent.VK_BACK_SPACE) {
-                        state.setPendingPlayerName(state.pendingPlayerName.substring(0, state.pendingPlayerName.length() - 1));
-                    } else {
-                        state.openMainMenu();
-                    }
-                } else if (code == KeyEvent.VK_L && saves.exists()) {
-                    openLoadMenu();
-                } else {
-                    char ch = event.getKeyChar();
-                    if ((Character.isLetterOrDigit(ch) || ch == ' ' || ch == '-' || ch == '_') && state.pendingPlayerName.length() < 24) {
-                        state.setPendingPlayerName(state.pendingPlayerName + ch);
-                    }
-                }
-                repaint();
-                return;
-            }
-            if (state.mode == GameMode.STORY_INTRO) {
-                if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_SPACE || code == KeyEvent.VK_E) {
-                    state.advanceStoryIntro();
-                } else if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
-                    state.openClassSelect();
-                }
-                repaint();
-                return;
-            }
-            if (state.mode == GameMode.PAUSE_MENU) {
-                if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_ENTER) {
-                    state.resumeGame();
-                } else if (code == KeyEvent.VK_F5 || code == KeyEvent.VK_S) {
-                    openSaveMenuForSaving();
-                } else if ((code == KeyEvent.VK_F9 || code == KeyEvent.VK_L) && saves.exists()) {
-                    openSaveMenuForSaving();
-                } else if (code == KeyEvent.VK_T) {
-                    state.openSettings();
-                } else if (code == KeyEvent.VK_N) {
-                    state.openClassSelect();
-                } else if (code == KeyEvent.VK_M) {
-                    state.openMainMenu();
-                }
-                repaint();
-                return;
-            }
-            if (state.mode == GameMode.SETTINGS) {
-                if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
-                    state.closeSettings();
-                }
-                repaint();
-                return;
-            }
-            if (state.mode == GameMode.SAVE_MENU) {
-                if (hasPendingOverwrite()) {
-                    if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_F5) {
-                        confirmOverwriteSave();
-                    } else if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
-                        cancelOverwrite();
-                    }
-                    repaint();
-                    return;
-                }
-                if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_BACK_SPACE) {
-                    if (state.saveMenuCanSave && code == KeyEvent.VK_BACK_SPACE && !state.pendingSaveName.isEmpty()) {
-                        state.setPendingSaveName(state.pendingSaveName.substring(0, state.pendingSaveName.length() - 1));
-                    } else {
-                        closeSaveMenuOrLoadFolder();
-                    }
-                } else if ((code == KeyEvent.VK_ENTER || code == KeyEvent.VK_F5) && state.saveMenuCanSave) {
-                    saveGame();
-                } else if (state.saveMenuCanSave && code == KeyEvent.VK_DELETE) {
-                    state.setPendingSaveName("");
-                } else if (state.saveMenuCanSave && code == KeyEvent.VK_TAB) {
-                    saveListCurrentCharacterOnly = !saveListCurrentCharacterOnly;
-                    saveListScroll = 0;
-                } else if (!state.saveMenuCanSave && code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    int index = code - KeyEvent.VK_1;
-                    if (selectedLoadCharacterId.isBlank()) {
-                        List<LoadFolder> folders = loadFoldersByLatestSave();
-                        if (index < folders.size()) {
-                            selectLoadFolder(folders.get(index).characterId);
-                        }
-                    } else {
-                        List<SaveSystem.SaveSummary> summaries = selectedLoadFolderSaves();
-                        if (index < summaries.size()) {
-                            loadOrImportGame(summaries.get(index).saveId());
-                        }
-                    }
-                } else if (code == KeyEvent.VK_UP) {
-                    saveListScroll = Math.max(0, saveListScroll - 1);
-                } else if (code == KeyEvent.VK_DOWN) {
-                    saveListScroll = Math.max(0, saveListScroll + 1);
-                } else if (state.saveMenuCanSave) {
-                    char ch = event.getKeyChar();
-                    if ((Character.isLetterOrDigit(ch) || ch == ' ' || ch == '-' || ch == '_' || ch == '\'')
-                            && state.pendingSaveName.length() < 32) {
-                        state.setPendingSaveName(state.pendingSaveName + ch);
-                    }
-                }
-                repaint();
-                return;
-            }
-
-            if (code == KeyEvent.VK_F3) {
-                battleVfxDebug = !battleVfxDebug;
-            } else if (code == KeyEvent.VK_F5) {
-                saveGame();
-            } else if (code == KeyEvent.VK_F9) {
-                loadGame();
-            } else if (code == KeyEvent.VK_ESCAPE) {
-                if (state.mode == GameMode.EXPLORE || state.mode == GameMode.BATTLE || state.mode == GameMode.DIALOG) {
-                    state.openPauseMenu();
-                } else if (state.mode != GameMode.EXPLORE && state.mode != GameMode.BATTLE) {
-                    state.closeOverlay();
-                }
-            } else if (code == KeyEvent.VK_P) {
-                state.openPauseMenu();
-            } else if (state.mode == GameMode.BATTLE) {
-                handleBattleKey(event);
-            } else if (state.mode == GameMode.DIALOG) {
-                if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_E) {
-                    state.advanceDialog();
-                } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    runDialogOption(dialogOptionScroll + code - KeyEvent.VK_1);
-                } else if (code == KeyEvent.VK_H) {
-                    state.hireActiveRecruit();
-                }
-            } else if (state.mode == GameMode.QUEST_LOG) {
-                if (code == KeyEvent.VK_Q) {
-                    state.toggleQuestLog();
-                } else if (code == KeyEvent.VK_TAB) {
-                    questLogCompletedTab = !questLogCompletedTab;
-                    questLogScroll = 0;
-                    selectedQuestLogId = "";
-                } else if (code == KeyEvent.VK_1) {
-                    questLogCompletedTab = false;
-                    questLogScroll = 0;
-                    selectedQuestLogId = "";
-                } else if (code == KeyEvent.VK_2) {
-                    questLogCompletedTab = true;
-                    questLogScroll = 0;
-                    selectedQuestLogId = "";
-                } else if (code == KeyEvent.VK_T) {
-                    Quest quest = selectedQuestLogQuest(questLogEntries(questLogCompletedTab));
-                    if (quest != null && !quest.completed) {
-                        toggleTrackedQuest(quest);
-                    }
-                }
-            } else if (state.mode == GameMode.SKILLS) {
-                if (code == KeyEvent.VK_K || code == KeyEvent.VK_O || code == KeyEvent.VK_Q) {
-                    state.closeOverlay();
-                }
-            } else if (state.mode == GameMode.WORLD_MAP) {
-                if (code == KeyEvent.VK_M || code == KeyEvent.VK_Q) {
-                    state.toggleWorldMap();
-                } else if (code == KeyEvent.VK_K) {
-                    state.toggleWorldMapKingdoms();
-                } else if (code == KeyEvent.VK_EQUALS || code == KeyEvent.VK_PLUS || code == KeyEvent.VK_ADD) {
-                    adjustWorldMapZoom(1);
-                } else if (code == KeyEvent.VK_MINUS || code == KeyEvent.VK_SUBTRACT) {
-                    adjustWorldMapZoom(-1);
-                } else if (code == KeyEvent.VK_0) {
-                    resetWorldMapZoom();
-                } else if (code == KeyEvent.VK_HOME || code == KeyEvent.VK_Y) {
-                    focusWorldMapOnPlayer();
-                } else if (code == KeyEvent.VK_TAB) {
-                    focusNextWorldMapQuest();
-                } else if (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_A) {
-                    panWorldMap(-WorldMap.COLS / (worldMapZoom * 10.0), 0.0);
-                } else if (code == KeyEvent.VK_RIGHT || code == KeyEvent.VK_D) {
-                    panWorldMap(WorldMap.COLS / (worldMapZoom * 10.0), 0.0);
-                } else if (code == KeyEvent.VK_UP || code == KeyEvent.VK_W) {
-                    panWorldMap(0.0, -WorldMap.ROWS / (worldMapZoom * 10.0));
-                } else if (code == KeyEvent.VK_DOWN || code == KeyEvent.VK_S) {
-                    panWorldMap(0.0, WorldMap.ROWS / (worldMapZoom * 10.0));
-                }
-            } else if (state.mode == GameMode.INVENTORY) {
-                if (code == KeyEvent.VK_I) {
-                    state.toggleInventory();
-                } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    state.useInventoryItem(inventoryItemScroll + code - KeyEvent.VK_1);
-                }
-            } else if (state.mode == GameMode.CRAFTING) {
-                if (code == KeyEvent.VK_C || code == KeyEvent.VK_Q) {
-                    state.toggleCrafting();
-                } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    List<CraftingSystem.Recipe> recipes = displayedCraftingRecipes();
-                    int index = craftingRecipeScroll + code - KeyEvent.VK_1;
-                    if (index >= 0 && index < recipes.size()) {
-                        state.craftRecipe(recipes.get(index).key());
-                    }
-                }
-            } else if (state.mode == GameMode.PARTY) {
-                if (code == KeyEvent.VK_O || code == KeyEvent.VK_Q) {
-                    state.toggleParty();
-                } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    state.selectPartyScreenActor(code - KeyEvent.VK_1);
-                }
-            } else if (state.mode == GameMode.VILLAGE) {
-                if (villageSearchFocused && handleVillageSearchKey(event)) {
-                    repaint();
-                    return;
-                }
-                if (code == KeyEvent.VK_V || code == KeyEvent.VK_Q) {
-                    state.toggleVillage();
-                } else if (code == KeyEvent.VK_1) {
-                    state.setVillageTab(0);
-                } else if (code == KeyEvent.VK_2) {
-                    state.setVillageTab(1);
-                } else if (code == KeyEvent.VK_3) {
-                    state.setVillageTab(2);
-                } else if (code == KeyEvent.VK_4) {
-                    state.setVillageTab(3);
-                } else if (code == KeyEvent.VK_5) {
-                    state.setVillageTab(4);
-                } else if (code == KeyEvent.VK_DELETE || code == KeyEvent.VK_BACK_SPACE) {
-                    state.setVillageEditAction("delete");
-                } else if (code == KeyEvent.VK_M) {
-                    state.setVillageEditAction("move");
-                } else if (code == KeyEvent.VK_U) {
-                    state.setVillageEditAction("upgrade");
-                } else if (code == KeyEvent.VK_P) {
-                    state.setVillageEditAction("place");
-                }
-            } else if (state.mode == GameMode.BUILDING_ASSIGNMENT) {
-                if (code == KeyEvent.VK_Q || code == KeyEvent.VK_ESCAPE) {
-                    state.closeOverlay();
-                } else if (code == KeyEvent.VK_E || code == KeyEvent.VK_ENTER) {
-                    state.enterActiveVillageBuilding();
-                } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    int index = code - KeyEvent.VK_1;
-                    List<Actor> workers = state.stationedAllies();
-                    if (index >= 0 && index < workers.size()) {
-                        state.assignAllyToActiveBuilding(workers.get(index).name);
-                    }
-                }
-            } else if (state.mode == GameMode.SETTLEMENT_BOARD) {
-                if (code == KeyEvent.VK_Q || code == KeyEvent.VK_E) {
-                    state.closeOverlay();
-                } else if (code == KeyEvent.VK_1) {
-                    state.setSettlementBoardTab(0);
-                } else if (code == KeyEvent.VK_2) {
-                    state.setSettlementBoardTab(1);
-                } else if (code == KeyEvent.VK_R) {
-                    state.rerollSettlementRecruits();
-                }
-            } else if (state.mode == GameMode.FAST_TRAVEL) {
-                if (code == KeyEvent.VK_Q || code == KeyEvent.VK_E) {
-                    state.closeOverlay();
-                } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    state.fastTravelTo(code - KeyEvent.VK_1);
-                }
-            } else if (state.mode == GameMode.SHOP) {
-                if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    state.buyShopItem(shopItemScroll + code - KeyEvent.VK_1);
-                } else if (code == KeyEvent.VK_H) {
-                    state.hireActiveRecruit();
-                }
-            } else if (handleMovementKeyPressed(code)) {
-            } else if (code == KeyEvent.VK_E) {
-                state.interact();
-            } else if (code == KeyEvent.VK_Q) {
-                state.toggleQuestLog();
-            } else if (code == KeyEvent.VK_M) {
-                state.toggleWorldMap();
-            } else if (code == KeyEvent.VK_K) {
-                state.toggleSkills();
-            } else if (code == KeyEvent.VK_I) {
-                state.toggleInventory();
-            } else if (code == KeyEvent.VK_G) {
-                state.gatherNearby(playerFacingDx, playerFacingDy);
-            } else if (code == KeyEvent.VK_C) {
-                state.toggleCrafting();
-            } else if (code == KeyEvent.VK_O) {
-                state.toggleParty();
-            } else if (code == KeyEvent.VK_V) {
-                state.toggleVillage();
-            } else if (code == KeyEvent.VK_H) {
-                state.useItem("potion_small");
-            } else if (code == KeyEvent.VK_J) {
-                state.useItem("ether");
-            }
-            repaint();
-        }
-
-        @Override
-        public void keyReleased(KeyEvent event) {
-            if (handleMovementKeyReleased(event.getKeyCode())) {
-                repaint();
-            }
-        }
-
-        private void handleBattleKey(KeyEvent event) {
-            int code = event.getKeyCode();
-            if (code == KeyEvent.VK_A || code == KeyEvent.VK_SPACE) {
-                state.battleAttack();
-            } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                state.battleAbility(code - KeyEvent.VK_1);
-            } else if (code == KeyEvent.VK_0) {
-                state.battleAbility(9);
-            } else if (code == KeyEvent.VK_TAB) {
-                if (event.isShiftDown()) {
-                    state.cycleBattlePartyTarget(1);
-                } else {
-                    state.cycleBattleEnemyTarget(1);
-                }
-            } else if (code == KeyEvent.VK_E) {
-                state.cycleBattleEnemyTarget(1);
-            } else if (code == KeyEvent.VK_Q) {
-                state.cycleBattlePartyTarget(1);
-            } else if (code == KeyEvent.VK_ENTER) {
-                state.leaveFinishedBattle();
-            } else if (code == KeyEvent.VK_R && state.battle != null && state.battle.finished && !state.battle.victory) {
-                state.revive();
-            } else if (code == KeyEvent.VK_H) {
-                state.useItem("potion_small");
-            } else if (code == KeyEvent.VK_J) {
-                state.useItem("ether");
-            }
-        }
-
-        private boolean handleClassSelectTextInput(KeyEvent event) {
-            int code = event.getKeyCode();
-            if (code == KeyEvent.VK_BACK_SPACE) {
-                if (!state.pendingPlayerName.isEmpty()) {
-                    state.setPendingPlayerName(state.pendingPlayerName.substring(0, state.pendingPlayerName.length() - 1));
-                }
-                return true;
-            }
-            if (event.isControlDown() || event.isAltDown() || event.isMetaDown()) {
-                return false;
-            }
-            char ch = event.getKeyChar();
-            if (isNameCharacter(ch) && state.pendingPlayerName.length() < 24) {
-                state.setPendingPlayerName(state.pendingPlayerName + ch);
-                return true;
-            }
-            return false;
-        }
-
-        private boolean isNameCharacter(char ch) {
-            return Character.isLetterOrDigit(ch) || ch == ' ' || ch == '-' || ch == '_';
-        }
-
+        audio.shutdown();
     }
 
     private UiButton buttonAt(Point point) {
@@ -17454,7 +16784,6 @@ public final class GamePanel extends JPanel {
             case DIFFICULTY -> setMonsterLevelScaling(fraction);
             case VOLUME -> setVolumeSetting(activeSlider.key(), (int) Math.round(fraction * 100));
             case CAMERA -> setCameraSmoothing((int) Math.round(fraction * 100));
-            case ZOOM -> state.setZoom(70 + (int) Math.round(fraction * 80));
         }
     }
 
@@ -17618,6 +16947,66 @@ public final class GamePanel extends JPanel {
         return true;
     }
 
+    private boolean openContextMenu(Point point) {
+        if (point == null) {
+            clearContextMenu();
+            return false;
+        }
+        if ((state.mode == GameMode.EXPLORE || state.mode == GameMode.PARTY || state.mode == GameMode.SKILLS)
+                && openPartyPortraitContextMenu(point)) {
+            return true;
+        }
+        if (state.mode == GameMode.PARTY || state.mode == GameMode.SKILLS) {
+            return openPartyViewContextMenu(point);
+        }
+        return openWorldContextMenu(point);
+    }
+
+    private boolean openPartyPortraitContextMenu(Point point) {
+        hoverPoint = point;
+        for (int i = partyPortraitZones.size() - 1; i >= 0; i--) {
+            PartyPortraitZone zone = partyPortraitZones.get(i);
+            if (!zone.bounds().contains(point)) {
+                continue;
+            }
+            Actor actor = zone.actor();
+            if (actor == null || !state.partyMembers().contains(actor)) {
+                clearContextMenu();
+                return false;
+            }
+            contextMenuSettlement = null;
+            contextMenuBuilding = null;
+            contextMenuTile = null;
+            contextMenuPartyMember = actor;
+            contextMenuPoint = new Point(point);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean openPartyViewContextMenu(Point point) {
+        hoverPoint = point;
+        for (int i = partyPortraitZones.size() - 1; i >= 0; i--) {
+            PartyPortraitZone zone = partyPortraitZones.get(i);
+            if (!zone.bounds().contains(point)) {
+                continue;
+            }
+            Actor actor = zone.actor();
+            if (actor == null || actor == state.player || !state.activeAllies().contains(actor)) {
+                clearContextMenu();
+                return false;
+            }
+            contextMenuSettlement = null;
+            contextMenuBuilding = null;
+            contextMenuTile = null;
+            contextMenuPartyMember = actor;
+            contextMenuPoint = new Point(point);
+            return true;
+        }
+        clearContextMenu();
+        return false;
+    }
+
     private PartyFollowerRender partyFollowerAtPoint(Point point) {
         if (point == null) {
             return null;
@@ -17643,12 +17032,12 @@ public final class GamePanel extends JPanel {
             requestFocusInWindow();
             hoverPoint = logicalPoint(event);
             if (SwingUtilities.isRightMouseButton(event) || event.isPopupTrigger()) {
-                suppressNextClick = openWorldContextMenu(hoverPoint);
+                suppressNextClick = openContextMenu(hoverPoint);
                 repaint();
                 return;
             }
             if (SwingUtilities.isLeftMouseButton(event)) {
-                if (contextMenuTile != null && hoverPoint != null && !contextMenuBounds().contains(hoverPoint)) {
+                if (contextMenuPoint != null && hoverPoint != null && !contextMenuBounds().contains(hoverPoint)) {
                     clearContextMenu();
                     suppressNextClick = true;
                     repaint();
@@ -17777,9 +17166,14 @@ public final class GamePanel extends JPanel {
                 suppressNextClick = false;
                 return;
             }
+            if (state.dialogueVideoActive()) {
+                state.dismissDialogueVideo();
+                repaint();
+                return;
+            }
             if (SwingUtilities.isRightMouseButton(event) || event.isPopupTrigger()) {
                 Point point = logicalPoint(event);
-                openWorldContextMenu(point);
+                openContextMenu(point);
                 repaint();
                 return;
             }
@@ -17963,7 +17357,7 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void runDialogOption(int index) {
+    void runDialogOption(int index) {
         if (state.activeNpc == null) {
             return;
         }

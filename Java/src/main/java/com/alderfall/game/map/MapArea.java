@@ -1,4 +1,7 @@
-package com.alderfall.game;
+package com.alderfall.game.map;
+
+import com.alderfall.game.TilePoint;
+import com.alderfall.game.WorldProp;
 
 import java.util.AbstractList;
 import java.util.ArrayList;

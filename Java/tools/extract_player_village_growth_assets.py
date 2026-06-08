@@ -21,21 +21,42 @@ def remove_green_key(img: Image.Image) -> Image.Image:
     return out
 
 
-def trim(img: Image.Image, pad: int = 12) -> Image.Image:
-    box = img.getchannel("A").getbbox()
-    if box is None:
-        return img
-    left = max(0, box[0] - pad)
-    top = max(0, box[1] - pad)
-    right = min(img.width, box[2] + pad)
-    bottom = min(img.height, box[3] + pad)
-    return img.crop((left, top, right, bottom))
+def stage_bounds(sheet: Image.Image, count: int, pad: int = 12) -> list[tuple[int, int, int, int]]:
+    alpha = sheet.getchannel("A")
+    columns: list[int] = []
+    for x in range(sheet.width):
+        if alpha.crop((x, 0, x + 1, sheet.height)).getbbox() is not None:
+            columns.append(x)
 
+    groups: list[tuple[int, int]] = []
+    if columns:
+        start = previous = columns[0]
+        for x in columns[1:]:
+            if x == previous + 1:
+                previous = x
+                continue
+            groups.append((start, previous + 1))
+            start = previous = x
+        groups.append((start, previous + 1))
 
-def crop_cell(sheet: Image.Image, index: int, count: int) -> Image.Image:
-    left = round(index * sheet.width / count)
-    right = round((index + 1) * sheet.width / count)
-    return sheet.crop((left, 0, right, sheet.height))
+    if len(groups) != count:
+        raise ValueError(f"Expected {count} stage clusters, found {len(groups)}")
+
+    boxes: list[tuple[int, int, int, int]] = []
+    for index, (left, right) in enumerate(groups):
+        cluster = alpha.crop((left, 0, right, sheet.height))
+        box = cluster.getbbox()
+        if box is None:
+            continue
+        left_limit = groups[index - 1][1] if index > 0 else 0
+        right_limit = groups[index + 1][0] if index < len(groups) - 1 else sheet.width
+        boxes.append((
+            max(left_limit, left + box[0] - pad),
+            max(0, box[1] - pad),
+            min(right_limit, left + box[2] + pad),
+            min(sheet.height, box[3] + pad),
+        ))
+    return boxes
 
 
 def main() -> None:
@@ -50,9 +71,9 @@ def main() -> None:
     keyed = remove_green_key(sheet)
     keyed.save(SOURCE_DIR / "player_village_growth_sheet.png")
 
-    for index in range(10):
-        cell = trim(crop_cell(keyed, index, 10))
-        cell.save(ASSET_DIR / f"player_village_stage_{index + 1:02d}.png")
+    for index, box in enumerate(stage_bounds(keyed, 10), start=1):
+        cell = keyed.crop(box)
+        cell.save(ASSET_DIR / f"player_village_stage_{index:02d}.png")
 
 
 if __name__ == "__main__":

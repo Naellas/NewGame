@@ -1,7 +1,7 @@
 package com.alderfall.game.render;
 
+import com.alderfall.game.map.WorldMap;
 import com.alderfall.game.Terrain;
-import com.alderfall.game.WorldMap;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 

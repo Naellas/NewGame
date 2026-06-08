@@ -1,5 +1,8 @@
 package com.alderfall.game;
 
+import com.alderfall.game.map.WorldMap;
+import com.alderfall.game.map.MapArea;
+import com.alderfall.game.map.WorldTransition;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -100,11 +103,15 @@ public final class SmokeTest {
         if (!state.world.isPassable(WorldMap.START_POSITION.x(), WorldMap.START_POSITION.y())) {
             throw new IllegalStateException("Start position is not passable.");
         }
+        assertTravelLogNarration(state);
+        assertLandmarkDiscoveryLog(state);
         assertMapAreaPropIndex();
         assertPathfinder(state);
         assertOverworldTraversal(state.world);
+        assertOverworldDiscoverabilityProps(state.world);
         assertSettlementGateRoads(state.world);
         assertRoadMaterialsGenerated(state.world);
+        assertWeatherControllerFacade(state);
         if (!state.currentMapId.equals(WorldMap.PLAYER_VILLAGE_ID)) {
             throw new IllegalStateException("Expected new adventure to start in the player camp.");
         }
@@ -119,6 +126,8 @@ public final class SmokeTest {
         state.playerX = 14;
         state.playerY = 17;
         assertTownPortalFastTravel(state);
+        assertCompanionNpcVisibility(state);
+        assertSettlementWeeklyQuestCoverage(state);
         state.currentMapId = "village_oakhaven";
         state.playerX = 13;
         state.playerY = 8;
@@ -134,11 +143,7 @@ public final class SmokeTest {
         if (state.mode != GameMode.SHOP) {
             throw new IllegalStateException("Expected Oakhaven shop.");
         }
-        int potionsBefore = state.player.inventory.getOrDefault("potion_small", 0);
-        state.buyShopItem(0);
-        if (state.player.inventory.getOrDefault("potion_small", 0) <= potionsBefore) {
-            throw new IllegalStateException("Shop purchase failed.");
-        }
+        assertShopTransactions(state);
         state.closeOverlay();
         state.player.gold = 100;
         talkToNamedNpc(state, "village_oakhaven", "Bran");
@@ -622,6 +627,42 @@ public final class SmokeTest {
         }
     }
 
+    private static void assertWeatherControllerFacade(GameState state) {
+        String oldMapId = state.currentMapId;
+        int oldX = state.playerX;
+        int oldY = state.playerY;
+        int oldTick = state.worldTick;
+        try {
+            state.currentMapId = WorldMap.PLAYER_VILLAGE_ID;
+            state.playerX = 14;
+            state.playerY = 17;
+            state.worldTick = GameState.TICKS_PER_GAME_DAY + 345;
+            WeatherCondition outdoorWeather = state.currentWeather();
+            if (!state.weatherLabel().equals(outdoorWeather.label())) {
+                throw new IllegalStateException("Weather label did not match current weather.");
+            }
+            double windStrength = state.windStrength();
+            if (windStrength < 0.0 || windStrength > 1.0 || state.windLabel().isBlank()) {
+                throw new IllegalStateException("Weather wind facade returned invalid values.");
+            }
+
+            List<CityBuilding> buildings = state.world.cityBuildings("village_oakhaven");
+            if (buildings.isEmpty()) {
+                throw new IllegalStateException("Expected Oakhaven to have at least one building for weather coverage.");
+            }
+            CityBuilding building = buildings.get(0);
+            state.currentMapId = state.world.ensureHouseInterior("village_oakhaven", building.x1(), building.y1(), 13, 8);
+            if (state.currentWeather() != WeatherCondition.CLEAR) {
+                throw new IllegalStateException("Indoor weather should remain clear.");
+            }
+        } finally {
+            state.currentMapId = oldMapId;
+            state.playerX = oldX;
+            state.playerY = oldY;
+            state.worldTick = oldTick;
+        }
+    }
+
     private static void talkToNamedNpc(GameState state, String mapId, String npcName) {
         Npc target = findNpc(mapId, npcName);
         state.currentMapId = mapId;
@@ -854,7 +895,8 @@ public final class SmokeTest {
         int oakhavenWorn = countTiles(world, "village_oakhaven", Terrain.VILLAGE_ROAD);
         int oakhavenRoad = countTiles(world, "village_oakhaven", Terrain.DIRT_ROAD);
         if (oakhavenWorn > 0 || oakhavenRoad < 60) {
-            throw new IllegalStateException("Oakhaven should generate normal village roads without blocky worn road segments.");
+            throw new IllegalStateException("Oakhaven should generate normal village roads without blocky worn road segments. "
+                    + "Worn=" + oakhavenWorn + " dirt=" + oakhavenRoad + ".");
         }
         if (countTiles(world, "city_riverside", Terrain.COBBLESTONE_ROAD) < 60) {
             throw new IllegalStateException("Riverside did not generate cobblestone city roads.");
@@ -863,6 +905,128 @@ public final class SmokeTest {
         int overworldRoad = countTiles(world, WorldMap.OVERWORLD_ID, Terrain.DIRT_ROAD);
         if (overworldCobble < 100 || overworldRoad < 100) {
             throw new IllegalStateException("Overworld city approach roads did not generate mixed cobblestone segments.");
+        }
+    }
+
+    private static void assertOverworldDiscoverabilityProps(WorldMap world) {
+        int settlementHooks = 0;
+        for (WorldMap.SettlementSite settlement : world.settlementSites()) {
+            if (hasNearbyDiscoverabilityProp(world, settlement.x(), settlement.y(), 10)) {
+                settlementHooks++;
+            }
+        }
+        if (settlementHooks < world.settlementSites().size()) {
+            throw new IllegalStateException("Not every settlement received an overworld discoverability prop.");
+        }
+
+        int campHooks = 0;
+        for (WorldMap.LocationSite camp : world.locationSites("goblin_camp")) {
+            if (hasNearbyProp(world, camp.x(), camp.y(), 7, Set.of("location_camp_fire", "deco_imagen_road_camp"))) {
+                campHooks++;
+            }
+        }
+        if (campHooks < 4) {
+            throw new IllegalStateException("Raider camps did not receive enough visible campfire or camp markers.");
+        }
+
+        boolean hasGlowHook = world.props(WorldMap.OVERWORLD_ID).stream()
+                .anyMatch(prop -> prop.asset().contains("shrine") || prop.asset().contains("rune"));
+        if (!hasGlowHook) {
+            throw new IllegalStateException("Overworld discoverability pass did not add any shrine or rune glows.");
+        }
+    }
+
+    private static boolean hasNearbyDiscoverabilityProp(WorldMap world, int x, int y, int radius) {
+        for (WorldProp prop : world.propsInBounds(WorldMap.OVERWORLD_ID, x - radius, y - radius, x + radius + 1, y + radius + 1)) {
+            if (Math.abs(prop.x() - x) + Math.abs(prop.y() - y) <= radius && isDiscoverabilityProp(prop.asset())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasNearbyProp(WorldMap world, int x, int y, int radius, Set<String> assets) {
+        for (WorldProp prop : world.propsInBounds(WorldMap.OVERWORLD_ID, x - radius, y - radius, x + radius + 1, y + radius + 1)) {
+            if (Math.abs(prop.x() - x) + Math.abs(prop.y() - y) <= radius && assets.contains(prop.asset())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isDiscoverabilityProp(String asset) {
+        return asset != null && (asset.equals("deco_imagen_signpost")
+                || asset.equals("deco_imagen_milestone")
+                || asset.equals("deco_imagen_road_camp")
+                || asset.equals("deco_imagen_shrine_stone")
+                || asset.equals("deco_forest_shrine_stone")
+                || asset.equals("deco_imagen_green_rune_stone")
+                || asset.equals("deco_imagen_tundra_rune_stone")
+                || asset.equals("deco_mountain_cairn")
+                || asset.equals("deco_mountain_pass_way_cairn")
+                || asset.equals("location_camp_fire")
+                || asset.equals("location_ruin_standing_stones")
+                || asset.equals("deco_tree_elder_harvestable"));
+    }
+
+    private static void assertTravelLogNarration(GameState state) {
+        String road = TravelLogNarrator.narrate(state, "Road");
+        if ("Road".equals(road) || road.isBlank()) {
+            throw new IllegalStateException("Travel log did not narrate raw road terrain.");
+        }
+        String meadow = TravelLogNarrator.narrate(state, "Meadow");
+        if ("Meadow".equals(meadow) || meadow.isBlank()) {
+            throw new IllegalStateException("Travel log did not narrate raw meadow terrain.");
+        }
+        String leave = TravelLogNarrator.narrate(state, "You leave Oakhaven Village.");
+        if (!leave.startsWith("You leave Oakhaven Village;")) {
+            throw new IllegalStateException("Travel log did not narrate settlement exits.");
+        }
+        String ordinary = TravelLogNarrator.narrate(state, "Saved Test.");
+        if (!"Saved Test.".equals(ordinary)) {
+            throw new IllegalStateException("Travel log changed an ordinary status message.");
+        }
+    }
+
+    private static void assertLandmarkDiscoveryLog(GameState state) {
+        String oldMapId = state.currentMapId;
+        int oldX = state.playerX;
+        int oldY = state.playerY;
+        try {
+            WorldProp target = state.world.props(WorldMap.OVERWORLD_ID).stream()
+                    .filter(prop -> isDiscoverabilityProp(prop.asset()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Expected at least one discoverable landmark prop."));
+            state.currentMapId = WorldMap.OVERWORLD_ID;
+            state.playerX = target.x();
+            state.playerY = target.y();
+            LandmarkDiscoveryLog log = new LandmarkDiscoveryLog();
+            int nearbyDiscoverables = (int) state.world.propsInBounds(
+                    WorldMap.OVERWORLD_ID,
+                    target.x() - 4,
+                    target.y() - 4,
+                    target.x() + 5,
+                    target.y() + 5
+            ).stream()
+                    .filter(prop -> isDiscoverabilityProp(prop.asset()))
+                    .filter(prop -> Math.abs(prop.x() - target.x()) + Math.abs(prop.y() - target.y()) <= 4)
+                    .count();
+            String first = log.discover(state);
+            if (first.isBlank() || first.equals(Terrain.name(state.world.tileAt(WorldMap.OVERWORLD_ID, target.x(), target.y())))) {
+                throw new IllegalStateException("Landmark discovery did not emit narrative text.");
+            }
+            for (int i = 1; i < nearbyDiscoverables; i++) {
+                if (log.discover(state).isBlank()) {
+                    throw new IllegalStateException("Landmark discovery forgot a nearby landmark before exhausting the set.");
+                }
+            }
+            if (!log.discover(state).isBlank()) {
+                throw new IllegalStateException("Landmark discovery repeated an already discovered nearby set.");
+            }
+        } finally {
+            state.currentMapId = oldMapId;
+            state.playerX = oldX;
+            state.playerY = oldY;
         }
     }
 
@@ -1270,6 +1434,59 @@ public final class SmokeTest {
         }
     }
 
+    private static void assertCompanionNpcVisibility(GameState state) {
+        for (Npc npc : GameData.NPCS) {
+            if (npc.recruitId() == null || npc.recruitCost() > 0) {
+                continue;
+            }
+            if (!state.world.hasMap(npc.mapId())) {
+                throw new IllegalStateException("Recruitable NPC map does not exist: " + npc.name() + " -> " + npc.mapId());
+            }
+            GameState.NpcMotion motion = state.npcMotionsForMap(npc.mapId()).stream()
+                    .filter(candidate -> candidate.npc().equals(npc))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Recruitable NPC is not listed on their map: " + npc.name()
+                            + " -> " + npc.mapId()));
+            if (!state.world.isPassable(npc.mapId(), motion.x(), motion.y())) {
+                throw new IllegalStateException("Recruitable NPC spawned on blocked tile: " + npc.name()
+                        + " at " + npc.mapId() + " " + motion.x() + "," + motion.y());
+            }
+        }
+    }
+
+    private static void assertSettlementWeeklyQuestCoverage(GameState state) {
+        state.ensureWeeklyNpcQuests();
+        for (WorldMap.SettlementSite settlement : state.world.settlementSites()) {
+            if (WorldMap.PLAYER_VILLAGE_ID.equals(settlement.id())) {
+                continue;
+            }
+            List<GameState.NpcMotion> motions = state.npcMotionsForMap(settlement.id());
+            if (motions.isEmpty()) {
+                throw new IllegalStateException("Settlement has no exterior NPCs: " + settlement.id());
+            }
+            for (GameState.NpcMotion motion : motions) {
+                if (placeholderNpcName(motion.npc().name())) {
+                    throw new IllegalStateException("Settlement generated placeholder NPC name: "
+                            + motion.npc().name() + " in " + settlement.id());
+                }
+            }
+            boolean hasQuestGiver = motions.stream().anyMatch(motion -> state.questForNpc(motion.npc()) != null);
+            if (!hasQuestGiver) {
+                throw new IllegalStateException("Settlement has no visible quest giver: " + settlement.id());
+            }
+        }
+    }
+
+    private static boolean placeholderNpcName(String name) {
+        if (name == null || name.isBlank()) {
+            return true;
+        }
+        if (Set.of("Townsperson", "Householder", "Resident", "Townfolk").contains(name)) {
+            return true;
+        }
+        return name.matches("(Street Guide|Local Clerk|Doorward|Town Crier|Guard) \\d+");
+    }
+
     private static void acceptActiveQuestThroughDialogue(GameState state, String questId) {
         Quest quest = state.quests.get(questId);
         int guard = 0;
@@ -1289,14 +1506,19 @@ public final class SmokeTest {
                 "What work needs doing?",
                 "What work do you do here?",
                 "What exactly do you need?",
-                "I will bring proof",
-                "I will carry that carefully",
+                "I will help",
+                "I will follow",
+                "I will stand",
+                "I know the road",
+                "I will show up",
+                "Point me at",
+                "Show me where",
                 "How can I help?",
                 "I need more context first."
         };
         for (String priority : priorities) {
             for (int i = 0; i < options.size(); i++) {
-                if (options.get(i).equals(priority)) {
+                if (options.get(i).equals(priority) || options.get(i).startsWith(priority)) {
                     return i;
                 }
             }
@@ -1313,6 +1535,47 @@ public final class SmokeTest {
             }
         }
         return options.isEmpty() ? -1 : 0;
+    }
+
+    private static void assertShopTransactions(GameState state) {
+        if (state.mode != GameMode.SHOP || state.activeShop == null) {
+            throw new IllegalStateException("Shop transaction test requires an active shop.");
+        }
+        List<String> stock = state.activeShop.availableStock(state.player.level);
+        String itemKey = stock.stream()
+                .filter(key -> !CraftingSystem.isRecipeBookItem(key))
+                .filter(key -> GameData.itemCost(key) > 0)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Active shop has no purchasable inventory item."));
+        int stockIndex = stock.indexOf(itemKey);
+        int itemCost = GameData.itemCost(itemKey);
+        int initialCount = state.player.inventory.getOrDefault(itemKey, 0);
+
+        state.player.gold = itemCost - 1;
+        state.buyShopItem(stockIndex);
+        if (state.player.gold != itemCost - 1 || state.player.inventory.getOrDefault(itemKey, 0) != initialCount) {
+            throw new IllegalStateException("Shop allowed purchase without enough gold for " + itemKey + ".");
+        }
+
+        int purchaseGold = itemCost + 17;
+        state.player.gold = purchaseGold;
+        state.buyShopItem(stockIndex);
+        if (state.player.gold != purchaseGold - itemCost
+                || state.player.inventory.getOrDefault(itemKey, 0) != initialCount + 1) {
+            throw new IllegalStateException("Shop purchase did not debit gold and add exactly one " + itemKey + ".");
+        }
+
+        int sellIndex = state.player.inventory.keySet().stream().toList().indexOf(itemKey);
+        if (sellIndex < 0) {
+            throw new IllegalStateException("Purchased item was not available for sale: " + itemKey + ".");
+        }
+        int sellGold = state.player.gold;
+        state.sellShopItem(sellIndex);
+        int expectedSaleValue = Math.max(1, itemCost / 2);
+        if (state.player.gold != sellGold + expectedSaleValue
+                || state.player.inventory.getOrDefault(itemKey, 0) != initialCount) {
+            throw new IllegalStateException("Shop sale did not refund half value and remove one " + itemKey + ".");
+        }
     }
 
     private static void assertTownPortalPlacement(WorldMap world, String mapId, TilePoint portal) {

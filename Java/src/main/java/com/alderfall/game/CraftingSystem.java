@@ -1,5 +1,6 @@
 package com.alderfall.game;
 
+import com.alderfall.game.map.WorldMap;
 import com.alderfall.game.inventory.Equipment;
 import com.alderfall.game.inventory.Item;
 import java.util.ArrayList;

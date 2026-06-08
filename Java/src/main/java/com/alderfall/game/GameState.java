@@ -1,5 +1,7 @@
 package com.alderfall.game;
 
+import com.alderfall.game.map.WorldMap;
+import com.alderfall.game.map.WorldTransition;
 import com.alderfall.game.inventory.Equipment;
 import com.alderfall.game.inventory.Item;
 import java.util.ArrayList;
@@ -12,8 +14,10 @@ import java.util.Random;
 import java.util.Set;
 
 public final class GameState {
+    public record DialogueVideoPrompt(String key, String title, String caption, String assetPath) {
+    }
+
     public static final int TICKS_PER_GAME_DAY = 7200;
-    private static final int WEATHER_BLOCK_TICKS = 1200;
     private static final int VILLAGE_PRODUCTION_TICKS = 900;
     private static final int TICKS_PER_GAME_WEEK = TICKS_PER_GAME_DAY * 7;
     private static final int VILLAGE_RECRUIT_RELATIONSHIP = 55;
@@ -53,6 +57,8 @@ public final class GameState {
     }
     public final GameConfig config;
     public final WorldMap world;
+    private final WeatherController weatherController;
+    private final LandmarkDiscoveryLog landmarkDiscoveryLog = new LandmarkDiscoveryLog();
     public final Random random = new Random();
     public final Map<String, Quest> quests = new LinkedHashMap<>();
     public final List<Actor> allies = new ArrayList<>();
@@ -124,6 +130,7 @@ public final class GameState {
     public CityBuilding activeVillageBuilding;
     public int dialogIndex;
     private DialogueLibrary.DialogueSession activeDialogueSession;
+    private DialogueVideoPrompt activeDialogueVideo;
     private String activeNpcIntroLine = "";
     private String activeQuestDialogueLine = "";
     private String activeShopDialogueBuildingKey = "";
@@ -156,11 +163,13 @@ public final class GameState {
     public int lastGatheredPropWorldTick = -1;
     private TravelBanterPrompt activeTravelBanter;
     private final List<PendingCompanionComment> pendingCompanionComments = new ArrayList<>();
+    private final Map<String, Integer> recentTravelBanterKeys = new LinkedHashMap<>();
     private int nextTravelBanterTick = 420;
 
     public GameState(GameConfig config) {
         this.config = config;
         this.world = new WorldMap(0);
+        this.weatherController = new WeatherController(world);
         for (Map.Entry<String, Quest> entry : GameData.QUESTS.entrySet()) {
             quests.put(entry.getKey(), entry.getValue().copy());
         }
@@ -342,78 +351,23 @@ public final class GameState {
     }
 
     public WeatherCondition currentWeather() {
-        char biome = currentBiomeTile();
-        if (!isOutdoorWeatherMap(currentMapId)) {
-            return WeatherCondition.CLEAR;
-        }
-        int block = Math.floorDiv(worldTick, WEATHER_BLOCK_TICKS);
-        int seed = Math.abs(biome * 7349 + block * 9127 + dayNumber() * 1711);
-        int roll = Math.floorMod(seed, 100);
-        return switch (biome) {
-            case 'f' -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.CLEAR, WeatherCondition.CLOUDY, WeatherCondition.CLOUDY, WeatherCondition.RAIN,
-                    WeatherCondition.RAIN, WeatherCondition.FOG, WeatherCondition.STORM
-            });
-            case 's' -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.CLEAR, WeatherCondition.CLEAR, WeatherCondition.CLEAR, WeatherCondition.HEAT_HAZE,
-                    WeatherCondition.HEAT_HAZE, WeatherCondition.DUST, WeatherCondition.CLOUDY
-            });
-            case 'n' -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.CLEAR, WeatherCondition.CLOUDY, WeatherCondition.SNOW, WeatherCondition.SNOW,
-                    WeatherCondition.SNOW, WeatherCondition.FOG, WeatherCondition.BLIZZARD
-            });
-            case 'v' -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.FOG, WeatherCondition.FOG, WeatherCondition.CLOUDY, WeatherCondition.RAIN,
-                    WeatherCondition.RAIN, WeatherCondition.STORM, WeatherCondition.CLEAR
-            });
-            case 'b' -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.CLEAR, WeatherCondition.CLEAR, WeatherCondition.DUST, WeatherCondition.DUST,
-                    WeatherCondition.HEAT_HAZE, WeatherCondition.CLOUDY, WeatherCondition.STORM
-            });
-            case 'm', 'q' -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.CLEAR, WeatherCondition.CLOUDY, WeatherCondition.CLOUDY, WeatherCondition.FOG,
-                    WeatherCondition.RAIN, WeatherCondition.SNOW, WeatherCondition.STORM
-            });
-            case 'w' -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.CLOUDY, WeatherCondition.RAIN, WeatherCondition.RAIN, WeatherCondition.FOG,
-                    WeatherCondition.FOG, WeatherCondition.STORM, WeatherCondition.CLEAR
-            });
-            default -> weightedWeather(roll, new WeatherCondition[]{
-                    WeatherCondition.CLEAR, WeatherCondition.CLEAR, WeatherCondition.CLOUDY, WeatherCondition.CLOUDY,
-                    WeatherCondition.RAIN, WeatherCondition.FOG, WeatherCondition.STORM
-            });
-        };
+        return weatherController.currentWeather(currentMapId, currentBiomeTile(), worldTick, dayNumber());
     }
 
     public String weatherLabel() {
-        return currentWeather().label();
+        return weatherController.weatherLabel(currentWeather());
     }
 
     public double windRadians() {
-        int block = Math.floorDiv(worldTick, 900);
-        char biome = currentBiomeTile();
-        int seed = Math.abs(block * 48121 + biome * 1697 + dayNumber() * 337);
-        return (Math.floorMod(seed, 360) - 180) * Math.PI / 180.0;
+        return weatherController.windRadians(currentBiomeTile(), worldTick, dayNumber());
     }
 
     public double windStrength() {
-        WeatherCondition weather = currentWeather();
-        int block = Math.floorDiv(worldTick, 900);
-        int seed = Math.abs(block * 7349 + currentBiomeTile() * 251 + dayNumber() * 97);
-        double gust = Math.floorMod(seed, 100) / 100.0;
-        double base = switch (weather) {
-            case STORM, BLIZZARD -> 0.72;
-            case RAIN, SNOW, DUST -> 0.42;
-            case CLOUDY, FOG, HEAT_HAZE -> 0.24;
-            case CLEAR -> 0.16;
-        };
-        return Math.min(1.0, base + gust * 0.28);
+        return weatherController.windStrength(currentWeather(), currentBiomeTile(), worldTick, dayNumber());
     }
 
     public String windLabel() {
-        String[] labels = {"E", "SE", "S", "SW", "W", "NW", "N", "NE"};
-        int index = Math.floorMod((int) Math.round(windRadians() / (Math.PI / 4.0)), labels.length);
-        return labels[index] + " wind";
+        return weatherController.windLabel(windRadians());
     }
 
     public void openPauseMenu() {
@@ -516,7 +470,7 @@ public final class GameState {
     }
 
     public boolean talkToPartyAlly(Actor ally) {
-        if (mode != GameMode.EXPLORE || ally == null) {
+        if ((mode != GameMode.EXPLORE && mode != GameMode.PARTY && mode != GameMode.SKILLS) || ally == null) {
             return false;
         }
         if (crafting.active()) {
@@ -1072,6 +1026,39 @@ public final class GameState {
         return activeDialogueSession.line(npcRelationship(activeNpc));
     }
 
+    public DialogueLibrary.DialogueLine activeNpcDialogLineParts() {
+        if (activeNpc == null) {
+            return new DialogueLibrary.DialogueLine("", "...");
+        }
+        if (activeDialogueSession == null) {
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+        }
+        if (!activeNpcIntroLine.isBlank()) {
+            return DialogueLibrary.DialogueLine.from(activeNpcIntroLine);
+        }
+        if (!activeQuestDialogueLine.isBlank()) {
+            return DialogueLibrary.DialogueLine.from(activeQuestDialogueLine);
+        }
+        return activeDialogueSession.structuredLine(npcRelationship(activeNpc));
+    }
+
+    public DialogueVideoPrompt activeDialogueVideo() {
+        return activeDialogueVideo;
+    }
+
+    public boolean dialogueVideoActive() {
+        return activeDialogueVideo != null;
+    }
+
+    public void dismissDialogueVideo() {
+        if (activeDialogueVideo == null) {
+            return;
+        }
+        String title = activeDialogueVideo.title();
+        activeDialogueVideo = null;
+        status = title + " settled back into conversation.";
+    }
+
     private void clearActiveQuestDialogueLine() {
         activeQuestDialogueLine = "";
         activeShopDialogueBuildingKey = "";
@@ -1325,6 +1312,10 @@ public final class GameState {
     }
 
     private void applyDialogueEffect(String effect) {
+        if (effect != null && effect.startsWith("dialogue_video:")) {
+            triggerDialogueVideo(effect.substring("dialogue_video:".length()).strip());
+            return;
+        }
         if (effect != null && effect.startsWith("quest:accept:")) {
             applyQuestAcceptEffect(effect);
             return;
@@ -1393,6 +1384,32 @@ public final class GameState {
         }
     }
 
+    private void triggerDialogueVideo(String rawKey) {
+        String key = rawKey == null || rawKey.isBlank() ? "dialogue:scene" : rawKey.strip();
+        String[] parts = key.split(":");
+        String sceneType = parts.length > 0 && !parts[0].isBlank() ? parts[0] : "dialogue";
+        String recruitId = parts.length > 1 && !parts[1].isBlank() ? parts[1] : activeCompanionRecruitId();
+        String companionName = recruitId == null || recruitId.isBlank() ? "this conversation" : companionName(recruitId);
+        String safeKey = key.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_-]+", "_");
+        String title = switch (sceneType) {
+            case "flirt" -> "A Quiet Look with " + companionName;
+            case "milestone" -> "A Turning Point with " + companionName;
+            case "quest" -> "A Story Beat with " + companionName;
+            default -> "A Dialogue Scene";
+        };
+        String caption = switch (sceneType) {
+            case "flirt" -> companionName + " lets the moment linger instead of turning it back into work.";
+            case "milestone" -> companionName + " stays with the choice long enough for it to matter.";
+            case "quest" -> companionName + " carries the quest's consequence into a more intimate scene.";
+            default -> "The conversation pauses for a staged scene.";
+        };
+        activeDialogueVideo = new DialogueVideoPrompt(key, title, caption, "assets/videos/dialogue/" + safeKey + ".mp4");
+        if (recruitId != null && !recruitId.isBlank()) {
+            recordCompanionMemory(recruitId, sceneType, "Shared a dialogue scene with the player: " + title + ".");
+        }
+        status = title + " is ready to play.";
+    }
+
     private void applyRecruitEffect(String effect) {
         if (activeNpc == null || effect == null) {
             return;
@@ -1458,7 +1475,7 @@ public final class GameState {
         }
         String label = readableQuestOutcome(outcome);
         if (quest.companionQuest() && quest.chainOwnerId != null && !quest.chainOwnerId.isBlank()) {
-            recordCompanionMemory(quest.chainOwnerId, "quest_choice", "Chose " + label + " during " + quest.title + ".");
+            recordCompanionMemory(quest.chainOwnerId, "quest_choice", companionQuestChoiceMemory(quest, outcome, label));
         }
         publishCompanionEvent("quest_outcome:" + quest.outcomeKey() + ":" + outcome,
                 "Chose " + label + " in " + quest.title,
@@ -1471,6 +1488,76 @@ public final class GameState {
         if (quest.ready()) {
             status += " " + quest.activeReadyDialog();
         }
+    }
+
+    private String companionQuestStartMemory(Quest quest) {
+        String title = quest == null ? "the work" : quest.title;
+        String owner = quest == null ? "" : quest.chainOwnerId;
+        return switch (owner == null ? "" : owner) {
+            case "seraphine" -> "Agreed to help Seraphine expose the first lie behind " + title + " without dressing it as heroics.";
+            case "maera" -> "Agreed to follow Maera's evidence through " + title + ", even where the official record resists.";
+            case "cassia" -> "Agreed to stand with Cassia at the breach opened by " + title + ".";
+            case "lyra" -> "Agreed to help Lyra before " + title + " could turn more people into patients.";
+            case "samir" -> "Agreed to carry Samir's question through " + title + " without forcing easy certainty.";
+            case "aria" -> "Accepted Aria's warning that the road in " + title + " might be bait and chose to follow anyway.";
+            case "vesper" -> "Agreed to help Vesper uncover what was buried in " + title + " without tearing up the living root.";
+            case "rafiq" -> "Agreed to help Rafiq face the truth behind " + title + " before charm could improve the story.";
+            case "calder" -> "Agreed to help Calder carry the weight behind " + title + " with both hands.";
+            default -> "Started " + title + " together.";
+        };
+    }
+
+    private String companionQuestStageMemory(Quest quest, String completedStage) {
+        String title = quest == null ? "the quest" : quest.title;
+        String stage = completedStage == null || completedStage.isBlank() ? "a stage" : completedStage;
+        String owner = quest == null ? "" : quest.chainOwnerId;
+        return switch (owner == null ? "" : owner) {
+            case "seraphine" -> "Finished " + stage + " in " + title + "; Seraphine noticed which piece of ink finally made the lie nervous.";
+            case "maera" -> "Finished " + stage + " in " + title + "; Maera kept the contradiction instead of sanding it smooth.";
+            case "cassia" -> "Finished " + stage + " in " + title + "; Cassia watched the facts hold under pressure.";
+            case "lyra" -> "Finished " + stage + " in " + title + "; Lyra remembered who would have suffered if the player had waited.";
+            case "samir" -> "Finished " + stage + " in " + title + "; Samir let the evidence trouble the old lesson.";
+            case "aria" -> "Finished " + stage + " in " + title + "; Aria noticed the player reading the second trail before trusting the first.";
+            case "vesper" -> "Finished " + stage + " in " + title + "; Vesper saw the player touch the buried thing carefully.";
+            case "rafiq" -> "Finished " + stage + " in " + title + "; Rafiq remembered the moment truth became harder to joke around.";
+            case "calder" -> "Finished " + stage + " in " + title + "; Calder saw the player check the strain before praising the repair.";
+            default -> "Completed " + stage + " in " + title + ".";
+        };
+    }
+
+    private String companionQuestCompletionMemory(Quest quest) {
+        String title = quest == null ? "the quest" : quest.title;
+        String owner = quest == null ? "" : quest.chainOwnerId;
+        return switch (owner == null ? "" : owner) {
+            case "seraphine" -> "Completed " + title + "; Seraphine keeps thinking about the moment the player made the lie answer back.";
+            case "maera" -> "Completed " + title + "; Maera added the player's choice to the living record, not the official one.";
+            case "cassia" -> "Completed " + title + "; Cassia remembers that the player stood where the line actually moved.";
+            case "lyra" -> "Completed " + title + "; Lyra remembers the player choosing care while there was still time for it to matter.";
+            case "samir" -> "Completed " + title + "; Samir remembers the player letting doubt become guidance instead of shame.";
+            case "aria" -> "Completed " + title + "; Aria remembers the player spotting the false trail and still walking beside her.";
+            case "vesper" -> "Completed " + title + "; Vesper remembers the player letting what was buried live at its own pace.";
+            case "rafiq" -> "Completed " + title + "; Rafiq remembers the player staying when the truth stopped being charming.";
+            case "calder" -> "Completed " + title + "; Calder remembers the player helping carry the weight after the first crack showed.";
+            default -> "Completed " + title + " together.";
+        };
+    }
+
+    private String companionQuestChoiceMemory(Quest quest, String outcome, String label) {
+        String title = quest == null ? "the choice" : quest.title;
+        String owner = quest == null ? "" : quest.chainOwnerId;
+        String choice = label == null || label.isBlank() ? readableQuestOutcome(outcome) : label;
+        return switch (owner == null ? "" : owner) {
+            case "seraphine" -> "Chose " + choice + " during " + title + "; Seraphine noticed whether freedom was treated as a fact or a performance.";
+            case "maera" -> "Chose " + choice + " during " + title + "; Maera kept the reasoning in the margin where it could not be simplified.";
+            case "cassia" -> "Chose " + choice + " during " + title + "; Cassia measured the choice by who had to stand behind it.";
+            case "lyra" -> "Chose " + choice + " during " + title + "; Lyra remembers who the choice protected and who it could not.";
+            case "samir" -> "Chose " + choice + " during " + title + "; Samir kept returning to the mercy or truth inside the decision.";
+            case "aria" -> "Chose " + choice + " during " + title + "; Aria watched whether the player named the trap or stepped around it.";
+            case "vesper" -> "Chose " + choice + " during " + title + "; Vesper remembers what the decision allowed to keep growing.";
+            case "rafiq" -> "Chose " + choice + " during " + title + "; Rafiq noticed whether the truth survived style.";
+            case "calder" -> "Chose " + choice + " during " + title + "; Calder remembers whether the decision could bear weight afterward.";
+            default -> "Chose " + choice + " during " + title + ".";
+        };
     }
 
     private String normalizeQuestOutcome(String outcome) {
@@ -1990,7 +2077,9 @@ public final class GameState {
                             "Makes the answer personal. Builds trust strongly.",
                             "Invites them to keep holding you accountable."
                     ),
-                    List.of(1, 2, 1)
+                    List.of(1, 2, 1),
+                    List.of("companion_request", "request_fulfilled", recruitId),
+                    banterResponseLines(ally, List.of("companion_request", "request_fulfilled", recruitId), 2)
             ));
         }
     }
@@ -2115,7 +2204,7 @@ public final class GameState {
             invalidateNpcListCache();
             recordNpcKnowledge(activeNpc, quest.companionQuest() ? 2 : 1);
             if (quest.companionQuest()) {
-                recordCompanionMemoryForNpc(activeNpc, "quest_start", "Started " + quest.title + " together.");
+                recordCompanionMemoryForNpc(activeNpc, "quest_start", companionQuestStartMemory(quest));
             }
             publishCompanionEvent(
                     "quest_start:" + quest.id,
@@ -2159,6 +2248,9 @@ public final class GameState {
                 activeShopDialogueBuildingKey = "";
                 activeDialogueSession = startDialogueSessionFor(activeNpc);
                 String stageLabel = completedStage == null || completedStage.isBlank() ? "stage" : completedStage;
+                if (quest.companionQuest()) {
+                    recordCompanionMemoryForNpc(activeNpc, "quest_stage", companionQuestStageMemory(quest, completedStage));
+                }
                 status = "Quest stage complete: " + stageLabel + ". " + quest.activeStartDialog();
                 return true;
             }
@@ -2171,7 +2263,7 @@ public final class GameState {
             adjustNpcRelationship(activeNpc, quest.mainStoryQuest() ? 30 : quest.companionQuest() ? 18 : 10);
             recordNpcKnowledge(activeNpc, quest.companionQuest() ? 2 : 1);
             if (quest.companionQuest()) {
-                recordCompanionMemoryForNpc(activeNpc, "quest_complete", "Completed " + quest.title + " together.");
+                recordCompanionMemoryForNpc(activeNpc, "quest_complete", companionQuestCompletionMemory(quest));
             } else if (quest.mainStoryQuest()) {
                 recordMainStoryMemory("Saw the player complete " + quest.title + ".");
             }
@@ -2493,8 +2585,9 @@ public final class GameState {
         }
         weeklyQuestBlock = block;
         weeklyNpcQuestIds.clear();
-        for (Npc npc : GameData.NPCS) {
-            if (authoredQuestForNpc(npc) != null && !authoredQuestForNpc(npc).completed) {
+        for (Npc npc : weeklyQuestCandidates()) {
+            Quest authored = authoredQuestForNpc(npc);
+            if (authored != null && !authored.completed) {
                 continue;
             }
             String id = weeklyQuestId(npc, block);
@@ -2504,6 +2597,23 @@ public final class GameState {
         if (block > 0) {
             status = "A new week begins. Fresh sidequests are posted across the settlements.";
         }
+    }
+
+    private List<Npc> weeklyQuestCandidates() {
+        List<Npc> candidates = new ArrayList<>(GameData.NPCS);
+        Set<String> seen = new HashSet<>();
+        for (Npc npc : candidates) {
+            seen.add(npcRelationshipKey(npc));
+        }
+        for (WorldMap.SettlementSite settlement : world.settlementSites()) {
+            for (Npc npc : world.npcs(settlement.id())) {
+                String key = npcRelationshipKey(npc);
+                if (seen.add(key)) {
+                    candidates.add(npc);
+                }
+            }
+        }
+        return candidates;
     }
 
     private String weeklyQuestId(Npc npc, int block) {
@@ -2701,6 +2811,7 @@ public final class GameState {
         activePartyTalkActor = null;
         activeShop = null;
         activeDialogueSession = null;
+        activeDialogueVideo = null;
         activeNpcIntroLine = "";
         activeQuestDialogueLine = "";
         activeShopDialogueBuildingKey = "";
@@ -2732,13 +2843,11 @@ public final class GameState {
             enqueueCompanionComment(new PendingCompanionComment(
                     ally.name,
                     ally.name + ": " + line,
-                    List.of("I hear you.", "We will carry it carefully.", "Keep moving."),
-                    List.of(
-                            "A warm acknowledgement. Builds a little trust.",
-                            "Promises to keep the conversation in mind.",
-                            "Lets the thought rest without changing trust."
-                    ),
-                    List.of(1, 1, 0)
+                    banterReplyOptions(ally, List.of("memory", "dialogue_after", recruitId), 1),
+                    banterReplyTooltips(List.of("memory", "dialogue_after", recruitId), 1),
+                    banterReplyDeltas(List.of("memory", "dialogue_after", recruitId), 1),
+                    List.of("memory", "dialogue_after", recruitId),
+                    banterResponseLines(ally, List.of("memory", "dialogue_after", recruitId), 1)
             ));
         } else {
             status = activeNpc.name() + ": " + line;
@@ -5066,7 +5175,8 @@ public final class GameState {
             return true;
         }
         tickWorldAbilityTimers();
-        status = world.describe(currentMapId, playerX, playerY);
+        String discovery = landmarkDiscoveryLog.discover(this);
+        status = discovery.isBlank() ? world.describe(currentMapId, playerX, playerY) : discovery;
         maybeStartEncounter();
         return true;
     }
@@ -5180,62 +5290,333 @@ public final class GameState {
             return;
         }
         Actor speaker = activeAllies().get(random.nextInt(activeAllies().size()));
-        String line = travelBanterLine(speaker);
+        BanterDraft draft = travelBanterDraft(speaker);
+        if (draft.line().isBlank() || recentlyUsedBanter(speaker.name, draft.key())) {
+            nextTravelBanterTick = worldTick + 240 + random.nextInt(420);
+            return;
+        }
         activeTravelBanter = new TravelBanterPrompt(
                 speaker.name,
-                line,
-                List.of("Keep talking.", "Stay focused.", "Tell me later."),
-                List.of(
-                        "Encourage the companion to say more. Improves trust slightly.",
-                        "A tactical answer. Keeps momentum without changing trust.",
-                        "Defers the conversation. Slightly distant, but not hostile."
-                ),
-                List.of(1, 0, 0),
+                draft.line(),
+                banterReplyOptions(speaker, draft.tags(), 1),
+                banterReplyTooltips(draft.tags(), 1),
+                banterReplyDeltas(draft.tags(), 1),
+                draft.tags(),
+                banterResponseLines(speaker, draft.tags(), 1),
                 worldTick + 520
         );
+        markBanterUsed(speaker.name, draft.key());
         nextTravelBanterTick = worldTick + 1200 + random.nextInt(1600);
     }
 
-    private String travelBanterLine(Actor speaker) {
+    private BanterDraft travelBanterDraft(Actor speaker) {
         String recruitId = recruitIdForAlly(speaker);
         String className = speaker.className;
         String terrain = Terrain.name(world.tileAt(currentMapId, playerX, playerY));
-        String companionLine = companionExplorationBark(speaker, recruitId, terrain);
-        if (!companionLine.isBlank()) {
+        BanterDraft companionLine = companionExplorationBark(speaker, recruitId, terrain);
+        if (!companionLine.line().isBlank()) {
             return companionLine;
         }
+        List<String> tags = List.of("exploration", "road", "terrain:" + terrain.toLowerCase().replaceAll("[^a-z0-9]+", "_"));
         if (className.contains("Medic") || className.equals("Cleric") || className.equals("Grovekeeper")) {
-            return "This road is collecting injuries before we have earned them. I can smell trouble under the " + terrain.toLowerCase() + ".";
+            return new BanterDraft(speaker.name + ": This road is collecting injuries before we have earned them. I can smell trouble under the " + terrain.toLowerCase() + ".",
+                    tagged(tags, "healing", "caution"), "travel:healer:" + terrain);
         }
         if (className.contains("Mage") || className.equals("Wildspeaker") || className.equals("Thornbinder")) {
-            return "The air changed. Not enough for a spell, enough for a warning.";
+            return new BanterDraft(speaker.name + ": The air changed. Not enough for a spell, enough for a warning.",
+                    tagged(tags, "magic", "caution"), "travel:mage:" + terrain);
         }
         if (className.contains("Ranger") || className.equals("Scout") || className.equals("Dune Guide")) {
-            return "Tracks cross here twice. Someone doubled back, or wanted us to think they did.";
+            return new BanterDraft(speaker.name + ": Tracks cross here twice. Someone doubled back, or wanted us to think they did.",
+                    tagged(tags, "scouting", "caution"), "travel:scout:" + terrain);
         }
         if (className.contains("Rogue") || className.equals("Veilrunner") || className.equals("Nightblade")) {
-            return "If an ambush waits ahead, it has terrible manners. I would have chosen better cover.";
+            return new BanterDraft(speaker.name + ": If an ambush waits ahead, it has terrible manners. I would have chosen better cover.",
+                    tagged(tags, "clever", "danger"), "travel:rogue:" + terrain);
         }
-        return "Good pace. Bad road. That usually means we are exactly where someone needs us.";
+        return new BanterDraft(speaker.name + ": Good pace. Bad road. That usually means we are exactly where someone needs us.",
+                tags, "travel:generic:" + terrain);
     }
 
-    private String companionExplorationBark(Actor speaker, String recruitId, String terrain) {
+    private BanterDraft companionExplorationBark(Actor speaker, String recruitId, String terrain) {
         if (recruitId == null || recruitId.isBlank()) {
-            return "";
+            return new BanterDraft("", List.of(), "");
         }
         String ground = terrain.toLowerCase();
+        List<String> tags = List.of("exploration", "road", "terrain:" + ground.replaceAll("[^a-z0-9]+", "_"), recruitId);
         return switch (recruitId) {
-            case "seraphine" -> speaker.name + ": Roads like this always have terms. The trick is finding who wrote them before we step into the fee.";
-            case "maera" -> speaker.name + ": The " + ground + " keeps better records than most archives. Less flattering, usually more accurate.";
-            case "cassia" -> speaker.name + ": Watch the edges. Trouble prefers people who stare only at the road ahead.";
-            case "lyra" -> speaker.name + ": If anyone starts limping, say it before pride turns a small hurt into a long one.";
-            case "samir" -> speaker.name + ": The light sits strangely here. Not wrong. Asking questions, maybe.";
-            case "aria" -> speaker.name + ": Tracks cross the " + ground + " and then pretend not to. Amateur lie. Useful lie.";
-            case "vesper" -> speaker.name + ": Something living passed here recently. Even fear leaves roots if it stays long enough.";
-            case "rafiq" -> speaker.name + ": Excellent terrain for a dramatic ambush. Poor terrain for my boots. The road has mixed priorities.";
-            case "calder" -> speaker.name + ": Bad footing. Keep your weight honest and the road might return the favor.";
-            default -> "";
+            case "seraphine" -> new BanterDraft(speaker.name + ": Roads like this always have terms. The trick is finding who wrote them before we step into the fee.",
+                    tagged(tags, "clever", "freedom"), "travel:seraphine:" + ground);
+            case "maera" -> new BanterDraft(speaker.name + ": The " + ground + " keeps better records than most archives. Less flattering, usually more accurate.",
+                    tagged(tags, "knowledge", "evidence"), "travel:maera:" + ground);
+            case "cassia" -> new BanterDraft(speaker.name + ": Watch the edges. Trouble prefers people who stare only at the road ahead.",
+                    tagged(tags, "duty", "protection"), "travel:cassia:" + ground);
+            case "lyra" -> new BanterDraft(speaker.name + ": If anyone starts limping, say it before pride turns a small hurt into a long one.",
+                    tagged(tags, "healing", "care"), "travel:lyra:" + ground);
+            case "samir" -> new BanterDraft(speaker.name + ": The light sits strangely here. Not wrong. Asking questions, maybe.",
+                    tagged(tags, "holy", "truth"), "travel:samir:" + ground);
+            case "aria" -> new BanterDraft(speaker.name + ": Tracks cross the " + ground + " and then pretend not to. Amateur lie. Useful lie.",
+                    tagged(tags, "scouting", "caution"), "travel:aria:" + ground);
+            case "vesper" -> new BanterDraft(speaker.name + ": Something living passed here recently. Even fear leaves roots if it stays long enough.",
+                    tagged(tags, "nature", "patience"), "travel:vesper:" + ground);
+            case "rafiq" -> new BanterDraft(speaker.name + ": Excellent terrain for a dramatic ambush. Poor terrain for my boots. The road has mixed priorities.",
+                    tagged(tags, "style", "danger"), "travel:rafiq:" + ground);
+            case "calder" -> new BanterDraft(speaker.name + ": Bad footing. Keep your weight honest and the road might return the favor.",
+                    tagged(tags, "practical", "craft"), "travel:calder:" + ground);
+            default -> new BanterDraft("", List.of(), "");
         };
+    }
+
+    private List<String> tagged(List<String> baseTags, String... extraTags) {
+        List<String> tags = new ArrayList<>();
+        if (baseTags != null) {
+            for (String tag : baseTags) {
+                addTag(tags, tag);
+            }
+        }
+        if (extraTags != null) {
+            for (String tag : extraTags) {
+                addTag(tags, tag);
+            }
+        }
+        return tags;
+    }
+
+    private void addTag(List<String> tags, String tag) {
+        if (tag == null || tag.isBlank()) {
+            return;
+        }
+        String normalized = tag.strip().toLowerCase(Locale.ROOT);
+        if (!tags.contains(normalized)) {
+            tags.add(normalized);
+        }
+    }
+
+    private boolean recentlyUsedBanter(String speaker, String key) {
+        cleanupRecentTravelBanterKeys();
+        if (speaker == null || key == null || key.isBlank()) {
+            return false;
+        }
+        return recentTravelBanterKeys.containsKey(speaker + "|" + key);
+    }
+
+    private void markBanterUsed(String speaker, String key) {
+        cleanupRecentTravelBanterKeys();
+        if (speaker == null || key == null || key.isBlank()) {
+            return;
+        }
+        recentTravelBanterKeys.put(speaker + "|" + key, worldTick);
+        while (recentTravelBanterKeys.size() > 36) {
+            String oldest = recentTravelBanterKeys.keySet().iterator().next();
+            recentTravelBanterKeys.remove(oldest);
+        }
+    }
+
+    private void cleanupRecentTravelBanterKeys() {
+        recentTravelBanterKeys.entrySet().removeIf(entry -> worldTick - entry.getValue() > TICKS_PER_GAME_DAY * 2);
+    }
+
+    private List<String> banterReplyOptions(Actor ally, List<String> tags, int approvalDelta) {
+        String recruitId = recruitIdForAlly(ally);
+        if (tags.contains("combat")) {
+            if (tags.contains("hard") || tags.contains("reckless") || approvalDelta < 0) {
+                return List.of(
+                        "You are right. I pushed too hard.",
+                        "We survived because you held.",
+                        "Say what you saw."
+                );
+            }
+            return List.of(
+                    "You held the line with me.",
+                    "Check everyone before we move.",
+                    "Keep your eyes on the road."
+            );
+        }
+        if (tags.contains("oathstead") || tags.contains("build")) {
+            return List.of(
+                    "I want this place to feel like yours too.",
+                    "Tell me what it still needs.",
+                    "Good. We keep building."
+            );
+        }
+        if (tags.contains("companion_request")) {
+            return List.of(
+                    "That matters to you. I hear it.",
+                    "Tell me exactly what you need from me.",
+                    "Not now, but I have not forgotten."
+            );
+        }
+        if (approvalDelta < 0) {
+            return List.of(
+                    "Tell me what sat wrong with you.",
+                    "I made the call I could live with.",
+                    "Not now."
+            );
+        }
+        return switch (recruitId) {
+            case "aria" -> List.of("You noticed something before I did.", "What did the road tell you?", "Stay sharp with me.");
+            case "vesper" -> List.of("You heard something in this place.", "What should I leave undisturbed?", "We will move gently.");
+            case "rafiq" -> List.of("That sounded almost sincere.", "Make the joke, then the truth.", "Try not to admire the danger.");
+            case "calder" -> List.of("What would you check first?", "You make the road sound like a beam under strain.", "Practical answer, then.");
+            case "seraphine" -> List.of("You think there is a price hidden here.", "Name the terms you see.", "I trust your suspicion.");
+            case "lyra" -> List.of("You are watching everyone breathe again.", "Tell me who you are worried about.", "I will not make you carry that alone.");
+            case "samir" -> List.of("You sound like the road asked a question.", "Tell me what the light is showing you.", "We can doubt and still move.");
+            case "maera" -> List.of("You are reading the ground like a record.", "What detail would others miss?", "Put it in plain words for me.");
+            case "cassia" -> List.of("You are measuring the edges again.", "What would break formation here?", "I will hold my side.");
+            default -> List.of("I am listening.", "What did you notice?", "We keep moving.");
+        };
+    }
+
+    private List<String> banterReplyTooltips(List<String> tags, int approvalDelta) {
+        if (tags.contains("combat") || approvalDelta < 0) {
+            return List.of(
+                    "Own the risk and invite honesty. Improves trust.",
+                    "Recognize their contribution. Improves trust.",
+                    "Ask for a tactical read. Small trust gain."
+            );
+        }
+        return List.of(
+                "Warm, personal reply. Improves trust.",
+                "Curious reply that asks for their perspective. Improves trust.",
+                "Practical reply. Keeps momentum."
+        );
+    }
+
+    private List<Integer> banterReplyDeltas(List<String> tags, int approvalDelta) {
+        if (approvalDelta < 0) {
+            return List.of(1, 0, -1);
+        }
+        if (tags.contains("combat") || tags.contains("companion_request")) {
+            return List.of(1, 1, 0);
+        }
+        return List.of(1, 1, 0);
+    }
+
+    private List<String> banterResponseLines(Actor ally, List<String> tags, int approvalDelta) {
+        List<Integer> deltas = banterReplyDeltas(tags, approvalDelta);
+        List<String> responses = new ArrayList<>();
+        for (int i = 0; i < deltas.size(); i++) {
+            responses.add(banterResponseLine(ally, tags, i, deltas.get(i)));
+        }
+        return responses;
+    }
+
+    private String banterResponseLine(Actor ally, List<String> tags, int optionIndex, int delta) {
+        if (ally == null) {
+            return "";
+        }
+        String recruitId = recruitIdForAlly(ally);
+        int relationship = npcRelationship(npcForAlly(ally));
+        String tier = relationship >= 150 ? "high" : relationship >= 70 ? "mid" : "low";
+        String memory = latestCompanionMemoryText(recruitId);
+        if (tags.contains("combat")) {
+            return companionCombatReplyLine(ally, recruitId, tier, optionIndex, memory);
+        }
+        if (tags.contains("oathstead") || tags.contains("build")) {
+            return companionOathsteadReplyLine(ally, recruitId, tier, optionIndex);
+        }
+        if (delta < 0 || optionIndex == 2 && !tags.contains("exploration")) {
+            return companionDistantReplyLine(ally, recruitId, tier);
+        }
+        if (optionIndex == 0 && !memory.isBlank() && relationship >= 70) {
+            return companionMemoryAwareReplyLine(ally, recruitId, tier, memory);
+        }
+        return companionExplorationReplyLine(ally, recruitId, tier, optionIndex);
+    }
+
+    private String companionCombatReplyLine(Actor ally, String recruitId, String tier, int optionIndex, String memory) {
+        if (optionIndex == 2) {
+            return switch (recruitId) {
+                case "aria" -> ally.name + ": I saw the flank open before the first shout. Next time, we move before they learn we noticed.";
+                case "lyra" -> ally.name + ": I saw breathing turn ragged. That is the part victory songs always forget.";
+                case "calder" -> ally.name + ": Left side nearly folded. We fix that before the next impact.";
+                default -> ally.name + ": I saw enough to respect the danger. That is the useful answer.";
+            };
+        }
+        if ("high".equals(tier) && !memory.isBlank()) {
+            return ally.name + ": I will say it plainly because you have earned plain words. I remembered " + memory.toLowerCase(Locale.ROOT) + " while we fought.";
+        }
+        return switch (recruitId) {
+            case "seraphine" -> ally.name + ": Then let us choose terms sooner next time. I dislike surviving by accident.";
+            case "maera" -> ally.name + ": Good. We keep the lesson, not the panic.";
+            case "cassia" -> ally.name + ": You held. I can work with someone who holds.";
+            case "lyra" -> ally.name + ": Then let me count everyone twice, and we can call it victory.";
+            case "samir" -> ally.name + ": Courage listens better when pride is quiet.";
+            case "aria" -> ally.name + ": I noticed you listening. That matters more than the apology.";
+            case "vesper" -> ally.name + ": Good. The damage needs witnesses before it becomes wisdom.";
+            case "rafiq" -> ally.name + ": Excellent. We are both alive and almost mature about it.";
+            case "calder" -> ally.name + ": Good. Inspection first, boasting never if we can help it.";
+            default -> ally.name + ": Good. Then the next fight starts with cleaner eyes.";
+        };
+    }
+
+    private String companionOathsteadReplyLine(Actor ally, String recruitId, String tier, int optionIndex) {
+        if (optionIndex == 1) {
+            return switch (recruitId) {
+                case "calder" -> ally.name + ": Dry storage, better braces, and people who stop calling temporary repairs temporary after a year.";
+                case "vesper" -> ally.name + ": A place where roots are not ripped up just because the road is impatient.";
+                case "lyra" -> ally.name + ": More rest than pride allows, and a corner where fear can sit without being mocked.";
+                default -> ally.name + ": It needs people who can argue and still return to the same hearth.";
+            };
+        }
+        return "high".equals(tier)
+                ? ally.name + ": Then I will let myself want that. Carefully. Wanting a home is not a small risk."
+                : ally.name + ": Then keep making it honest. A place can lie as easily as a person.";
+    }
+
+    private String companionDistantReplyLine(Actor ally, String recruitId, String tier) {
+        return switch (recruitId) {
+            case "seraphine" -> ally.name + ": Convenient distance. I know the shape. We can return to it when you are less fond of it.";
+            case "aria" -> ally.name + ": Fine. I know how to keep a thought packed for later.";
+            case "vesper" -> ally.name + ": Then later. Roots can wait. They do not forget.";
+            case "rafiq" -> ally.name + ": Ah, the tactical retreat from feelings. A classic maneuver.";
+            case "calder" -> ally.name + ": Later, then. Weight does not vanish because we stop naming it.";
+            default -> ally.name + ": Later, then. I heard the answer too.";
+        };
+    }
+
+    private String companionMemoryAwareReplyLine(Actor ally, String recruitId, String tier, String memory) {
+        String remembered = memory.length() > 110 ? memory.substring(0, 107) + "..." : memory;
+        return switch (recruitId) {
+            case "aria" -> ally.name + ": I remember that too. " + remembered + " I notice who comes back after the trail gets ugly.";
+            case "vesper" -> ally.name + ": It is still growing in me. " + remembered + " Some things need time before they become trust.";
+            case "rafiq" -> ally.name + ": Do not look so pleased. I remember it too: " + remembered;
+            case "calder" -> ally.name + ": That stayed with me. " + remembered + " Some repairs begin after the work looks finished.";
+            case "seraphine" -> ally.name + ": I remember the terms of that moment. " + remembered + " You did not spend trust cheaply.";
+            case "lyra" -> ally.name + ": I remember. " + remembered + " Care becomes real when someone returns to it.";
+            case "samir" -> ally.name + ": I have carried that quietly. " + remembered + " It still gives light from an unexpected angle.";
+            case "maera" -> ally.name + ": I kept that in the margin. " + remembered + " It refused to become a simple note.";
+            case "cassia" -> ally.name + ": I remember where you stood. " + remembered + " People reveal themselves under weight.";
+            default -> ally.name + ": I remember that. " + remembered;
+        };
+    }
+
+    private String companionExplorationReplyLine(Actor ally, String recruitId, String tier, int optionIndex) {
+        if ("high".equals(tier) && optionIndex == 0) {
+            return switch (recruitId) {
+                case "aria" -> ally.name + ": You asking like that makes the road feel less like a thing I have to survive alone.";
+                case "vesper" -> ally.name + ": Then walk quietly with me. I trust you more when you do not rush the answer.";
+                case "rafiq" -> ally.name + ": Careful. If you keep listening, I may become sincere and ruin my reputation.";
+                case "calder" -> ally.name + ": Good. I am tired of pretending practical things do not become personal.";
+                default -> ally.name + ": Good. I have started believing you mean that.";
+            };
+        }
+        if ("mid".equals(tier)) {
+            return ally.name + ": Good. I can work with a question that makes room for an answer.";
+        }
+        return ally.name + ": Then listen with your feet too. Roads punish careless attention.";
+    }
+
+    private void recordBanterMemory(Actor ally, List<String> tags, int optionIndex) {
+        String recruitId = recruitIdForAlly(ally);
+        if (recruitId.isBlank()) {
+            return;
+        }
+        String category = tags.contains("combat") ? "banter_combat" : tags.contains("oathstead") ? "banter_oathstead" : "banter";
+        String text = optionIndex == 0
+                ? "The player answered a passing comment with warmth instead of treating it as noise."
+                : "The player asked for the companion's perspective during travel.";
+        recordCompanionMemory(recruitId, category, text);
     }
 
     public TravelBanterPrompt activeTravelBanter() {
@@ -5244,6 +5625,13 @@ public final class GameState {
 
     public void replyToTravelBanter(int optionIndex) {
         if (activeTravelBanter == null || optionIndex < 0 || optionIndex >= activeTravelBanter.options().size()) {
+            return;
+        }
+        if (activeTravelBanter.tags().contains("banter_response")) {
+            activeTravelBanter = null;
+            nextTravelBanterTick = pendingCompanionComments.isEmpty()
+                    ? worldTick + 900 + random.nextInt(1200)
+                    : worldTick + 120;
             return;
         }
         String speaker = activeTravelBanter.speaker();
@@ -5255,17 +5643,29 @@ public final class GameState {
         if (delta != 0) {
             adjustNpcRelationshipDirect(npc, delta);
         }
-        if (optionIndex == 0) {
-            status = delta > 0
-                    ? speaker + " takes the answer in, and the road between you feels warmer."
-                    : speaker + " accepts the answer and keeps pace.";
-        } else if (optionIndex == 1) {
-            status = speaker + " nods and scans the horizon.";
-        } else {
-            status = delta < 0
-                    ? speaker + " lets the matter drop, but the silence has edges."
-                    : speaker + " lets the thought rest for now.";
+        List<String> responses = activeTravelBanter.optionResponseLines();
+        String response = optionIndex < responses.size() ? responses.get(optionIndex) : "";
+        if (response.isBlank() && ally != null) {
+            response = banterResponseLine(ally, activeTravelBanter.tags(), optionIndex, delta);
         }
+        if (!response.isBlank()) {
+            activeTravelBanter = new TravelBanterPrompt(
+                    speaker,
+                    response,
+                    List.of("We keep moving."),
+                    List.of("Close the exchange and return to travel."),
+                    List.of(0),
+                    tagged(activeTravelBanter.tags(), "banter_response"),
+                    List.of(""),
+                    worldTick + 520
+            );
+            if (ally != null && delta > 0) {
+                recordBanterMemory(ally, activeTravelBanter.tags(), optionIndex);
+            }
+            nextTravelBanterTick = worldTick + 900 + random.nextInt(1200);
+            return;
+        }
+        status = speaker + " lets the thought settle and keeps pace.";
         activeTravelBanter = null;
         if (!pendingCompanionComments.isEmpty()) {
             nextTravelBanterTick = worldTick + 120;
@@ -5445,16 +5845,6 @@ public final class GameState {
             parts.add(entry.getValue() + " " + GameData.itemName(entry.getKey()));
         }
         return String.join(", ", parts);
-    }
-
-    private WeatherCondition weightedWeather(int roll, WeatherCondition[] conditions) {
-        int index = Math.min(conditions.length - 1, roll * conditions.length / 100);
-        return conditions[index];
-    }
-
-    private boolean isOutdoorWeatherMap(String mapId) {
-        String kind = world.kind(mapId);
-        return "overworld".equals(kind) || "city".equals(kind) || "village".equals(kind);
     }
 
     private char biomeTileAt(String mapId, int x, int y) {
@@ -7437,13 +7827,15 @@ public final class GameState {
         enqueueCompanionComment(new PendingCompanionComment(
                 ally.name,
                 ally.name + ": When we have a quiet moment, there is something I should say about this " + label + " between us.",
-                List.of("We will talk.", "Say it when ready.", "Keep moving for now."),
+                List.of("I want to hear it from you.", "Say it when you are ready.", "We can keep it for a quieter road."),
                 List.of(
-                        "Acknowledges the moment and leaves room for the full conversation.",
+                        "Warmly acknowledges the bond. Improves trust.",
                         "Gives the companion patience and agency.",
                         "Defers the scene without losing it."
                 ),
-                List.of(1, 1, 0)
+                List.of(2, 1, 0),
+                List.of("relationship", "milestone", "trust:" + threshold, recruitId),
+                banterResponseLines(ally, List.of("relationship", "milestone", "trust:" + threshold, recruitId), 2)
         ));
     }
 
@@ -7489,27 +7881,16 @@ public final class GameState {
                 .max((left, right) -> Integer.compare(Math.abs(left.approvalDelta()), Math.abs(right.approvalDelta())))
                 .orElse(reactions.get(0));
         String line = companionEventCommentLine(speaker.ally(), speaker.recruitId(), detail, eventTags, speaker.approvalDelta());
-        List<String> options;
-        List<String> tooltips;
-        List<Integer> deltas;
-        if (speaker.approvalDelta() < 0) {
-            options = List.of("You may be right.", "It was necessary.", "Drop it.");
-            tooltips = List.of(
-                    "Acknowledge their concern. Repairs a little trust.",
-                    "Stand by the action. Keeps the disagreement contained.",
-                    "Dismiss their concern. Damages trust."
-            );
-            deltas = List.of(1, 0, -1);
-        } else {
-            options = List.of("I hear you.", "Good point.", "Keep moving.");
-            tooltips = List.of(
-                    "Meet the comment warmly. Builds a little more trust.",
-                    "Accept the observation without lingering.",
-                    "Keep the party focused. No extra trust change."
-            );
-            deltas = List.of(1, 0, 0);
-        }
-        enqueueCompanionComment(new PendingCompanionComment(speaker.ally().name, line, options, tooltips, deltas));
+        List<String> promptTags = tagged(eventTags, "event", speaker.recruitId());
+        enqueueCompanionComment(new PendingCompanionComment(
+                speaker.ally().name,
+                line,
+                banterReplyOptions(speaker.ally(), promptTags, speaker.approvalDelta()),
+                banterReplyTooltips(promptTags, speaker.approvalDelta()),
+                banterReplyDeltas(promptTags, speaker.approvalDelta()),
+                promptTags,
+                banterResponseLines(speaker.ally(), promptTags, speaker.approvalDelta())
+        ));
     }
 
     private int companionApprovalDelta(String recruitId, List<String> tags, int baseApproval) {
@@ -7647,6 +8028,10 @@ public final class GameState {
         if (comment == null || comment.line().isBlank()) {
             return;
         }
+        if (!comment.tags().contains("milestone") && recentlyUsedBanter(comment.speaker(), comment.line())) {
+            return;
+        }
+        markBanterUsed(comment.speaker(), comment.line());
         if (activeTravelBanter == null && mode == GameMode.EXPLORE) {
             activeTravelBanter = comment.toPrompt(worldTick + 900);
             nextTravelBanterTick = worldTick + 1300;
@@ -7667,6 +8052,37 @@ public final class GameState {
         nextTravelBanterTick = worldTick + 1300;
     }
 
+    private List<String> postCombatTags(Actor speaker, boolean majorFight, boolean hardFight) {
+        List<String> tags = new ArrayList<>(List.of("combat", recruitIdForAlly(speaker)));
+        if (majorFight) {
+            tags.add("major");
+            tags.add("courage");
+            tags.add("duty");
+        }
+        if (hardFight) {
+            tags.add("hard");
+            tags.add("reckless");
+        }
+        return tags;
+    }
+
+    private List<String> actionBanterTags(String line, Actor speaker) {
+        List<String> tags = new ArrayList<>(List.of("action", recruitIdForAlly(speaker)));
+        String text = line == null ? "" : line.toLowerCase(Locale.ROOT);
+        if (text.contains("oathstead") || text.contains("working at") || text.contains("assigned")) {
+            tags.add("oathstead");
+            tags.add("build");
+        }
+        if (text.contains("joined") || text.contains("travel")) {
+            tags.add("recruited");
+            tags.add("loyalty");
+        }
+        if (text.contains("request")) {
+            tags.add("companion_request");
+        }
+        return tags;
+    }
+
     private void triggerPostCombatBanter(Actor speaker, boolean majorFight, boolean hardFight) {
         if (speaker == null) {
             return;
@@ -7674,15 +8090,14 @@ public final class GameState {
         activeTravelBanter = new TravelBanterPrompt(
                 speaker.name,
                 postCombatBanterLine(speaker, majorFight, hardFight),
-                List.of("You held well too.", "Everyone still standing?", "Keep watch."),
-                List.of(
-                        "Warm response. Builds trust with this companion.",
-                        "Practical care. Small trust gain and a steadier tone.",
-                        "Tactical response. No extra trust, but keeps the party moving."
-                ),
-                List.of(1, 1, 0),
+                banterReplyOptions(speaker, postCombatTags(speaker, majorFight, hardFight), hardFight ? -1 : 1),
+                banterReplyTooltips(postCombatTags(speaker, majorFight, hardFight), hardFight ? -1 : 1),
+                banterReplyDeltas(postCombatTags(speaker, majorFight, hardFight), hardFight ? -1 : 1),
+                postCombatTags(speaker, majorFight, hardFight),
+                banterResponseLines(speaker, postCombatTags(speaker, majorFight, hardFight), hardFight ? -1 : 1),
                 worldTick + 900
         );
+        markBanterUsed(speaker.name, "combat:" + (majorFight ? "major" : hardFight ? "hard" : "normal"));
         nextTravelBanterTick = worldTick + 1300;
     }
 
@@ -7693,13 +8108,11 @@ public final class GameState {
         enqueueCompanionComment(new PendingCompanionComment(
                 speaker.name,
                 line,
-                List.of("I am glad you are here.", "Make it your own.", "We keep moving."),
-                List.of(
-                        "Warm response. Improves trust with this companion.",
-                        "Encourages them to invest in their role.",
-                        "Practical response. No extra trust, but keeps momentum."
-                ),
-                List.of(1, 1, 0)
+                banterReplyOptions(speaker, actionBanterTags(line, speaker), 1),
+                banterReplyTooltips(actionBanterTags(line, speaker), 1),
+                banterReplyDeltas(actionBanterTags(line, speaker), 1),
+                actionBanterTags(line, speaker),
+                banterResponseLines(speaker, actionBanterTags(line, speaker), 1)
         ));
     }
 
@@ -8452,7 +8865,10 @@ public final class GameState {
     private NpcRuntime runtimeFor(Npc npc) {
         return npcRuntime.computeIfAbsent(npc, ignored -> {
             TilePoint home = world.npcHome(npc);
-            return new NpcRuntime(npc.x(), npc.y(), home.x(), home.y(), Math.max(0, random.nextInt(90)));
+            TilePoint start = world.isPassable(npc.mapId(), npc.x(), npc.y())
+                    ? new TilePoint(npc.x(), npc.y())
+                    : home;
+            return new NpcRuntime(start.x(), start.y(), home.x(), home.y(), Math.max(0, random.nextInt(90)));
         });
     }
 
@@ -8576,10 +8992,12 @@ public final class GameState {
             List<String> options,
             List<String> optionTooltips,
             List<Integer> optionRelationshipDeltas,
+            List<String> tags,
+            List<String> optionResponseLines,
             int expiresAtTick
     ) {
         public TravelBanterPrompt(String speaker, String line, List<String> options, int expiresAtTick) {
-            this(speaker, line, options, List.of(), List.of(), expiresAtTick);
+            this(speaker, line, options, List.of(), List.of(), List.of(), List.of(), expiresAtTick);
         }
 
         public TravelBanterPrompt(
@@ -8589,13 +9007,26 @@ public final class GameState {
                 List<String> optionTooltips,
                 int expiresAtTick
         ) {
-            this(speaker, line, options, optionTooltips, List.of(), expiresAtTick);
+            this(speaker, line, options, optionTooltips, List.of(), List.of(), List.of(), expiresAtTick);
+        }
+
+        public TravelBanterPrompt(
+                String speaker,
+                String line,
+                List<String> options,
+                List<String> optionTooltips,
+                List<Integer> optionRelationshipDeltas,
+                int expiresAtTick
+        ) {
+            this(speaker, line, options, optionTooltips, optionRelationshipDeltas, List.of(), List.of(), expiresAtTick);
         }
 
         public TravelBanterPrompt {
             options = options == null ? List.of() : List.copyOf(options);
             optionTooltips = optionTooltips == null ? List.of() : List.copyOf(optionTooltips);
             optionRelationshipDeltas = optionRelationshipDeltas == null ? List.of() : List.copyOf(optionRelationshipDeltas);
+            tags = tags == null ? List.of() : List.copyOf(tags);
+            optionResponseLines = optionResponseLines == null ? List.of() : List.copyOf(optionResponseLines);
         }
     }
 
@@ -8647,7 +9078,9 @@ public final class GameState {
             String line,
             List<String> options,
             List<String> optionTooltips,
-            List<Integer> optionRelationshipDeltas
+            List<Integer> optionRelationshipDeltas,
+            List<String> tags,
+            List<String> optionResponseLines
     ) {
         private PendingCompanionComment {
             speaker = speaker == null ? "" : speaker.strip();
@@ -8655,10 +9088,20 @@ public final class GameState {
             options = options == null ? List.of() : List.copyOf(options);
             optionTooltips = optionTooltips == null ? List.of() : List.copyOf(optionTooltips);
             optionRelationshipDeltas = optionRelationshipDeltas == null ? List.of() : List.copyOf(optionRelationshipDeltas);
+            tags = tags == null ? List.of() : List.copyOf(tags);
+            optionResponseLines = optionResponseLines == null ? List.of() : List.copyOf(optionResponseLines);
         }
 
         private TravelBanterPrompt toPrompt(int expiresAtTick) {
-            return new TravelBanterPrompt(speaker, line, options, optionTooltips, optionRelationshipDeltas, expiresAtTick);
+            return new TravelBanterPrompt(speaker, line, options, optionTooltips, optionRelationshipDeltas, tags, optionResponseLines, expiresAtTick);
+        }
+    }
+
+    private record BanterDraft(String line, List<String> tags, String key) {
+        private BanterDraft {
+            line = line == null ? "" : line.replaceAll("\\s+", " ").strip();
+            tags = tags == null ? List.of() : List.copyOf(tags);
+            key = key == null || key.isBlank() ? line : key.strip();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.alderfall.game;
 
+import com.alderfall.game.map.WorldMap;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +46,7 @@ public final class DialogueLibrary {
             addCompanionRecruitmentTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
             addCompanionRelationshipTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
             addCompanionRomanceTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
+            addCompanionFlirtTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
             addCompanionCheckInTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
             addCompanionValuesTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
             addCompanionSharedTableTree(nodes, homeChoices, companionVoice, relationship, dialogueContext);
@@ -410,35 +412,35 @@ public final class DialogueLibrary {
         rootChoices.add(new DialogueChoice(companionQuestRootLabel(quest), "companion_quest"));
         if (questStage == QuestDialogueStage.OFFER) {
             addNode(nodes, "companion_quest", voice.reply(DialogueIntent.QUEST_ROOT, relationship, context, voice.questOpening(quest)), List.of(
-                    new DialogueChoice("Tell me what is really happening.", "companion_quest_clarify", 1),
+                    new DialogueChoice("Start from the beginning.", "companion_quest_clarify", 1),
                     new DialogueChoice(voice.personalQuestion(), "companion_quest_personal", 1),
                     new DialogueChoice(practicalQuestLabel(quest), "companion_quest_practical", 1),
-                    new DialogueChoice(questCommitLabel(quest), "companion_quest_accept", 2, questAcceptEffect(quest)),
-                    new DialogueChoice("Give me the short version.", "companion_quest_push", -1),
+                    new DialogueChoice(voice.questCommitLabel(quest), "companion_quest_accept", 2, questAcceptEffect(quest)),
+                    new DialogueChoice("Give me the version I can act on.", "companion_quest_push", -1),
                     backToCompanion(voice)
             ));
         } else if (questStage == QuestDialogueStage.READY) {
             addNode(nodes, "companion_quest", voice.reply(DialogueIntent.QUEST_ROOT, relationship, context, voice.questOpening(quest)), List.of(
-                    new DialogueChoice("Here is what I found.", "companion_quest_turnin", 2, questTurnInEffect(quest)),
-                    new DialogueChoice("What does this prove?", "companion_quest_clarify", 1),
+                    new DialogueChoice("I brought what you needed.", "companion_quest_turnin", 2, questTurnInEffect(quest)),
+                    new DialogueChoice("What does this change?", "companion_quest_clarify", 1),
                     new DialogueChoice("What does it cost you to hear this?", "companion_quest_personal", 1),
-                    new DialogueChoice("What happens after this?", "companion_quest_warning", 1),
+                    new DialogueChoice("Where does this leave us?", "companion_quest_warning", 1),
                     backToCompanion(voice)
             ));
         } else if (questStage == QuestDialogueStage.COMPLETED) {
             List<DialogueChoice> choices = new ArrayList<>();
             if (hasRememberedOutcome) {
-                choices.add(new DialogueChoice("Can we talk about the choice we made?", "companion_quest_outcome", 2));
+                choices.add(new DialogueChoice("That choice still follows us, doesn't it?", "companion_quest_outcome", 2));
             }
             choices.addAll(List.of(
-                    new DialogueChoice("What changed after this?", "companion_quest_clarify", 1),
-                    new DialogueChoice("Was it worth the cost?", "companion_quest_personal", 1),
-                    new DialogueChoice("What remains unfinished?", "companion_quest_warning", 1),
+                    new DialogueChoice("What changed after that?", "companion_quest_clarify", 1),
+                    new DialogueChoice("Did it cost you more than you expected?", "companion_quest_personal", 1),
+                    new DialogueChoice("What is still unresolved?", "companion_quest_warning", 1),
                     backToCompanion(voice)
             ));
             addNode(nodes, "companion_quest", voice.reply(DialogueIntent.QUEST_ROOT, relationship, context, voice.questOpening(quest)), choices);
         } else {
-            String progressLabel = questStage == QuestDialogueStage.IN_PROGRESS ? "Let me make sure I understand." : "Remind me why this matters.";
+            String progressLabel = questStage == QuestDialogueStage.IN_PROGRESS ? "Let me make sure I have this right." : "Remind me why this matters to you.";
             List<DialogueChoice> choices = new ArrayList<>();
             if (quest.activeObjectiveKind() == Quest.ObjectiveKind.CHOICE && !quest.ready()) {
                 choices.add(new DialogueChoice("The honest answer comes first.", "companion_quest_choice_truth", 2, questOutcomeEffect(quest, "truth")));
@@ -446,13 +448,13 @@ public final class DialogueLibrary {
                 choices.add(new DialogueChoice("There has to be accountability.", "companion_quest_choice_accountability", 1, questOutcomeEffect(quest, "accountability")));
             }
             if (hasRememberedOutcome) {
-                choices.add(new DialogueChoice("Can we talk about the choice we made?", "companion_quest_outcome", 2));
+                choices.add(new DialogueChoice("That choice still follows us, doesn't it?", "companion_quest_outcome", 2));
             }
             choices.addAll(List.of(
                     new DialogueChoice(progressLabel, "companion_quest_clarify", 1),
-                    new DialogueChoice("Where should I go next?", "companion_quest_practical", 1),
+                    new DialogueChoice("Where do I start?", "companion_quest_practical", 1),
                     new DialogueChoice(voice.personalQuestion(), "companion_quest_personal", 1),
-                    new DialogueChoice("What are you afraid will happen?", "companion_quest_warning", 1),
+                    new DialogueChoice("What worries you most about this?", "companion_quest_warning", 1),
                     backToCompanion(voice)
             ));
             addNode(nodes, "companion_quest", voice.reply(DialogueIntent.QUEST_ROOT, relationship, context, voice.questOpening(quest)), choices);
@@ -461,23 +463,23 @@ public final class DialogueLibrary {
                 new DialogueChoice("And what does that cost you?", "companion_quest_personal", 1),
                 new DialogueChoice(practicalQuestLabel(quest), "companion_quest_practical", 1),
                 questStage == QuestDialogueStage.OFFER
-                        ? new DialogueChoice(questCommitLabel(quest), "companion_quest_accept", 2, questAcceptEffect(quest))
+                        ? new DialogueChoice(voice.questCommitLabel(quest), "companion_quest_accept", 2, questAcceptEffect(quest))
                         : new DialogueChoice("I will keep the thread straight.", "companion_quest_support", 2),
                 backToQuest(quest)
         ));
         addNode(nodes, "companion_quest_personal", voice.reply(DialogueIntent.QUEST_PERSONAL, relationship, context, voice.stagePersonal(stage, quest)), List.of(
                 questStage == QuestDialogueStage.OFFER
-                        ? new DialogueChoice("I will carry that carefully.", "companion_quest_accept", 2, questAcceptEffect(quest))
+                        ? new DialogueChoice(voice.questPersonalCommitLabel(quest), "companion_quest_accept", 2, questAcceptEffect(quest))
                         : new DialogueChoice("I will carry that carefully.", "companion_quest_support", 2),
-                new DialogueChoice("Tell me only what helps the work.", "companion_quest_practical", 0),
+                new DialogueChoice("Give me the part I can act on.", "companion_quest_practical", 0),
                 new DialogueChoice("That sounds like an excuse.", "companion_quest_challenge", -2),
                 backToQuest(quest)
         ));
         addNode(nodes, "companion_quest_practical", voice.reply(DialogueIntent.QUEST_PRACTICAL, relationship, context, voice.stagePractical(stage, quest)), List.of(
                 questStage == QuestDialogueStage.OFFER
-                        ? new DialogueChoice("I will bring proof, not guesses.", "companion_quest_accept", 2, questAcceptEffect(quest))
-                        : new DialogueChoice("I know where to go.", "companion_quest_support", 1),
-                new DialogueChoice("What should I watch for?", "companion_quest_warning", 1),
+                        ? new DialogueChoice(voice.questPracticalCommitLabel(quest), "companion_quest_accept", 2, questAcceptEffect(quest))
+                        : new DialogueChoice("I know where to start.", "companion_quest_support", 1),
+                new DialogueChoice("What would make you nervous out there?", "companion_quest_warning", 1),
                 backToQuest(quest)
         ));
         addNode(nodes, "companion_quest_push", voice.reply(DialogueIntent.QUEST_CHALLENGE, relationship, context, voice.impatientResponse()), List.of(
@@ -486,7 +488,7 @@ public final class DialogueLibrary {
                 backToQuest(quest)
         ));
         addNode(nodes, "companion_quest_support", voice.reply(DialogueIntent.QUEST_SUPPORT, relationship, context, voice.supportResponse(stage, quest)), companionBackChoices(voice));
-        addNode(nodes, "companion_quest_accept", voice.reply(DialogueIntent.QUEST_SUPPORT, relationship, context, voice.supportResponse(stage, quest)), companionBackChoices(voice));
+        addNode(nodes, "companion_quest_accept", voice.reply(DialogueIntent.QUEST_SUPPORT, relationship, context, voice.questAcceptedLine(stage, quest)), companionBackChoices(voice));
         addNode(nodes, "companion_quest_turnin", voice.reply(DialogueIntent.QUEST_SUPPORT, relationship, context, voice.readyLine(stage)), companionBackChoices(voice));
         addNode(nodes, "companion_quest_choice_truth", voice.reply(DialogueIntent.QUEST_SUPPORT, relationship, context,
                 "You choose truth, even where it will bruise. " + voice.supportResponse(stage, quest)), companionBackChoices(voice));
@@ -815,6 +817,42 @@ public final class DialogueLibrary {
                 voice.romanceDateBoundaryLine(context)), companionBackChoices(voice));
     }
 
+    private static void addCompanionFlirtTree(
+            Map<String, DialogueNode> nodes,
+            List<DialogueChoice> personalChoices,
+            CompanionVoice voice,
+            int relationship,
+            DialogueContext context
+    ) {
+        if (!context.romanced() && !context.romanceMilestoneResolved() && relationship < 150) {
+            return;
+        }
+        String rootId = "companion_flirt";
+        personalChoices.add(new DialogueChoice(voice.flirtRootLabel(context), rootId));
+        addNode(nodes, rootId, voice.reply(DialogueIntent.ROMANCE, relationship, context,
+                voice.flirtOpening(relationship, context)), List.of(
+                new DialogueChoice(voice.flirtSoftChoice(context), "companion_flirt_soft", 2,
+                        "dialogue_video:flirt:" + voice.recruitId()),
+                new DialogueChoice(voice.flirtBoldChoice(context), "companion_flirt_bold", 2),
+                new DialogueChoice("Too much?", "companion_flirt_boundary", 1),
+                backToPersonal()
+        ));
+        addNode(nodes, "companion_flirt_soft", voice.reply(DialogueIntent.ROMANCE, relationship, context,
+                voice.flirtSoftLine(context)), List.of(
+                new DialogueChoice("I wanted you to know.", "companion_flirt_after", 1),
+                backToPersonal()
+        ));
+        addNode(nodes, "companion_flirt_bold", voice.reply(DialogueIntent.ROMANCE, relationship, context,
+                voice.flirtBoldLine(context)), List.of(
+                new DialogueChoice("I can behave. Mostly.", "companion_flirt_after", 1),
+                backToPersonal()
+        ));
+        addNode(nodes, "companion_flirt_boundary", voice.reply(DialogueIntent.ROMANCE, relationship, context,
+                voice.flirtBoundaryLine(context)), companionBackChoices(voice));
+        addNode(nodes, "companion_flirt_after", voice.reply(DialogueIntent.ROMANCE, relationship, context,
+                voice.flirtAfterLine(context)), companionBackChoices(voice));
+    }
+
     private static void addCompanionCheckInTree(
             Map<String, DialogueNode> nodes,
             List<DialogueChoice> rootChoices,
@@ -1126,21 +1164,21 @@ public final class DialogueLibrary {
 
     private static String practicalQuestLabel(Quest quest) {
         if (quest == null) {
-            return "What should I look for?";
+            return "What am I looking for, exactly?";
         }
         return switch (quest.activeObjectiveKind()) {
-            case DEFEAT -> "What are we fighting?";
-            case RESCUE -> "Who needs rescuing?";
-            case DEFEND -> "What are we defending?";
-            case GATHER -> "What should I gather?";
-            case DELIVER -> "What should I deliver?";
-            case VISIT -> "What should I inspect?";
-            case SEARCH -> "What am I searching for?";
-            case TALK -> "Who should I talk to?";
-            case ASK_AROUND -> "Who should I ask?";
-            case REPORT -> "Who needs the report?";
-            case ESCORT -> "Where are we going?";
-            case CHOICE -> "What choice are you asking of me?";
+            case DEFEAT -> "What are we up against?";
+            case RESCUE -> "Who are we trying to get out alive?";
+            case DEFEND -> "What has to hold?";
+            case GATHER -> "What am I bringing back?";
+            case DELIVER -> "Who needs this in their hands?";
+            case VISIT -> "What am I supposed to notice there?";
+            case SEARCH -> "What am I looking for, exactly?";
+            case TALK -> "Who needs to hear this from me?";
+            case ASK_AROUND -> "Whose version should I listen for?";
+            case REPORT -> "Who needs the truth carried back?";
+            case ESCORT -> "Where do we need to get them safely?";
+            case CHOICE -> "What choice are you putting in my hands?";
         };
     }
 
@@ -1465,10 +1503,20 @@ public final class DialogueLibrary {
         String reply(DialogueIntent intent, int relationship, DialogueContext context, String answer) {
             String cleaned = answer == null ? "" : answer.replaceAll("\\s+", " ").strip();
             StringBuilder line = new StringBuilder();
-            line.append(conversationBeat(relationship, context)).append(' ');
-            line.append('"').append(repeatAcknowledgement(intent, context));
+            String narration = conversationBeat(intent, relationship, context);
+            if (!narration.isBlank()) {
+                line.append(narration).append(' ');
+            }
+            line.append('"');
+            String lead = replyLead(intent, relationship, context, cleaned);
+            if (!lead.isBlank()) {
+                line.append(lead);
+            }
             if (!cleaned.isBlank()) {
-                line.append(' ').append(cleaned);
+                if (!lead.isBlank()) {
+                    line.append(' ');
+                }
+                line.append(cleaned);
             }
             String thread = relationshipThread(intent, relationship, context);
             if (!thread.isBlank()) {
@@ -1478,38 +1526,34 @@ public final class DialogueLibrary {
             return line.toString();
         }
 
-        private String repeatAcknowledgement(DialogueIntent intent, DialogueContext context) {
+        private String replyLead(DialogueIntent intent, int relationship, DialogueContext context, String answer) {
             if (intent == null) {
                 return "";
             }
+            if (questIntent(intent)) {
+                return "";
+            }
             int visits = context.topicVisitCount(topicKey(intent));
-            if (visits <= 0) {
-                return intentAcknowledgement(intent, 0, context);
+            if (visits > 0) {
+                return repeatAcknowledgement(intent, context);
             }
-            if (visits == 1) {
-                return switch (this) {
-                    case SERAPHINE -> "Again, then. Good. Repeated questions reveal which clauses still matter.";
-                    case MAERA -> "We are returning to the same entry. That usually means the margin was not wide enough.";
-                    case CASSIA -> "Back to this. Fine. Some things deserve a second inspection.";
-                    case LYRA -> "Still this wound, then. We will look carefully and not pretend it closed.";
-                    case SAMIR -> "You return to the question. Perhaps it is still giving off light.";
-                    case ARIA -> "Still tracking this? Good. The second pass catches what the first missed.";
-                    case VESPER -> "You come back to the same root. That is often where the water is.";
-                    case RAFIQ -> "Again? Either you are thorough or I was devastatingly unclear. Let us be generous and say thorough.";
-                    case CALDER -> "Back to the same joint. Sensible. Load-bearing things should be checked twice.";
-                };
+            String characterLine = characterIntentAcknowledgement(intent);
+            if (!characterLine.isBlank()) {
+                return characterLine;
             }
-            return switch (this) {
-                case SERAPHINE -> "You keep returning to this. I will answer, but I will not perform certainty just because repetition asks nicely.";
-                case MAERA -> "Third pass and counting. The record is not changing, but perhaps we are.";
-                case CASSIA -> "We have named this before. I can stand here again, but not forever.";
-                case LYRA -> "We can reopen it, gently. But even honest care needs breath between dressings.";
-                case SAMIR -> "The question remains lit. Let us not stare so long that we mistake brightness for understanding.";
-                case ARIA -> "We have circled this trail enough to know it is not random. Ask, then.";
-                case VESPER -> "Roots can be tended. They can also be worried loose. Carefully, then.";
-                case RAFIQ -> "Again. I am beginning to suspect this question has rented space in both our heads.";
-                case CALDER -> "We have checked this brace before. I will check it again, but we should also keep building.";
+            return answer == null || answer.isBlank() ? intentAcknowledgement(intent, relationship, context) : "";
+        }
+
+        private boolean questIntent(DialogueIntent intent) {
+            return switch (intent) {
+                case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL, QUEST_PRACTICAL, QUEST_WARNING,
+                     QUEST_SUPPORT, QUEST_CHALLENGE -> true;
+                default -> false;
             };
+        }
+
+        private String repeatAcknowledgement(DialogueIntent intent, DialogueContext context) {
+            return "";
         }
 
         private String topicKey(DialogueIntent intent) {
@@ -1539,19 +1583,81 @@ public final class DialogueLibrary {
             };
         }
 
-        private String conversationBeat(int relationship, DialogueContext context) {
-            String beat = switch (this) {
-                case SERAPHINE -> "Seraphine weighs your wording before she lets it pass.";
-                case MAERA -> "Maera sorts the thought as if it were a page with dangerous margins.";
-                case CASSIA -> "Cassia steadies her shoulders, but her answer is for you rather than the room.";
-                case LYRA -> "Lyra studies your face first, gentle as a healer checking an old wound.";
-                case SAMIR -> "Samir lets the silence breathe before he answers.";
-                case ARIA -> "Aria checks the nearest exit by habit, then gives her attention back to you.";
-                case VESPER -> "Vesper grows still, as if listening for the root under the words.";
-                case RAFIQ -> "Rafiq almost reaches for a joke, then thinks better of hiding there.";
-                case CALDER -> "Calder sets the answer down carefully, like weight on tested timber.";
+        private String conversationBeat(DialogueIntent intent, int relationship, DialogueContext context) {
+            String beat = characterBeat(intent);
+            String relationshipBeat = relationshipBeat(relationship, context);
+            return relationshipBeat.isBlank() ? beat : beat + " " + relationshipBeat;
+        }
+
+        private String characterBeat(DialogueIntent intent) {
+            DialogueIntent safeIntent = intent == null ? DialogueIntent.TRUST : intent;
+            return switch (this) {
+                case SERAPHINE -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL -> "Seraphine studies the wording as if the lie might be hiding in the punctuation.";
+                    case QUEST_PRACTICAL, NEXT_STEP -> "Seraphine's answer sharpens into instructions, all velvet stripped from the edge.";
+                    case OPINION, VALUES, TRUST -> "Seraphine lets the truth sit on the table without dressing it up.";
+                    case ROMANCE, FUTURE, HOME -> "Seraphine allows the pause to become almost tender before she speaks.";
+                    default -> "Seraphine weighs your wording before she lets it pass.";
+                };
+                case MAERA -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, MEMORY -> "Maera follows the thought like a line of ink across a dangerous margin.";
+                    case QUEST_PRACTICAL, NEXT_STEP -> "Maera organizes the answer into steps before emotion can scatter it.";
+                    case OPINION, VALUES, TRUST -> "Maera looks up from the inner record she keeps of you.";
+                    case ROMANCE, FUTURE, HOME -> "Maera softens around the question, as if surprised the page is still blank.";
+                    default -> "Maera sorts the thought as if it were a page with dangerous margins.";
+                };
+                case CASSIA -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL -> "Cassia answers like someone holding a line others once abandoned.";
+                    case QUEST_PRACTICAL, NEXT_STEP, QUEST_WARNING -> "Cassia makes the answer practical before fear can start giving orders.";
+                    case OPINION, VALUES, TRUST -> "Cassia meets the question squarely, no salute to hide behind.";
+                    case ROMANCE, FUTURE, HOME -> "Cassia's posture stays disciplined, but her voice does not.";
+                    default -> "Cassia steadies her shoulders, but her answer is for you rather than the room.";
+                };
+                case LYRA -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL -> "Lyra listens first, the way a healer listens for breath under pain.";
+                    case QUEST_PRACTICAL, NEXT_STEP, NEED -> "Lyra counts what can be done before grief can make the room too large.";
+                    case CONCERN, FEELING, MEMORY -> "Lyra lets the gentleness stay, even when the answer does not.";
+                    case ROMANCE, FUTURE, HOME -> "Lyra's expression warms with the relief of being asked to rest, not only mend.";
+                    default -> "Lyra studies your face first, gentle as a healer checking an old wound.";
+                };
+                case SAMIR -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL -> "Samir lets the question pass through silence before giving it shape.";
+                    case QUEST_PRACTICAL, NEXT_STEP, QUEST_WARNING -> "Samir's voice steadies, light turned toward the work instead of the wound.";
+                    case OPINION, VALUES, TRUST -> "Samir answers without making faith do the thinking for him.";
+                    case ROMANCE, FUTURE, HOME -> "Samir looks at you as if warmth itself has become a question worth honoring.";
+                    default -> "Samir lets the silence breathe before he answers.";
+                };
+                case ARIA -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY -> "Aria reads the road in her head before she gives you the part that matters.";
+                    case QUEST_PERSONAL, MEMORY -> "Aria's gaze shifts away from the exits and toward the old hurt.";
+                    case QUEST_PRACTICAL, NEXT_STEP, QUEST_WARNING -> "Aria's answer turns spare and useful, the way trail signs are useful.";
+                    case CONCERN, FEELING, NEED -> "Aria lets the silence stretch before deciding not to dodge the question.";
+                    case OPINION, VALUES, TRUST -> "Aria measures the truth carefully, then leaves it where you can see it.";
+                    case ROMANCE, FUTURE, HOME -> "Aria stays close enough that leaving would have to be a choice.";
+                    default -> "Aria gives you her attention without pretending attention is easy.";
+                };
+                case VESPER -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL -> "Vesper listens as if the ground beneath the words has shifted.";
+                    case QUEST_PRACTICAL, NEXT_STEP, QUEST_WARNING -> "Vesper trims the answer down to what can survive winter.";
+                    case CONCERN, FEELING, MEMORY -> "Vesper's stillness deepens, protective rather than distant.";
+                    case ROMANCE, FUTURE, HOME -> "Vesper lets warmth into the silence without rushing it into bloom.";
+                    default -> "Vesper grows still, as if listening for the root under the words.";
+                };
+                case RAFIQ -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL -> "Rafiq tests a smile, then lets the dangerous truth go first.";
+                    case QUEST_PRACTICAL, NEXT_STEP, QUEST_WARNING -> "Rafiq gives the answer quickly, before style can get in the way of survival.";
+                    case OPINION, VALUES, TRUST -> "Rafiq lets charm stand aside long enough for honesty to be seen.";
+                    case ROMANCE, FUTURE, HOME -> "Rafiq's humor thins into something warmer and far less practiced.";
+                    default -> "Rafiq almost reaches for a joke, then thinks better of hiding there.";
+                };
+                case CALDER -> switch (safeIntent) {
+                    case QUEST_ROOT, QUEST_CLARIFY, QUEST_PERSONAL -> "Calder sets the truth down carefully, like weight on tested timber.";
+                    case QUEST_PRACTICAL, NEXT_STEP, QUEST_WARNING -> "Calder's answer becomes a repair plan, plain enough to trust.";
+                    case OPINION, VALUES, TRUST -> "Calder inspects the question like a brace that has to hold.";
+                    case ROMANCE, FUTURE, HOME -> "Calder's voice roughens around the feeling, but it does not move away.";
+                    default -> "Calder sets the answer down carefully, like weight on tested timber.";
+                };
             };
-            return beat + " " + relationshipBeat(relationship, context);
         }
 
         private String relationshipBeat(int relationship, DialogueContext context) {
@@ -1564,16 +1670,7 @@ public final class DialogueLibrary {
             if (relationship >= 150) {
                 return "Trust has taken enough root that the guarded part no longer speaks first.";
             }
-            if (relationship >= 90) {
-                return "The guard remains, but it no longer fills the whole doorway.";
-            }
-            if (relationship >= 50) {
-                return "They let you see the answer forming before they decide how much to give.";
-            }
-            if (relationship >= 20 || context.recruited()) {
-                return "They answer cautiously, measuring whether concern and usefulness can share a road.";
-            }
-            return "The answer is careful, offered from just beyond arm's reach.";
+            return "";
         }
 
         private String intentAcknowledgement(DialogueIntent intent, int relationship, DialogueContext context) {
@@ -1609,65 +1706,65 @@ public final class DialogueLibrary {
                 case SERAPHINE -> switch (intent) {
                     case VALUES -> "If you want my honest measure of you, I will not hide it under pretty language.";
                     case OPINION -> "Since you brought a name to the table, I will not pretend neutrality is the same as truth.";
-                    case REQUEST -> "You asked what I need without asking what it buys you. That changes the answer.";
+                    case REQUEST -> "Need without a price attached. That changes the answer.";
                     case TRUST -> "Trust, then. No contracts, no ownership, no hidden ink.";
-                    case ROMANCE -> "You are asking for the uncontracted part of me. Careful. That part has teeth.";
+                    case ROMANCE -> "The uncontracted part of me, then. Careful. That part has teeth.";
                     default -> "";
                 };
                 case MAERA -> switch (intent) {
                     case QUEST_CLARIFY -> "You want the underlying record, not the summary. Sensible.";
-                    case VALUES -> "You asked for my assessment. I will make it as honest as a living source permits.";
+                    case VALUES -> "My assessment, as honest as a living source permits.";
                     case MEMORY -> "If we are reopening the record, we should do it deliberately.";
-                    case FUTURE -> "You are asking me to speculate about after. I have notes, unfortunately.";
+                    case FUTURE -> "Speculating about after. I have notes, unfortunately.";
                     default -> "";
                 };
                 case CASSIA -> switch (intent) {
-                    case QUEST_PRACTICAL -> "You asked for the practical line. Good. It keeps fear from giving orders.";
-                    case QUEST_WARNING -> "You asked what breaks first. That is the soldier's question.";
+                    case QUEST_PRACTICAL -> "The practical line, then. It keeps fear from giving orders.";
+                    case QUEST_WARNING -> "What breaks first. That is the soldier's question.";
                     case TRUST -> "Trust is not a speech. It is where I stand when the line moves.";
                     case FEELING -> "You want the answer under the armor. Fine.";
                     default -> "";
                 };
                 case LYRA -> switch (intent) {
                     case CONCERN -> "You are checking the healer for wounds. That is irritatingly fair.";
-                    case NEED -> "You asked what I need before I collapsed into being useful. I heard that.";
-                    case FUTURE -> "You are asking about a future where care is allowed to rest. I want that answer too.";
+                    case NEED -> "Need, before I collapse into being useful. I heard that.";
+                    case FUTURE -> "A future where care is allowed to rest. I want that answer too.";
                     case MEMORY -> "If we touch that memory, we do it gently and all the way awake.";
                     default -> "";
                 };
                 case SAMIR -> switch (intent) {
-                    case QUEST_CLARIFY -> "You are asking for the shadow behind the light. That is where truth usually waits.";
+                    case QUEST_CLARIFY -> "The shadow behind the light. That is where truth usually waits.";
                     case VALUES -> "You ask how I see you. I will answer without making faith do the work for me.";
                     case TRUST -> "Trust should not kneel. It should look up and choose.";
-                    case ROMANCE -> "You are asking for warmth without worship. That is rarer than it should be.";
+                    case ROMANCE -> "Warmth without worship. That is rarer than it should be.";
                     default -> "";
                 };
                 case ARIA -> switch (intent) {
-                    case CONCERN -> "You are asking whether I am fine. I usually say yes before checking.";
+                    case CONCERN -> "I usually say yes before checking.";
                     case QUEST_PERSONAL -> "You want the part of the trail I usually cover with leaves.";
-                    case QUEST_WARNING -> "You asked what can go wrong. Finally, a question with survival instincts.";
-                    case HOME -> "You are asking about staying. I know every exit, so the answer matters.";
-                    case ROMANCE -> "You are asking me to stay close without calling it a tactic. Suspicious.";
+                    case QUEST_WARNING -> "Finally, a question with survival instincts.";
+                    case HOME -> "Staying is not a small word. I know every exit, so the answer matters.";
+                    case ROMANCE -> "Close without tactics. Suspicious.";
                     default -> "";
                 };
                 case VESPER -> switch (intent) {
-                    case CONCERN -> "You are asking after the root, not just the branch. Few people do.";
+                    case CONCERN -> "After the root, not just the branch. Few people do.";
                     case QUEST_CLARIFY -> "You want the buried part named before the work begins. Good.";
                     case MEMORY -> "Spoken memory changes the soil. Let us be careful what we plant.";
                     case HOME -> "You ask about home as if it can grow instead of trap. I am listening.";
-                    case REQUEST -> "You ask what I need from you. Needs are roots; pulled too roughly, they tear.";
+                    case REQUEST -> "Needs are roots; pulled too roughly, they tear.";
                     default -> "";
                 };
                 case RAFIQ -> switch (intent) {
                     case CONCERN -> "You are inviting sincerity. Reckless. I will attempt not to ruin it immediately.";
                     case OPINION -> "If you want my opinion, I can make it charming or true. Today I will risk true.";
-                    case ROMANCE -> "You are asking for the honest version of my attention. Bold, dangerous, well dressed.";
+                    case ROMANCE -> "The honest version of my attention. Bold, dangerous, well dressed.";
                     case QUEST_CHALLENGE -> "You are calling the bluff. Excellent. I was getting tired of holding it alone.";
                     default -> "";
                 };
                 case CALDER -> switch (intent) {
-                    case QUEST_PRACTICAL -> "You asked what needs doing. Good. A sound answer starts there.";
-                    case NEED -> "You asked what I need. Needs are easier to meet when named before the beam cracks.";
+                    case QUEST_PRACTICAL -> "What needs doing. Good. A sound answer starts there.";
+                    case NEED -> "Needs are easier to meet when named before the beam cracks.";
                     case TRUST -> "Trust is load-bearing. Best to inspect it honestly.";
                     case FUTURE -> "You ask about after. That means we plan for weather, not just sunlight.";
                     default -> "";
@@ -1676,21 +1773,6 @@ public final class DialogueLibrary {
         }
 
         private String relationshipThread(DialogueIntent intent, int relationship, DialogueContext context) {
-            if (intent == DialogueIntent.QUEST_PRACTICAL || intent == DialogueIntent.QUEST_WARNING) {
-                return "";
-            }
-            if (context.married()) {
-                return "I can say that because the promise between us has room for truth, not only comfort.";
-            }
-            if (context.romanced() && (intent == DialogueIntent.CONCERN || intent == DialogueIntent.FEELING || intent == DialogueIntent.FUTURE)) {
-                return "It changes the answer, knowing you are not asking from a distance anymore.";
-            }
-            if (relationship >= 150 && (intent == DialogueIntent.MEMORY || intent == DialogueIntent.VALUES || intent == DialogueIntent.REQUEST)) {
-                return "At this point, pretending not to trust you would be less honest than the fear.";
-            }
-            if (relationship < 50 && (intent == DialogueIntent.CONCERN || intent == DialogueIntent.FEELING || intent == DialogueIntent.NEED)) {
-                return "Do not mistake the answer for full trust yet, but it is an answer.";
-            }
             return "";
         }
 
@@ -1701,10 +1783,10 @@ public final class DialogueLibrary {
         String questGreeting(Quest quest) {
             int stage = companionQuestStage(quest);
             if (quest.ready()) {
-                return "You found enough of the truth. Now we decide what it means.";
+                return readyRootGreeting(stage);
             }
             if (quest.accepted && quest.progress > 0) {
-                return "The thread is moving. Do not let it knot around your wrist.";
+                return progressRootGreeting(stage);
             }
             if (stage == 1) {
                 return firstQuestOpening;
@@ -1730,11 +1812,11 @@ public final class DialogueLibrary {
             }
             if (quest.ready()) {
                 line = cleanQuestLine(quest.activeReadyDialog(), shortName);
-                return (line.isBlank() ? "That should be enough." : line) + " " + readyLine(companionQuestStage(quest));
+                return (line.isBlank() ? readyRootGreeting(companionQuestStage(quest)) : line) + " " + readyLine(companionQuestStage(quest));
             }
             if (quest.progress > 0) {
                 line = cleanQuestLine(quest.activeProgressDialog(), shortName);
-                return (line.isBlank() ? "Stay with it." : line) + " Progress is proof that the story can still be changed.";
+                return (line.isBlank() ? progressRootGreeting(companionQuestStage(quest)) : line) + " " + progressLine(companionQuestStage(quest));
             }
             return questGreeting(quest);
         }
@@ -1744,7 +1826,76 @@ public final class DialogueLibrary {
         }
 
         String helpResponse() {
-            return "By treating this like more than an errand. " + shortName + " watches you a little more steadily. The work is about " + concern + ", and the trust behind it.";
+            return switch (this) {
+                case SERAPHINE -> "Treat it like more than a job. Someone wrote a cage and called it normal; help me make that expensive.";
+                case MAERA -> "Stay with the evidence when it stops being elegant. The missing piece matters because the official story wants it gone.";
+                case CASSIA -> "Stand where the breach is, and do not dress fear as discipline. That will help.";
+                case LYRA -> "Help the people who will bleed if we delay. Everything else is decoration.";
+                case SAMIR -> "Carry the question with me. Do not polish it into certainty before we know what it costs.";
+                case ARIA -> "Move quietly with me. Notice the false trail before grief starts running after it.";
+                case VESPER -> "Be patient with what is buried. If we pull too hard, we may tear the living root.";
+                case RAFIQ -> "Keep me honest when charm would be easier. I realize this is a cruel request.";
+                case CALDER -> "Put your hands under the weight before making speeches about repair.";
+            };
+        }
+
+        String questCommitLabel(Quest quest) {
+            return switch (this) {
+                case SERAPHINE -> "I will help, but no pretty promises.";
+                case MAERA -> "I will follow the evidence with you.";
+                case CASSIA -> "I will stand where this breaks.";
+                case LYRA -> "I will help before more people get hurt.";
+                case SAMIR -> "I will carry the question with you.";
+                case ARIA -> "I know the road may be bait. I am still coming.";
+                case VESPER -> "I will be careful with what is buried.";
+                case RAFIQ -> "I will help you survive the truth.";
+                case CALDER -> "I will show up with both hands.";
+            };
+        }
+
+        String questPersonalCommitLabel(Quest quest) {
+            return switch (this) {
+                case SERAPHINE -> "Then I will not make your name another contract.";
+                case MAERA -> "Then I will not flatten this into a theory.";
+                case CASSIA -> "Then I will carry the cost, not just the order.";
+                case LYRA -> "Then I will treat the wound, not admire it.";
+                case SAMIR -> "Then I will not force certainty where grief is speaking.";
+                case ARIA -> "Then I will follow carefully, not loudly.";
+                case VESPER -> "Then I will not pull at the roots for answers.";
+                case RAFIQ -> "Then I will stay honest when charming would be easier.";
+                case CALDER -> "Then I will help carry the weight, not praise it.";
+            };
+        }
+
+        String questPracticalCommitLabel(Quest quest) {
+            return switch (this) {
+                case SERAPHINE -> "Point me at the first lie.";
+                case MAERA -> "Show me where the record starts breaking.";
+                case CASSIA -> "Tell me where the line needs holding.";
+                case LYRA -> "Tell me who gets hurt if I wait.";
+                case SAMIR -> "Show me where the light turns wrong.";
+                case ARIA -> "Show me the first false trail.";
+                case VESPER -> "Show me where the ground remembers.";
+                case RAFIQ -> "Point me at the danger with manners.";
+                case CALDER -> "Show me where the structure is failing.";
+            };
+        }
+
+        String questAcceptedLine(int stage, Quest quest) {
+            if (quest != null) {
+                return chapterAcceptanceLine(stage, quest);
+            }
+            return switch (this) {
+                case SERAPHINE -> "Good. Keep the promise small enough to stay honest. We expose the lie first; speeches can queue politely.";
+                case MAERA -> "Good. Follow what contradicts the official version, even if it makes the map uglier.";
+                case CASSIA -> "Good. Then we do this with discipline. Courage without attention is just noise in armor.";
+                case LYRA -> "Good. Then we move before someone else becomes a lesson no one deserved.";
+                case SAMIR -> "Good. Then we carry the question without worshipping the first answer that glows.";
+                case ARIA -> "Good. Say it back to yourself: the road may be bait. If you still come, come with your eyes open.";
+                case VESPER -> "Good. Step lightly. Buried things are not dead simply because no one heard them breathe.";
+                case RAFIQ -> "Good. If I start joking too quickly, assume the truth is close and ugly.";
+                case CALDER -> "Good. Bring your hands, not just your agreement. Weight does not care about intentions.";
+            };
         }
 
         String personalQuestion() {
@@ -1756,11 +1907,13 @@ public final class DialogueLibrary {
         }
 
         String practicalResponse(Quest quest) {
-            String target = quest == null ? "the next sign" : quest.activeTarget();
-            return "Start with " + target + ". Bring back proof, not guesses. If something looks staged, assume it was staged for someone less careful than you.";
+            return objectiveDialogueLine(quest);
         }
 
         String stageClarify(int stage, Quest quest) {
+            if (quest != null) {
+                return chapterClarifyLine(stage, quest);
+            }
             return switch (stage) {
                 case 1 -> firstQuestOpening + " " + originLine();
                 case 2 -> "This is the practical part, where pretty motives become sore hands. " + concernLine();
@@ -1775,6 +1928,9 @@ public final class DialogueLibrary {
         }
 
         String stagePersonal(int stage, Quest quest) {
+            if (quest != null) {
+                return chapterPersonalLine(stage, quest);
+            }
             return switch (stage) {
                 case 1 -> personalResponse;
                 case 2 -> "I am asking for grounded help because trust has to survive ordinary weight before it survives danger.";
@@ -1788,31 +1944,129 @@ public final class DialogueLibrary {
             };
         }
 
-        String stagePractical(int stage, Quest quest) {
-            String target = quest == null ? "the next sign" : quest.activeTarget();
-            String action = quest == null ? "Follow" : switch (quest.activeObjectiveKind()) {
-                case DEFEAT -> "Break";
-                case RESCUE -> "Rescue";
-                case DEFEND -> "Defend";
-                case GATHER -> "Gather";
-                case DELIVER -> "Deliver";
-                case VISIT -> "Inspect";
-                case SEARCH -> "Search";
-                case TALK -> "Speak with";
-                case ASK_AROUND -> "Ask around about";
-                case REPORT -> "Report to";
-                case ESCORT -> "Escort";
-                case CHOICE -> "Decide about";
+        private String chapterAcceptanceLine(int stage, Quest quest) {
+            return switch (this) {
+                case SERAPHINE -> "Good. No pretty promises. " + activeStageFocusLine(quest);
+                case MAERA -> "Good. Follow the contradiction. " + activeStageFocusLine(quest);
+                case CASSIA -> "Good. Judgment first, noise never. " + activeStageFocusLine(quest);
+                case LYRA -> "Good. We move before care arrives too late. " + activeStageFocusLine(quest);
+                case SAMIR -> "Good. Carry the question with me. " + activeStageFocusLine(quest);
+                case ARIA -> "Good. The road may be bait, so read it twice. " + activeStageFocusLine(quest);
+                case VESPER -> "Good. Step lightly around what is buried. " + activeStageFocusLine(quest);
+                case RAFIQ -> "Good. Keep me honest if I start making it charming. " + activeStageFocusLine(quest);
+                case CALDER -> "Good. Bring your hands, not just your agreement. " + activeStageFocusLine(quest);
             };
-            String where = quest == null ? "where the trail points" : objectiveLocationLine(quest);
-            return action + " " + target + " at " + where + ". " + practicalDetail(stage) + " Bring back proof, not guesses.";
+        }
+
+        private String chapterClarifyLine(int stage, Quest quest) {
+            String focus = activeStageFocusLine(quest);
+            return switch (this) {
+                case SERAPHINE -> "Someone made harm look properly filed. I want the first lie exposed. " + focus;
+                case MAERA -> "The official record is contradicting itself. That is where truth starts speaking. " + focus;
+                case CASSIA -> "This is about who was protected, who was abandoned, and who gave the order. " + focus;
+                case LYRA -> "People die while heroes debate symbols. We start with care. " + focus;
+                case SAMIR -> "The light was taught to command instead of reveal. I need to see where it turns wrong. " + focus;
+                case ARIA -> "This is a road problem first. Road problems kill quietly and call it accident. " + focus;
+                case VESPER -> "Something survived under the cold, but survival does not make it simple. " + focus;
+                case RAFIQ -> "Charm stopped paying the debt. Now the receipt is ugly. " + focus;
+                case CALDER -> "Something failed before the collapse became visible. Good craft listens early. " + focus;
+            };
+        }
+
+        private String chapterPersonalLine(int stage, Quest quest) {
+            String title = quest.title;
+            return switch (this) {
+                case SERAPHINE -> "Because " + title + " keeps circling the same bruise: I was treated like a clause someone else could inherit. Help me prove a name can belong to itself.";
+                case MAERA -> "Because " + title + " asks whether being correct is worth being alone. I know how to defend evidence. I am less practiced at letting someone defend the witness.";
+                case CASSIA -> "Because " + title + " touches the part of me that once mistook obedience for courage. I need facts, but I also need not to hide inside them.";
+                case LYRA -> "Because " + title + " is not abstract to me. Every delay has a face, a cot, a pulse I may or may not get back.";
+                case SAMIR -> "Because " + title + " asks whether my faith was ever mine, or only a polished chain I learned to call devotion.";
+                case ARIA -> "Because " + title + " keeps finding the old fear: if someone walks with me, will they help me choose the road or start choosing it for me?";
+                case VESPER -> "Because " + title + " wakes the part of me that confuses patience with abandonment. I need to know what should grow, not just what can.";
+                case RAFIQ -> "Because " + title + " is where the joke starts costing more than the debt. I am tired of surviving by making the truth entertaining.";
+                case CALDER -> "Because " + title + " puts weight exactly where I pretend I can carry it alone. I know bridges. I am still learning people.";
+            };
+        }
+
+        String stagePractical(int stage, Quest quest) {
+            return objectiveDialogueLine(quest);
+        }
+
+        private String objectiveDialogueLine(Quest quest) {
+            if (quest == null) {
+                return defaultObjectiveLine();
+            }
+            String place = objectiveLocationLine(quest);
+            String target = objectiveTargetLine(quest);
+            String instruction = switch (quest.activeObjectiveKind()) {
+                case DEFEAT -> "Find " + target + " near " + place + " and stop it.";
+                case RESCUE -> "Reach " + target + " near " + place + ".";
+                case DEFEND -> "Hold " + target + " at " + place + ".";
+                case GATHER -> "Start at " + place + " and bring back " + target + ".";
+                case DELIVER -> "Carry " + target + " to " + place + ".";
+                case VISIT -> "Go to " + place + " and inspect " + target + ".";
+                case SEARCH -> "Start at " + place + ". Find " + target + ".";
+                case TALK -> "Find " + target + " at " + place + " and ask plainly.";
+                case ASK_AROUND -> "Ask around " + place + " about " + target + ".";
+                case REPORT -> "Bring the truth about " + target + " back to " + place + ".";
+                case ESCORT -> "Get " + target + " through " + place + " safely.";
+                case CHOICE -> "Decide what to do about " + target + ".";
+            };
+            return instruction;
+        }
+
+        private String defaultObjectiveLine() {
+            return switch (this) {
+                case SERAPHINE -> "Follow the nearest contradiction. Clean ink worries me more than spilled ink.";
+                case MAERA -> "Find the detail that refuses to fit the official map.";
+                case CASSIA -> "Go where the pressure is strongest and see what still holds.";
+                case LYRA -> "Start where someone living can still be helped.";
+                case SAMIR -> "Follow the sign, then check the shadow beside it.";
+                case ARIA -> "Read the ground before you trust the story above it.";
+                case VESPER -> "Touch the quiet places carefully; quiet is not empty.";
+                case RAFIQ -> "If it looks theatrical, assume someone expected us to admire it.";
+                case CALDER -> "Check the strain first, then the excuse built around it.";
+            };
+        }
+
+        private String objectiveTargetLine(Quest quest) {
+            String target = quest.activeTarget();
+            int needed = quest.activeNeeded();
+            return switch (quest.activeObjectiveKind()) {
+                case GATHER, SEARCH, VISIT -> needed > 1 ? needed + " " + target : target;
+                default -> target;
+            };
+        }
+
+        private String objectiveVoiceWarning(Quest quest) {
+            return switch (this) {
+                case SERAPHINE -> "If the answer looks too official, assume someone paid for the polish.";
+                case MAERA -> "Bring me the contradiction intact; it may be the only honest witness.";
+                case CASSIA -> "Do not confuse a clean order with a worthy one.";
+                case LYRA -> "If a choice appears, protect whoever can still be protected.";
+                case SAMIR -> "If certainty arrives too quickly, make it wait outside.";
+                case ARIA -> "Look twice at anything arranged to be found once.";
+                case VESPER -> "Do not pull at what is buried until you know what else is rooted to it.";
+                case RAFIQ -> "And if I would be tempted to make a joke, assume the knife is close.";
+                case CALDER -> "Weight tells the truth before people do.";
+            };
         }
 
         String supportResponse(int stage, Quest quest) {
             return switch (stage) {
                 case 5, 6, 7 -> "Good. I do not need rescuing from the truth. I need someone beside me while I stop obeying it.";
                 case 8 -> finalHome();
-                default -> "That is the right kind of help. Not loud. Not possessive. Present.";
+                default -> switch (this) {
+                    case SERAPHINE -> "Then help me make the lie expensive for the people profiting from it.";
+                    case MAERA -> "Then stay with the evidence when it becomes inconvenient.";
+                    case CASSIA -> "Then stand where the work is, not where it looks impressive.";
+                    case LYRA -> "Then keep your hands clean and your attention kinder than your pride.";
+                    case SAMIR -> "Then carry the question with me without trying to turn it into certainty.";
+                    case ARIA -> "Then move quietly with me and notice what the road hopes we miss.";
+                    case VESPER -> "Then be patient with what is buried. Roots tear when pulled for comfort.";
+                    case RAFIQ -> "Then help me survive the truth without making it dull.";
+                    case CALDER -> "Then put your weight under the beam before praising the bridge.";
+                };
             };
         }
 
@@ -1825,11 +2079,142 @@ public final class DialogueLibrary {
         }
 
         String warningResponse(int stage, Quest quest) {
+            if (quest != null) {
+                return chapterWarningLine(stage, quest);
+            }
             return switch (stage) {
                 case 3 -> "Evidence may be planted. Look for what is too neat, too clean, or too eager to be found.";
                 case 4, 7 -> bossTactical();
                 case 8 -> "Old endings sometimes pretend to be peace. Watch for what still asks to be carried.";
-                default -> "The danger is not only the task. It is believing the task is small because the first step is simple.";
+                default -> switch (this) {
+                    case SERAPHINE -> "The danger is that whoever benefits from the lie has already priced our silence.";
+                    case MAERA -> "The danger is a tidy answer. Tidy answers often mean someone burned the rough draft.";
+                    case CASSIA -> "The danger is assuming a first breach is the only breach.";
+                    case LYRA -> "The danger is moving so fast that we miss who is already bleeding.";
+                    case SAMIR -> "The danger is mistaking bright signs for honest ones.";
+                    case ARIA -> "The danger is following the trail they wanted us to find.";
+                    case VESPER -> "The danger is treating what sleeps as harmless.";
+                    case RAFIQ -> "The danger is the elegant solution. Elegant solutions get people stabbed politely.";
+                    case CALDER -> "The danger is trusting the visible crack and ignoring the pressure behind it.";
+                };
+            };
+        }
+
+        private String chapterWarningLine(int stage, Quest quest) {
+            return switch (this) {
+                case SERAPHINE -> "Do not trust the official shape of the harm. If it looks too clean, someone paid for the polish.";
+                case MAERA -> "Do not accept the clean version because it is easier to cite. Keep the contradiction intact.";
+                case CASSIA -> "Do not let discipline become a hiding place. Orders still need judgment.";
+                case LYRA -> "Do not move so fast that the living become background. Check who still needs help.";
+                case SAMIR -> "Do not mistake brightness for honesty. Bad light loves familiar shapes.";
+                case ARIA -> "Do not follow the trail meant for us. Look for the mark that does not want attention.";
+                case VESPER -> "Do not force the buried thing to answer too quickly. Roots tear when pulled for comfort.";
+                case RAFIQ -> "Beware the elegant answer. It usually arrives well dressed and carrying a knife.";
+                case CALDER -> "Do not fix only the visible crack. Find where the weight is really shifting.";
+            };
+        }
+
+        private String activeStageFocusLine(Quest quest) {
+            Quest.QuestStage active = quest.activeStage();
+            String target = objectiveTargetLine(quest);
+            String place = objectiveLocationLine(quest);
+            return switch (active.objectiveKind()) {
+                case DEFEAT -> "For now: face " + target + " near " + place + ".";
+                case RESCUE -> "For now: reach " + target + " near " + place + ".";
+                case DEFEND -> "For now: hold " + target + " at " + place + ".";
+                case GATHER -> "For now: bring back " + target + " from " + place + ".";
+                case DELIVER -> "For now: carry " + target + " to " + place + ".";
+                case VISIT -> "For now: inspect " + target + " at " + place + ".";
+                case SEARCH -> "For now: find " + target + " at " + place + ".";
+                case TALK -> "For now: speak with " + target + " at " + place + ".";
+                case ASK_AROUND -> "For now: ask around " + place + " about " + target + ".";
+                case REPORT -> "For now: report about " + target + " at " + place + ".";
+                case ESCORT -> "For now: escort " + target + " through " + place + ".";
+                case CHOICE -> "For now: decide what " + target + " should mean.";
+            };
+        }
+
+        private String searchFocusClose() {
+            return switch (this) {
+                case SERAPHINE -> "before the official version hardens around the lie.";
+                case MAERA -> "before the archive sands the contradiction into something convenient.";
+                case CASSIA -> "before memory turns itself into an order no one questions.";
+                case LYRA -> "before another living detail becomes only a name on a cot.";
+                case SAMIR -> "before the wrong light claims it was always holy.";
+                case ARIA -> "before the false trail teaches people to obey it.";
+                case VESPER -> "before the buried thing is pulled awake too roughly.";
+                case RAFIQ -> "before charm makes the lie easier to applaud.";
+                case CALDER -> "before the crack hides under fresh paint.";
+            };
+        }
+
+        private String gatherFocusClose() {
+            return switch (this) {
+                case SERAPHINE -> "because evidence embarrasses lies better than outrage does.";
+                case MAERA -> "because a theory with nothing in its hands is only a clever guess.";
+                case CASSIA -> "because proof has to stand after discipline stops speaking.";
+                case LYRA -> "because care needs supplies before it earns speeches.";
+                case SAMIR -> "because faith should touch what it claims to understand.";
+                case ARIA -> "because hands remember what frightened witnesses forget.";
+                case VESPER -> "because taking carefully is different from taking everything.";
+                case RAFIQ -> "because the truth needs something less slippery than my phrasing.";
+                case CALDER -> "because weight in the hand keeps judgment honest.";
+            };
+        }
+
+        private String defeatFocusClose() {
+            return switch (this) {
+                case SERAPHINE -> "and noticing who paid for violence to look inevitable.";
+                case MAERA -> "and noticing what knowledge it was set to guard.";
+                case CASSIA -> "and noticing whether fear is trying to command the line.";
+                case LYRA -> "and ending the harm before it creates more patients.";
+                case SAMIR -> "and refusing to let force call itself revelation.";
+                case ARIA -> "and reading the footprints it leaves when it stops pretending.";
+                case VESPER -> "and remembering that hunger and evil are not always the same root.";
+                case RAFIQ -> "and noticing who expected blood to clean up the story.";
+                case CALDER -> "and stopping the pressure before it brings the whole span down.";
+            };
+        }
+
+        String progressRootGreeting(int stage) {
+            return switch (this) {
+                case SERAPHINE -> "The ink is starting to smear. Good. Clean lies make me nervous.";
+                case MAERA -> "The record is changing as we read it. Keep your place.";
+                case CASSIA -> "We have movement. That does not mean safety; it means attention.";
+                case LYRA -> "Something has shifted. Check the living before counting the proof.";
+                case SAMIR -> "The light has moved, and so has the shadow behind it.";
+                case ARIA -> "The trail is answering. Do not trust it just because it speaks.";
+                case VESPER -> "The root has taken water. Now we see what else wakes.";
+                case RAFIQ -> "The debt is beginning to name its collectors. Terrible manners. Useful.";
+                case CALDER -> "The first strain showed. Now we find what else is carrying it.";
+            };
+        }
+
+        String readyRootGreeting(int stage) {
+            return switch (this) {
+                case SERAPHINE -> "You brought enough ink to make someone powerful uncomfortable.";
+                case MAERA -> "The page is no longer blank. Now we decide how loudly it speaks.";
+                case CASSIA -> "You found what holds. Now we test whether I can hear it.";
+                case LYRA -> "You brought the piece that matters. Let us not make grief wait longer.";
+                case SAMIR -> "The sign is here. Now I have to decide what faith does with evidence.";
+                case ARIA -> "You found the mark. Now we decide who was meant to follow it.";
+                case VESPER -> "The buried thing has surfaced. Touch it carefully.";
+                case RAFIQ -> "You found the proof. I am choosing not to make a joke before it cuts me.";
+                case CALDER -> "You brought the weight back. Set it down where I can see it.";
+            };
+        }
+
+        String progressLine(int stage) {
+            return switch (this) {
+                case SERAPHINE -> "Every piece we find makes the lie less profitable.";
+                case MAERA -> "Keep the contradiction intact; it may be the most honest thing here.";
+                case CASSIA -> "Hold the line of facts. Do not let urgency move it.";
+                case LYRA -> "Good. Now make sure the next step still protects the living.";
+                case SAMIR -> "If the evidence troubles the old lesson, trust the trouble.";
+                case ARIA -> "The second sign matters more than the first; patterns do not lie as easily.";
+                case VESPER -> "Let it rise at its own pace. Forced truth breaks roots.";
+                case RAFIQ -> "Excellent. The story is becoming inconvenient for someone other than me.";
+                case CALDER -> "A single crack is warning. Two cracks are instruction.";
             };
         }
 
@@ -1877,7 +2262,17 @@ public final class DialogueLibrary {
 
         String practicalDetail(int stage) {
             return switch (stage) {
-                case 1 -> "Start where the first lie touches the ground.";
+                case 1 -> switch (this) {
+                    case SERAPHINE -> "Follow the ink that looks too clean.";
+                    case MAERA -> "Trust the mark that does not belong on the map.";
+                    case CASSIA -> "Check the place duty failed before asking who failed it.";
+                    case LYRA -> "Look for what a careful hand would never leave behind.";
+                    case SAMIR -> "Watch where the light behaves like it is hiding something.";
+                    case ARIA -> "Read the ground before you trust the story people tell above it.";
+                    case VESPER -> "Look under the quiet surface; winter keeps accounts.";
+                    case RAFIQ -> "Start with the clue someone expected me to laugh off.";
+                    case CALDER -> "Check the first crack before arguing about the collapse.";
+                };
                 case 2 -> "Small things matter because someone is counting on us to overlook them.";
                 case 3 -> "Let objects contradict people. Objects are less ambitious.";
                 case 4 -> "Enemies protect the weak point. Notice what they guard hardest.";
@@ -1889,18 +2284,52 @@ public final class DialogueLibrary {
             };
         }
 
+        String practicalClose(int stage) {
+            return switch (this) {
+                case SERAPHINE -> "Bring me the part they thought no one would dare read.";
+                case MAERA -> "Bring back the contradiction, not a cleaned-up story.";
+                case CASSIA -> "Bring back what can stand under questioning.";
+                case LYRA -> "Bring back what helps us prevent the next wound.";
+                case SAMIR -> "Bring back what still feels true after doubt touches it.";
+                case ARIA -> "Bring back a mark I can trust more than rumor.";
+                case VESPER -> "Bring back what the buried thing allowed you to see.";
+                case RAFIQ -> "Bring back the proof before I improve the story for entertainment.";
+                case CALDER -> "Bring back something solid enough to bear weight.";
+            };
+        }
+
         String readyLine(int stage) {
             return switch (stage) {
                 case 5, 6 -> "I am ready to hear the part I avoided.";
                 case 7 -> "Now the fight has to become an ending.";
                 case 8 -> "Now I choose what comes after.";
-                default -> "Bring it here. We will make the next choice with eyes open.";
+                default -> switch (this) {
+                    case SERAPHINE -> "Put it where I can see the fraud without letting rage edit the evidence.";
+                    case MAERA -> "Set it beside the record. I want the lie and the correction in the same light.";
+                    case CASSIA -> "Show me. I will not salute the truth until I have looked it in the face.";
+                    case LYRA -> "Show me carefully. Proof can bruise too, if handled like a victory.";
+                    case SAMIR -> "Let me see it plainly. If it burns away certainty, so be it.";
+                    case ARIA -> "Show me the mark. Slowly. I want to know which trail it opens.";
+                    case VESPER -> "Lay it down gently. Some things wake angry when treated like trophies.";
+                    case RAFIQ -> "Show me before I pretend I am ready. I may even tell the truth first.";
+                    case CALDER -> "Set it down. We test the weight before deciding what it means.";
+                };
             };
         }
 
         String afterQuestLine(int stage) {
             return switch (stage) {
-                case 1 -> "That was the first honest mark on a very dishonest road.";
+                case 1 -> switch (this) {
+                    case SERAPHINE -> "First page found. Now the contract knows someone is reading back.";
+                    case MAERA -> "First mark confirmed. The map has lost the comfort of being unquestioned.";
+                    case CASSIA -> "First breach named. That matters more than a clean report.";
+                    case LYRA -> "First wound traced. Now we keep it from becoming someone else's.";
+                    case SAMIR -> "First shadow named. The light can stop pretending it stands alone.";
+                    case ARIA -> "First trail cut free. Now I know the road was lying on purpose.";
+                    case VESPER -> "First root uncovered. It still lives, which is both mercy and demand.";
+                    case RAFIQ -> "First debt marker exposed. I dislike how relieved I am.";
+                    case CALDER -> "First crack found. The structure has begun telling the truth.";
+                };
                 case 2 -> "Useful help is how trust learns to stand.";
                 case 3 -> "Evidence has a colder kindness than comfort. It does not look away.";
                 case 4 -> "The old wound has enemies now. That means it can be fought.";
@@ -1913,18 +2342,61 @@ public final class DialogueLibrary {
         }
 
         String marriedGreeting() {
-            return "There you are. I was beginning to think the road had grown selfish again.";
+            return switch (this) {
+                case SERAPHINE -> "There you are. No summons, no contract, and still you came back. I remain suspiciously fond of that.";
+                case MAERA -> "There you are. I was about to annotate the silence, which would have been undignified.";
+                case CASSIA -> "There you are. The line holds better when I know where you stand.";
+                case LYRA -> "There you are. Sit if you can. I am trying to learn that welcome is also care.";
+                case SAMIR -> "There you are. The room feels less like waiting when you enter it.";
+                case ARIA -> "There you are. I left the door in my mind open and pretended it was strategy.";
+                case VESPER -> "There you are. I kept the warm place beside me without naming why.";
+                case RAFIQ -> "There you are. I have been terribly composed in your absence. A tragedy.";
+                case CALDER -> "There you are. Roof held, table held, promise held. Good start.";
+            };
         }
 
         String romancedGreeting() {
-            return "You have terrible timing. Somehow I have grown fond of that.";
+            return switch (this) {
+                case SERAPHINE -> "You have terrible timing. I am beginning to suspect I like being interrupted by you.";
+                case MAERA -> "You arrived before I finished sorting my thoughts. Annoyingly, that may improve them.";
+                case CASSIA -> "You are here. Good. I will pretend that did not change my breathing.";
+                case LYRA -> "There you are. I was not waiting. I was... pausing with intent.";
+                case SAMIR -> "You come in like ordinary light. That is harder to resist than miracles.";
+                case ARIA -> "You found me before I could decide whether I wanted finding. That is becoming familiar.";
+                case VESPER -> "You are early. Or I am glad. I have not decided which is safer.";
+                case RAFIQ -> "Ah. My favorite complication has arrived.";
+                case CALDER -> "You are here. Good. The day was leaning oddly without you.";
+            };
         }
 
         String oathsteadGreeting(DialogueContext context) {
             if (!context.assignedBuildingLabel().isBlank()) {
-                return "Oathstead has put me at the " + context.assignedBuildingLabel().toLowerCase() + ". I am making it useful in my own way.";
+                String station = context.assignedBuildingLabel()
+                        .replaceFirst("(?i)^oathstead\\s+", "")
+                        .toLowerCase(Locale.ROOT);
+                return switch (this) {
+                    case SERAPHINE -> "The " + station + " has fewer hidden clauses than I expected. I am improving it anyway.";
+                    case MAERA -> "The " + station + " keeps producing questions. I have claimed a corner for the dangerous ones.";
+                    case CASSIA -> "The " + station + " is not a wall, but people lean on it. That is enough for my attention.";
+                    case LYRA -> "The " + station + " needs clean hands, calmer voices, and fewer heroic entrances. I am working on two.";
+                    case SAMIR -> "The " + station + " has ordinary work and honest shadows. I find that useful.";
+                    case ARIA -> "The " + station + " gives me roads to watch and reasons to come back from them.";
+                    case VESPER -> "The " + station + " is learning what grows when people stop mistaking shelter for ownership.";
+                    case RAFIQ -> "The " + station + " has survived my standards so far. Heroic little structure.";
+                    case CALDER -> "The " + station + " is uneven, overworked, and worth maintaining. Familiar virtues.";
+                };
             }
-            return "Oathstead still leans toward standing. That counts for more than it sounds.";
+            return switch (this) {
+                case SERAPHINE -> "Oathstead has not asked me to sign away a single piece of myself. Suspicious place.";
+                case MAERA -> "Oathstead keeps becoming a place worth footnoting. I am trying not to overdo it.";
+                case CASSIA -> "Oathstead is still standing. So are the people inside it. That is not nothing.";
+                case LYRA -> "Oathstead smells of smoke, linen, wet boots, and people trying again.";
+                case SAMIR -> "Oathstead has light in ordinary places. I am learning to trust that.";
+                case ARIA -> "Oathstead has roads that return. I keep noticing.";
+                case VESPER -> "Oathstead is not my grove. Good. It may grow into itself.";
+                case RAFIQ -> "Oathstead remains muddy, sincere, and alarmingly difficult to mock.";
+                case CALDER -> "Oathstead still leans toward standing. That counts for more than it sounds.";
+            };
         }
 
         String oathsteadLine(DialogueContext context) {
@@ -2042,7 +2514,17 @@ public final class DialogueLibrary {
                 return "You ask like you intend to hear the answer. That still catches me off guard.";
             }
             if (relationship >= 50) {
-                return "You are making a habit of checking whether I am a person. Dangerous habit.";
+                return switch (this) {
+                    case SERAPHINE -> "Most people ask that when they want leverage. You keep forgetting the leverage.";
+                    case MAERA -> "You ask as if the answer belongs in the record. I am not sure whether to be annoyed or relieved.";
+                    case CASSIA -> "You ask after the person inside the armor. That is still not standard procedure.";
+                    case LYRA -> "You remembered that healers bruise too. Sensible. Inconveniently kind.";
+                    case SAMIR -> "You ask gently enough that I cannot hide behind doctrine.";
+                    case ARIA -> "You keep asking before I can turn the answer into a joke about roads.";
+                    case VESPER -> "You ask softly enough that the root does not flinch.";
+                    case RAFIQ -> "You ask with the tragic confidence of someone expecting honesty from me.";
+                    case CALDER -> "You ask like a person checking the supports after rain. I respect that.";
+                };
             }
             return "If this is concern, it is early. If this is strategy, it is unusually gentle.";
         }
@@ -2062,7 +2544,17 @@ public final class DialogueLibrary {
                 };
             }
             if (relationship >= 50) {
-                return "Tired. Not the sleepy kind. The road kind.";
+                return switch (this) {
+                    case SERAPHINE -> "Threadbare in places I prefer to keep expensive-looking.";
+                    case MAERA -> "Like I need another shelf for thoughts I refuse to misfile.";
+                    case CASSIA -> "Bruised under the discipline. Still standing.";
+                    case LYRA -> "Tired in the hands. Better because someone noticed.";
+                    case SAMIR -> "Unsteady, but not dimmed.";
+                    case ARIA -> "Like I have been walking too long and only just noticed I can stop.";
+                    case VESPER -> "Cold at the edges. Alive at the center.";
+                    case RAFIQ -> "Dramatically fine. Which is to say: not fine, but well dressed.";
+                    case CALDER -> "A little strained. Still holding.";
+                };
             }
             return "Aware. Armed. Not answering that fully.";
         }
@@ -3452,6 +3944,122 @@ public final class DialogueLibrary {
             };
         }
 
+        String flirtRootLabel(DialogueContext context) {
+            if (context.romanced() || context.married()) {
+                return "Come here a moment.";
+            }
+            return switch (this) {
+                case SERAPHINE -> "No contracts. Just you and me.";
+                case MAERA -> "You keep stealing my attention.";
+                case CASSIA -> "You are ruining my discipline.";
+                case LYRA -> "I like seeing you smile.";
+                case SAMIR -> "You make ordinary light difficult.";
+                case ARIA -> "You keep making me look back.";
+                case VESPER -> "You make the cold feel less certain.";
+                case RAFIQ -> "Flirt with me before you behave.";
+                case CALDER -> "You feel like somewhere solid.";
+            };
+        }
+
+        String flirtOpening(int relationship, DialogueContext context) {
+            if (context.married()) {
+                return switch (this) {
+                    case SERAPHINE -> "A dangerous opening, spouse. I have no legal objection.";
+                    case MAERA -> "The record notes a familiar look and refuses to remain objective.";
+                    case CASSIA -> "I know that tone. It still disarms me more efficiently than any blade.";
+                    case LYRA -> "If this is how you ask me to rest, I may diagnose it as effective.";
+                    case SAMIR -> "You still make vows feel less like weight and more like light.";
+                    case ARIA -> "I know that look. I still check the exits, but I no longer plan to use them.";
+                    case VESPER -> "Some warmth does not startle me anymore. Yours does, but kindly.";
+                    case RAFIQ -> "Marriage has done nothing to improve my resistance to you. Tragic.";
+                    case CALDER -> "You look at me like the roof will hold. I am still learning how good that feels.";
+                };
+            }
+            if (context.romanced()) {
+                return romanceDateFlirtLine(context);
+            }
+            if (relationship >= 180) {
+                return "Careful. If you say it softly enough, I might believe you are not only teasing.";
+            }
+            return "That is a warmer road than we usually walk. I am listening, but do not make it careless.";
+        }
+
+        String flirtSoftChoice(DialogueContext context) {
+            return context.romanced() || context.married()
+                    ? "I missed being close to you."
+                    : "I like being near you.";
+        }
+
+        String flirtBoldChoice(DialogueContext context) {
+            return switch (this) {
+                case SERAPHINE -> "You are impossible to negotiate with when you look at me like that.";
+                case MAERA -> "I am trying very hard not to memorize your mouth.";
+                case CASSIA -> "Permission to be a terrible distraction?";
+                case LYRA -> "I think you are bad for my pulse.";
+                case SAMIR -> "If this is temptation, I am becoming fond of the theology.";
+                case ARIA -> "You make danger look like a place I might stay.";
+                case VESPER -> "I keep wanting to stand where you are warmest.";
+                case RAFIQ -> "You are unfairly pretty when you pretend to be sensible.";
+                case CALDER -> "I keep thinking about what it would mean to come home to you.";
+            };
+        }
+
+        String flirtSoftLine(DialogueContext context) {
+            return switch (this) {
+                case SERAPHINE -> "Near is acceptable. Near does not own. Near chooses, and I like choices.";
+                case MAERA -> "Good. I have been pretending the same thing was merely tactical positioning.";
+                case CASSIA -> "Then stand there a moment. I can guard the world badly for one breath.";
+                case LYRA -> "Near is a very good medicine when administered by someone I trust.";
+                case SAMIR -> "Then stay near without making it a sermon. I would like that better.";
+                case ARIA -> "Near, but not trapping. You are learning.";
+                case VESPER -> "Near can be enough. Some roots grow toward warmth without being ordered.";
+                case RAFIQ -> "Near is dangerous. Luckily, I have always believed in useful danger.";
+                case CALDER -> "Near is honest. It puts weight where words cannot dodge it.";
+            };
+        }
+
+        String flirtBoldLine(DialogueContext context) {
+            return switch (this) {
+                case SERAPHINE -> "Careful. I might start believing you know exactly what you are promising.";
+                case MAERA -> "That is not a scholarly observation. I approve of the methodological collapse.";
+                case CASSIA -> "Permission granted, briefly. Abuse it and I will make you earn the next smile.";
+                case LYRA -> "Unfair. I am trained for fevers, not for you saying things like that.";
+                case SAMIR -> "I should object on principle. I am discovering several principles are negotiable.";
+                case ARIA -> "That road is trouble. I noticed you did not ask me to avoid it.";
+                case VESPER -> "Bold things need careful hands. Show me yours are.";
+                case RAFIQ -> "At last, someone appreciates my commitment to irresponsible beauty.";
+                case CALDER -> "That lands harder than you think. Fortunately, I am built for weight.";
+            };
+        }
+
+        String flirtBoundaryLine(DialogueContext context) {
+            return switch (this) {
+                case SERAPHINE -> "Not too much if it stays honest. I flinch from claims, not wanting.";
+                case MAERA -> "Not too much. Just undocumented. I can survive one unsorted feeling.";
+                case CASSIA -> "No. But ask like that if you are unsure. Discipline applies to tenderness too.";
+                case LYRA -> "No. Tenderness is safer when both people are allowed to breathe.";
+                case SAMIR -> "No. I would rather name the boundary than pretend holiness means silence.";
+                case ARIA -> "No. You gave me an exit before I needed one. That matters.";
+                case VESPER -> "No. Gentle questions do not bruise the root.";
+                case RAFIQ -> "Too much? From you? Alarming concept. Still, I like being asked.";
+                case CALDER -> "No. A checked load holds better.";
+            };
+        }
+
+        String flirtAfterLine(DialogueContext context) {
+            return switch (this) {
+                case SERAPHINE -> "I know now. Try not to look smug; I am already fond enough to find it charming.";
+                case MAERA -> "Noted, badly filed, and likely to distract me later.";
+                case CASSIA -> "Then I will carry it. Quietly. Carefully. More gladly than I intended.";
+                case LYRA -> "I know. And because you said it plainly, I can keep it somewhere soft.";
+                case SAMIR -> "Then let it be true without demanding a miracle to justify it.";
+                case ARIA -> "I know. I may even stop pretending I did not follow that sign willingly.";
+                case VESPER -> "I know. Let it grow slowly, where noise cannot trample it.";
+                case RAFIQ -> "I know now, and I am going to be insufferable about it in moderation.";
+                case CALDER -> "I know. That gives the day a better foundation than it had.";
+            };
+        }
+
         String romanceDateOpening(DialogueContext context, String place) {
             if (context.sharedTableConversation()) {
                 return switch (this) {
@@ -3539,7 +4147,17 @@ public final class DialogueLibrary {
         }
 
         String loyalOpening() {
-            return "You have become harder to leave behind. That is either trust or poor tactical judgment.";
+            return switch (this) {
+                case SERAPHINE -> "I keep choosing your side without checking for a loophole first. Disturbing progress.";
+                case MAERA -> "I have begun leaving space for you in plans I pretend are only theoretical.";
+                case CASSIA -> "If the line moves, I look for you before I look for orders.";
+                case LYRA -> "I trust you with the part of care that keeps working after the room goes quiet.";
+                case SAMIR -> "I trust your questions near my faith. That is not a small permission.";
+                case ARIA -> "I keep finding roads back to you before I admit I chose them.";
+                case VESPER -> "I do not uproot easily. Somehow you have become part of where I stand.";
+                case RAFIQ -> "I have stopped rehearsing my exit whenever you speak. Alarming. Meaningful.";
+                case CALDER -> "I trust your weight on the beam. That is higher praise than it sounds.";
+            };
         }
 
         String loyalStand() {
@@ -3559,7 +4177,17 @@ public final class DialogueLibrary {
         }
 
         String trustedOpening() {
-            return "There is a truth I would not hand to a stranger. You are no longer convenient enough to be one.";
+            return switch (this) {
+                case SERAPHINE -> "There are truths I used to keep under lock. You have become annoyingly difficult to lock out.";
+                case MAERA -> "You are no longer a source note. You are in the argument itself.";
+                case CASSIA -> "I can speak plainly with you. Do not make me regret discovering that.";
+                case LYRA -> "I can be tired in front of you without feeling like I have failed the room.";
+                case SAMIR -> "Some doubts are safer when spoken near you.";
+                case ARIA -> "There is a truth I would not hand to a stranger. You are no longer convenient enough to be one.";
+                case VESPER -> "You have seen enough of the root that pretending at surface would be foolish.";
+                case RAFIQ -> "I could lie charmingly. I find I do not want to. Very inconvenient.";
+                case CALDER -> "Some cracks should be named before weather tests them. You may hear this one.";
+            };
         }
 
         String trustedTruth() {
@@ -3579,7 +4207,17 @@ public final class DialogueLibrary {
         }
 
         String friendOpening() {
-            return "You have a habit of being present before I decide whether I need anyone present.";
+            return switch (this) {
+                case SERAPHINE -> "You keep arriving before I can decide whether I am pleased. Evidence is accumulating.";
+                case MAERA -> "Your timing interrupts my notes. I have begun leaving room for it.";
+                case CASSIA -> "You are present again. I am learning not to treat that as a tactical error.";
+                case LYRA -> "You came back with all your limbs and at least one thoughtful expression. Promising.";
+                case SAMIR -> "You keep standing near the questions instead of fleeing the answer. I notice.";
+                case ARIA -> "You have a habit of being present before I decide whether I need anyone present.";
+                case VESPER -> "You return without pulling at the roots. That is rarer than warmth.";
+                case RAFIQ -> "There you are. I had almost achieved responsible solitude.";
+                case CALDER -> "You show up before the supports fail. Sensible habit.";
+            };
         }
 
         String friendListen() {
@@ -3599,7 +4237,17 @@ public final class DialogueLibrary {
         }
 
         String friendlyOpening() {
-            return "I am beginning to believe you are useful on purpose.";
+            return switch (this) {
+                case SERAPHINE -> "You are either useful or very well disguised as useful. I am still investigating.";
+                case MAERA -> "I am beginning to file you under 'useful complications.'";
+                case CASSIA -> "You have not wasted my time yet. That is a better start than most.";
+                case LYRA -> "You look like trouble with decent intentions. I can work with half of that.";
+                case SAMIR -> "You ask better questions than most people who want simple answers.";
+                case ARIA -> "You notice traps before stepping into them. I am trying not to look impressed.";
+                case VESPER -> "You are warmer than you are careful. Somehow both have helped.";
+                case RAFIQ -> "You continue to be entertainingly useful. Please do not become smug.";
+                case CALDER -> "You are useful in ways that do not immediately collapse. Good.";
+            };
         }
 
         String friendlyWarm() {
@@ -3619,7 +4267,17 @@ public final class DialogueLibrary {
         }
 
         String acquaintanceOpening() {
-            return "We are not friends yet. We are two people with overlapping problems and tolerable timing.";
+            return switch (this) {
+                case SERAPHINE -> "We have compatible suspicions. That is not friendship, but it has opened worse doors.";
+                case MAERA -> "You are an adjacent entry in a risky index. I have not decided the cross-reference.";
+                case CASSIA -> "You are standing near the same trouble. That earns clarity, not trust.";
+                case LYRA -> "You are less useless than expected. I am choosing to treat that as a medical improvement.";
+                case SAMIR -> "Your questions have not insulted the light so far. Continue carefully.";
+                case ARIA -> "Our problems overlap. That is not trust yet, but it is a trail.";
+                case VESPER -> "You are not stepping on the roots. That is enough beginning for now.";
+                case RAFIQ -> "This is a promising arrangement of danger and curiosity. I approve conditionally.";
+                case CALDER -> "You have not leaned wrong on the structure. That earns another conversation.";
+            };
         }
 
         String acquaintUseful() {
@@ -3639,7 +4297,17 @@ public final class DialogueLibrary {
         }
 
         String guardedOpening() {
-            return "You are alive, armed, and asking questions. Only one of those is automatically useful.";
+            return switch (this) {
+                case SERAPHINE -> "You are asking questions. I respect that less than answers and more than silence.";
+                case MAERA -> "If you came for an approved version, you are standing in the wrong margin.";
+                case CASSIA -> "Speak clearly. Half-truths waste time and get people killed.";
+                case LYRA -> "If you are here to help, good. If you are here to hover, stand where no one bleeds on you.";
+                case SAMIR -> "Ask carefully. Some doors open because they should. Some because they are bait.";
+                case ARIA -> "You came armed with questions. I will decide which are dangerous.";
+                case VESPER -> "Warmth given too quickly melts trust. Step lightly.";
+                case RAFIQ -> "If this is about my debts, take a number. If it is about survival, speak quickly.";
+                case CALDER -> "Say what you need. I dislike guessing when things may already be cracking.";
+            };
         }
 
         String guardedTeach() {
@@ -4130,7 +4798,7 @@ public final class DialogueLibrary {
         if (stage == QuestDialogueStage.OFFER) {
             addNode(nodes, prefix, questDialog(quest, false), List.of(
                     new DialogueChoice("Why does this need doing?", prefix + "_reason", 1),
-                    new DialogueChoice("Where should I start?", prefix + "_where", 1),
+                    new DialogueChoice("Where do I start?", prefix + "_where", 1),
                     new DialogueChoice("What do you think of this task?", prefix + "_opinion", 1),
                     new DialogueChoice(questCommitLabel(quest), prefix + "_accept", 1, questAcceptEffect(quest)),
                     new DialogueChoice(questDoubtLabel(quest), prefix + "_doubt", -1),
@@ -4138,7 +4806,7 @@ public final class DialogueLibrary {
             ));
             addNode(nodes, prefix + "_reason", questReasonLine(quest), List.of(
                     new DialogueChoice("That is enough reason.", prefix + "_accept", 1, questAcceptEffect(quest)),
-                    new DialogueChoice("Where should I start?", prefix + "_where", 0),
+                    new DialogueChoice("Where do I start?", prefix + "_where", 0),
                     new DialogueChoice("Back to topics", "root")
             ));
             addNode(nodes, prefix + "_where", questWhereLine(quest), List.of(
@@ -4149,7 +4817,7 @@ public final class DialogueLibrary {
             ));
             addNode(nodes, prefix + "_opinion", questOpinionLine(npc, quest), List.of(
                     new DialogueChoice("I understand the stakes.", prefix + "_accept", 1, questAcceptEffect(quest)),
-                    new DialogueChoice("Where should I start?", prefix + "_where", 0),
+                    new DialogueChoice("Where do I start?", prefix + "_where", 0),
                     new DialogueChoice("Back to topics", "root")
             ));
             addNode(nodes, prefix + "_accept", questOfferDetailLine(quest), backChoices());
@@ -4158,9 +4826,9 @@ public final class DialogueLibrary {
         }
         if (stage == QuestDialogueStage.READY) {
             addNode(nodes, prefix, questDialog(quest, false), List.of(
-                    new DialogueChoice("Here is what I found.", prefix + "_turnin", 2, questTurnInEffect(quest)),
-                    new DialogueChoice("What does this prove?", prefix + "_meaning", 1),
-                    new DialogueChoice("What happens after this?", prefix + "_after", 1),
+                    new DialogueChoice("I brought what you needed.", prefix + "_turnin", 2, questTurnInEffect(quest)),
+                    new DialogueChoice("What does this change?", prefix + "_meaning", 1),
+                    new DialogueChoice("Where does this leave us?", prefix + "_after", 1),
                     new DialogueChoice("Back to topics", "root")
             ));
             addNode(nodes, prefix + "_meaning", questReadyMeaningLine(quest), backChoices());
@@ -4170,8 +4838,8 @@ public final class DialogueLibrary {
         }
         if (stage == QuestDialogueStage.COMPLETED) {
             addNode(nodes, prefix, questDialog(quest, false), List.of(
-                    new DialogueChoice("What changed after this?", prefix + "_after", 1),
-                    new DialogueChoice("Was it worth the cost?", prefix + "_opinion", 1),
+                    new DialogueChoice("What changed after that?", prefix + "_after", 1),
+                    new DialogueChoice("Did it cost more than expected?", prefix + "_opinion", 1),
                     new DialogueChoice("Back to topics", "root")
             ));
             addNode(nodes, prefix + "_after", questAftermathLine(quest), backChoices());
@@ -4193,9 +4861,9 @@ public final class DialogueLibrary {
             return;
         }
         addNode(nodes, prefix, questDialog(quest, false), List.of(
-                new DialogueChoice(stage == QuestDialogueStage.IN_PROGRESS ? "This is what I have so far." : "Remind me why this matters.", prefix + "_progress", 1),
-                new DialogueChoice("Where do I finish this?", prefix + "_where", 1),
-                new DialogueChoice("What should I watch for?", prefix + "_warning", 1),
+                new DialogueChoice(stage == QuestDialogueStage.IN_PROGRESS ? "Let me make sure I have this right." : "Remind me why this matters to you.", prefix + "_progress", 1),
+                new DialogueChoice("Where do I take this next?", prefix + "_where", 1),
+                new DialogueChoice("What would make you nervous out there?", prefix + "_warning", 1),
                 new DialogueChoice("What do you think of the task now?", prefix + "_opinion", 1),
                 new DialogueChoice("Back to topics", "root")
         ));
@@ -4264,8 +4932,7 @@ public final class DialogueLibrary {
     }
 
     private static String questWhereLine(Quest quest) {
-        return "Start with " + objectiveLocationLine(quest) + ". " + questActionPhrase(quest)
-                + ", then return when the work can be answered for.";
+        return spokenQuestObjectiveLine(quest) + " Then return when the work can be answered for.";
     }
 
     private static String questProgressLine(Quest quest) {
@@ -4352,6 +5019,34 @@ public final class DialogueLibrary {
             case REPORT -> "Report to " + quest.activeTarget();
             case ESCORT -> "Escort " + quest.activeTarget();
             case CHOICE -> "Decide what to do about " + quest.activeTarget();
+        };
+    }
+
+    private static String spokenQuestObjectiveLine(Quest quest) {
+        String place = objectiveLocationLine(quest);
+        String target = spokenQuestTarget(quest);
+        return switch (quest.activeObjectiveKind()) {
+            case DEFEAT -> "Find " + target + " near " + place + ", and stop the threat before it grows bolder.";
+            case RESCUE -> "Reach " + target + " near " + place + " before fear or injury gets the final word.";
+            case DEFEND -> "Hold " + target + " at " + place + " and watch what the attackers reveal about themselves.";
+            case GATHER -> "Start at " + place + " and bring back " + target + ".";
+            case DELIVER -> "Take " + target + " to " + place + " and keep it out of careless hands.";
+            case VISIT -> "Go to " + place + " and inspect " + target + " closely enough that the place has to answer.";
+            case SEARCH -> "Start at " + place + ". Look for " + target + ", especially whatever someone tried to make ordinary.";
+            case TALK -> "Find " + target + " at " + place + ", ask plainly, and listen past the prepared answer.";
+            case ASK_AROUND -> "Ask around " + place + " about " + target + ", then compare the quiet details.";
+            case REPORT -> "Bring what you learned about " + target + " back to " + place + " without polishing it into comfort.";
+            case ESCORT -> "Guide " + target + " through " + place + " safely; a boring road is a successful one.";
+            case CHOICE -> "At " + place + ", decide what should happen with " + target + " and own the consequence.";
+        };
+    }
+
+    private static String spokenQuestTarget(Quest quest) {
+        int needed = quest.activeNeeded();
+        String target = quest.activeTarget();
+        return switch (quest.activeObjectiveKind()) {
+            case GATHER, SEARCH, VISIT -> needed > 1 ? needed + " " + target : target;
+            default -> target;
         };
     }
 
@@ -4938,11 +5633,11 @@ public final class DialogueLibrary {
             if (line.contains("{{relationship}}")) {
                 line = line.replace("{{relationship}}", relationshipLabel(relationship) + " (" + relationship + ")");
             }
-            String bridge = inSessionBridge();
-            if (!bridge.isBlank()) {
-                line = bridge + " " + line;
-            }
             return line;
+        }
+
+        public DialogueLine structuredLine(int relationship) {
+            return DialogueLine.from(line(relationship));
         }
 
         public List<String> optionLabels() {
@@ -4986,35 +5681,6 @@ public final class DialogueLibrary {
             return nodes.getOrDefault(currentNodeId, nodes.get("root"));
         }
 
-        private String inSessionBridge() {
-            DialogueNode node = currentNode();
-            DialogueIntent currentIntent = node.intent();
-            if (currentIntent == null || previousIntent == null || currentIntent == previousIntent || "root".equals(node.id())) {
-                return "";
-            }
-            int visits = nodeVisits.getOrDefault(node.id(), 0);
-            if (visits > 1) {
-                return "They notice you circling back to the same point before answering again.";
-            }
-            return switch (currentIntent) {
-                case QUEST_PRACTICAL -> switch (previousIntent) {
-                    case QUEST_PERSONAL, FEELING, CONCERN, TRUST, ROMANCE ->
-                            "They carry the personal thread into the practical answer instead of dropping it.";
-                    default -> "";
-                };
-                case QUEST_PERSONAL, FEELING -> switch (previousIntent) {
-                    case QUEST_PRACTICAL, NEXT_STEP ->
-                            "The practical answer has not erased the feeling under it.";
-                    default -> "";
-                };
-                case QUEST_WARNING -> "The answer turns from what happened to what could still hurt.";
-                case MEMORY -> "The conversation slows as the present makes room for what already happened.";
-                case OPINION -> "They treat the question as part of the same trust, not a separate curiosity.";
-                case HOME, FUTURE -> "The thread moves from survival toward what it would mean to stay.";
-                case ROMANCE -> "The air between you changes because the question is no longer only practical.";
-                default -> "";
-            };
-        }
     }
 
     private record DialogueNode(String id, String line, List<DialogueChoice> choices, DialogueIntent intent, String repeatKey) {
@@ -5023,6 +5689,42 @@ public final class DialogueLibrary {
     public record DialogueChoiceResult(int relationshipDelta, String effect, String repeatKey) {
         public DialogueChoiceResult(int relationshipDelta) {
             this(relationshipDelta, "", "");
+        }
+    }
+
+    public record DialogueLine(String narration, String speech) {
+        public DialogueLine {
+            narration = narration == null ? "" : narration.replaceAll("\\s+", " ").strip();
+            speech = speech == null ? "" : speech.replaceAll("\\s+", " ").strip();
+        }
+
+        public static DialogueLine from(String rawLine) {
+            String cleaned = rawLine == null ? "" : rawLine.replaceAll("\\s+", " ").strip();
+            if (cleaned.isBlank()) {
+                return new DialogueLine("", "");
+            }
+            int firstQuote = cleaned.indexOf('"');
+            int lastQuote = cleaned.lastIndexOf('"');
+            if (firstQuote >= 0 && lastQuote > firstQuote) {
+                String narration = cleaned.substring(0, firstQuote).strip();
+                String speech = cleaned.substring(firstQuote + 1, lastQuote).strip();
+                String trailing = cleaned.substring(lastQuote + 1).strip();
+                if (!trailing.isBlank()) {
+                    speech = speech.isBlank() ? trailing : speech + " " + trailing;
+                }
+                return new DialogueLine(narration, speech);
+            }
+            return new DialogueLine("", cleaned);
+        }
+
+        public String combined() {
+            if (narration.isBlank()) {
+                return speech;
+            }
+            if (speech.isBlank()) {
+                return narration;
+            }
+            return narration + " \"" + speech + "\"";
         }
     }
 

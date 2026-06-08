@@ -365,6 +365,114 @@ SAMPLE_OPTIONS = (
 )
 
 
+INSPIRED_SAMPLE_OPTIONS = (
+    SampleOption(
+        suffix="emberglass",
+        label="Emberglass",
+        description="bright bell ostinato, soft low pulse, and a wide dusk-like wash",
+        tempo_scale=1.02,
+        drum="soft",
+        pad_wave="sine",
+        lead_wave="bell",
+        density=0.92,
+        pad_volume=0.92,
+        arp_volume=0.92,
+        bass_volume=0.70,
+        lead_volume=0.62,
+        drum_volume=0.32,
+        ceiling=0.56,
+        long_pads=True,
+        counterline=True,
+        shimmer=True,
+        lead_octave_delta=1,
+        detune_cents=8.0,
+        vibrato_depth=0.0026,
+        delay_mix=0.15,
+        reverb_mix=0.31,
+        filter_warmth=0.18,
+        saturation=1.06,
+    ),
+    SampleOption(
+        suffix="nightdrive",
+        label="Nightdrive",
+        description="steady mid-tempo movement with rounded square lead and restrained percussion",
+        tempo_scale=1.22,
+        drum="soft",
+        pad_wave="triangle",
+        lead_wave="soft_square",
+        density=1.22,
+        pad_volume=0.70,
+        arp_volume=1.24,
+        bass_volume=1.05,
+        lead_volume=0.72,
+        drum_volume=0.62,
+        ceiling=0.66,
+        long_pads=False,
+        counterline=True,
+        shimmer=True,
+        bass_octave_delta=0,
+        detune_cents=3.0,
+        vibrato_depth=0.0014,
+        delay_mix=0.08,
+        reverb_mix=0.14,
+        filter_warmth=0.10,
+        saturation=1.18,
+    ),
+    SampleOption(
+        suffix="lowtide",
+        label="Lowtide",
+        description="slow submerged pads, sparse bell fragments, and almost no attack",
+        tempo_scale=0.72,
+        drum="none",
+        pad_wave="sine",
+        lead_wave="bell",
+        density=0.38,
+        pad_volume=0.84,
+        arp_volume=0.22,
+        bass_volume=0.36,
+        lead_volume=0.28,
+        drum_volume=0.0,
+        ceiling=0.40,
+        long_pads=True,
+        counterline=True,
+        shimmer=True,
+        lead_octave_delta=0,
+        detune_cents=9.0,
+        vibrato_depth=0.0030,
+        delay_mix=0.18,
+        reverb_mix=0.36,
+        filter_warmth=0.26,
+        saturation=1.02,
+    ),
+    SampleOption(
+        suffix="prismarch",
+        label="Prismarch",
+        description="more urgent arpeggio motion with luminous high accents and a heroic lift",
+        tempo_scale=1.34,
+        drum=None,
+        pad_wave="triangle",
+        lead_wave="bell",
+        density=1.38,
+        pad_volume=0.66,
+        arp_volume=1.36,
+        bass_volume=1.12,
+        lead_volume=0.66,
+        drum_volume=0.78,
+        ceiling=0.70,
+        long_pads=False,
+        counterline=True,
+        shimmer=True,
+        lead_octave_delta=1,
+        detune_cents=4.0,
+        vibrato_depth=0.0016,
+        delay_mix=0.09,
+        reverb_mix=0.18,
+        filter_warmth=0.08,
+        saturation=1.16,
+    ),
+)
+
+
 ZONE_TRACKS = (
     "zone_grasslands",
     "zone_forest",
@@ -810,11 +918,16 @@ def make_manifest(generated: Iterable[tuple[str, Path, TrackPreset, int]]) -> st
     return "\n".join(lines)
 
 
-def make_sample_manifest(generated: Iterable[tuple[str, Path, TrackPreset, int, SampleOption]]) -> str:
+def make_sample_manifest(
+    generated: Iterable[tuple[str, Path, TrackPreset, int, SampleOption]],
+    title: str = "Music Audition Samples",
+    note: str = "Short samples generated for choosing biome music direction. These do not replace the in-game loops.",
+    command: str = "python tools/musicgen.py --sample-pack",
+) -> str:
     lines = [
-        "# Music Audition Samples",
+        f"# {title}",
         "",
-        "Short samples generated for choosing biome music direction. These do not replace the in-game loops.",
+        note,
         "",
     ]
     for name, path, preset, bars, option in generated:
@@ -825,16 +938,23 @@ def make_sample_manifest(generated: Iterable[tuple[str, Path, TrackPreset, int, 
             f"{preset.tempo} BPM, {length:.1f}s sample"
         )
     lines.append("")
-    lines.append("Generated with `python tools/musicgen.py --sample-pack`.")
+    lines.append(f"Generated with `{command}`.")
     return "\n".join(lines)
 
 
-def generate_sample_pack(output_dir: Path, bars: int) -> None:
+def generate_sample_pack(
+    output_dir: Path,
+    bars: int,
+    options: tuple[SampleOption, ...] = SAMPLE_OPTIONS,
+    title: str = "Music Audition Samples",
+    note: str = "Short samples generated for choosing biome music direction. These do not replace the in-game loops.",
+    command: str = "python tools/musicgen.py --sample-pack",
+) -> None:
     generated: list[tuple[str, Path, TrackPreset, int, SampleOption]] = []
-    print(f"Generating {len(ZONE_TRACKS) * len(SAMPLE_OPTIONS)} audition sample(s) into {output_dir}...")
+    print(f"Generating {len(ZONE_TRACKS) * len(options)} audition sample(s) into {output_dir}...")
     for base_name in ZONE_TRACKS:
         base = PRESETS[base_name]
-        for option in SAMPLE_OPTIONS:
+        for option in options:
             name = f"{base_name}__{option.suffix}"
             preset = arranged_preset(base, option)
             audio = render_track(name, preset, bars)
@@ -844,7 +964,7 @@ def generate_sample_pack(output_dir: Path, bars: int) -> None:
             print(f"- {name}: {path}")
 
     manifest = output_dir / "README.md"
-    manifest.write_text(make_sample_manifest(generated), encoding="utf-8")
+    manifest.write_text(make_sample_manifest(generated, title, note, command), encoding="utf-8")
     print(f"Done. Audition manifest: {manifest}")
 
 
@@ -857,6 +977,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sample-pack", action="store_true", help="Generate short biome audition variants without replacing game tracks.")
     parser.add_argument("--sample-bars", type=int, default=4, help="Bars per audition sample. Default: 4.")
     parser.add_argument("--sample-out", type=Path, default=OUT / "samples", help="Audition output directory. Default: assets/music/samples.")
+    parser.add_argument("--inspired-pack", action="store_true", help="Generate original reference-inspired audition variants without replacing game tracks.")
+    parser.add_argument("--inspired-bars", type=int, default=6, help="Bars per inspired sample. Default: 6.")
+    parser.add_argument("--inspired-out", type=Path, default=OUT / "samples" / "inspired", help="Inspired audition output directory. Default: assets/music/samples/inspired.")
     return parser.parse_args()
 
 
@@ -869,10 +992,28 @@ def main() -> None:
         print("Sample options:")
         for option in SAMPLE_OPTIONS:
             print(f"{option.suffix}: {option.label} - {option.description}")
+        print("")
+        print("Inspired sample options:")
+        for option in INSPIRED_SAMPLE_OPTIONS:
+            print(f"{option.suffix}: {option.label} - {option.description}")
         return
 
     if args.bars < 2:
         raise SystemExit("--bars must be at least 2")
+
+    if args.inspired_pack:
+        if args.inspired_bars < 2:
+            raise SystemExit("--inspired-bars must be at least 2")
+        inspired_output_dir = args.inspired_out if args.inspired_out.is_absolute() else ROOT / args.inspired_out
+        generate_sample_pack(
+            inspired_output_dir,
+            args.inspired_bars,
+            INSPIRED_SAMPLE_OPTIONS,
+            "Reference-Inspired Music Audition Samples",
+            "Original samples using broad atmospheric traits from the reference as direction. These do not quote or recreate melodies, rhythms, or recordings, and they do not replace the in-game loops.",
+            "python tools/musicgen.py --inspired-pack",
+        )
+        return
 
     if args.sample_pack:
         if args.sample_bars < 2:

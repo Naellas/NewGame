@@ -279,8 +279,9 @@ Acceptance criteria:
 
 ### Phase 4 - Split World Rendering
 
-- [ ] Create `WorldRenderer` as a package-private class.
+- [x] Create `WorldRenderer` as a package-private class.
 - [ ] Move pure world drawing helpers from `GamePanel` into `WorldRenderer`.
+  - Started with the base terrain tile pass; props, actors, weather, lighting, overlays, and input-owned UI remain coordinated by `GamePanel`.
 - [ ] Keep shared UI state, buttons, and input in `GamePanel`.
 - [ ] Pass a compact render context instead of exposing all `GamePanel` fields.
 - [ ] Preserve terrain, water, roads, city/village overlays, lights, weather, props, NPCs, player, quest markers, and clouds.

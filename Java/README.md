@@ -22,6 +22,14 @@ The current port is intentionally dependency-free Java 21/Swing so it can compil
 .\scripts\smoke-test.ps1
 ```
 
+## Generated Files
+
+Build products under `out/` and `out-check/`, local saves, local settings, map-editor exports, compiled `.class` files, and Python `__pycache__` bytecode are ignored. From the repository root, existing tracked generated artifacts can be removed from the index without deleting local copies with:
+
+```powershell
+git rm -r --cached out Java/tools/__pycache__
+```
+
 ## Current Scope
 
 - Java window and fixed-step Swing game loop.

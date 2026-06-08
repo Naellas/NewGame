@@ -1,13 +1,14 @@
+# Root build output
+/out/
+
 # Java project generated output and local runtime state
-out/
-out-check/
-saves/
-config/settings.properties
-exports/
+/Java/out/
+/Java/out-check/
+/Java/saves/
+/Java/config/settings.properties
+/Java/exports/
 
 # Compiled classes and Python tool caches
 *.class
 __pycache__/
 *.pyc
-
-Story premise/

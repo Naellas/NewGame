@@ -1,5 +1,7 @@
 package com.alderfall.game;
 
+import com.alderfall.game.map.WorldMap;
+import com.alderfall.game.map.WorldTransition;
 import com.alderfall.game.inventory.Equipment;
 import java.io.IOException;
 import java.nio.file.Files;
