@@ -1750,9 +1750,11 @@ public final class WorldMap {
         }
         buildings = splitOversizedSettlementBuildings(buildings);
         cityBuildings.put(id, buildings);
+        applySettlementLayoutPlan(area, variant, town);
         connectSettlementBuildingPaths(area, buildings, Terrain.COBBLESTONE_ROAD);
         addTownParks(area, variant, town ? 2 : 3);
         normalizeCityRoadsAndPaving(area, variant);
+        addSettlementDistrictProps(area, variant, town);
         addCityProps(area, variant);
         addBusinessYardPropClusters(area, variant);
         if (town) {
@@ -2056,15 +2058,19 @@ public final class WorldMap {
     }
 
     private void addDungeon(String id, String label, int ox, int oy, int depth) {
+        addDungeon(id, label, ox, oy, depth, "crypt");
+    }
+
+    private void addDungeon(String id, String label, int ox, int oy, int depth, String theme) {
         int floors = Math.max(3, Math.min(4, depth + 2));
         String firstFloor = dungeonFloorId(id, 1);
         for (int floor = 1; floor <= floors; floor++) {
             String floorId = dungeonFloorId(id, floor);
-            MapArea area = new MapArea(floorId, dungeonFloorLabel(label, floor, floors), "dungeon", dungeonTiles(floor));
-            addDungeonProps(area);
-            addDungeonStairProps(area, floor, floors);
+            MapArea area = new MapArea(floorId, dungeonFloorLabel(label, theme, floor, floors), "dungeon", dungeonTiles(theme, floor, floors, floorId));
+            addDungeonProps(area, theme, floor, floors);
+            addDungeonStairProps(area, theme, floor, floors);
             maps.put(floorId, area);
-            area.landmarks.put(new TilePoint(2, 12), floor == 1 ? label : dungeonFloorLabel(label, floor, floors));
+            area.landmarks.put(new TilePoint(2, 12), floor == 1 ? label : dungeonFloorLabel(label, theme, floor, floors));
             if (floor < floors) {
                 area.landmarks.put(new TilePoint(34, 18), "Stairs Down");
             }
@@ -2083,7 +2089,7 @@ public final class WorldMap {
     }
 
     private void addDungeon(AdventureSite site) {
-        addDungeon(site.id, site.label, site.x, site.y, site.depth);
+        addDungeon(site.id, site.label, site.x, site.y, site.depth, site.kind);
     }
 
     public WorldTransition dungeonEscapeTransition(String mapId) {
@@ -2133,14 +2139,53 @@ public final class WorldMap {
         return id.replaceFirst("_\\d+$", "_" + floor);
     }
 
-    private String dungeonFloorLabel(String label, int floor, int floors) {
+    private String dungeonFloorLabel(String label, String theme, int floor, int floors) {
         if (floor == 1) {
-            return label + " - Upper Halls";
+            return label + " - " + themedDungeonUpperLabel(theme);
         }
         if (floor == floors) {
-            return label + " - Deepest Floor";
+            return label + " - " + themedDungeonDeepLabel(theme);
         }
-        return label + " - Floor " + floor;
+        return label + " - " + themedDungeonMiddleLabel(theme, floor);
+    }
+
+    private String themedDungeonUpperLabel(String theme) {
+        return switch (theme) {
+            case "cave" -> "Upper Caverns";
+            case "crypt" -> "Grave Halls";
+            case "abandoned_castle" -> "Outer Keep";
+            case "prison" -> "Cell Blocks";
+            case "sewer" -> "Drainworks";
+            case "goblin_camp" -> "Warren Tunnels";
+            case "bandit_camp" -> "Smuggler Vaults";
+            default -> "Upper Halls";
+        };
+    }
+
+    private String themedDungeonMiddleLabel(String theme, int floor) {
+        return switch (theme) {
+            case "cave" -> "Crystal Galleries";
+            case "crypt" -> "Ossuary " + floor;
+            case "abandoned_castle" -> "Collapsed Ward";
+            case "prison" -> "Iron Gallery";
+            case "sewer" -> "Cistern " + floor;
+            case "goblin_camp" -> "Root Cellars";
+            case "bandit_camp" -> "Contraband Halls";
+            default -> "Floor " + floor;
+        };
+    }
+
+    private String themedDungeonDeepLabel(String theme) {
+        return switch (theme) {
+            case "cave" -> "Deep Grotto";
+            case "crypt" -> "Sealed Tomb";
+            case "abandoned_castle" -> "Black Vault";
+            case "prison" -> "Oubliette";
+            case "sewer" -> "Sunken Sump";
+            case "goblin_camp" -> "Boss Den";
+            case "bandit_camp" -> "Captain's Lockup";
+            default -> "Deepest Floor";
+        };
     }
 
     private int dungeonFloorNumber(String mapId) {
@@ -2155,12 +2200,17 @@ public final class WorldMap {
         }
     }
 
-    private void addDungeonStairProps(MapArea area, int floor, int floors) {
+    private void addDungeonStairProps(MapArea area, String theme, int floor, int floors) {
+        String stairAsset = switch (theme) {
+            case "cave" -> "location_overgrown_cave_entrance";
+            case "abandoned_castle", "prison" -> "location_castle_ruins";
+            default -> "location_dungeon_stair_entrance";
+        };
         if (floor > 1) {
-            area.addProp(new WorldProp(1, 12, "location_dungeon_stair_entrance", 46));
+            area.addProp(new WorldProp(1, 12, stairAsset, 46));
         }
         if (floor < floors) {
-            area.addProp(new WorldProp(34, 18, "location_dungeon_stair_entrance", 50));
+            area.addProp(new WorldProp(34, 18, stairAsset, 50));
         }
     }
 
@@ -2218,8 +2268,10 @@ public final class WorldMap {
             rect(grid, 12, 8, 22, 8, 'a');
             rect(grid, 16, 7, 17, 8, 't');
         } else if ("highwall".equals(variant)) {
-            rect(grid, 3, 2, 30, 2, 'x');
-            rect(grid, 3, 21, 30, 21, 'x');
+            rect(grid, 3, 2, 10, 2, 'x');
+            rect(grid, 23, 2, 30, 2, 'x');
+            rect(grid, 3, 21, 8, 21, 'x');
+            rect(grid, 25, 21, 30, 21, 'x');
             rect(grid, 9, 7, 10, 8, 't');
             rect(grid, 19, 15, 20, 16, 't');
         } else if ("belltower".equals(variant)) {
@@ -2478,6 +2530,90 @@ public final class WorldMap {
                 }
             }
         }
+    }
+
+    private void applySettlementLayoutPlan(MapArea area, String variant, boolean town) {
+        openConfusingInteriorWallRuns(area, variant, town);
+        stampSettlementMarketCore(area, variant, town);
+        if ("highwall".equals(variant)) {
+            stampHighwallDistrictPlan(area, town);
+        }
+    }
+
+    private void openConfusingInteriorWallRuns(MapArea area, String variant, boolean town) {
+        if (!"highwall".equals(variant)) {
+            return;
+        }
+        int minimumRun = town ? 7 : 9;
+        char surface = town ? 'C' : 'p';
+        for (int y = 2; y < area.height() - 2; y++) {
+            int x = 2;
+            while (x < area.width() - 2) {
+                if (area.tiles[y][x] != 'x') {
+                    x++;
+                    continue;
+                }
+                int start = x;
+                while (x < area.width() - 2 && area.tiles[y][x] == 'x') {
+                    x++;
+                }
+                int end = x - 1;
+                int length = end - start + 1;
+                if (length >= minimumRun) {
+                    for (int xx = start + 3; xx <= end - 3; xx++) {
+                        area.tiles[y][xx] = surface;
+                    }
+                }
+            }
+        }
+    }
+
+    private void stampSettlementMarketCore(MapArea area, String variant, boolean town) {
+        int centerX = Math.min(area.width() - 7, 17);
+        int centerY = Math.min(area.height() - 8, 12);
+        char court = town ? 'G' : 'a';
+        char edge = town ? 'C' : 'p';
+        paintDistrictSurface(area, centerX - 6, centerY - 4, centerX + 7, centerY + 4, edge);
+        paintDistrictSurface(area, centerX - 4, centerY - 2, centerX + 5, centerY + 2, court);
+        if ("highwall".equals(variant)) {
+            paintDistrictSurface(area, centerX - 5, centerY - 3, centerX + 6, centerY + 3, town ? 'C' : 'p');
+        }
+    }
+
+    private void stampHighwallDistrictPlan(MapArea area, boolean town) {
+        paintDistrictSurface(area, 11, 3, 22, 5, 'C');
+        paintDistrictSurface(area, 4, 18, 15, 23, 'C');
+        paintDistrictSurface(area, 20, 20, 32, Math.min(area.height() - 4, 29), 'p');
+        paintDistrictSurface(area, 26, 13, Math.min(area.width() - 4, 34), 18, town ? 'C' : 'p');
+        if (town) {
+            paintDistrictSurface(area, 14, 14, 22, 18, 'G');
+            paintDistrictSurface(area, 6, 24, 14, Math.min(area.height() - 4, 30), 'n');
+        }
+    }
+
+    private void paintDistrictSurface(MapArea area, int x1, int y1, int x2, int y2, char tile) {
+        int minX = Math.max(1, x1);
+        int minY = Math.max(1, y1);
+        int maxX = Math.min(area.width() - 2, x2);
+        int maxY = Math.min(area.height() - 2, y2);
+        for (int y = minY; y <= maxY; y++) {
+            for (int x = minX; x <= maxX; x++) {
+                if (canPaintDistrictSurfaceTile(area, x, y)) {
+                    area.tiles[y][x] = tile;
+                }
+            }
+        }
+    }
+
+    private boolean canPaintDistrictSurfaceTile(MapArea area, int x, int y) {
+        char tile = area.tileAt(x, y);
+        return Terrain.passable(tile)
+                && !Terrain.connectingRoad(tile)
+                && tile != 'w'
+                && tile != '~'
+                && tile != 't'
+                && cityBuildingAt(area.id, x, y) == null
+                && transitionAt(area.id, x, y) == null;
     }
 
     private void paintCitySurfaceZones(char[][] grid) {
@@ -3376,54 +3512,172 @@ public final class WorldMap {
         };
     }
 
-    private char[][] dungeonTiles(int depth) {
+    private char[][] dungeonTiles(String theme, int depth, int floors, String mapId) {
+        return switch (theme) {
+            case "cave" -> caveDungeonTiles(depth, floors, mapId);
+            case "crypt" -> cryptDungeonTiles(depth, floors, mapId);
+            case "abandoned_castle" -> castleDungeonTiles(depth, floors, mapId);
+            case "prison" -> prisonDungeonTiles(depth, floors, mapId);
+            case "sewer" -> sewerDungeonTiles(depth, floors, mapId);
+            case "goblin_camp", "bandit_camp" -> strongholdDungeonTiles(theme, depth, floors, mapId);
+            default -> cryptDungeonTiles(depth, floors, mapId);
+        };
+    }
+
+    private char[][] cryptDungeonTiles(int depth, int floors, String mapId) {
+        char[][] grid = structuredDungeonTiles(depth, floors, mapId, 'Q');
+        rectIf(grid, 5, 5, 9, 8, 'M', 'Q', 'd', 'F', 'R');
+        rectIf(grid, 13, 11, 22, 14, depth == floors ? 'S' : 'D', 'Q', 'd', 'F', 'R', 'M');
+        return grid;
+    }
+
+    private char[][] castleDungeonTiles(int depth, int floors, String mapId) {
+        char[][] grid = structuredDungeonTiles(depth, floors, mapId, 'H');
+        rectIf(grid, 12, 10, 23, 15, depth == floors ? 'S' : 'D', 'H', 'd', 'F', 'R');
+        rectIf(grid, 4, 3, 11, 7, 'F', 'H', 'd', 'R');
+        rectIf(grid, 24, 4, 32, 8, 'D', 'H', 'd', 'F');
+        return grid;
+    }
+
+    private char[][] prisonDungeonTiles(int depth, int floors, String mapId) {
         char[][] grid = filled(36, 26, 'x');
-        int salt = 1100 + depth * 137;
+        rect(grid, 1, 11, 9, 14, 'I');
+        rect(grid, 8, 12, 30, 13, 'I');
+        rect(grid, 29, 12, 34, 20, 'I');
+        rect(grid, 13, 5, 22, 9, 'I');
+        rect(grid, 13, 16, 22, 21, 'I');
+        for (int x = 5; x <= 29; x += 4) {
+            rect(grid, x, 4, x + 2, 9, 'I');
+            rect(grid, x, 16, x + 2, 22, 'I');
+            if (x + 2 < grid[0].length - 1) {
+                grid[10][x + 1] = 'I';
+                grid[15][x + 1] = 'I';
+            }
+        }
+        rect(grid, 22, 6, 30, 9, depth == floors ? 'S' : 'I');
+        rect(grid, 4, 19, 9, 22, 'R');
+        ensureDungeonEndpoints(grid, depth, floors, 'I');
+        decorateDungeonFloors(grid, depth, 1800 + mapId.hashCode(), 'I');
+        return grid;
+    }
 
-        rect(grid, 1, 11, 8, 14, 'd');
-        rect(grid, 4, 3, 11, 7, 'd');
-        rect(grid, 13, 3, 21, 6, 'd');
-        rect(grid, 24, 4, 32, 8, 'd');
-        rect(grid, 12, 10, 23, 15, 'd');
-        rect(grid, 4, 18, 12, 22, 'd');
-        rect(grid, 16, 18, 24, 22, 'd');
-        rect(grid, 28, 15, 34, 22, 'd');
+    private char[][] sewerDungeonTiles(int depth, int floors, String mapId) {
+        char[][] grid = filled(36, 26, 'x');
+        rect(grid, 1, 11, 8, 14, 'J');
+        rect(grid, 8, 11, 34, 13, 'J');
+        rect(grid, 16, 4, 20, 22, 'J');
+        rect(grid, 4, 4, 14, 8, 'J');
+        rect(grid, 22, 4, 32, 8, 'J');
+        rect(grid, 4, 18, 14, 22, 'J');
+        rect(grid, 22, 17, 34, 22, 'J');
+        rect(grid, 9, 5, 11, 21, 'W');
+        rect(grid, 24, 5, 26, 21, 'W');
+        rect(grid, 11, 10, 24, 11, 'W');
+        rect(grid, 11, 14, 24, 15, 'W');
+        rect(grid, 17, 11, 19, 14, 'J');
+        if (depth == floors) {
+            rectIf(grid, 27, 18, 33, 21, 'S', 'J');
+        } else {
+            rectIf(grid, 5, 5, 13, 7, 'M', 'J');
+        }
+        ensureDungeonEndpoints(grid, depth, floors, 'J');
+        decorateDungeonFloors(grid, depth, 1900 + mapId.hashCode(), 'J');
+        return grid;
+    }
 
-        rect(grid, 8, 12, 14, 13, 'd');
-        rect(grid, 7, 7, 8, 12, 'd');
-        rect(grid, 11, 5, 13, 6, 'd');
-        rect(grid, 21, 5, 25, 6, 'd');
-        rect(grid, 22, 8, 23, 12, 'd');
-        rect(grid, 8, 14, 9, 18, 'd');
-        rect(grid, 12, 20, 16, 21, 'd');
-        rect(grid, 20, 15, 21, 18, 'd');
-        rect(grid, 24, 19, 28, 20, 'd');
-        rect(grid, 31, 8, 32, 15, 'd');
+    private char[][] caveDungeonTiles(int depth, int floors, String mapId) {
+        char[][] grid = filled(36, 26, 'O');
+        int salt = 2100 + depth * 151 + mapId.hashCode();
+        List<TilePoint> rooms = List.of(
+                new TilePoint(5, 12), new TilePoint(9, 5), new TilePoint(17, 7),
+                new TilePoint(24, 11), new TilePoint(11, 19), new TilePoint(22, 19),
+                new TilePoint(31, 18)
+        );
+        for (int i = 0; i < rooms.size(); i++) {
+            TilePoint room = rooms.get(i);
+            carveDungeonRoom(grid, room, 3 + Math.floorMod(hash(i, depth, salt), 3), 2 + Math.floorMod(hash(depth, i, salt), 2), salt + i * 19);
+            if (i > 0) {
+                carveDungeonCorridor(grid, rooms.get(i - 1), room, salt + i * 31);
+            }
+        }
+        replaceTile(grid, 'd', 'N');
+        rectIf(grid, 7, 4, 11, 6, 'M', 'N');
+        rectIf(grid, 19, 18, 25, 21, depth == floors ? 'S' : 'R', 'N');
+        rect(grid, 27, 8, 29, 12, 'W');
+        ensureDungeonEndpoints(grid, depth, floors, 'N');
+        decorateDungeonFloors(grid, depth, salt, 'N');
+        return grid;
+    }
 
-        grid[12][1] = 'd';
-        grid[12][2] = 'd';
-        grid[18][34] = 'd';
-        grid[18][33] = 'd';
+    private char[][] strongholdDungeonTiles(String theme, int depth, int floors, String mapId) {
+        char floor = theme.equals("goblin_camp") ? 'R' : 'H';
+        char[][] grid = structuredDungeonTiles(depth, floors, mapId, floor);
+        rectIf(grid, 4, 18, 12, 22, theme.equals("goblin_camp") ? 'M' : 'I', floor, 'd', 'F', 'R', 'H');
+        rectIf(grid, 28, 15, 34, 22, depth == floors ? 'S' : floor, floor, 'd', 'F', 'R', 'H');
+        return grid;
+    }
+
+    private char[][] structuredDungeonTiles(int depth, int floors, String mapId, char baseFloor) {
+        char[][] grid = filled(36, 26, 'x');
+        int salt = 1100 + depth * 137 + mapId.hashCode();
+
+        rect(grid, 1, 11, 8, 14, baseFloor);
+        rect(grid, 4, 3, 11, 7, baseFloor);
+        rect(grid, 13, 3, 21, 6, baseFloor);
+        rect(grid, 24, 4, 32, 8, baseFloor);
+        rect(grid, 12, 10, 23, 15, baseFloor);
+        rect(grid, 4, 18, 12, 22, baseFloor);
+        rect(grid, 16, 18, 24, 22, baseFloor);
+        rect(grid, 28, 15, 34, 22, baseFloor);
+
+        rect(grid, 8, 12, 14, 13, baseFloor);
+        rect(grid, 7, 7, 8, 12, baseFloor);
+        rect(grid, 11, 5, 13, 6, baseFloor);
+        rect(grid, 21, 5, 25, 6, baseFloor);
+        rect(grid, 22, 8, 23, 12, baseFloor);
+        rect(grid, 8, 14, 9, 18, baseFloor);
+        rect(grid, 12, 20, 16, 21, baseFloor);
+        rect(grid, 20, 15, 21, 18, baseFloor);
+        rect(grid, 24, 19, 28, 20, baseFloor);
+        rect(grid, 31, 8, 32, 15, baseFloor);
 
         if (depth == 1) {
-            rectIf(grid, 13, 11, 22, 14, 'D', 'd');
-            rectIf(grid, 5, 4, 10, 6, 'M', 'd');
+            rectIf(grid, 13, 11, 22, 14, 'D', baseFloor);
+            rectIf(grid, 5, 4, 10, 6, 'M', baseFloor);
         } else if (depth == 2) {
             rect(grid, 15, 10, 20, 13, 'w');
-            rect(grid, 17, 12, 18, 13, 'd');
-            rectIf(grid, 28, 16, 33, 21, 'S', 'd');
+            rect(grid, 17, 12, 18, 13, baseFloor);
+            rectIf(grid, 28, 16, 33, 21, 'S', baseFloor);
         } else {
-            rectIf(grid, 12, 10, 23, 15, 'F', 'd');
-            rectIf(grid, 28, 15, 34, 22, 'S', 'd');
-            rectIf(grid, 4, 18, 12, 22, 'R', 'd');
+            rectIf(grid, 12, 10, 23, 15, 'F', baseFloor);
+            rectIf(grid, 28, 15, 34, 22, 'S', baseFloor);
+            rectIf(grid, 4, 18, 12, 22, 'R', baseFloor);
         }
 
-        decorateDungeonFloors(grid, depth, salt);
-        grid[12][1] = 'd';
-        grid[12][2] = 'd';
-        grid[18][34] = 'd';
-        grid[18][33] = 'd';
+        decorateDungeonFloors(grid, depth, salt, baseFloor);
+        ensureDungeonEndpoints(grid, depth, floors, baseFloor);
         return grid;
+    }
+
+    private void ensureDungeonEndpoints(char[][] grid, int depth, int floors, char floorTile) {
+        rect(grid, 1, 11, 4, 14, floorTile);
+        grid[12][1] = floorTile;
+        grid[12][2] = floorTile;
+        if (depth < floors) {
+            rect(grid, 32, 17, 35, 20, floorTile);
+            grid[18][34] = floorTile;
+            grid[18][33] = floorTile;
+        }
+    }
+
+    private void replaceTile(char[][] grid, char from, char to) {
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[0].length; x++) {
+                if (grid[y][x] == from) {
+                    grid[y][x] = to;
+                }
+            }
+        }
     }
 
     private void carveDungeonRoom(char[][] grid, TilePoint center, int rx, int ry, int salt) {
@@ -3472,10 +3726,10 @@ public final class WorldMap {
         }
     }
 
-    private void decorateDungeonFloors(char[][] grid, int depth, int salt) {
+    private void decorateDungeonFloors(char[][] grid, int depth, int salt, char baseFloor) {
         for (int y = 1; y < grid.length - 1; y++) {
             for (int x = 1; x < grid[0].length - 1; x++) {
-                if (grid[y][x] != 'd') {
+                if (grid[y][x] != baseFloor) {
                     continue;
                 }
                 int roll = Math.floorMod(hash(x, y, salt), 100);
@@ -3492,9 +3746,9 @@ public final class WorldMap {
                 }
             }
         }
-        rectIf(grid, 21, 14, 26, 17, depth > 1 ? 'S' : 'D', 'd', 'F', 'M', 'R', 'L');
-        rectIf(grid, 5, 5, 9, 8, 'M', 'd', 'F', 'R');
-        rectIf(grid, 12, 4, 16, 6, 'F', 'd', 'M', 'R');
+        rectIf(grid, 21, 14, 26, 17, depth > 1 ? 'S' : 'D', baseFloor, 'F', 'M', 'R', 'L');
+        rectIf(grid, 5, 5, 9, 8, 'M', baseFloor, 'F', 'R');
+        rectIf(grid, 12, 4, 16, 6, 'F', baseFloor, 'M', 'R');
     }
 
     private String interiorTheme(CityBuilding building, int seed) {
@@ -4648,6 +4902,61 @@ public final class WorldMap {
         return count;
     }
 
+    private void addSettlementDistrictProps(MapArea area, String variant, boolean town) {
+        addMarketCoreProps(area, variant, town);
+        if ("highwall".equals(variant)) {
+            addHighwallDistrictProps(area, town);
+        }
+    }
+
+    private void addMarketCoreProps(MapArea area, String variant, boolean town) {
+        int centerX = Math.min(area.width() - 7, 17);
+        int centerY = Math.min(area.height() - 8, 12);
+        placeCityPropIfFree(area, centerX - 4, centerY - 3, "city_prop_news_kiosk", 40);
+        placeCityPropIfFree(area, centerX + 6, centerY - 2, "city_prop_wagon_awning", 46);
+        placeCityPropIfFree(area, centerX - 5, centerY + 3, town ? "city_prop_market_green" : "city_prop_market_red", 46);
+        placeCityPropIfFree(area, centerX + 5, centerY + 3, "city_prop_market_yellow", 46);
+        placeCityPropIfFree(area, centerX - 7, centerY, "city_prop_street_lamp", 36);
+        placeCityPropIfFree(area, centerX + 8, centerY, "city_prop_street_lamp", 36);
+        if ("archive".equals(variant)) {
+            placeCityPropIfFree(area, centerX, centerY - 4, "city_prop_flower_crate", 36);
+        } else if ("sanctum".equals(variant)) {
+            placeCityPropIfFree(area, centerX, centerY - 4, "city_prop_planter_stone", 38);
+        }
+    }
+
+    private void addHighwallDistrictProps(MapArea area, boolean town) {
+        addDistrictPropLine(area, 11, 3, 22, 3, "city_prop_street_lamp", 34, 5);
+        addDistrictPropLine(area, 5, 18, 15, 18, "location_graveyard_iron_fence", 42, 4);
+        addDistrictPropLine(area, 20, 20, 32, 20, "location_graveyard_iron_fence", 42, 5);
+        placeCityPropIfFree(area, 8, 19, "village_prop_anvil_stump", 44);
+        placeCityPropIfFree(area, 10, 20, "village_prop_ore_cart", 44);
+        placeCityPropIfFree(area, 13, 20, "village_prop_tool_rack", 42);
+        placeCityPropIfFree(area, 25, 21, "village_prop_training_dummy", 44);
+        placeCityPropIfFree(area, 29, 21, "city_prop_crate", 40);
+        placeCityPropIfFree(area, 31, 23, "city_prop_barrel_stack", 42);
+        placeCityPropIfFree(area, 29, 16, "city_prop_stone_bench", 36);
+        placeCityPropIfFree(area, 32, 16, "city_prop_street_lamp", 36);
+        if (town) {
+            placeCityPropIfFree(area, 18, 16, "village_prop_training_dummy", 44);
+            placeCityPropIfFree(area, 21, 16, "city_prop_crate", 38);
+        }
+    }
+
+    private void addDistrictPropLine(MapArea area, int x1, int y1, int x2, int y2, String asset, int size, int spacing) {
+        int dx = Integer.compare(x2, x1);
+        int dy = Integer.compare(y2, y1);
+        int steps = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
+        for (int step = 0; step <= steps; step++) {
+            if (spacing > 1 && step % spacing == spacing - 1) {
+                continue;
+            }
+            int x = x1 + dx * step;
+            int y = y1 + dy * step;
+            placeCityPropIfFree(area, x, y, asset, size);
+        }
+    }
+
     private void addCityProps(MapArea area, String variant) {
         for (int y = 2; y < area.height() - 2; y++) {
             for (int x = 2; x < area.width() - 2; x++) {
@@ -5500,20 +5809,136 @@ public final class WorldMap {
         area.addProp(prop);
     }
 
-    private void addDungeonProps(MapArea area) {
+    private void addDungeonProps(MapArea area, String theme, int floor, int floors) {
         for (int y = 3; y < area.height() - 3; y++) {
             for (int x = 3; x < area.width() - 3; x++) {
                 int roll = Math.abs(hash(x, y, area.id.hashCode())) % 100;
                 char tile = area.tileAt(x, y);
-                if ((tile == 'd' || tile == 'D' || tile == 'F') && roll < 8) {
-                    String[] options = {
-                            "dungeon_prop_rune_pillar", "dungeon_prop_lantern_stand",
-                            "dungeon_prop_chain_stand", "dungeon_prop_relic_crate",
-                            "location_graveyard_skull_marker", "location_camp_crates"
-                    };
-                    area.addProp(new WorldProp(x, y, pick(options, roll + area.id.hashCode()), roll < 2 ? 44 : 36 + roll % 10));
+                if (isDungeonDecorFloor(tile) && roll < dungeonPropChance(theme, area, x, y)) {
+                    String asset = dungeonDecorationFor(theme, tile, x, y, roll + area.id.hashCode());
+                    area.addProp(new WorldProp(x, y, asset, dungeonPropSize(asset, roll)));
                 }
             }
+        }
+        addDungeonSetPieces(area, theme, floor, floors);
+    }
+
+    private boolean isDungeonDecorFloor(char tile) {
+        return switch (tile) {
+            case 'd', 'D', 'F', 'M', 'R', 'S', 'L', 'N', 'I', 'J', 'H', 'Q' -> true;
+            default -> false;
+        };
+    }
+
+    private int dungeonPropChance(String theme, MapArea area, int x, int y) {
+        int open = 0;
+        int[][] dirs = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+        for (int[] dir : dirs) {
+            if (isDungeonDecorFloor(area.tileAt(x + dir[0], y + dir[1]))) {
+                open++;
+            }
+        }
+        int cluster = Math.abs(hash(x / 3, y / 3, area.id.hashCode())) % 100;
+        int base = switch (theme) {
+            case "cave" -> 7;
+            case "sewer" -> 9;
+            case "prison" -> 10;
+            case "crypt" -> 12;
+            case "abandoned_castle" -> 11;
+            default -> 9;
+        };
+        if (open <= 1) {
+            base += 5;
+        } else if (open >= 4) {
+            base -= 4;
+        }
+        if (cluster < 28) {
+            base += 9;
+        }
+        return Math.max(3, Math.min(26, base));
+    }
+
+    private String dungeonDecorationFor(String theme, char tile, int x, int y, int seed) {
+        if (tile == 'S') {
+            return seed % 2 == 0 ? "dungeon_prop_rune_pillar" : "location_dungeon_broken_altar";
+        }
+        if (tile == 'M') {
+            return pick(new String[]{"deco_soft_mossy_rock", "deco_imagen_pale_mushroom_ring", "deco_imagen_green_rune_stone"}, seed);
+        }
+        if (tile == 'R') {
+            return pick(new String[]{"location_dungeon_rubble_cairn", "location_dungeon_collapsed_wall", "deco_imagen_flat_stone_stack"}, seed);
+        }
+        return switch (theme) {
+            case "cave" -> pick(new String[]{
+                    "deco_rocks", "deco_imagen_crystal_cluster", "quest_cave_rune_cache",
+                    "deco_imagen_pale_mushroom_ring", "dungeon_prop_lantern_stand"
+            }, seed);
+            case "crypt" -> pick(new String[]{
+                    "location_crypt_sarcophagus", "location_dungeon_grave_slabs", "location_graveyard_skull_marker",
+                    "dungeon_prop_rune_pillar", "location_dungeon_braziers", "location_graveyard_tombstones"
+            }, seed);
+            case "abandoned_castle" -> pick(new String[]{
+                    "location_dungeon_collapsed_wall", "location_dungeon_broken_altar", "dungeon_prop_relic_crate",
+                    "dungeon_prop_lantern_stand", "location_camp_crates", "deco_imagen_flat_stone_stack"
+            }, seed);
+            case "prison" -> pick(new String[]{
+                    "dungeon_prop_chain_stand", "dungeon_prop_lantern_stand", "location_graveyard_skull_marker",
+                    "dungeon_prop_relic_crate", "location_camp_crates"
+            }, seed);
+            case "sewer" -> pick(new String[]{
+                    "dungeon_prop_lantern_stand", "location_camp_crates", "deco_soft_water_wet_stones",
+                    "deco_soft_water_reeds_gold", "deco_imagen_marsh_bubble_pool"
+            }, seed);
+            case "goblin_camp" -> pick(new String[]{
+                    "location_camp_crates", "location_graveyard_skull_marker", "location_camp_fire",
+                    "dungeon_prop_chain_stand", "dungeon_prop_relic_crate"
+            }, seed);
+            case "bandit_camp" -> pick(new String[]{
+                    "location_camp_crates", "dungeon_prop_relic_crate", "dungeon_prop_lantern_stand",
+                    "dungeon_prop_chain_stand", "deco_imagen_road_camp"
+            }, seed);
+            default -> pick(new String[]{
+                    "dungeon_prop_rune_pillar", "dungeon_prop_lantern_stand",
+                    "dungeon_prop_chain_stand", "dungeon_prop_relic_crate"
+            }, seed);
+        };
+    }
+
+    private int dungeonPropSize(String asset, int roll) {
+        return switch (asset) {
+            case "location_dungeon_collapsed_wall" -> 54;
+            case "location_dungeon_broken_altar", "location_crypt_sarcophagus" -> 50;
+            case "location_dungeon_braziers" -> 48;
+            case "location_graveyard_tombstones", "location_dungeon_grave_slabs" -> 44;
+            case "location_camp_fire", "location_camp_crates", "location_graveyard_skull_marker" -> 36;
+            case "quest_cave_rune_cache", "deco_imagen_crystal_cluster", "deco_imagen_marsh_bubble_pool" -> 40;
+            default -> roll < 2 ? 44 : 34 + roll % 10;
+        };
+    }
+
+    private void addDungeonSetPieces(MapArea area, String theme, int floor, int floors) {
+        switch (theme) {
+            case "cave" -> {
+                area.addProp(new WorldProp(8, 5, "deco_imagen_crystal_cluster", 46));
+                area.addProp(new WorldProp(24, 19, floor == floors ? "dungeon_prop_rune_pillar" : "quest_cave_rune_cache", 44));
+            }
+            case "crypt" -> {
+                area.addProp(new WorldProp(17, 12, floor == floors ? "location_dungeon_broken_altar" : "location_crypt_sarcophagus", 52));
+                area.addProp(new WorldProp(7, 20, "location_dungeon_grave_slabs", 46));
+            }
+            case "abandoned_castle" -> {
+                area.addProp(new WorldProp(17, 5, "dungeon_prop_relic_crate", 42));
+                area.addProp(new WorldProp(30, 18, floor == floors ? "location_dungeon_broken_altar" : "location_dungeon_collapsed_wall", 54));
+            }
+            case "prison" -> {
+                area.addProp(new WorldProp(6, 5, "dungeon_prop_chain_stand", 42));
+                area.addProp(new WorldProp(18, 18, floor == floors ? "location_graveyard_skull_marker" : "dungeon_prop_lantern_stand", 42));
+            }
+            case "sewer" -> {
+                area.addProp(new WorldProp(18, 12, "dungeon_prop_lantern_stand", 40));
+                area.addProp(new WorldProp(30, 19, floor == floors ? "deco_imagen_marsh_bubble_pool" : "deco_soft_water_wet_stones", 42));
+            }
+            default -> area.addProp(new WorldProp(17, 12, "dungeon_prop_lantern_stand", 40));
         }
     }
 
@@ -6413,8 +6838,10 @@ public final class WorldMap {
                     int chance = switch (patch.kind) {
                         case "farmland" -> 24;
                         case "goblin_camp", "bandit_camp" -> 34;
-                        case "graveyard", "crypt", "abandoned_castle" -> 32;
+                        case "graveyard", "crypt", "abandoned_castle", "prison", "sewer" -> 32;
                         case "cave" -> 28;
+                        case "forest_shrine", "hidden_grove" -> 30;
+                        case "cave_mouth", "ruined_watchpost", "old_road_marker" -> 34;
                         default -> 26;
                     };
                     chance = Math.min(58, chance + (int) Math.round(centerPull * 18.0));
@@ -6439,12 +6866,20 @@ public final class WorldMap {
                     ? "location_farmland_wheat"
                     : "location_farmland_tilled";
             case "goblin_camp", "bandit_camp" -> seed % 4 == 0 ? "location_graveyard_path" : "location_graveyard_dirt";
-            case "graveyard", "crypt", "abandoned_castle" -> {
+            case "graveyard", "crypt", "abandoned_castle", "prison" -> {
                 if (tile == 'd' || (Math.abs(dx) <= 1 && dy >= 0 && dy <= patch.ry)) {
                     yield "location_dungeon_approach_path";
                 }
                 yield seed % 100 < 42 + (int) Math.round(patch.centerPull(x, y) * 18.0)
                         ? "location_graveyard_dirt"
+                        : null;
+            }
+            case "sewer" -> {
+                if (tile == 'd' || (Math.abs(dx) <= 1 && dy >= 0 && dy <= patch.ry)) {
+                    yield "location_dungeon_approach_path";
+                }
+                yield seed % 100 < 38 + (int) Math.round(patch.centerPull(x, y) * 18.0)
+                        ? (seed % 3 == 0 ? "deco_soft_water_wet_stones" : "location_graveyard_dirt")
                         : null;
             }
             case "cave" -> {
@@ -6455,6 +6890,20 @@ public final class WorldMap {
                         ? "location_graveyard_dirt"
                         : null;
             }
+            case "forest_shrine", "hidden_grove" -> seed % 100 < 28 + (int) Math.round(patch.centerPull(x, y) * 22.0)
+                    ? "deco_soft_leaf_litter"
+                    : null;
+            case "cave_mouth", "ruined_watchpost" -> {
+                if (Math.abs(dx) <= 1 && dy >= 0 && dy <= patch.ry) {
+                    yield "location_dungeon_approach_path";
+                }
+                yield seed % 100 < 34 + (int) Math.round(patch.centerPull(x, y) * 18.0)
+                        ? "location_graveyard_dirt"
+                        : null;
+            }
+            case "old_road_marker" -> Terrain.connectingRoad(tile) || seed % 100 < 38
+                    ? "location_graveyard_path"
+                    : null;
             default -> null;
         };
     }
@@ -6466,6 +6915,8 @@ public final class WorldMap {
         return switch (patch.kind) {
             case "cave" -> "location_overgrown_cave_entrance";
             case "crypt", "graveyard" -> "location_dungeon_stair_entrance";
+            case "prison" -> "location_castle_ruins";
+            case "sewer" -> "location_dungeon_stair_entrance";
             case "goblin_camp" -> "location_goblin_hut";
             case "bandit_camp" -> "location_bandit_outpost";
             case "abandoned_castle" -> "location_castle_ruins";
@@ -6560,6 +7011,32 @@ public final class WorldMap {
             };
             return pick(options, seed);
         }
+        if (patch.kind.equals("prison")) {
+            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                return seed % 2 == 0 ? "location_castle_ruins" : "dungeon_prop_chain_stand";
+            }
+            if (edge) {
+                return seed % 2 == 0 ? "location_graveyard_iron_fence" : "location_dungeon_collapsed_wall";
+            }
+            String[] options = {
+                    "location_dungeon_collapsed_wall", "dungeon_prop_chain_stand", "dungeon_prop_lantern_stand",
+                    "location_dungeon_rubble_cairn", "location_camp_crates", "location_graveyard_skull_marker"
+            };
+            return pick(options, seed);
+        }
+        if (patch.kind.equals("sewer")) {
+            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                return seed % 2 == 0 ? "location_dungeon_braziers" : "location_dungeon_rubble_cairn";
+            }
+            if (edge) {
+                return seed % 2 == 0 ? "deco_soft_water_reeds_gold" : "deco_soft_water_wet_stones";
+            }
+            String[] options = {
+                    "deco_soft_water_wet_stones", "deco_soft_water_reeds_gold", "deco_imagen_marsh_bubble_pool",
+                    "location_dungeon_rubble_cairn", "location_camp_crates", "dungeon_prop_lantern_stand"
+            };
+            return pick(options, seed);
+        }
         if (patch.kind.equals("graveyard")) {
             if (nearAnyTile(x, y, new char[]{'d', 'r'}, 1)) {
                 return "location_graveyard_tombstones";
@@ -6574,6 +7051,66 @@ public final class WorldMap {
             };
             return pick(options, seed);
         }
+        if (patch.kind.equals("forest_shrine")) {
+            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                return "quest_forest_relic";
+            }
+            if (edge) {
+                return seed % 2 == 0 ? "deco_imagen_forest_roots" : "deco_tree_young";
+            }
+            String[] options = {
+                    "quest_forest_relic", "quest_ward_marker", "deco_imagen_shrine_stone",
+                    "location_ruin_standing_stones", "deco_imagen_green_rune_stone",
+                    "deco_soft_mossy_rock", "deco_soft_purple_flowers"
+            };
+            return pick(options, seed);
+        }
+        if (patch.kind.equals("hidden_grove")) {
+            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                return seed % 2 == 0 ? "quest_mushroom_samples" : "deco_forest_mushrooms";
+            }
+            String[] options = {
+                    "quest_mushroom_samples", "deco_forest_mushrooms", "deco_imagen_forest_roots",
+                    "deco_tree_young", "deco_soft_dense_meadow_flowers", "deco_soft_moss_stones"
+            };
+            return pick(options, seed);
+        }
+        if (patch.kind.equals("cave_mouth")) {
+            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                return seed % 2 == 0 ? "location_overgrown_cave_entrance" : "quest_cave_rune_cache";
+            }
+            if (edge) {
+                return "location_dungeon_rubble_cairn";
+            }
+            String[] options = {
+                    "quest_cave_rune_cache", "location_dungeon_collapsed_wall", "location_dungeon_rubble_cairn",
+                    "deco_rocks", "deco_imagen_crystal_cluster", "location_ruin_standing_stones"
+            };
+            return pick(options, seed);
+        }
+        if (patch.kind.equals("ruined_watchpost")) {
+            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                return "quest_watchpost_signal";
+            }
+            if (edge) {
+                return seed % 2 == 0 ? "location_dungeon_collapsed_wall" : "location_camp_palisade";
+            }
+            String[] options = {
+                    "quest_watchpost_signal", "quest_trail_marker_post", "location_dungeon_collapsed_wall",
+                    "location_dungeon_rubble_cairn", "quest_broken_road_signs", "location_camp_crates"
+            };
+            return pick(options, seed);
+        }
+        if (patch.kind.equals("old_road_marker")) {
+            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                return "quest_trail_marker_post";
+            }
+            String[] options = {
+                    "quest_trail_marker_post", "quest_roadwatch_warning_marks", "quest_broken_road_signs",
+                    "quest_supply_cache", "deco_imagen_milestone", "location_camp_crates"
+            };
+            return pick(options, seed);
+        }
         return "deco_bush";
     }
 
@@ -6581,6 +7118,10 @@ public final class WorldMap {
         int base = 42 + seed % 8;
         return switch (asset) {
             case "location_camp_fire", "location_camp_crates", "location_graveyard_skull_marker" -> 38;
+            case "dungeon_prop_chain_stand", "dungeon_prop_lantern_stand" -> 40;
+            case "deco_soft_water_wet_stones", "deco_soft_water_reeds_gold", "deco_imagen_marsh_bubble_pool" -> 42;
+            case "quest_forest_relic", "quest_mushroom_samples", "quest_cave_rune_cache",
+                    "quest_trail_marker_post", "quest_watchpost_signal" -> 42;
             case "location_dungeon_approach_path" -> 50;
             case "location_farmland_fence", "location_graveyard_iron_fence" -> 46;
             case "location_camp_tent", "location_camp_palisade", "location_farmland_scarecrow",
@@ -7151,6 +7692,10 @@ public final class WorldMap {
                 72, 218, 1, 5, 5, 930, new TilePoint(102, 245));
         addAdventureSite("abandoned_castle", "dungeon_blackvault_1", "Blackvault Ruins",
                 194, 235, 1, 7, 6, 940, new TilePoint(150, 230));
+        addAdventureSite("prison", "dungeon_ironbarrow_1", "Ironbarrow Prison",
+                129, 119, 1, 6, 5, 950, new TilePoint(131, 121));
+        addAdventureSite("sewer", "dungeon_belltower_sluice_1", "Belltower Sluice",
+                238, 183, 1, 7, 5, 960, new TilePoint(228, 185));
 
         TilePoint goblinCamp = chooseLocationCenter(
                 980 + seedSalt, 176, 112, 38, 30,
@@ -7215,6 +7760,47 @@ public final class WorldMap {
             int x = dungeons[i][0];
             int y = dungeons[i][1];
             addLocationPatch("graveyard", x, y, 6 + hash(x, y, 907) % 2, 5 + hash(x, y, 911) % 2, 910 + i);
+        }
+
+        int[][] forestAnchors = {
+                {109, 91}, {153, 119}, {183, 171}, {232, 139}, {72, 183}, {211, 208}
+        };
+        for (int i = 0; i < forestAnchors.length; i++) {
+            TilePoint center = chooseLocationCenter(
+                    1040 + i * 47 + seedSalt, forestAnchors[i][0], forestAnchors[i][1],
+                    24, 22, new char[]{'f', 'g', 'v'}, new char[]{'f'}, 5, 12
+            );
+            if (center != null) {
+                String kind = i % 2 == 0 ? "forest_shrine" : "hidden_grove";
+                addLocationPatch(kind, center.x(), center.y(), 4 + hash(i, 1049, 5) % 3, 4 + hash(i, 1051, 7) % 3, 1050 + i);
+            }
+        }
+
+        int[][] caveMouthAnchors = {
+                {64, 215}, {202, 64}, {257, 183}, {184, 239}, {126, 226}
+        };
+        for (int i = 0; i < caveMouthAnchors.length; i++) {
+            TilePoint center = chooseLocationCenter(
+                    1120 + i * 53 + seedSalt, caveMouthAnchors[i][0], caveMouthAnchors[i][1],
+                    22, 20, new char[]{'q', 'm', 'f', 'b'}, new char[]{'q', 'm', 'd'}, 6, 12
+            );
+            if (center != null) {
+                addLocationPatch("cave_mouth", center.x(), center.y(), 4 + hash(i, 1129, 7) % 3, 4 + hash(i, 1133, 11) % 2, 1130 + i);
+            }
+        }
+
+        int[][] roadAnchors = {
+                {132, 130}, {209, 105}, {234, 184}, {96, 247}, {169, 199}, {253, 224}
+        };
+        for (int i = 0; i < roadAnchors.length; i++) {
+            TilePoint center = chooseLocationCenter(
+                    1200 + i * 59 + seedSalt, roadAnchors[i][0], roadAnchors[i][1],
+                    20, 18, new char[]{'g', 'f', 's', 'b', 'v', 'r', 'T', 'K'}, new char[]{'r', 'T', 'K'}, 5, 10
+            );
+            if (center != null) {
+                String kind = i % 2 == 0 ? "ruined_watchpost" : "old_road_marker";
+                addLocationPatch(kind, center.x(), center.y(), 4 + hash(i, 1201, 5) % 3, 3 + hash(i, 1207, 7) % 3, 1210 + i);
+            }
         }
     }
 
@@ -7323,6 +7909,11 @@ public final class WorldMap {
                 case "crypt" -> "Crypt";
                 case "cave" -> "Cave";
                 case "abandoned_castle" -> "Abandoned Castle";
+                case "forest_shrine" -> "Forest Shrine";
+                case "hidden_grove" -> "Hidden Grove";
+                case "cave_mouth" -> "Cave Mouth";
+                case "ruined_watchpost" -> "Ruined Watchpost";
+                case "old_road_marker" -> "Old Road Marker";
                 default -> "Landmark";
             };
         }

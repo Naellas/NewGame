@@ -134,6 +134,7 @@ public final class WorldMapOverlayRenderer {
             case ESCORT -> "E";
             case RESCUE -> "!";
             case DEFEND -> "P";
+            case RAID_DEFENSE -> "R";
             case CHOICE -> "C";
             case DEFEAT -> "B";
         };

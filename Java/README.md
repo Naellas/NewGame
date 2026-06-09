@@ -63,6 +63,23 @@ This is not a one-file translation of the Python `app.py`. The Java port is spli
 - `Battle` owns the initial combat loop.
 - `SaveSystem` owns Java save persistence.
 
+## Source Organization
+
+The remaining `com.alderfall.game` classes are grouped into responsibility folders while keeping the root package declaration intact for now. This preserves package-private collaboration during the migration while making the source tree easier to scan:
+
+- `app`: window, panel, input, game mode, and launch configuration.
+- `audio`: music, sound, and game audio coordination.
+- `combat`: battle flow, abilities, combat poses, and status effects.
+- `content`: catalogs, dialogue, quests, shops, professions, and skill tree definitions.
+- `entities`: actors, NPC behavior, directional sprites, and character presentation data.
+- `systems`: save/load, weather, crafting, equipment hooks, and village management.
+- `worldmodel`: terrain, pathfinding, landmarks, settlements, prompts, and world props.
+- `rendering`: root-package render helpers, asset loading, metrics, weather cache, and world rendering.
+- `diagnostics`: smoke tests, audit tools, debug metrics, and QA exports.
+- `uiwidgets`: root-package UI helper widgets.
+- `state`: shared game state.
+- `minigames`: standalone minigame flows.
+
 ## Controls
 
 - Move: click a visible map tile to path toward it, or use `WASD`/arrow keys
