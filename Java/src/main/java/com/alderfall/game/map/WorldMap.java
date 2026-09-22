@@ -1,8 +1,16 @@
 package com.alderfall.game.map;
 
+import com.alderfall.game.InteriorStyle;
+import com.alderfall.game.StoryLocationCatalog;
+
 import com.alderfall.game.CityBuilding;
 import com.alderfall.game.GameData;
+import com.alderfall.game.FolkloreContent;
+import com.alderfall.game.HearthlandsFolklore;
+import com.alderfall.game.WesternReachFolklore;
+import com.alderfall.game.RegionalBuildingTypes;
 import com.alderfall.game.Npc;
+import com.alderfall.game.NpcJob;
 import com.alderfall.game.Terrain;
 import com.alderfall.game.TilePoint;
 import com.alderfall.game.VillageManager;
@@ -20,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 
 public final class WorldMap {
-    public static final int COLS = 300;
-    public static final int ROWS = 300;
+    public static final int COLS = 420;
+    public static final int ROWS = 380;
     public static final TilePoint START_POSITION = new TilePoint(112, 158);
     public static final TilePoint OAKHAVEN_POSITION = new TilePoint(124, 151);
     public static final String OVERWORLD_ID = "overworld";
@@ -30,6 +38,8 @@ public final class WorldMap {
     private static final int PLAYER_VILLAGE_EXIT_MARKER_SIZE = 38;
     private static final int MAX_CONTINUOUS_BRIDGE_SPAN = 8;
     private static final int CITY_COBBLESTONE_ROAD_RADIUS = 38;
+    private static final int MIN_TRAVERSABLE_ISLAND_GROUND_TILES = 12;
+    private static final int ISLAND_EXPANSION_BONUS_TILES = 4;
     private static final List<Kingdom> KINGDOMS = List.of(
             new Kingdom("riverside", "Riverside Reach", "Riverside City", 74, 112,
                     "River barons, mill towns, and western bridge keeps.", 0x5BA7D1),
@@ -40,11 +50,14 @@ public final class WorldMap {
             new Kingdom("belltower", "Belltower Fenlands", "Belltower City", 242, 176,
                     "Marsh bells, reed causeways, and mist-guarded ports.", 0x5FA785),
             new Kingdom("sanctum", "Sanctum Sunrealm", "Sanctum City", 144, 244,
-                    "Sunsteppe towns, desert shrines, and badlands caravans.", 0xD6905B)
+                    "Sunsteppe towns, desert shrines, and badlands caravans.", 0xD6905B),
+            new Kingdom("northroad", "Northroad Freeholds", "Northwatch Town", 326, 74,
+                    "High passes, cairn villages, and storm-battered eastern harbors.", 0x8FB6C9)
     );
 
     private final char[][] tiles = new char[ROWS][COLS];
     private final Map<TilePoint, String> landmarks = new HashMap<>();
+    private final Map<String, TilePoint> campaignPlaces = new LinkedHashMap<>();
     private final Map<String, MapArea> maps = new LinkedHashMap<>();
     private final Map<String, WorldTransition> transitions = new HashMap<>();
     private final Map<String, List<CityBuilding>> cityBuildings = new HashMap<>();
@@ -59,10 +72,158 @@ public final class WorldMap {
     private final List<AdventureSite> adventureSites = new ArrayList<>();
     private final List<SettlementSite> settlementSites = new ArrayList<>();
     private int playerVillageStage = 1;
+    private final int groveSeed;
 
     public WorldMap(long seed) {
+        groveSeed = (int) (seed ^ (seed >>> 32));
         build(seed);
         registerMaps();
+        addStoryInvestigationSites();
+        addCampaignPlaces();
+        addWesternAbbeyGrounds();
+        for (SettlementSite site : settlementSites) {
+            MapArea settlement = area(site.id());
+            List<Npc> residents = RegionalSettlementGenerator.populate(this, settlement);
+            if (!residents.isEmpty()) {
+                List<Npc> combined = new ArrayList<>(npcs(site.id()));
+                combined.addAll(residents);
+                interiorNpcs.put(site.id(), combined);
+            }
+        }
+    }
+
+    private void addWesternAbbeyGrounds() {
+        TilePoint entrance = WesternAbbeyGrounds.townEntrance(this);
+        if (entrance == null) return;
+        MapArea garden = WesternAbbeyGrounds.garden();
+        MapArea cellar = WesternAbbeyGrounds.undercroft();
+        maps.put(garden.id, garden);
+        maps.put(cellar.id, cellar);
+        interiorNpcs.put(garden.id, WesternAbbeyGrounds.gardeners());
+        interiorNpcs.put(cellar.id, WesternAbbeyGrounds.keepers());
+        TilePoint arrival = WesternAbbeyGrounds.GARDEN_ARRIVAL;
+        TilePoint exit = WesternAbbeyGrounds.GARDEN_EXIT;
+        TilePoint stairs = WesternAbbeyGrounds.GARDEN_STAIRS;
+        TilePoint cellarArrival = WesternAbbeyGrounds.CELLAR_ARRIVAL;
+        TilePoint cellarExit = WesternAbbeyGrounds.CELLAR_EXIT;
+        addTransition("town_briarbridge", entrance.x(), entrance.y(), garden.id, arrival.x(), arrival.y(),
+                "You enter the abbey's public orchard. The path is open to guests.");
+        addTransition(garden.id, exit.x(), exit.y(), "town_briarbridge", entrance.x(), entrance.y() + 1,
+                "You return to Briarbridge beside the Guest Abbey.");
+        addTransition(garden.id, stairs.x(), stairs.y(), cellar.id, cellarArrival.x(), cellarArrival.y(),
+                "You descend beneath the orchard roots to the sealed guest passage.");
+        addTransition(cellar.id, cellarExit.x(), cellarExit.y(), garden.id, stairs.x(), stairs.y() + 1,
+                "You climb back into the guest orchard.");
+        area("town_briarbridge").addProp(new WorldProp(entrance.x(), entrance.y(), WesternReachFolklore.GARDEN_GATE, 64));
+        area("town_briarbridge").landmarks.put(entrance, "Open Bough Guest Orchard");
+    }
+
+    private void addStoryInvestigationSites() {
+        addStoryInvestigationSite("story_road_shrine", "Burned Road Shrine", PLAYER_VILLAGE_ID,
+                "Follow the shrine path from Oathstead.", "Return to Oathstead.");
+        addStoryInvestigationSite("story_oath_vault", "Old Oath Vault", "city_archive",
+                "Enter the Old Oath Vault beneath the Archive.", "Return to Archive City.");
+    }
+
+    private void addCampaignPlaces() {
+        for (StoryLocationCatalog.Place place : StoryLocationCatalog.PLACES) {
+            if (!place.outdoorSite()) continue;
+            AdventureMarker existing = adventureMarkers().stream()
+                    .filter(m -> m.mapId().equals(place.adventureId())).findFirst().orElse(null);
+            TilePoint center = existing == null ? new TilePoint(place.x(), place.y()) : new TilePoint(existing.x(), existing.y());
+            TilePoint accessible = null;
+            for (int radius = 0; radius <= 30 && accessible == null; radius++) {
+                for (int dy = -radius; dy <= radius && accessible == null; dy++) {
+                    for (int dx = -radius; dx <= radius; dx++) {
+                        if (Math.abs(dx) + Math.abs(dy) != radius) continue;
+                        int x = center.x() + dx, y = center.y() + dy;
+                        TilePoint candidate = new TilePoint(x, y);
+                        if (isPassable(OVERWORLD_ID, x, y) && transitionAt(OVERWORLD_ID, x, y) == null
+                                && !campaignPlaces.containsValue(candidate)) {
+                            accessible = candidate;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (accessible == null) throw new IllegalStateException("No reachable ground for campaign place " + place.id());
+            campaignPlaces.put(place.id(), accessible);
+            landmarks.put(accessible, place.name());
+            area(OVERWORLD_ID).landmarks.put(accessible, place.name());
+            // Quest markers supply the interactive props; this persistent marker identifies the place even without a quest.
+            area(OVERWORLD_ID).addProp(new WorldProp(accessible.x(), accessible.y(), "quest_ward_marker", 38));
+        }
+    }
+
+    public TilePoint campaignPlacePoint(String id, int variant) {
+        TilePoint center = campaignPlaces.get(id);
+        if (center == null) throw new IllegalArgumentException("Unknown campaign place " + id);
+        List<TilePoint> candidates = new ArrayList<>();
+        for (int radius = 0; radius <= 6; radius++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dx = -radius; dx <= radius; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) != radius) continue;
+                    int x = center.x() + dx, y = center.y() + dy;
+                    if (isPassable(OVERWORLD_ID, x, y) && transitionAt(OVERWORLD_ID, x, y) == null)
+                        candidates.add(new TilePoint(x, y));
+                }
+            }
+        }
+        if (candidates.isEmpty()) throw new IllegalStateException("Campaign place lost its approach: " + id);
+        return candidates.get(Math.floorMod(variant * 3, candidates.size()));
+    }
+
+    private void addStoryInvestigationSite(String id, String label, String parent, String enter, String leave) {
+        MapArea site = new MapArea(id, label, "interior", editorTiles("interior", 24, 18));
+        maps.put(id, site);
+        interiorNpcs.put(id, List.of());
+        TilePoint entrance = storyObjectivePoint(parent, 11);
+        addTransition(parent, entrance.x(), entrance.y(), id, 12, 15, enter);
+        addTransition(id, 12, 15, parent, entrance.x(), entrance.y(), leave);
+        area(parent).landmarks.put(entrance, label);
+        area(parent).addProp(new WorldProp(entrance.x(), entrance.y(), "location_dungeon_stair_entrance", 40));
+        site.landmarks.put(new TilePoint(12, 15), label + " exit");
+        site.addProp(new WorldProp(12, 15, "location_dungeon_stair_entrance", 40));
+        site.addProp(new WorldProp(12, 4, "quest_ward_marker", 48));
+        site.addProp(new WorldProp(8, 4, "quest_document_bundle", 36));
+    }
+
+    /** Resolve local story evidence onto tiles reachable from an actual map entrance. */
+    public TilePoint storyObjectivePoint(String mapId, int slot) {
+        MapArea map = area(mapId);
+        if (map == null) throw new IllegalArgumentException("Missing story map: " + mapId);
+        TilePoint start = transitions.values().stream()
+                .filter(t -> mapId.equals(t.targetMapId()) && isPassable(mapId, t.targetX(), t.targetY()))
+                .map(t -> new TilePoint(t.targetX(), t.targetY())).findFirst().orElse(null);
+        if (start == null) {
+            for (int y = 1; y < height(mapId) - 1 && start == null; y++) {
+                for (int x = 1; x < width(mapId) - 1; x++) {
+                    if (isPassable(mapId, x, y)) { start = new TilePoint(x, y); break; }
+                }
+            }
+        }
+        if (start == null) throw new IllegalStateException("No accessible story anchor: " + mapId);
+        Set<TilePoint> seen = new HashSet<>();
+        ArrayDeque<TilePoint> pending = new ArrayDeque<>();
+        pending.add(start);
+        seen.add(start);
+        while (!pending.isEmpty()) {
+            TilePoint p = pending.removeFirst();
+            for (int[] step : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+                TilePoint n = new TilePoint(p.x() + step[0], p.y() + step[1]);
+                if (n.x() >= 0 && n.y() >= 0 && n.x() < width(mapId) && n.y() < height(mapId)
+                        && !seen.contains(n) && isPassable(mapId, n.x(), n.y())) {
+                    seen.add(n);
+                    pending.add(n);
+                }
+            }
+        }
+        List<TilePoint> candidates = seen.stream()
+                .filter(p -> p.x() > 1 && p.y() > 1 && p.x() < width(mapId) - 2 && p.y() < height(mapId) - 2)
+                .filter(p -> !transitions.containsKey(mapId + ":" + p.x() + ":" + p.y()))
+                .sorted(Comparator.comparingInt((TilePoint p) -> Math.abs(p.x() - width(mapId) / 2) + Math.abs(p.y() - height(mapId) / 2))
+                        .thenComparingInt(TilePoint::y).thenComparingInt(TilePoint::x)).toList();
+        return candidates.isEmpty() ? start : candidates.get(Math.floorMod(slot * 7, candidates.size()));
     }
 
     public char tileAt(int x, int y) {
@@ -83,6 +244,9 @@ public final class WorldMap {
             return Terrain.passable('m');
         }
         if (cityBuildingBlocksMovementAt(mapId, x, y)) {
+            return false;
+        }
+        if (worldPropBlocksMovementAt(area, x, y)) {
             return false;
         }
         char tile = area.tileAt(x, y);
@@ -550,6 +714,22 @@ public final class WorldMap {
         }
         addSettlementBorderExits(PLAYER_VILLAGE_ID, area, ox, oy, "Oathstead Camp");
         refreshPlayerVillageExitMarkers(area, offset, area.width() - 1, area.height() - 1);
+        if (maps.containsKey("story_road_shrine")) {
+            TilePoint entrance = area.landmarks.entrySet().stream()
+                    .filter(entry -> "Burned Road Shrine".equals(entry.getValue()))
+                    .map(Map.Entry::getKey)
+                    .filter(p -> isPassable(PLAYER_VILLAGE_ID, p.x(), p.y()))
+                    .findFirst().orElse(null);
+            if (entrance == null) {
+                entrance = storyObjectivePoint(PLAYER_VILLAGE_ID, 11);
+                area.landmarks.put(entrance, "Burned Road Shrine");
+                area.addProp(new WorldProp(entrance.x(), entrance.y(), "location_dungeon_stair_entrance", 40));
+            }
+            addTransition(PLAYER_VILLAGE_ID, entrance.x(), entrance.y(), "story_road_shrine", 12, 15,
+                    "Follow the shrine path from Oathstead.");
+            addTransition("story_road_shrine", 12, 15, PLAYER_VILLAGE_ID, entrance.x(), entrance.y(),
+                    "Return to Oathstead.");
+        }
     }
 
     private TilePoint playerVillageEntryPoint(int dx, int dy, int offset, int width, int height) {
@@ -844,6 +1024,18 @@ public final class WorldMap {
         return new int[]{footprint[0], footprint[1]};
     }
 
+    /** Render and collision share the same top-left footprint anchor. */
+    public int[] interiorVisualFootprint(String asset) {
+        return interiorHitboxFootprint(asset);
+    }
+
+    public boolean interiorRugAt(String mapId, int x, int y) {
+        MapArea map = maps.get(mapId);
+        if (map == null || !"interior".equals(map.kind)) return false;
+        char tile = map.tileAt(x, y);
+        return tile == 'z' || ((tile == 'i' || tile == 'k') && map.interiorRugs.contains(new TilePoint(x, y)));
+    }
+
     public boolean restorePlayerInteriorProp(String mapId, WorldProp prop) {
         if (mapId == null || prop == null) {
             return false;
@@ -903,6 +1095,7 @@ public final class WorldMap {
         }
         char resolved = tile == 'o' ? 'o' : 'i';
         area.tiles[y][x] = resolved;
+        area.interiorRugs.remove(new TilePoint(x, y));
         playerInteriorTiles.computeIfAbsent(mapId, ignored -> new LinkedHashMap<>())
                 .put(new TilePoint(x, y), resolved);
         return true;
@@ -923,6 +1116,7 @@ public final class WorldMap {
             return false;
         }
         area.tiles[y][x] = resolved;
+        area.interiorRugs.remove(new TilePoint(x, y));
         return true;
     }
 
@@ -1281,10 +1475,23 @@ public final class WorldMap {
         String mapId = "house_" + sourceMapId + "_" + wx + "_" + wy;
         if (!maps.containsKey(mapId)) {
             int seed = wx * 928371 + wy * 364479 + sourceMapId.hashCode();
-            String theme = interiorTheme(building, seed);
-            MapArea house = new MapArea(mapId, interiorLabel(theme), "interior", houseTiles(theme, seed));
+            String folkloreName = HearthlandsFolklore.buildingName(sourceMapId, building);
+            String theme = folkloreName.isEmpty() ? interiorTheme(building, seed) : "bakery";
+            String westernName = WesternReachFolklore.buildingName(sourceMapId, building);
+            if (!westernName.isEmpty()) theme = WesternReachFolklore.interiorTheme(sourceMapId);
+            String houseLabel = !westernName.isEmpty() ? westernName : folkloreName.isEmpty() ? interiorLabel(theme) : folkloreName;
+            RegionalBuildingTypes.Type regional = RegionalBuildingTypes.type(sourceMapId, building);
+            if (regional != null) {
+                theme = regional.theme;
+                houseLabel = RegionalBuildingTypes.name(sourceMapId, building);
+            }
+            InteriorLayout layout = InteriorLayout.compose(theme, seed, InteriorStyle.forMap(mapId));
+            MapArea house = new MapArea(mapId, houseLabel,
+                    "interior", layout.tiles());
             if (!isEmptyPlayerVillageInterior(sourceMapId, building)) {
-                addHouseProps(house, theme, seed);
+                for (WorldProp prop : layout.props()) {
+                    addFurniture(house, prop.x(), prop.y(), prop.asset());
+                }
             }
             ensureInteriorNavigable(house);
             applyPlayerInteriorTiles(house);
@@ -1292,6 +1499,47 @@ public final class WorldMap {
             interiorNpcs.put(mapId, PLAYER_VILLAGE_ID.equals(sourceMapId)
                     ? List.of()
                     : interiorNpcsFor(mapId, theme, house.width(), house.height(), seed));
+            if (!folkloreName.isEmpty()) {
+                List<Npc> keepers = new ArrayList<>();
+                List<Npc> residents = interiorNpcs.get(mapId);
+                for (int i = 0; i < Math.min(2, residents.size()); i++) {
+                    Npc resident = residents.get(i);
+                    keepers.add(new Npc(mapId, i == 0 ? "Seed Keeper" : "Hearth Apprentice", resident.sprite(),
+                            resident.x(), resident.y(), HearthlandsFolklore.seedhouseDialogue(sourceMapId, i), null, null));
+                }
+                interiorNpcs.put(mapId, keepers);
+            }
+            if (!westernName.isEmpty()) {
+                List<Npc> hosts = new ArrayList<>();
+                List<Npc> residents = interiorNpcs.get(mapId);
+                for (int i = 0; i < Math.min(2, residents.size()); i++) {
+                    Npc resident = residents.get(i);
+                    hosts.add(new Npc(mapId, WesternReachFolklore.residentName(sourceMapId, i), resident.sprite(),
+                            resident.x(), resident.y(), WesternReachFolklore.localDialogue(sourceMapId, i, resident.dialog()), null, null));
+                }
+                interiorNpcs.put(mapId, hosts);
+            }
+            if (regional != null) {
+                List<Npc> hosts = new ArrayList<>();
+                for (int i = 0; i < Math.min(2, layout.residents().size()); i++) {
+                    TilePoint anchor = layout.residents().get(i);
+                    hosts.add(new Npc(mapId, i == 0 ? regional.keeper : regional.keeper + "'s Apprentice",
+                            i == 0 ? "npc_citizen_woman" : "npc_citizen_man", anchor.x(), anchor.y(),
+                            i == 0 ? regional.dialogue : List.of(regional.dialogue.get(1), regional.dialogue.get(0)), null, null));
+                }
+                interiorNpcs.put(mapId, hosts);
+            }
+            List<Npc> positioned = new ArrayList<>();
+            List<Npc> residents = interiorNpcs.get(mapId);
+            for (int i = 0; i < residents.size(); i++) {
+                Npc npc = residents.get(i);
+                TilePoint anchor = layout.residents().get(Math.min(i, layout.residents().size() - 1));
+                // Saved player furniture can occupy a planned work position.
+                if (!interiorConnectivityWalkable(house, anchor.x(), anchor.y())) anchor = interiorEntryPointForArea(house);
+                positioned.add(new Npc(mapId, npc.name(), npc.sprite(), anchor.x(), anchor.y(), npc.dialog(),
+                        npc.questId(), npc.shopId(), npc.recruitId(), npc.recruitCost(), npc.professionXp(), npc.job()));
+            }
+            interiorNpcs.put(mapId, positioned);
             maps.put(mapId, house);
         }
         MapArea house = area(mapId);
@@ -1592,7 +1840,32 @@ public final class WorldMap {
         return isPassable(OVERWORLD_ID, x, y);
     }
 
+    private boolean worldPropBlocksMovementAt(MapArea area, int x, int y) {
+        for (WorldProp prop : area.propsAt(x, y)) {
+            if (worldPropBlocksMovement(prop.asset())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean worldPropBlocksMovement(String asset) {
+        return asset.equals("location_camp_palisade")
+                || asset.equals("location_camp_palisade_side")
+                || asset.equals("location_farmland_fence")
+                || asset.equals("location_farmland_fence_side")
+                || asset.equals("location_graveyard_iron_fence")
+                || asset.equals("location_graveyard_iron_fence_side")
+                || asset.equals("village_fence_auto")
+                || asset.startsWith("village_fence_")
+                || asset.equals("village_prop_fence_segment");
+    }
+
     public String describe(String mapId, int x, int y) {
+        for (WorldProp prop : area(mapId) == null ? List.<WorldProp>of() : area(mapId).propsAt(x, y)) {
+            String observation = HearthlandsFolklore.observation(mapId, prop);
+            if (!observation.isEmpty()) return observation;
+        }
         String landmark = landmarkAt(mapId, x, y);
         if (landmark != null) {
             return landmark;
@@ -1607,6 +1880,34 @@ public final class WorldMap {
     public String locationKindAt(String mapId, int x, int y) {
         LocationPatch location = locationAt(mapId, x, y);
         return location == null ? null : location.kind;
+    }
+
+    /** Continuous visual footprints; these do not change movement or encounter tiles. */
+    private List<GroundRegion> groundRegionCache;
+
+    public List<GroundRegion> groundRegions() {
+        if (groundRegionCache == null) groundRegionCache = locationPatches.stream()
+                .filter(p -> p.kind.equals("goblin_camp") || p.kind.equals("bandit_camp"))
+                .map(p -> new GroundRegion(p.kind, p.cx, p.cy, p.rx, p.ry, p.salt))
+                .toList();
+        return groundRegionCache;
+    }
+
+    public double campGroundCoverage(double x, double y) {
+        double coverage = 0;
+        for (GroundRegion region : groundRegions()) coverage = Math.max(coverage, region.coverage(x, y));
+        return coverage;
+    }
+
+    public record GroundRegion(String kind, int x, int y, int radiusX, int radiusY, int seed) {
+        public double coverage(double worldX, double worldY) {
+            double dx = worldX - x - 0.5, dy = worldY - y - 0.5;
+            if (Math.abs(dx) > radiusX + 2 || Math.abs(dy) > radiusY + 2) return 0;
+            double radius = Math.hypot(dx / radiusX, dy / radiusY);
+            double edge = 0.96 + Math.sin(worldX * 0.7 + seed) * 0.06 + Math.sin(worldY * 0.9 - seed) * 0.04;
+            double t = Math.max(0, Math.min(1, (radius - edge + 0.28) / 0.40));
+            return 1 - t * t * (3 - 2 * t);
+        }
     }
 
     public String describe(int x, int y) {
@@ -1632,11 +1933,38 @@ public final class WorldMap {
         return sites;
     }
 
+    public AdventureMarker adventureMarker(String kind, int index) {
+        if (kind == null || kind.isBlank()) {
+            return null;
+        }
+        List<AdventureSite> matches = new ArrayList<>();
+        for (AdventureSite site : adventureSites) {
+            if (site.kind().equals(kind)) {
+                matches.add(site);
+            }
+        }
+        if (matches.isEmpty()) {
+            return null;
+        }
+        AdventureSite site = matches.get(Math.floorMod(index, matches.size()));
+        return new AdventureMarker(site.kind(), site.id(), site.label(), site.x(), site.y(), site.depth());
+    }
+
+    public List<AdventureMarker> adventureMarkers() {
+        List<AdventureMarker> markers = new ArrayList<>();
+        for (AdventureSite site : adventureSites) {
+            markers.add(new AdventureMarker(site.kind(), site.id(), site.label(), site.x(), site.y(), site.depth()));
+        }
+        return List.copyOf(markers);
+    }
+
     public TilePoint objectivePoint(String locationKind, int locationIndex, int variant) {
         return objectivePoint(locationKind, locationIndex, variant, null);
     }
 
     public TilePoint objectivePoint(String locationKind, int locationIndex, int variant, String preferredAsset) {
+        if (locationKind != null && locationKind.startsWith("place:"))
+            return campaignPlacePoint(locationKind.substring("place:".length()), variant);
         List<LocationPatch> matches = new ArrayList<>();
         for (LocationPatch patch : locationPatches) {
             if (patch.kind.equals(locationKind)) {
@@ -1680,7 +2008,7 @@ public final class WorldMap {
         }
         List<WorldProp> candidates = new ArrayList<>();
         for (WorldProp prop : overworld.props) {
-            if (preferredAsset.equals(prop.asset()) && patch.contains(prop.x(), prop.y())) {
+            if (preferredObjectiveAssetMatches(preferredAsset, prop.asset()) && patch.contains(prop.x(), prop.y())) {
                 candidates.add(prop);
             }
         }
@@ -1697,7 +2025,14 @@ public final class WorldMap {
             return byY != 0 ? byY : Integer.compare(a.x(), b.x());
         });
         WorldProp prop = candidates.get(Math.floorMod(variant, candidates.size()));
+        if (worldPropBlocksMovement(prop.asset())) {
+            return closestPassableNear(OVERWORLD_ID, prop.x(), prop.y(), patch.cx, patch.cy, 3, variant + patch.salt);
+        }
         return new TilePoint(prop.x(), prop.y());
+    }
+
+    private boolean preferredObjectiveAssetMatches(String preferredAsset, String propAsset) {
+        return preferredAsset.equals(propAsset) || (preferredAsset + "_vertical").equals(propAsset);
     }
 
     private void registerMaps() {
@@ -1705,6 +2040,7 @@ public final class WorldMap {
         overworld.landmarks.putAll(landmarks);
         addBiomeProps(overworld, 0);
         addLocationProps(overworld);
+        addCrossingProps(overworld);
         overworld.landmarks.put(new TilePoint(183, 248), "The Old Gate of Alderfall");
         overworld.addProp(new WorldProp(183, 248, GameData.STORY_PORTAL_ASSET, 88));
         OverworldLandmarkPropGenerator.addDiscoverabilityProps(overworld);
@@ -1720,6 +2056,8 @@ public final class WorldMap {
         addCity("town_moonspire", "Moonspire Town", 170, 180, "archive");
         addCity("town_reedwatch", "Reedwatch Town", 259, 205, "belltower");
         addCity("town_embermarket", "Embermarket Town", 126, 269, "sanctum");
+        addCity("town_northwatch", "Northwatch Town", 286, 42, "highwall");
+        addCity("town_greyharbor", "Greyharbor Town", 318, 122, "belltower");
 
         addPlayerCamp(PLAYER_VILLAGE_ID, "Oathstead Camp", START_POSITION.x(), START_POSITION.y(), "green");
         addVillage("village_oakhaven", "Oakhaven Village", OAKHAVEN_POSITION.x(), OAKHAVEN_POSITION.y(), "green");
@@ -1732,9 +2070,18 @@ public final class WorldMap {
         addVillage("village_glimmerfen", "Glimmerfen Village", 268, 138, "marsh");
         addVillage("village_sunmere", "Sunmere Village", 78, 266, "desert");
         addVillage("village_redcairn", "Redcairn Village", 205, 254, "desert");
+        addVillage("village_cairnvale", "Cairnvale Village", 324, 56, "snow");
+        addVillage("village_stormfen", "Stormfen Village", 366, 160, "marsh");
 
         for (AdventureSite site : adventureSites) {
             addDungeon(site);
+        }
+        // Transitions and building footprints are now available for placement checks.
+        FolklorePropGenerator.populate(this);
+        WesternReachPropGenerator.populate(this);
+        HearthlandsPropGenerator.addOverworld(this, overworld);
+        for (String mapId : List.of("village_elderford", "town_moonspire", "town_briarbridge")) {
+            HearthlandsPropGenerator.addSettlement(this, area(mapId));
         }
     }
 
@@ -1780,6 +2127,8 @@ public final class WorldMap {
         MapArea area = new MapArea(id, label, "village", villageTiles(variant));
         List<CityBuilding> buildings = villageBuildingTemplates(id, variant);
         cityBuildings.put(id, buildings);
+        addOrganicVillagePaths(area, buildings, variant, Terrain.DIRT_ROAD);
+        roughenVillageRoadEdges(area, variant);
         addVillageProps(area, variant);
         addTownParks(area, variant, 1 + Math.floorMod(id.hashCode(), 2));
         maps.put(id, area);
@@ -1824,21 +2173,121 @@ public final class WorldMap {
                 case 2 -> "Doorward";
                 default -> "Town Crier";
             };
-            String sprite = switch (roll) {
+            String place = label(mapId);
+            String name = settlementNpcName(mapId, variant, buildingKey, roll, npcs.size());
+            NpcJob job = settlementCommuterJob(building.style());
+            String sprite = settlementNpcSprite(mapId, variant, buildingKey, roll, npcs.size(), job);
+            List<String> dialog = job == null
+                    ? List.of(
+                    role + ": I keep track of the doors and stories around " + place + ".",
+                    "Places: Ask me about nearby buildings if you want the useful version, not the signboard version.",
+                    "Work: The " + variant + " streets teach you where to look before they teach you what it means."
+            )
+                    : List.of(
+                    job.roleLabel() + ": Daylight sends me outside " + place + " more often than it leaves me standing in it.",
+                    "Places: I work beyond the gate and return by evening with whatever the town still needs.",
+                    "Work: " + commuterJobDescription(job.kind(), place)
+            );
+            if (job == null) {
+                dialog = WesternReachFolklore.localDialogue(mapId, npcs.size(),
+                        FolkloreContent.localDialogue(mapId, npcs.size(), dialog));
+                RegionalBuildingTypes.Type regional = RegionalBuildingTypes.type(mapId, building);
+                if (regional != null) dialog = List.of(
+                        "This is the " + RegionalBuildingTypes.name(mapId, building) + ". " + regional.description,
+                        regional.dialogue.get(0), regional.dialogue.get(1));
+            }
+            npcs.add(new Npc(mapId, name, sprite, x, y, dialog, null, null, job));
+        }
+        return npcs;
+    }
+
+    private String settlementNpcSprite(String mapId, String variant, String buildingKey, int roleRoll, int index, NpcJob job) {
+        int seed = Math.abs((mapId + ":" + variant + ":" + buildingKey + ":" + roleRoll + ":" + index + ":sprite").hashCode());
+        if (job == null) {
+            return switch (roleRoll) {
                 case 0 -> "npc_citizen_man";
                 case 1 -> "npc_citizen_woman";
                 case 2 -> "npc_torin";
                 default -> "npc_merchant";
             };
-            String place = label(mapId);
-            String name = settlementNpcName(mapId, variant, buildingKey, roll, npcs.size());
-            npcs.add(new Npc(mapId, name, sprite, x, y, List.of(
-                    role + ": I keep track of the doors and stories around " + place + ".",
-                    "Places: Ask me about nearby buildings if you want the useful version, not the signboard version.",
-                    "Work: The " + variant + " streets teach you where to look before they teach you what it means."
-            ), null, null));
         }
-        return npcs;
+        List<String> pool = commuterSpritePool(job.kind(), variant);
+        return pool.get(Math.floorMod(seed, pool.size()));
+    }
+
+    private List<String> commuterSpritePool(NpcJob.Kind kind, String variant) {
+        return switch (kind) {
+            case FARMER -> switch (variant) {
+                case "desert", "sanctum" -> List.of("npc_citizen_woman", "npc_citizen_man", "npc_baker");
+                case "snow", "highwall" -> List.of("npc_citizen_man", "npc_citizen_woman");
+                default -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker");
+            };
+            case WOODCUTTER -> switch (variant) {
+                case "snow", "highwall" -> List.of("npc_citizen_man", "npc_citizen_woman");
+                case "marsh", "belltower" -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker");
+                default -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker");
+            };
+            case HERBALIST -> switch (variant) {
+                case "desert", "sanctum" -> List.of("npc_liora", "npc_mira_sunwarden", "npc_citizen_woman");
+                case "marsh", "belltower" -> List.of("npc_rowan", "npc_elowen", "npc_citizen_woman");
+                default -> List.of("npc_elowen", "npc_liora", "npc_citizen_woman", "npc_baker");
+            };
+        };
+    }
+
+    public static boolean isPreferredCommuterSprite(NpcJob.Kind kind, String variant, String sprite) {
+        if (kind == null || sprite == null || sprite.isBlank()) {
+            return false;
+        }
+        return switch (kind) {
+            case FARMER -> switch (variant == null ? "" : variant) {
+                case "desert", "sanctum" -> List.of("npc_citizen_woman", "npc_citizen_man", "npc_baker").contains(sprite);
+                case "snow", "highwall" -> List.of("npc_citizen_man", "npc_citizen_woman").contains(sprite);
+                default -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker").contains(sprite);
+            };
+            case WOODCUTTER -> switch (variant == null ? "" : variant) {
+                case "snow", "highwall" -> List.of("npc_citizen_man", "npc_citizen_woman").contains(sprite);
+                case "marsh", "belltower" -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker").contains(sprite);
+                default -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker").contains(sprite);
+            };
+            case HERBALIST -> switch (variant == null ? "" : variant) {
+                case "desert", "sanctum" -> List.of("npc_liora", "npc_mira_sunwarden", "npc_citizen_woman").contains(sprite);
+                case "marsh", "belltower" -> List.of("npc_rowan", "npc_elowen", "npc_citizen_woman").contains(sprite);
+                default -> List.of("npc_elowen", "npc_liora", "npc_citizen_woman", "npc_baker").contains(sprite);
+            };
+        };
+    }
+
+    public static boolean isPreferredCommuterSprite(NpcJob.Kind kind, String sprite) {
+        if (kind == null || sprite == null || sprite.isBlank()) {
+            return false;
+        }
+        return switch (kind) {
+            case FARMER -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker").contains(sprite);
+            case WOODCUTTER -> List.of("npc_citizen_man", "npc_citizen_woman", "npc_baker").contains(sprite);
+            case HERBALIST -> List.of("npc_elowen", "npc_liora", "npc_mira_sunwarden",
+                    "npc_rowan", "npc_citizen_woman", "npc_baker").contains(sprite);
+        };
+    }
+
+    private NpcJob settlementCommuterJob(String style) {
+        if (style == null) {
+            return null;
+        }
+        return switch (style) {
+            case "farmstead", "garden" -> NpcJob.farmer();
+            case "forestry_hut", "carpenter", "workshop" -> NpcJob.woodcutter();
+            case "apothecary", "alchemist", "sun_shrine" -> NpcJob.herbalist();
+            default -> null;
+        };
+    }
+
+    private String commuterJobDescription(NpcJob.Kind kind, String place) {
+        return switch (kind) {
+            case FARMER -> "I cut wheat, check rows, and bring the field's temper back to " + place + ".";
+            case WOODCUTTER -> "I work the tree line, trim deadfall, and haul usable timber back toward " + place + ".";
+            case HERBALIST -> "I gather clean herbs beyond the walls and keep " + place + " supplied with medicine before dusk.";
+        };
     }
 
     private String settlementNpcName(String mapId, String variant, String buildingKey, int roleRoll, int index) {
@@ -2070,21 +2519,25 @@ public final class WorldMap {
             addDungeonProps(area, theme, floor, floors);
             addDungeonStairProps(area, theme, floor, floors);
             maps.put(floorId, area);
-            area.landmarks.put(new TilePoint(2, 12), floor == 1 ? label : dungeonFloorLabel(label, theme, floor, floors));
+            TilePoint upPoint = dungeonStairsUpPoint(theme);
+            TilePoint downPoint = dungeonStairsDownPoint(theme);
+            area.landmarks.put(upPoint, floor == 1 ? label : dungeonFloorLabel(label, theme, floor, floors));
             if (floor < floors) {
-                area.landmarks.put(new TilePoint(34, 18), "Stairs Down");
+                area.landmarks.put(downPoint, "Stairs Down");
             }
             if (floor > 1) {
-                area.landmarks.put(new TilePoint(1, 12), "Stairs Up");
+                area.landmarks.put(upPoint, "Stairs Up");
             }
         }
-        addTransition(OVERWORLD_ID, ox, oy, firstFloor, 2, 12, "You descend into " + label + ".");
-        addTransition(firstFloor, 1, 12, OVERWORLD_ID, ox, oy, "You climb back to the surface.");
+        TilePoint upPoint = dungeonStairsUpPoint(theme);
+        TilePoint downPoint = dungeonStairsDownPoint(theme);
+        addTransition(OVERWORLD_ID, ox, oy, firstFloor, upPoint.x(), upPoint.y(), "You descend into " + label + ".");
+        addTransition(firstFloor, upPoint.x(), upPoint.y(), OVERWORLD_ID, ox, oy, "You climb back to the surface.");
         for (int floor = 1; floor < floors; floor++) {
             String upper = dungeonFloorId(id, floor);
             String lower = dungeonFloorId(id, floor + 1);
-            addTransition(upper, 34, 18, lower, 2, 12, "You descend to floor " + (floor + 1) + ".");
-            addTransition(lower, 1, 12, upper, 33, 18, "You climb back to floor " + floor + ".");
+            addTransition(upper, downPoint.x(), downPoint.y(), lower, upPoint.x(), upPoint.y(), "You descend to floor " + (floor + 1) + ".");
+            addTransition(lower, upPoint.x(), upPoint.y(), upper, downPoint.x(), downPoint.y(), "You climb back to floor " + floor + ".");
         }
     }
 
@@ -2200,17 +2653,40 @@ public final class WorldMap {
         }
     }
 
+    private TilePoint dungeonStairsUpPoint(String theme) {
+        return switch (theme) {
+            case "abandoned_castle" -> new TilePoint(3, 12);
+            default -> new TilePoint(2, 12);
+        };
+    }
+
+    private TilePoint dungeonStairsDownPoint(String theme) {
+        return switch (theme) {
+            case "abandoned_castle" -> new TilePoint(31, 18);
+            default -> new TilePoint(34, 18);
+        };
+    }
+
     private void addDungeonStairProps(MapArea area, String theme, int floor, int floors) {
+        TilePoint upPoint = dungeonStairsUpPoint(theme);
+        TilePoint downPoint = dungeonStairsDownPoint(theme);
+        if ("abandoned_castle".equals(theme)) {
+            addDungeonPropIfFloor(area, upPoint.x() + 1, upPoint.y() - 1, "dungeon_prop_castle_candles", 36);
+            addDungeonPropIfFloor(area, upPoint.x() - 1, upPoint.y() + 1, "dungeon_prop_castle_rubble", 40);
+            if (floor < floors) {
+                addDungeonPropIfFloor(area, downPoint.x() + 1, downPoint.y() - 1, "dungeon_prop_castle_candles", 36);
+                addDungeonPropIfFloor(area, downPoint.x() + 2, downPoint.y() + 1, "dungeon_prop_castle_iron_gate", 42);
+            }
+            return;
+        }
         String stairAsset = switch (theme) {
-            case "cave" -> "location_overgrown_cave_entrance";
-            case "abandoned_castle", "prison" -> "location_castle_ruins";
+            case "cave" -> "location_cave_dungeon_entrance";
+            case "prison" -> "location_castle_ruins";
             default -> "location_dungeon_stair_entrance";
         };
-        if (floor > 1) {
-            area.addProp(new WorldProp(1, 12, stairAsset, 46));
-        }
+        area.addProp(new WorldProp(upPoint.x(), upPoint.y(), stairAsset, 46));
         if (floor < floors) {
-            area.addProp(new WorldProp(34, 18, stairAsset, 50));
+            area.addProp(new WorldProp(downPoint.x(), downPoint.y(), stairAsset, 50));
         }
     }
 
@@ -3053,6 +3529,14 @@ public final class WorldMap {
         } else if ("desert".equals(variant) || "marsh".equals(variant)) {
             buildings.add(building("edge_worker_hut", 23, 12, 25, 14, "house", 0));
         }
+        for (int i = 0; i < buildings.size(); i++) {
+            CityBuilding existing = buildings.get(i);
+            if (!HearthlandsFolklore.buildingName(id, existing).isEmpty()) {
+                // Preserve the lot key and door geometry used by saves and generated interiors.
+                buildings.set(i, building(existing.key(), existing.x1(), existing.y1(), existing.x2(), existing.y2(),
+                        "farmstead", existing.palette()));
+            }
+        }
         return buildings;
     }
 
@@ -3096,7 +3580,6 @@ public final class WorldMap {
             rect(grid, 3, 9, 4, 10, 'w');
             rect(grid, 23, 11, 24, 12, 'w');
         }
-        addVillageRoadNetwork(grid, Terrain.DIRT_ROAD);
         return grid;
     }
 
@@ -3115,12 +3598,223 @@ public final class WorldMap {
         return grid;
     }
 
-    private void addVillageRoadNetwork(char[][] grid, char road) {
-        rect(grid, 13, 0, 14, 27, road);
-        rect(grid, 0, 9, 35, 10, road);
-        rect(grid, 7, 15, 14, 15, road);
-        rect(grid, 14, 15, 22, 15, road);
-        rect(grid, 4, 21, 24, 21, road);
+    private void addOrganicVillagePaths(MapArea area, List<CityBuilding> buildings, String variant, char roadTile) {
+        if (area == null || buildings == null || buildings.isEmpty()) {
+            return;
+        }
+        int salt = area.id.hashCode() ^ variant.hashCode() ^ 0x5197;
+        TilePoint hub = nearestSettlementPathStart(area, 14, 10, salt);
+        if (hub == null) {
+            return;
+        }
+        stampSettlementPathTile(area, hub.x(), hub.y(), salt, roadTile);
+        List<TilePoint> entrances = List.of(
+                new TilePoint(14, 0), villageEntryPoint(0, -1),
+                new TilePoint(area.width() - 1, 10), villageEntryPoint(1, 0),
+                new TilePoint(14, area.height() - 1), villageEntryPoint(0, 1),
+                new TilePoint(0, 10), villageEntryPoint(-1, 0)
+        );
+        for (int i = 0; i < entrances.size(); i += 2) {
+            TilePoint border = entrances.get(i);
+            TilePoint entry = entrances.get(i + 1);
+            carveOrganicVillagePath(area, border, entry, salt + i * 53, roadTile);
+            carveOrganicVillagePath(area, entry, hub, salt + i * 79, roadTile);
+        }
+        for (CityBuilding building : buildings) {
+            List<TilePoint> doors = cityBuildingDoorTiles(building);
+            for (int index = 0; index < doors.size(); index++) {
+                TilePoint door = doors.get(index);
+                TilePoint approach = nearestSettlementPathStart(area, door.x(), door.y() + 1, salt + index);
+                if (approach == null) {
+                    continue;
+                }
+                TilePoint target = nearestVillageRoadTile(area, approach, salt + building.key().hashCode() + index * 37);
+                carveOrganicVillagePath(area, approach, target == null ? hub : target,
+                        salt + building.key().hashCode() + index * 101, roadTile);
+            }
+            stampBuildingFrontagePath(area, building, salt + building.key().hashCode(), roadTile);
+        }
+    }
+
+    private TilePoint nearestVillageRoadTile(MapArea area, TilePoint start, int salt) {
+        TilePoint best = null;
+        int bestScore = Integer.MAX_VALUE;
+        int limit = area.width() + area.height();
+        for (int radius = 1; radius <= limit; radius++) {
+            for (int y = Math.max(0, start.y() - radius); y <= Math.min(area.height() - 1, start.y() + radius); y++) {
+                for (int x = Math.max(0, start.x() - radius); x <= Math.min(area.width() - 1, start.x() + radius); x++) {
+                    int distance = Math.abs(x - start.x()) + Math.abs(y - start.y());
+                    if (distance != radius || !Terrain.connectingRoad(area.tileAt(x, y))) {
+                        continue;
+                    }
+                    int score = distance * 100 + Math.floorMod(hash(x, y, salt), 23);
+                    if (score < bestScore) {
+                        bestScore = score;
+                        best = new TilePoint(x, y);
+                    }
+                }
+            }
+            if (best != null) {
+                return best;
+            }
+        }
+        return null;
+    }
+
+    private void carveOrganicVillagePath(MapArea area, TilePoint start, TilePoint end, int salt, char roadTile) {
+        if (start == null || end == null) {
+            return;
+        }
+        TilePoint point = start;
+        boolean[][] visited = new boolean[area.height()][area.width()];
+        int guardLimit = area.width() * area.height();
+        for (int guard = 0; guard < guardLimit; guard++) {
+            stampSettlementPathTile(area, point.x(), point.y(), salt + guard, roadTile);
+            if (point.equals(end)) {
+                return;
+            }
+            visited[point.y()][point.x()] = true;
+            TilePoint next = nextOrganicVillagePathStep(area, point, end, visited, salt + guard * 17);
+            if (next == null) {
+                carveFallbackVillagePath(area, point, end, salt + guard * 31, roadTile);
+                return;
+            }
+            point = next;
+        }
+        carveFallbackVillagePath(area, point, end, salt ^ 0x2B31, roadTile);
+    }
+
+    private TilePoint nextOrganicVillagePathStep(MapArea area, TilePoint point, TilePoint end, boolean[][] visited, int salt) {
+        int currentDistance = Math.abs(point.x() - end.x()) + Math.abs(point.y() - end.y());
+        int[][] directions = organicVillagePathDirections(point, end, salt);
+        TilePoint relaxed = null;
+        for (int[] direction : directions) {
+            int nx = point.x() + direction[0];
+            int ny = point.y() + direction[1];
+            if (!canUseSettlementPathTile(area, nx, ny) || visited[ny][nx]) {
+                continue;
+            }
+            int distance = Math.abs(nx - end.x()) + Math.abs(ny - end.y());
+            if (distance < currentDistance || distance <= currentDistance + 1 && Math.floorMod(hash(nx, ny, salt), 100) < 42) {
+                return new TilePoint(nx, ny);
+            }
+            if (relaxed == null && distance <= currentDistance + 2) {
+                relaxed = new TilePoint(nx, ny);
+            }
+        }
+        return relaxed;
+    }
+
+    private int[][] organicVillagePathDirections(TilePoint point, TilePoint end, int salt) {
+        int sx = Integer.compare(end.x(), point.x());
+        int sy = Integer.compare(end.y(), point.y());
+        int lateralX = Math.floorMod(hash(point.x(), point.y(), salt), 2) == 0 ? 1 : -1;
+        int lateralY = Math.floorMod(hash(point.y(), point.x(), salt), 2) == 0 ? 1 : -1;
+        boolean horizontalFirst = Math.abs(end.x() - point.x()) >= Math.abs(end.y() - point.y());
+        int[][] preferred = horizontalFirst
+                ? new int[][]{{sx, 0}, {0, sy}, {0, lateralY}, {-sx, 0}, {lateralX, 0}, {0, -sy}}
+                : new int[][]{{0, sy}, {sx, 0}, {lateralX, 0}, {0, -sy}, {0, lateralY}, {-sx, 0}};
+        if (Math.floorMod(hash(point.x(), point.y(), salt ^ 0x1D), 100) < 28) {
+            int[] first = preferred[0];
+            preferred[0] = preferred[2];
+            preferred[2] = first;
+        }
+        return preferred;
+    }
+
+    private void carveFallbackVillagePath(MapArea area, TilePoint start, TilePoint end, int salt, char roadTile) {
+        if (start == null || end == null) {
+            return;
+        }
+        boolean[][] visited = new boolean[area.height()][area.width()];
+        TilePoint[][] previous = new TilePoint[area.height()][area.width()];
+        ArrayDeque<TilePoint> queue = new ArrayDeque<>();
+        visited[start.y()][start.x()] = true;
+        queue.add(start);
+        while (!queue.isEmpty()) {
+            TilePoint point = queue.removeFirst();
+            if (point.equals(end)) {
+                break;
+            }
+            int[][] directions = settlementPathDirections(point.x(), point.y(), salt);
+            for (int[] direction : directions) {
+                int nx = point.x() + direction[0];
+                int ny = point.y() + direction[1];
+                if (!canUseSettlementPathTile(area, nx, ny) || visited[ny][nx]) {
+                    continue;
+                }
+                visited[ny][nx] = true;
+                previous[ny][nx] = point;
+                queue.addLast(new TilePoint(nx, ny));
+            }
+        }
+        if (!visited[end.y()][end.x()]) {
+            return;
+        }
+        TilePoint point = end;
+        while (point != null) {
+            stampSettlementPathTile(area, point.x(), point.y(), salt, roadTile);
+            if (point.equals(start)) {
+                break;
+            }
+            point = previous[point.y()][point.x()];
+        }
+    }
+
+    private void roughenVillageRoadEdges(MapArea area, String variant) {
+        if (area == null || !"village".equals(area.kind)) {
+            return;
+        }
+        char[][] source = copyTiles(area.tiles);
+        int salt = area.id.hashCode() ^ variant.hashCode() ^ 0x6A47;
+        for (int y = 1; y < area.height() - 1; y++) {
+            for (int x = 1; x < area.width() - 1; x++) {
+                if (!canAddVillageRoadShoulder(area, source, x, y)) {
+                    continue;
+                }
+                int orthogonalRoads = orthogonalConnectingRoadCount(source, x, y);
+                int nearbyRoads = nearbyConnectingRoadCount(source, x, y, 1);
+                if (nearbyRoads == 0) {
+                    continue;
+                }
+                int chance = orthogonalRoads > 0 ? 32 : 12;
+                int roll = Math.floorMod(hash(x, y, salt), 100);
+                if (roll < chance) {
+                    area.tiles[y][x] = Terrain.DIRT_ROAD;
+                }
+            }
+        }
+    }
+
+    private boolean canAddVillageRoadShoulder(MapArea area, char[][] source, int x, int y) {
+        if (cityBuildingAt(area.id, x, y) != null
+                || transitionAt(area.id, x, y) != null
+                || area.propAt(x, y) != null) {
+            return false;
+        }
+        char tile = source[y][x];
+        return isVillageRoadShoulderGround(tile);
+    }
+
+    private boolean isVillageRoadShoulderGround(char tile) {
+        return tile == 'g' || tile == 'f' || tile == 's' || tile == 'n' || tile == 'v' || tile == 'b';
+    }
+
+    private int orthogonalConnectingRoadCount(char[][] grid, int x, int y) {
+        int count = 0;
+        if (Terrain.connectingRoad(grid[y - 1][x])) {
+            count++;
+        }
+        if (Terrain.connectingRoad(grid[y + 1][x])) {
+            count++;
+        }
+        if (Terrain.connectingRoad(grid[y][x - 1])) {
+            count++;
+        }
+        if (Terrain.connectingRoad(grid[y][x + 1])) {
+            count++;
+        }
+        return count;
     }
 
     private void connectSettlementBuildingPaths(MapArea area, List<CityBuilding> buildings, char roadTile) {
@@ -3532,11 +4226,79 @@ public final class WorldMap {
     }
 
     private char[][] castleDungeonTiles(int depth, int floors, String mapId) {
-        char[][] grid = structuredDungeonTiles(depth, floors, mapId, 'H');
-        rectIf(grid, 12, 10, 23, 15, depth == floors ? 'S' : 'D', 'H', 'd', 'F', 'R');
-        rectIf(grid, 4, 3, 11, 7, 'F', 'H', 'd', 'R');
-        rectIf(grid, 24, 4, 32, 8, 'D', 'H', 'd', 'F');
+        char[][] grid = filled(36, 26, 'Z');
+        rect(grid, 1, 11, 8, 14, 'H');
+        rect(grid, 4, 3, 12, 7, 'H');
+        rect(grid, 14, 3, 22, 8, 'H');
+        rect(grid, 25, 4, 33, 9, 'H');
+        rect(grid, 12, 10, 24, 16, 'H');
+        rect(grid, 5, 18, 13, 23, 'H');
+        rect(grid, 17, 18, 25, 23, 'H');
+        rect(grid, 28, 15, 34, 22, 'H');
+
+        rect(grid, 8, 12, 14, 13, 'H');
+        rect(grid, 7, 7, 8, 12, 'H');
+        rect(grid, 12, 5, 15, 6, 'H');
+        rect(grid, 22, 6, 26, 7, 'H');
+        rect(grid, 23, 8, 24, 12, 'H');
+        rect(grid, 9, 14, 10, 19, 'H');
+        rect(grid, 13, 20, 17, 21, 'H');
+        rect(grid, 21, 16, 22, 18, 'H');
+        rect(grid, 25, 19, 28, 20, 'H');
+        rect(grid, 31, 9, 32, 15, 'H');
+
+        rect(grid, 15, 11, 22, 14, depth == floors ? '4' : '2');
+        rect(grid, 5, 4, 10, 6, '3');
+        rect(grid, 28, 17, 33, 21, depth == floors ? '4' : '1');
+        rect(grid, 5, 19, 10, 22, '1');
+        rect(grid, 17, 19, 23, 22, '2');
+        if (depth > 1) {
+            rect(grid, 18, 5, 20, 7, 'Z');
+            rect(grid, 29, 6, 31, 8, 'Z');
+        }
+        ensureCastleDungeonEndpoints(grid, depth, floors);
+        addCastleBoundaryWalls(grid);
         return grid;
+    }
+
+    private void ensureCastleDungeonEndpoints(char[][] grid, int depth, int floors) {
+        rect(grid, 1, 11, 5, 14, 'H');
+        grid[12][3] = '5';
+        grid[12][4] = '5';
+        if (depth < floors) {
+            rect(grid, 29, 17, 33, 20, 'H');
+            grid[18][31] = '6';
+            grid[18][32] = '6';
+        }
+    }
+
+    private void addCastleBoundaryWalls(char[][] grid) {
+        for (int y = 1; y < grid.length - 1; y++) {
+            for (int x = 1; x < grid[0].length - 1; x++) {
+                if (grid[y][x] != 'Z' || !nearCastleOpenTile(grid, x, y)) {
+                    continue;
+                }
+                grid[y][x] = 'X';
+            }
+        }
+    }
+
+    private boolean nearCastleOpenTile(char[][] grid, int x, int y) {
+        for (int oy = -1; oy <= 1; oy++) {
+            for (int ox = -1; ox <= 1; ox++) {
+                if (ox == 0 && oy == 0) {
+                    continue;
+                }
+                if (isCastleOpenTile(grid[y + oy][x + ox])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isCastleOpenTile(char tile) {
+        return tile == 'H' || tile == '1' || tile == '2' || tile == '3' || tile == '4' || tile == '5' || tile == '6';
     }
 
     private char[][] prisonDungeonTiles(int depth, int floors, String mapId) {
@@ -3586,7 +4348,7 @@ public final class WorldMap {
     }
 
     private char[][] caveDungeonTiles(int depth, int floors, String mapId) {
-        char[][] grid = filled(36, 26, 'O');
+        char[][] grid = filled(36, 26, 'Z');
         int salt = 2100 + depth * 151 + mapId.hashCode();
         List<TilePoint> rooms = List.of(
                 new TilePoint(5, 12), new TilePoint(9, 5), new TilePoint(17, 7),
@@ -3601,12 +4363,58 @@ public final class WorldMap {
             }
         }
         replaceTile(grid, 'd', 'N');
-        rectIf(grid, 7, 4, 11, 6, 'M', 'N');
-        rectIf(grid, 19, 18, 25, 21, depth == floors ? 'S' : 'R', 'N');
-        rect(grid, 27, 8, 29, 12, 'W');
+        rectIf(grid, 7, 4, 11, 6, 'N', 'N');
+        rectIf(grid, 19, 18, 25, 21, depth == floors ? 'S' : 'E', 'N');
+        rect(grid, 27, 8, 29, 12, 'Y');
         ensureDungeonEndpoints(grid, depth, floors, 'N');
-        decorateDungeonFloors(grid, depth, salt, 'N');
+        decorateCaveFloors(grid, depth, salt);
+        addCaveBoundaryWalls(grid);
         return grid;
+    }
+
+    private void decorateCaveFloors(char[][] grid, int depth, int salt) {
+        for (int y = 1; y < grid.length - 1; y++) {
+            for (int x = 1; x < grid[0].length - 1; x++) {
+                if (grid[y][x] != 'N') {
+                    continue;
+                }
+                int roll = Math.floorMod(hash(x, y, salt), 100);
+                if (roll < 10) {
+                    grid[y][x] = 'E';
+                }
+            }
+        }
+        rectIf(grid, 4, 18, 9, 21, 'E', 'N');
+        rectIf(grid, 22, 10, 25, 13, depth > 1 ? 'S' : 'N', 'N', 'E');
+    }
+
+    private void addCaveBoundaryWalls(char[][] grid) {
+        for (int y = 1; y < grid.length - 1; y++) {
+            for (int x = 1; x < grid[0].length - 1; x++) {
+                if (grid[y][x] != 'Z' || !nearCaveOpenTile(grid, x, y)) {
+                    continue;
+                }
+                grid[y][x] = 'O';
+            }
+        }
+    }
+
+    private boolean nearCaveOpenTile(char[][] grid, int x, int y) {
+        for (int oy = -1; oy <= 1; oy++) {
+            for (int ox = -1; ox <= 1; ox++) {
+                if (ox == 0 && oy == 0) {
+                    continue;
+                }
+                if (isCaveOpenTile(grid[y + oy][x + ox])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isCaveOpenTile(char tile) {
+        return tile == 'N' || tile == 'E' || tile == 'S' || tile == 'Y';
     }
 
     private char[][] strongholdDungeonTiles(String theme, int depth, int floors, String mapId) {
@@ -3799,105 +4607,6 @@ public final class WorldMap {
         };
     }
 
-    private char[][] houseTiles(String theme, int seed) {
-        int width = switch (theme) {
-            case "blacksmith" -> 20;
-            case "carpenter" -> 21;
-            case "bakery" -> 22;
-            case "inn" -> 25;
-            case "tavern" -> 24;
-            case "shop" -> 22;
-            case "study" -> 23;
-            default -> Math.floorMod(seed, 3) == 0 ? 16 : 17;
-        };
-        int height = switch (theme) {
-            case "blacksmith", "carpenter", "study" -> 14;
-            case "tavern", "inn" -> 15;
-            case "bakery" -> 14;
-            case "shop" -> 13;
-            default -> Math.floorMod(seed / 7, 2) == 0 ? 11 : 12;
-        };
-        char[][] grid = filled(width, height, 'x');
-        buildEnclosedInteriorShell(grid);
-        addInteriorRooms(grid, theme);
-        int doorX = Math.max(1, width / 2 - 1);
-        grid[height - 2][doorX] = 'e';
-        grid[height - 2][doorX + 1] = 'e';
-
-        switch (theme) {
-            case "tavern" -> {
-                rect(grid, 9, height - 4, 16, height - 3, 'z');
-            }
-            case "inn" -> {
-                rect(grid, 10, height - 4, 15, height - 3, 'z');
-            }
-            default -> {
-                rect(grid, width / 2 - 2, 6, width / 2 + 2, 8, 'z');
-            }
-        }
-        return grid;
-    }
-
-    private void buildEnclosedInteriorShell(char[][] grid) {
-        int width = grid[0].length;
-        int height = grid.length;
-        rect(grid, 1, 1, width - 2, height - 2, 'i');
-        rect(grid, 1, 1, width - 2, 1, 'o');
-        rect(grid, 1, height - 2, width - 2, height - 2, 'o');
-        rect(grid, 1, 1, 1, height - 2, 'o');
-        rect(grid, width - 2, 1, width - 2, height - 2, 'o');
-    }
-
-    private void addInteriorRooms(char[][] grid, String theme) {
-        int width = grid[0].length;
-        int height = grid.length;
-        switch (theme) {
-            case "tavern" -> {
-                interiorWallH(grid, 9, width - 10, height - 6, width / 2);
-            }
-            case "inn" -> {
-                interiorWallH(grid, 9, width - 5, 5, width - 8);
-                interiorWallH(grid, 9, width - 5, height - 5, width / 2);
-                interiorWallV(grid, width - 8, 2, height - 6, 6);
-            }
-            case "bakery" -> {
-                interiorWallH(grid, 3, width - 4, 5, width / 2);
-            }
-            case "blacksmith" -> {
-                interiorWallH(grid, 8, width - 4, 5, 12);
-            }
-            case "carpenter" -> {
-                interiorWallH(grid, 10, width - 4, 6, 15);
-            }
-            case "shop" -> {
-                interiorWallH(grid, 3, width - 4, 5, width / 2);
-            }
-            case "study" -> {
-                interiorWallH(grid, 3, width - 4, 5, width / 2);
-                interiorWallH(grid, 3, width - 4, height - 5, width / 2 + 2);
-            }
-            default -> {
-                interiorWallH(grid, 3, width - 4, height / 2, width / 2);
-            }
-        }
-    }
-
-    private void interiorWallH(char[][] grid, int x1, int x2, int y, int doorX) {
-        for (int x = Math.max(1, x1); x <= Math.min(grid[0].length - 2, x2); x++) {
-            if (grid[y][x] == 'i' || grid[y][x] == 'z' || grid[y][x] == 'k') {
-                grid[y][x] = x == doorX || x == doorX + 1 ? 'e' : 'o';
-            }
-        }
-    }
-
-    private void interiorWallV(char[][] grid, int x, int y1, int y2, int doorY) {
-        for (int y = Math.max(1, y1); y <= Math.min(grid.length - 2, y2); y++) {
-            if (grid[y][x] == 'i' || grid[y][x] == 'z' || grid[y][x] == 'k') {
-                grid[y][x] = y == doorY ? 'e' : 'o';
-            }
-        }
-    }
-
     private void addFurniture(MapArea area, int x, int y, String asset) {
         int[] hitbox = interiorHitboxFootprint(asset);
         if (x < 1 || y < 1 || x + hitbox[0] >= area.width() - 1 || y + hitbox[1] >= area.height() - 1) {
@@ -3930,6 +4639,7 @@ public final class WorldMap {
             TilePoint point = entry.getKey();
             if (canSetPlayerInteriorTile(area, point.x(), point.y())) {
                 area.tiles[point.y()][point.x()] = entry.getValue() == 'o' ? 'o' : 'i';
+                area.interiorRugs.remove(point);
             }
         }
     }
@@ -3980,7 +4690,11 @@ public final class WorldMap {
                 return false;
             }
         }
-        return true;
+        return area.props.stream().anyMatch(prop -> {
+            int[] footprint = interiorHitboxFootprint(prop.asset());
+            return isSurfaceDetailAnchor(prop.asset()) && x >= prop.x() && y >= prop.y()
+                    && x < prop.x() + footprint[0] && y < prop.y() + footprint[1];
+        });
     }
 
     private boolean canPlaceInteriorPassThrough(MapArea area, int x, int y, int width, int height) {
@@ -4073,9 +4787,6 @@ public final class WorldMap {
     }
 
     private int[] interiorPlacementFootprint(String asset) {
-        if (isInteriorJoinableFurnitureAsset(asset)) {
-            return new int[]{1, 1};
-        }
         return interiorHitboxFootprint(asset);
     }
 
@@ -4096,15 +4807,6 @@ public final class WorldMap {
                     "interior_stool_table_h", "interior_study_desk_h", "interior_counter_corner_h" -> new int[]{2, 1};
             case "interior_vine_trellis" -> new int[]{1, 2};
             default -> new int[]{1, 1};
-        };
-    }
-
-    private boolean isInteriorJoinableFurnitureAsset(String asset) {
-        return switch (asset) {
-            case "interior_tavern_bar", "interior_shop_counter", "interior_carpenter_table",
-                    "interior_alchemy_station", "interior_cooking_station", "interior_herb_drying_rack",
-                    "interior_aquarium_table" -> true;
-            default -> false;
         };
     }
 
@@ -4286,47 +4988,49 @@ public final class WorldMap {
         return false;
     }
 
-    private void addTableSet(MapArea area, int x, int y) {
-        addFurniture(area, x, y, "interior_round_table");
-        addFurniture(area, x, y, Math.floorMod(x * 31 + y * 17 + area.id.hashCode(), 3) == 0
-                ? "interior_tabletop_candle"
-                : "interior_tabletop_place_setting");
-        addFurniture(area, x, y - 1, "interior_chair_north");
-        addFurniture(area, x, y + 1, "interior_chair_south");
-        addFurniture(area, x - 1, y, "interior_chair_west");
-        addFurniture(area, x + 1, y, "interior_chair_east");
-    }
-
-    private void addModularTableSet(MapArea area, int x, int y, boolean horizontal) {
-        if (horizontal) {
-            addFurniture(area, x, y, "interior_table_h_left");
-            addFurniture(area, x + 2, y, "interior_table_h_middle");
-            addFurniture(area, x + 4, y, "interior_table_h_right");
-            addFurniture(area, x + 1, y, "interior_tabletop_place_setting");
-            addFurniture(area, x + 3, y, "interior_tabletop_candle");
-            addFurniture(area, x, y - 1, "interior_bench_h");
-            addFurniture(area, x + 2, y - 1, "interior_bench_h");
-            addFurniture(area, x + 4, y - 1, "interior_bench_h");
-            addFurniture(area, x, y + 1, "interior_bench_h");
-            addFurniture(area, x + 2, y + 1, "interior_bench_h");
-            addFurniture(area, x + 4, y + 1, "interior_bench_h");
-            addFurniture(area, x - 1, y, "interior_chair_west_alt");
-            addFurniture(area, x + 6, y, "interior_chair_east_alt");
-            return;
+    private void addCrossingProps(MapArea area) {
+        for (int y = 1; y < area.height() - 1; y++) {
+            for (int x = 1; x < area.width() - 1; x++) {
+                if (area.tileAt(x, y) != 'B') {
+                    continue;
+                }
+                // Decorate one bank per span, leaving its travel lane open.
+                boolean horizontal = area.tileAt(x + 1, y) == 'B' || area.tileAt(x - 1, y) == 'B'
+                        || (area.tileAt(x, y - 1) != 'B' && area.tileAt(x, y + 1) != 'B'
+                        && Terrain.connectingRoad(area.tileAt(x - 1, y))
+                        && Terrain.connectingRoad(area.tileAt(x + 1, y)));
+                int dx = horizontal ? 1 : 0;
+                int dy = horizontal ? 0 : 1;
+                if (area.tileAt(x - dx, y - dy) == 'B') {
+                    continue;
+                }
+                String kingdom = kingdomAt(x, y).id;
+                String asset = switch (kingdom) {
+                    case "riverside" -> "deco_crossing_charter_marker";
+                    case "belltower" -> "deco_crossing_flood_bell";
+                    default -> "";
+                };
+                if (asset.isEmpty()) {
+                    continue;
+                }
+                boolean placed = false;
+                for (int back = 1; back <= 3 && !placed; back++) {
+                    for (int side : new int[]{-1, 1}) {
+                        int px = x - dx * back + dy * side;
+                        int py = y - dy * back + dx * side;
+                        char tile = area.tileAt(px, py);
+                        if (px <= 0 || py <= 0 || px >= area.width() - 1 || py >= area.height() - 1
+                                || !isNaturalBiome(tile) || !Terrain.passable(tile)
+                                || Terrain.connectingRoad(tile) || area.propAt(px, py) != null) {
+                            continue;
+                        }
+                        area.addProp(new WorldProp(px, py, asset, asset.endsWith("bell") ? 58 : 44));
+                        placed = true;
+                        break;
+                    }
+                }
+            }
         }
-        addFurniture(area, x, y, "interior_table_v_top");
-        addFurniture(area, x, y + 2, "interior_table_v_middle");
-        addFurniture(area, x, y + 4, "interior_table_v_bottom");
-        addFurniture(area, x, y + 1, "interior_tabletop_place_setting");
-        addFurniture(area, x, y + 3, "interior_tabletop_candle");
-        addFurniture(area, x - 1, y, "interior_bench_v");
-        addFurniture(area, x - 1, y + 2, "interior_bench_v");
-        addFurniture(area, x - 1, y + 4, "interior_bench_v");
-        addFurniture(area, x + 1, y, "interior_bench_v");
-        addFurniture(area, x + 1, y + 2, "interior_bench_v");
-        addFurniture(area, x + 1, y + 4, "interior_bench_v");
-        addFurniture(area, x, y - 1, "interior_chair_north_alt");
-        addFurniture(area, x, y + 6, "interior_chair_south_alt");
     }
 
     private void addBiomeProps(MapArea area, int salt) {
@@ -4527,7 +5231,7 @@ public final class WorldMap {
     private String forestResourceNodeFor(MapArea area, int x, int y, int roll, int patchSeed) {
         boolean forestCore = naturalNeighborCount(area, x, y, 'f') >= 16;
         boolean edge = distanceToDifferentNatural(area, x, y, 'f', 2) <= 1;
-        return weightedDecoration(roll, patchSeed, new DecorationOption[]{
+        return groveDecoration(area, x, y, roll, patchSeed, new DecorationOption[]{
                 option("deco_tree_oak_harvestable", forestCore ? 14 : 7),
                 option("deco_tree_birch_harvestable", forestCore ? 10 : 8),
                 option("deco_tree_pine_harvestable", forestCore ? 12 : 9),
@@ -4921,7 +5625,7 @@ public final class WorldMap {
         if ("archive".equals(variant)) {
             placeCityPropIfFree(area, centerX, centerY - 4, "city_prop_flower_crate", 36);
         } else if ("sanctum".equals(variant)) {
-            placeCityPropIfFree(area, centerX, centerY - 4, "city_prop_planter_stone", 38);
+            placeCityPropIfFree(area, centerX, centerY - 4, "city_prop_moss_barrel_planter", 38);
         }
     }
 
@@ -5013,7 +5717,7 @@ public final class WorldMap {
         boolean paved = tile == 'p' || tile == 'C' || tile == 'j' || tile == 'l';
         addCityPropCandidate(candidates, "city_prop_street_lamp", 34 + roll % 8, road ? 44 : 12, roll);
         addCityPropCandidate(candidates, "city_prop_stone_bench", 34 + roll % 8, green ? 42 : 14, roll);
-        addCityPropCandidate(candidates, "city_prop_planter_stone", 34 + roll % 10, green || paved ? 36 : 8, roll);
+        addCityPropCandidate(candidates, "city_prop_moss_barrel_planter", 34 + roll % 10, green || paved ? 36 : 8, roll);
         addCityPropCandidate(candidates, "city_prop_flower_pot", 30 + roll % 8, green ? 34 : 12, roll);
         addCityPropCandidate(candidates, "city_prop_plant_box", 34 + roll % 8, green ? 38 : 10, roll);
         if (green && nearbyPropCount(area, x, y, 2) < 3) {
@@ -5096,7 +5800,7 @@ public final class WorldMap {
                 addCityPropCandidate(candidates, "village_prop_produce_basket", 38 + roll % 8, 44, roll);
             }
             case "sun_shrine", "shrine" -> {
-                addCityPropCandidate(candidates, "city_prop_planter_stone", 40 + roll % 8, 42, roll);
+                addCityPropCandidate(candidates, "city_prop_moss_barrel_planter", 40 + roll % 8, 42, roll);
                 addCityPropCandidate(candidates, "city_prop_stone_bench", 38 + roll % 8, 36, roll);
             }
             default -> {
@@ -5538,7 +6242,7 @@ public final class WorldMap {
                     "city_prop_source_snow_bush", "deco_snow_mound", "city_prop_source_snow_stump"
             };
             case "sanctum", "desert" -> new String[]{
-                    "deco_dry_grass", "city_prop_planter_stone", "deco_desert_jar_cache"
+                    "deco_dry_grass", "city_prop_moss_barrel_planter", "deco_desert_jar_cache"
             };
             case "belltower", "marsh" -> new String[]{
                     "city_prop_source_reeds", "deco_bog_grass", "deco_reeds"
@@ -5554,7 +6258,7 @@ public final class WorldMap {
 
     private String parkObjectAsset(String variant, int layout) {
         if ("sanctum".equals(variant) || "desert".equals(variant)) {
-            return layout % 2 == 0 ? "city_prop_planter_stone" : "city_prop_stone_bench";
+            return layout % 2 == 0 ? "city_prop_moss_barrel_planter" : "city_prop_stone_bench";
         }
         if ("archive".equals(variant)) {
             return layout % 2 == 0 ? "city_prop_flower_crate" : "city_prop_stone_bench";
@@ -5801,8 +6505,9 @@ public final class WorldMap {
         addManagedCampProp(area, new WorldProp(16, 15, "player_village_quest_board", 42));
         addManagedCampProp(area, new WorldProp(11, 15, "deco_road_signpost", 36));
         addManagedCampProp(area, new WorldProp(22, 17, "village_prop_woodpile", 40));
-        addManagedCampProp(area, new WorldProp(20, 18, "village_prop_clay_oven", 42));
+        addManagedCampProp(area, new WorldProp(20, 18, FolkloreContent.HEARTH, 82));
         addManagedCampProp(area, new WorldProp(24, 18, "village_prop_seedling_tray", 36));
+        addManagedCampProp(area, new WorldProp(9, 19, FolkloreContent.BOUNDARY, 54));
     }
 
     private void addManagedCampProp(MapArea area, WorldProp prop) {
@@ -5810,8 +6515,14 @@ public final class WorldMap {
     }
 
     private void addDungeonProps(MapArea area, String theme, int floor, int floors) {
+        TilePoint upPoint = dungeonStairsUpPoint(theme);
+        TilePoint downPoint = dungeonStairsDownPoint(theme);
         for (int y = 3; y < area.height() - 3; y++) {
             for (int x = 3; x < area.width() - 3; x++) {
+                if ((x == upPoint.x() && y == upPoint.y())
+                        || (floor < floors && x == downPoint.x() && y == downPoint.y())) {
+                    continue;
+                }
                 int roll = Math.abs(hash(x, y, area.id.hashCode())) % 100;
                 char tile = area.tileAt(x, y);
                 if (isDungeonDecorFloor(tile) && roll < dungeonPropChance(theme, area, x, y)) {
@@ -5825,9 +6536,22 @@ public final class WorldMap {
 
     private boolean isDungeonDecorFloor(char tile) {
         return switch (tile) {
-            case 'd', 'D', 'F', 'M', 'R', 'S', 'L', 'N', 'I', 'J', 'H', 'Q' -> true;
+            case 'd', 'D', 'F', 'M', 'R', 'S', 'L', 'N', 'E', 'I', 'J', 'H', 'Q',
+                    '1', '2', '3', '4', '5', '6' -> true;
             default -> false;
         };
+    }
+
+    private void addDungeonPropIfFloor(MapArea area, int x, int y, String asset, int size) {
+        if (x <= 0 || y <= 0 || x >= area.width() - 1 || y >= area.height() - 1) {
+            return;
+        }
+        char tile = area.tileAt(x, y);
+        if (tile == '5' || tile == '6' || !isDungeonDecorFloor(tile)
+                || transitionAt(area.id, x, y) != null || area.propAt(x, y) != null) {
+            return;
+        }
+        area.addProp(new WorldProp(x, y, asset, size));
     }
 
     private int dungeonPropChance(String theme, MapArea area, int x, int y) {
@@ -5844,7 +6568,7 @@ public final class WorldMap {
             case "sewer" -> 9;
             case "prison" -> 10;
             case "crypt" -> 12;
-            case "abandoned_castle" -> 11;
+            case "abandoned_castle" -> 15;
             default -> 9;
         };
         if (open <= 1) {
@@ -5855,12 +6579,18 @@ public final class WorldMap {
         if (cluster < 28) {
             base += 9;
         }
-        return Math.max(3, Math.min(26, base));
+        return Math.max(3, Math.min("abandoned_castle".equals(theme) ? 32 : 26, base));
     }
 
     private String dungeonDecorationFor(String theme, char tile, int x, int y, int seed) {
         if (tile == 'S') {
             return seed % 2 == 0 ? "dungeon_prop_rune_pillar" : "location_dungeon_broken_altar";
+        }
+        if (tile == '4') {
+            return seed % 2 == 0 ? "dungeon_prop_castle_altar" : "dungeon_prop_castle_candles";
+        }
+        if (tile == '1') {
+            return pick(new String[]{"dungeon_prop_castle_rubble", "dungeon_prop_castle_broken_pillars"}, seed);
         }
         if (tile == 'M') {
             return pick(new String[]{"deco_soft_mossy_rock", "deco_imagen_pale_mushroom_ring", "deco_imagen_green_rune_stone"}, seed);
@@ -5868,18 +6598,23 @@ public final class WorldMap {
         if (tile == 'R') {
             return pick(new String[]{"location_dungeon_rubble_cairn", "location_dungeon_collapsed_wall", "deco_imagen_flat_stone_stack"}, seed);
         }
+        if (tile == 'E') {
+            return pick(new String[]{"dungeon_prop_cave_crates", "dungeon_prop_cave_crystal", "deco_rocks"}, seed);
+        }
         return switch (theme) {
             case "cave" -> pick(new String[]{
-                    "deco_rocks", "deco_imagen_crystal_cluster", "quest_cave_rune_cache",
-                    "deco_imagen_pale_mushroom_ring", "dungeon_prop_lantern_stand"
+                    "dungeon_prop_cave_torch", "dungeon_prop_cave_crates", "dungeon_prop_cave_bedroll",
+                    "dungeon_prop_cave_crystal", "deco_rocks"
             }, seed);
             case "crypt" -> pick(new String[]{
                     "location_crypt_sarcophagus", "location_dungeon_grave_slabs", "location_graveyard_skull_marker",
                     "dungeon_prop_rune_pillar", "location_dungeon_braziers", "location_graveyard_tombstones"
             }, seed);
             case "abandoned_castle" -> pick(new String[]{
-                    "location_dungeon_collapsed_wall", "location_dungeon_broken_altar", "dungeon_prop_relic_crate",
-                    "dungeon_prop_lantern_stand", "location_camp_crates", "deco_imagen_flat_stone_stack"
+                    "dungeon_prop_castle_candles", "dungeon_prop_castle_statue", "dungeon_prop_castle_sarcophagus",
+                    "dungeon_prop_castle_bones", "dungeon_prop_castle_urns", "dungeon_prop_castle_chains",
+                    "dungeon_prop_castle_rubble", "dungeon_prop_castle_altar", "dungeon_prop_castle_broken_pillars",
+                    "dungeon_prop_castle_skulls", "dungeon_prop_castle_chest", "dungeon_prop_castle_books"
             }, seed);
             case "prison" -> pick(new String[]{
                     "dungeon_prop_chain_stand", "dungeon_prop_lantern_stand", "location_graveyard_skull_marker",
@@ -5912,6 +6647,16 @@ public final class WorldMap {
             case "location_graveyard_tombstones", "location_dungeon_grave_slabs" -> 44;
             case "location_camp_fire", "location_camp_crates", "location_graveyard_skull_marker" -> 36;
             case "quest_cave_rune_cache", "deco_imagen_crystal_cluster", "deco_imagen_marsh_bubble_pool" -> 40;
+            case "dungeon_prop_cave_torch", "dungeon_prop_cave_crates",
+                    "dungeon_prop_cave_bedroll", "dungeon_prop_cave_crystal" -> 44;
+            case "dungeon_prop_castle_candles", "dungeon_prop_castle_bones",
+                    "dungeon_prop_castle_urns", "dungeon_prop_castle_chains",
+                    "dungeon_prop_castle_rubble", "dungeon_prop_castle_skulls",
+                    "dungeon_prop_castle_books" -> 42;
+            case "dungeon_prop_castle_statue", "dungeon_prop_castle_sarcophagus",
+                    "dungeon_prop_castle_altar", "dungeon_prop_castle_broken_pillars",
+                    "dungeon_prop_castle_chest", "dungeon_prop_castle_gravestone",
+                    "dungeon_prop_castle_iron_gate" -> 50;
             default -> roll < 2 ? 44 : 34 + roll % 10;
         };
     }
@@ -5919,16 +6664,27 @@ public final class WorldMap {
     private void addDungeonSetPieces(MapArea area, String theme, int floor, int floors) {
         switch (theme) {
             case "cave" -> {
-                area.addProp(new WorldProp(8, 5, "deco_imagen_crystal_cluster", 46));
-                area.addProp(new WorldProp(24, 19, floor == floors ? "dungeon_prop_rune_pillar" : "quest_cave_rune_cache", 44));
+                area.addProp(new WorldProp(8, 5, "dungeon_prop_cave_crystal", 46));
+                area.addProp(new WorldProp(24, 19, floor == floors ? "dungeon_prop_cave_torch" : "dungeon_prop_cave_crates", 44));
             }
             case "crypt" -> {
                 area.addProp(new WorldProp(17, 12, floor == floors ? "location_dungeon_broken_altar" : "location_crypt_sarcophagus", 52));
                 area.addProp(new WorldProp(7, 20, "location_dungeon_grave_slabs", 46));
             }
             case "abandoned_castle" -> {
-                area.addProp(new WorldProp(17, 5, "dungeon_prop_relic_crate", 42));
-                area.addProp(new WorldProp(30, 18, floor == floors ? "location_dungeon_broken_altar" : "location_dungeon_collapsed_wall", 54));
+                addDungeonPropIfFloor(area, 17, 5, floor == floors ? "dungeon_prop_castle_altar" : "dungeon_prop_castle_sarcophagus", 52);
+                addDungeonPropIfFloor(area, 30, 18, floor == floors ? "dungeon_prop_castle_statue" : "dungeon_prop_castle_broken_pillars", 50);
+                addDungeonPropIfFloor(area, 7, 20, "dungeon_prop_castle_candles", 42);
+                addDungeonPropIfFloor(area, 6, 5, "dungeon_prop_castle_candles", 40);
+                addDungeonPropIfFloor(area, 9, 6, "dungeon_prop_castle_bones", 40);
+                addDungeonPropIfFloor(area, 20, 7, "dungeon_prop_castle_urns", 42);
+                addDungeonPropIfFloor(area, 27, 6, "dungeon_prop_castle_chest", 46);
+                addDungeonPropIfFloor(area, 29, 8, "dungeon_prop_castle_books", 40);
+                addDungeonPropIfFloor(area, 13, 12, "dungeon_prop_castle_chains", 42);
+                addDungeonPropIfFloor(area, 22, 13, "dungeon_prop_castle_skulls", 42);
+                addDungeonPropIfFloor(area, 18, 20, floor == floors ? "dungeon_prop_castle_altar" : "dungeon_prop_castle_statue", 50);
+                addDungeonPropIfFloor(area, 23, 21, "dungeon_prop_castle_sarcophagus", 50);
+                addDungeonPropIfFloor(area, 31, 21, "dungeon_prop_castle_candles", 42);
             }
             case "prison" -> {
                 area.addProp(new WorldProp(6, 5, "dungeon_prop_chain_stand", 42));
@@ -5942,513 +6698,21 @@ public final class WorldMap {
         }
     }
 
-    private void addHouseProps(MapArea area, String theme, int seed) {
-        switch (theme) {
-            case "blacksmith" -> {
-                addFurniture(area, 3, 2, "interior_forge");
-                addFurniture(area, 5, 2, "interior_anvil_tool_rack");
-                addFurniture(area, 8, 2, "interior_anvil");
-                addFurniture(area, 10, 2, "interior_metal_crate");
-                addFurniture(area, area.width() - 7, 2, "interior_shop_counter");
-                addFurniture(area, area.width() - 4, 2, "interior_metal_crate");
-                addFurniture(area, 4, 7, "interior_storage_counter");
-                addFurniture(area, 7, 7, "interior_metal_crate");
-                addFurniture(area, 10, 7, "interior_anvil_tool_rack");
-                addFurniture(area, 12, 7, "interior_stove");
-                addFurniture(area, 15, 7, "interior_metal_crate");
-                addFurniture(area, 4, 10, "interior_barrels");
-                addFurniture(area, area.width() - 4, 9, "interior_traveler_trunk");
-                addFurniture(area, area.width() - 5, area.height() - 4, "interior_hearth_pot");
-            }
-            case "carpenter" -> {
-                addFurniture(area, 3, 2, "interior_carpenter_workbench");
-                addFurniture(area, 6, 2, "interior_sawhorse_planks");
-                addFurniture(area, 9, 2, "interior_low_cupboard");
-                addFurniture(area, area.width() - 9, 2, "interior_crates");
-                addFurniture(area, area.width() - 6, 2, "interior_barrels");
-                addFurniture(area, 4, 7, "interior_low_cupboard");
-                addFurniture(area, 7, 7, "interior_stool_table_h");
-                addFurniture(area, 11, 7, "interior_sawhorse_planks");
-                addFurniture(area, area.width() - 9, 7, "interior_carpenter_workbench");
-                addFurniture(area, area.width() - 6, 7, "interior_sawhorse_planks");
-                addFurniture(area, 4, 10, "interior_crates");
-                addFurniture(area, 8, 10, "interior_carpenter_workbench");
-                addFurniture(area, area.width() - 5, area.height() - 4, "interior_storage_counter");
-            }
-            case "bakery" -> {
-                addFurniture(area, 3, 2, "interior_bakery_oven");
-                addFurniture(area, 8, 2, "interior_bakery_counter");
-                addFurniture(area, 11, 2, "interior_bakery_counter");
-                addFurniture(area, area.width() - 7, 2, "interior_cooking_station");
-                addFurniture(area, area.width() - 4, 2, "interior_grain_sacks_v");
-                addFurniture(area, 6, 8, "interior_banquet_table_h");
-                addFurniture(area, 6, 9, "interior_bench_h");
-                addFurniture(area, 10, 8, "interior_stool_table_h");
-                addFurniture(area, 10, 9, "interior_bench_h");
-                addFurniture(area, 14, 8, "interior_round_table");
-                addFurniture(area, 14, 8, "interior_tabletop_meal");
-                addFurniture(area, 17, 8, "interior_bakery_counter");
-                addFurniture(area, 4, 11, "interior_grain_sacks_v");
-                addFurniture(area, area.width() - 5, area.height() - 4, "interior_storage_counter");
-            }
-            case "inn" -> {
-                addFurniture(area, 2, 2, "interior_tavern_counter");
-                addFurniture(area, 5, 2, "interior_tavern_counter");
-                addFurniture(area, 8, 2, "interior_storage_counter");
-                addFurniture(area, 11, 2, "interior_barrels");
-                addFurniture(area, area.width() - 7, 3, "interior_resident_bed");
-                addFurniture(area, area.width() - 4, 3, "interior_traveler_trunk");
-                addFurniture(area, area.width() - 7, 7, "interior_resident_bed");
-                addFurniture(area, area.width() - 4, 7, "interior_inn_screen_chest");
-                addModularTableSet(area, 6, 8, true);
-                addFurniture(area, 15, 8, "interior_banquet_table_h");
-                addFurniture(area, 15, 7, "interior_bench_h");
-                addFurniture(area, 15, 9, "interior_bench_h");
-                addTableSet(area, 5, 12);
-                addFurniture(area, 11, 12, "interior_hearth_pot");
-                addFurniture(area, area.width() - 6, area.height() - 4, "interior_linen_shelf");
-            }
-            case "tavern" -> {
-                addFurniture(area, 2, 2, "interior_tavern_counter");
-                addFurniture(area, 5, 2, "interior_tavern_counter");
-                addFurniture(area, 8, 2, "interior_tavern_counter");
-                addFurniture(area, 6, 2, "interior_barrels");
-                addFurniture(area, area.width() - 6, 3, "interior_resident_bed");
-                addFurniture(area, area.width() - 4, 5, "interior_traveler_trunk");
-                addFurniture(area, area.width() - 3, 3, "interior_oven");
-                addModularTableSet(area, 7, 8, true);
-                addFurniture(area, 15, 9, "interior_banquet_table_h");
-                addFurniture(area, 15, 8, "interior_bench_h");
-                addFurniture(area, 15, 10, "interior_bench_h");
-                addTableSet(area, area.width() - 5, 10);
-                addTableSet(area, 5, 12);
-                addFurniture(area, 11, 13, "interior_hearth_pot");
-            }
-            case "shop" -> {
-                addFurniture(area, 3, 2, "interior_shop_counter");
-                addFurniture(area, 6, 2, "interior_bookshelf");
-                addFurniture(area, 8, 2, "interior_bookshelf");
-                addFurniture(area, area.width() - 7, 2, "interior_shop_counter");
-                addFurniture(area, area.width() - 4, 2, "interior_crates");
-                addFurniture(area, 3, 7, "interior_counter_corner_h");
-                addFurniture(area, 6, 7, "interior_shop_counter");
-                addFurniture(area, 10, 7, "interior_low_cupboard");
-                addFurniture(area, 5, 8, "interior_stool_table_h");
-                addFurniture(area, 9, 8, "interior_banquet_table_h");
-                addFurniture(area, 13, 8, "interior_crates");
-                addFurniture(area, 16, 7, "interior_barrels");
-                addFurniture(area, area.width() - 6, area.height() - 4, "interior_alchemy_station");
-            }
-            case "study" -> {
-                addFurniture(area, 3, 2, "interior_bookshelf");
-                addFurniture(area, 5, 2, "interior_bookshelf");
-                addFurniture(area, 7, 2, "interior_bookshelf");
-                addFurniture(area, area.width() - 7, 2, "interior_bookshelf");
-                addFurniture(area, area.width() - 5, 2, "interior_bookshelf");
-                addFurniture(area, area.width() - 3, 2, "interior_bookshelf");
-                addFurniture(area, 3, 3, "interior_study_desk_h");
-                addFurniture(area, 7, 3, "interior_study_desk_h");
-                addFurniture(area, 12, 7, "interior_round_table");
-                addFurniture(area, 12, 7, "interior_tabletop_candle");
-                addFurniture(area, 16, 7, "interior_study_desk_h");
-                addFurniture(area, 3, 10, "interior_bookshelf");
-                addFurniture(area, 6, 10, "interior_side_table");
-                addFurniture(area, 10, 10, "interior_aquarium_table");
-                addFurniture(area, 15, 10, "interior_alchemy_station");
-                addFurniture(area, area.width() - 6, area.height() - 4, "interior_alchemy_station");
-            }
-            default -> {
-                addFurniture(area, 2, 2, "interior_resident_bed");
-                addFurniture(area, 4, 2, "interior_traveler_trunk");
-                addFurniture(area, area.width() - 6, 2, "interior_bookshelf");
-                addFurniture(area, 3, 6, "interior_round_table");
-                addFurniture(area, 3, 6, "interior_tabletop_meal");
-                addFurniture(area, 2, 6, "interior_chair_west");
-                addFurniture(area, 4, 6, "interior_chair_east");
-                addFurniture(area, area.width() - 8, 6, "interior_storage_counter");
-                addFurniture(area, area.width() - 5, 6, "interior_linen_shelf");
-                addFurniture(area, 5, area.height() - 5, Math.floorMod(seed, 2) == 0 ? "interior_stove" : "interior_hearth_pot");
-            }
-        }
-        addInteriorAccentFurniture(area, theme, seed);
-        addInteriorLightSources(area, theme, seed);
-        addRankedInteriorFurnishings(area, theme, seed);
-    }
-
-    private void addRankedInteriorFurnishings(MapArea area, String theme, int seed) {
-        int target = interiorDensityTarget(area, theme);
-        String[] assets = rankedInteriorAssetsFor(theme);
-        int guard = 0;
-        while (interiorDensityCount(area) < target && guard++ < target * 2) {
-            RankedInteriorCandidate best = null;
-            for (String asset : assets) {
-                int[] footprint = interiorHitboxFootprint(asset);
-                for (int y = 2; y < area.height() - 2; y++) {
-                    for (int x = 2; x < area.width() - 2; x++) {
-                        if (x + footprint[0] >= area.width() - 1 || y + footprint[1] >= area.height() - 1
-                                || reservedPlayerInteriorEditSpot(area, x, y, footprint[0], footprint[1])
-                                || !canPlaceInteriorAsset(area, x, y, asset)) {
-                            continue;
-                        }
-                        int score = interiorPlacementScore(area, theme, seed, x, y, asset);
-                        if (best == null || score > best.score()) {
-                            best = new RankedInteriorCandidate(x, y, asset, score);
-                        }
-                    }
-                }
-            }
-            if (best == null || best.score() < 28) {
-                break;
-            }
-            addFurniture(area, best.x(), best.y(), best.asset());
-            addSurfaceDetailFor(area, best.x(), best.y(), best.asset(), seed + guard * 31);
-            addRankedCompanionClusterFor(area, best.x(), best.y(), best.asset(), seed + guard * 47);
-        }
-    }
-
     private boolean reservedPlayerInteriorEditSpot(MapArea area, int x, int y, int width, int height) {
         return area.id.startsWith("house_" + PLAYER_VILLAGE_ID)
                 && rectsOverlap(x, y, x + width - 1, y + height - 1, 8, 4, 8, 4);
-    }
-
-    private int interiorDensityTarget(MapArea area, String theme) {
-        int floorArea = 0;
-        for (int y = 1; y < area.height() - 1; y++) {
-            for (int x = 1; x < area.width() - 1; x++) {
-                char tile = area.tileAt(x, y);
-                if (tile == 'i' || tile == 'z' || tile == 'k' || tile == 'e') {
-                    floorArea++;
-                }
-            }
-        }
-        int areaTarget = Math.max(18, floorArea / 7);
-        int themeTarget = switch (theme) {
-            case "inn", "tavern" -> 38;
-            case "study" -> 35;
-            case "shop", "bakery", "carpenter" -> 33;
-            case "blacksmith" -> 30;
-            default -> 24;
-        };
-        return Math.min(themeTarget, areaTarget + 8);
-    }
-
-    private int interiorDensityCount(MapArea area) {
-        int count = 0;
-        for (WorldProp prop : area.props) {
-            if (!isInteriorWallDecorAsset(prop.asset()) && !isInteriorOverlayAsset(prop.asset())) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    private String[] rankedInteriorAssetsFor(String theme) {
-        return switch (theme) {
-            case "blacksmith" -> new String[]{
-                    "interior_anvil", "interior_anvil_tool_rack", "interior_metal_crate", "interior_forge",
-                    "interior_storage_counter", "interior_low_cupboard", "interior_barrels", "interior_crates",
-                    "interior_stool_table_h", "interior_hearth_pot", "interior_flower_pot", "interior_herb_pot"
-            };
-            case "carpenter" -> new String[]{
-                    "interior_carpenter_workbench", "interior_sawhorse_planks", "interior_low_cupboard",
-                    "interior_storage_counter", "interior_stool_table_h", "interior_crates", "interior_barrels",
-                    "interior_side_table", "interior_planting_pot", "interior_floor_sapling_pot", "interior_flower_pot"
-            };
-            case "bakery" -> new String[]{
-                    "interior_bakery_counter", "interior_cooking_station", "interior_cookpot_stand",
-                    "interior_grain_sacks_v", "interior_barrels", "interior_banquet_table_h", "interior_stool_table_h",
-                    "interior_bench_h", "interior_round_table", "interior_chair_north", "interior_chair_south",
-                    "interior_chair_east", "interior_chair_west", "interior_herb_planter", "interior_flower_pot"
-            };
-            case "inn", "tavern" -> new String[]{
-                    "interior_tavern_counter", "interior_barrels", "interior_banquet_table_h", "interior_stool_table_h",
-                    "interior_bench_h", "interior_round_table", "interior_chair_north", "interior_chair_south",
-                    "interior_chair_east", "interior_chair_west", "interior_side_table", "interior_traveler_trunk",
-                    "interior_linen_shelf", "interior_hearth_pot", "interior_flower_pot", "interior_herb_pot"
-            };
-            case "shop" -> new String[]{
-                    "interior_shop_counter", "interior_counter_corner_h", "interior_low_cupboard", "interior_bookshelf",
-                    "interior_crates", "interior_barrels", "interior_stool_table_h", "interior_banquet_table_h",
-                    "interior_round_table", "interior_chair_north", "interior_chair_south", "interior_chair_east",
-                    "interior_chair_west", "interior_flower_pot", "interior_herb_planter"
-            };
-            case "study" -> new String[]{
-                    "interior_bookshelf", "interior_study_desk_h", "interior_side_table", "interior_aquarium_table",
-                    "interior_alchemy_station", "interior_round_table", "interior_chair_north", "interior_chair_south",
-                    "interior_chair_east", "interior_chair_west", "interior_flower_pot",
-                    "interior_floor_leafy_plant"
-            };
-            default -> new String[]{
-                    "interior_bookshelf", "interior_side_table", "interior_storage_counter", "interior_round_table",
-                    "interior_chair_north", "interior_chair_south", "interior_chair_east", "interior_chair_west",
-                    "interior_flower_pot", "interior_herb_pot", "interior_floor_leafy_plant", "interior_traveler_trunk"
-            };
-        };
-    }
-
-    private int interiorPlacementScore(MapArea area, String theme, int seed, int x, int y, String asset) {
-        int[] footprint = interiorHitboxFootprint(asset);
-        int horizontalWalls = adjacentHorizontalWallCount(area, x, y, footprint[0], footprint[1]);
-        int verticalWalls = adjacentVerticalWallCount(area, x, y, footprint[0], footprint[1]);
-        int wallTotal = horizontalWalls + verticalWalls;
-        int minDistance = nearestInteriorPropDistance(area, x, y, footprint[0], footprint[1]);
-        int score = 24 + Math.floorMod(hash(x, y, seed + asset.hashCode()), 17);
-
-        if (minDistance == 1) {
-            score -= 14;
-        } else if (minDistance == 2 || minDistance == 3) {
-            score += 18;
-        } else if (minDistance >= 5) {
-            score += isFillerInteriorAsset(asset) ? 22 : 6;
-        }
-
-        if (isChairAsset(asset)) {
-            int tableScore = directionalTableScore(area, x, y, asset);
-            if (tableScore <= 0) {
-                return -1000;
-            }
-            score += 72 + tableScore * 18 - wallTotal * 8;
-        } else if (isBenchAsset(asset)) {
-            score += nearbyRoleScore(area, x, y, "table", 2) * 18 - wallTotal * 5;
-        } else if (isTableAsset(asset)) {
-            score += wallTotal == 0 ? 58 : -22;
-            score += interiorCenterScore(area, x, y);
-        } else if (isBookshelfAsset(asset)) {
-            score += horizontalWalls > 0 ? 72 : -42;
-            score += verticalWalls > 0 ? 8 : 0;
-        } else if (isVerticalInteriorFurniture(asset)) {
-            score += verticalWalls > 0 ? 66 : -26;
-            score += horizontalWalls > 0 ? 12 : 0;
-        } else if (isCookingInteriorAsset(asset)) {
-            score += nearbyRoleScore(area, x, y, "counter", 3) * 18;
-            score += nearbyRoleScore(area, x, y, "storage", 3) * 12;
-            score += nearbyRoleScore(area, x, y, "herb", 3) * 12;
-        } else if (isMetalInteriorAsset(asset)) {
-            score += nearbyRoleScore(area, x, y, "metal", 3) * 18;
-            score += nearbyRoleScore(area, x, y, "forge", 4) * 24;
-            score += wallTotal > 0 ? 10 : 0;
-        } else if (isStorageInteriorAsset(asset)) {
-            score += wallTotal > 0 ? 34 : -8;
-            score += nearbyRoleScore(area, x, y, "work", 3) * 9;
-        } else if (isFillerInteriorAsset(asset)) {
-            score += wallTotal > 0 ? 24 : 6;
-            score += minDistance >= 4 ? 30 : 0;
-        } else if (isCounterOrWorkbenchAsset(asset)) {
-            score += horizontalWalls > 0 || verticalWalls > 0 ? 34 : -4;
-            score += nearbyRoleScore(area, x, y, "storage", 3) * 8;
-        }
-
-        score += themeInteriorAssetBonus(theme, asset);
-        score -= sameInteriorAssetCount(area, asset) * assetRepeatPenalty(asset);
-        return score;
-    }
-
-    private int themeInteriorAssetBonus(String theme, String asset) {
-        return switch (theme) {
-            case "blacksmith" -> isMetalInteriorAsset(asset) || asset.contains("forge") ? 30 : 0;
-            case "carpenter" -> asset.contains("carpenter") || asset.contains("sawhorse") || asset.contains("planks") ? 30 : 0;
-            case "bakery" -> isCookingInteriorAsset(asset) || asset.contains("bakery") || asset.contains("grain") ? 26 : 0;
-            case "inn", "tavern" -> isTableAsset(asset) || isBenchAsset(asset) || isChairAsset(asset)
-                    || asset.contains("barrel") || asset.contains("counter") ? 20 : 0;
-            case "shop" -> asset.contains("counter") || asset.contains("crates") || asset.contains("bookshelf") ? 22 : 0;
-            case "study" -> asset.contains("bookshelf") || asset.contains("study") || asset.contains("alchemy")
-                    || asset.contains("aquarium") ? 28 : 0;
-            default -> 0;
-        };
-    }
-
-    private void addSurfaceDetailFor(MapArea area, int x, int y, String asset, int seed) {
-        if (isSurfaceDetailAnchor(asset)) {
-            String detail = Math.floorMod(seed + asset.hashCode(), 4) == 0
-                    ? "interior_tabletop_candle"
-                    : Math.floorMod(seed + asset.hashCode(), 4) == 1
-                    ? "interior_tabletop_meal"
-                    : "interior_tabletop_place_setting";
-            addFurniture(area, x, y, detail);
-        }
-    }
-
-    private void addRankedCompanionClusterFor(MapArea area, int x, int y, String asset, int seed) {
-        if (asset.equals("interior_round_table")) {
-            addFurniture(area, x, y - 1, "interior_chair_north");
-            addFurniture(area, x, y + 1, "interior_chair_south");
-            addFurniture(area, x - 1, y, "interior_chair_west");
-            addFurniture(area, x + 1, y, "interior_chair_east");
-            return;
-        }
-        if (asset.equals("interior_banquet_table_h") || asset.equals("interior_stool_table_h")) {
-            addFurniture(area, x, y - 1, "interior_bench_h");
-            addFurniture(area, x, y + 1, "interior_bench_h");
-            addFurniture(area, x - 1, y, "interior_chair_west_alt");
-            addFurniture(area, x + 2, y, "interior_chair_east_alt");
-            return;
-        }
-        if (isCookingInteriorAsset(asset)) {
-            addFurniture(area, x - 2, y, asset.contains("bakery") ? "interior_bakery_counter" : "interior_storage_counter");
-            addFurniture(area, x + 2, y, "interior_barrels");
-            addFurniture(area, x, y + 1, Math.floorMod(seed, 2) == 0 ? "interior_herb_planter" : "interior_herb_pot");
-            return;
-        }
-        if (isMetalInteriorAsset(asset)) {
-            addFurniture(area, x - 2, y, "interior_metal_crate");
-            addFurniture(area, x + 1, y, "interior_anvil_tool_rack");
-            addFurniture(area, x, y + 2, "interior_metal_crate");
-            return;
-        }
-        if (asset.contains("carpenter") || asset.contains("sawhorse")) {
-            addFurniture(area, x + 2, y, "interior_sawhorse_planks");
-            addFurniture(area, x - 2, y, "interior_crates");
-            addFurniture(area, x, y + 1, "interior_low_cupboard");
-            return;
-        }
-        if (isBookshelfAsset(asset)) {
-            addFurniture(area, x + 1, y, Math.floorMod(seed, 2) == 0 ? "interior_flower_pot" : "interior_side_table");
-        }
-    }
-
-    private int adjacentHorizontalWallCount(MapArea area, int x, int y, int width, int height) {
-        int count = 0;
-        for (int xx = x; xx < x + width; xx++) {
-            if (area.tileAt(xx, y - 1) == 'o') {
-                count++;
-            }
-            if (area.tileAt(xx, y + height) == 'o') {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    private int adjacentVerticalWallCount(MapArea area, int x, int y, int width, int height) {
-        int count = 0;
-        for (int yy = y; yy < y + height; yy++) {
-            if (area.tileAt(x - 1, yy) == 'o') {
-                count++;
-            }
-            if (area.tileAt(x + width, yy) == 'o') {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    private int nearestInteriorPropDistance(MapArea area, int x, int y, int width, int height) {
-        int best = 99;
-        int cx = x + width / 2;
-        int cy = y + height / 2;
-        for (WorldProp prop : area.props) {
-            if (isInteriorWallDecorAsset(prop.asset()) || isInteriorOverlayAsset(prop.asset())) {
-                continue;
-            }
-            int[] footprint = interiorHitboxFootprint(prop.asset());
-            int px = prop.x() + footprint[0] / 2;
-            int py = prop.y() + footprint[1] / 2;
-            best = Math.min(best, Math.abs(cx - px) + Math.abs(cy - py));
-        }
-        return best;
-    }
-
-    private int nearbyRoleScore(MapArea area, int x, int y, String role, int radius) {
-        int score = 0;
-        for (WorldProp prop : area.props) {
-            if (Math.abs(prop.x() - x) + Math.abs(prop.y() - y) > radius || !interiorAssetMatchesRole(prop.asset(), role)) {
-                continue;
-            }
-            score++;
-        }
-        return Math.min(4, score);
-    }
-
-    private boolean interiorAssetMatchesRole(String asset, String role) {
-        return switch (role) {
-            case "table" -> isSeatingAnchorAsset(asset);
-            case "counter" -> hasInteriorAssetTag(asset, InteriorAssetTag.COUNTER)
-                    || hasInteriorAssetTag(asset, InteriorAssetTag.WORK);
-            case "storage" -> isStorageInteriorAsset(asset);
-            case "herb" -> asset.contains("herb") || asset.contains("plant") || asset.contains("flower");
-            case "metal" -> isMetalInteriorAsset(asset);
-            case "forge" -> hasInteriorAssetTag(asset, InteriorAssetTag.FORGE) || hasInteriorAssetTag(asset, InteriorAssetTag.METAL);
-            case "work" -> hasInteriorAssetTag(asset, InteriorAssetTag.WORK);
-            default -> false;
-        };
-    }
-
-    private int directionalTableScore(MapArea area, int x, int y, String chairAsset) {
-        int tx = x;
-        int ty = y;
-        if (hasInteriorAssetTag(chairAsset, InteriorAssetTag.CHAIR_NORTH)) {
-            ty = y + 1;
-        } else if (hasInteriorAssetTag(chairAsset, InteriorAssetTag.CHAIR_SOUTH)) {
-            ty = y - 1;
-        } else if (hasInteriorAssetTag(chairAsset, InteriorAssetTag.CHAIR_EAST)) {
-            tx = x - 1;
-        } else if (hasInteriorAssetTag(chairAsset, InteriorAssetTag.CHAIR_WEST)) {
-            tx = x + 1;
-        } else {
-            return 0;
-        }
-        int score = 0;
-        for (WorldProp prop : area.props) {
-            if (!isSeatingAnchorAsset(prop.asset())) {
-                continue;
-            }
-            int[] footprint = interiorHitboxFootprint(prop.asset());
-            if (tx >= prop.x() && tx < prop.x() + footprint[0]
-                    && ty >= prop.y() && ty < prop.y() + footprint[1]) {
-                score++;
-            }
-        }
-        return score;
-    }
-
-    private int interiorCenterScore(MapArea area, int x, int y) {
-        int cx = area.width() / 2;
-        int cy = area.height() / 2;
-        int distance = Math.abs(x - cx) + Math.abs(y - cy);
-        return Math.max(0, 28 - distance * 3);
-    }
-
-    private int sameInteriorAssetCount(MapArea area, String asset) {
-        int count = 0;
-        for (WorldProp prop : area.props) {
-            if (prop.asset().equals(asset)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    private int assetRepeatPenalty(String asset) {
-        if (isChairAsset(asset)) {
-            return 7;
-        }
-        if (isFillerInteriorAsset(asset) || isBenchAsset(asset) || isStorageInteriorAsset(asset)) {
-            return 3;
-        }
-        if (isBookshelfAsset(asset)) {
-            return 4;
-        }
-        return 8;
-    }
-
-    private boolean isChairAsset(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.CHAIR);
-    }
-
-    private boolean isBenchAsset(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.BENCH);
     }
 
     private boolean isTableAsset(String asset) {
         return hasInteriorAssetTag(asset, InteriorAssetTag.DINING_TABLE);
     }
 
-    private boolean isSeatingAnchorAsset(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.DINING_TABLE)
-                || hasInteriorAssetTag(asset, InteriorAssetTag.DESK);
-    }
-
     private boolean isSurfaceDetailAnchor(String asset) {
+        // These sprites already contain meals or working equipment. Extra dishes
+        // obscure the art and (for ovens) appear to hover in front of the fire.
+        if (isCookingInteriorAsset(asset) || asset.equals("interior_banquet_table_h")
+                || asset.equals("interior_stool_table_h") || asset.equals("interior_tavern_counter")
+                || asset.equals("interior_bakery_counter")) return false;
         return hasInteriorAssetTag(asset, InteriorAssetTag.SURFACE)
                 || hasInteriorAssetTag(asset, InteriorAssetTag.DINING_TABLE)
                 || hasInteriorAssetTag(asset, InteriorAssetTag.DESK)
@@ -6456,33 +6720,13 @@ public final class WorldMap {
                 || hasInteriorAssetTag(asset, InteriorAssetTag.WORK);
     }
 
-    private boolean isBookshelfAsset(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.BOOKSHELF);
-    }
-
-    private boolean isVerticalInteriorFurniture(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.VERTICAL);
-    }
-
     private boolean isCookingInteriorAsset(String asset) {
         return hasInteriorAssetTag(asset, InteriorAssetTag.COOKING);
-    }
-
-    private boolean isMetalInteriorAsset(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.METAL);
-    }
-
-    private boolean isStorageInteriorAsset(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.STORAGE);
     }
 
     private boolean isCounterOrWorkbenchAsset(String asset) {
         return hasInteriorAssetTag(asset, InteriorAssetTag.COUNTER)
                 || hasInteriorAssetTag(asset, InteriorAssetTag.WORK);
-    }
-
-    private boolean isFillerInteriorAsset(String asset) {
-        return hasInteriorAssetTag(asset, InteriorAssetTag.FILLER);
     }
 
     private boolean hasInteriorAssetTag(String asset, InteriorAssetTag tag) {
@@ -6573,9 +6817,6 @@ public final class WorldMap {
         WORK
     }
 
-    private record RankedInteriorCandidate(int x, int y, String asset, int score) {
-    }
-
     private record BuildingLotCandidate(String key, int x1, int y1, int x2, int y2, int palette,
                                         List<String> styles) {
     }
@@ -6584,135 +6825,6 @@ public final class WorldMap {
     }
 
     private record CityPropCandidate(String asset, int size, int score) {
-    }
-
-    private void addInteriorLightSources(MapArea area, String theme, int seed) {
-        int width = area.width();
-        int height = area.height();
-        addFurniture(area, 3, 1, "interior_wall_sconce_lamp");
-        addFurniture(area, Math.max(4, width / 2), 1, Math.floorMod(seed, 2) == 0
-                ? "interior_wall_sconce_lamp"
-                : "interior_wall_window_small");
-        addFurniture(area, width - 4, 1, "interior_wall_sconce_lamp");
-        switch (theme) {
-            case "blacksmith" -> {
-                addFurniture(area, 10, 6, "interior_hearth_pot");
-                addFurniture(area, width - 5, 6, "interior_wall_sconce_lamp");
-            }
-            case "carpenter" -> {
-                addFurniture(area, width - 5, 6, "interior_wall_sconce_lamp");
-                addFurniture(area, 6, height - 5, "interior_tabletop_candle");
-            }
-            case "bakery" -> {
-                addFurniture(area, 14, 8, "interior_tabletop_candle");
-                addFurniture(area, width - 6, height - 5, "interior_wall_sconce_lamp");
-            }
-            case "inn", "tavern" -> {
-                addFurniture(area, 9, 8, "interior_tabletop_candle");
-                addFurniture(area, 16, 9, "interior_tabletop_candle");
-                addFurniture(area, width - 5, height - 5, "interior_wall_sconce_lamp");
-            }
-            case "shop" -> {
-                addFurniture(area, 7, 8, "interior_tabletop_candle");
-                addFurniture(area, width - 6, height - 5, "interior_wall_sconce_lamp");
-            }
-            case "study" -> {
-                addFurniture(area, 4, 5, "interior_tabletop_candle");
-                addFurniture(area, 15, 8, "interior_tabletop_candle");
-                addFurniture(area, width - 6, height - 5, "interior_wall_crystal_ornament");
-            }
-            default -> {
-                addFurniture(area, width / 2, 7, "interior_tabletop_candle");
-                addFurniture(area, width - 5, height - 5, "interior_wall_sconce_lamp");
-            }
-        }
-    }
-
-    private void addInteriorAccentFurniture(MapArea area, String theme, int seed) {
-        int width = area.width();
-        int height = area.height();
-        int roll = Math.floorMod(seed, 12);
-        addFurniture(area, Math.max(3, width / 2 - 1), 1,
-                roll % 2 == 0 ? "interior_wall_window_wide" : "interior_wall_plant_shelf");
-        addFurniture(area, 3, 1, roll % 3 == 0 ? "interior_wall_sconce_lamp" : "interior_wall_flower_pot");
-        addFurniture(area, width - 4, 1, roll % 3 == 1 ? "interior_wall_ivy_planter" : "interior_wall_sconce_lamp");
-        switch (theme) {
-            case "blacksmith" -> {
-                addFurniture(area, width / 2 + 3, 1, "interior_wall_sconce_lamp");
-                addFurniture(area, 7, height - 5, roll % 2 == 0 ? "interior_storage_counter" : "interior_metal_crate");
-                addFurniture(area, width - 5, 6, "interior_oven");
-                addFurniture(area, width - 7, height - 4, "interior_herb_drying_rack");
-                if (roll % 3 == 0) {
-                    addFurniture(area, width - 4, height - 5, "interior_grain_sacks_v");
-                }
-            }
-            case "carpenter" -> {
-                addFurniture(area, width / 2 + 4, 1, "interior_wall_herb_rack");
-                addFurniture(area, width - 6, height - 5, "interior_planting_pot");
-                addFurniture(area, width - 9, height - 5, "interior_sprout_planter");
-                addFurniture(area, 6, height - 5, "interior_side_table");
-                addFurniture(area, 6, height - 5, "interior_seed_bowl");
-                addFurniture(area, 9, height - 5, "interior_floor_sapling_pot");
-                addFurniture(area, width - 4, height - 5, "interior_traveler_trunk");
-                addFurniture(area, width / 2, height - 5, "interior_sawhorse_planks");
-            }
-            case "bakery" -> {
-                addFurniture(area, width / 2 + 4, 1, "interior_wall_window_small");
-                addFurniture(area, width - 6, 6, "interior_grain_sacks_v");
-                addFurniture(area, 4, height - 5, "interior_cookpot_stand");
-                addFurniture(area, 8, height - 5, "interior_bakery_counter");
-                addFurniture(area, width - 8, height - 5, "interior_flower_pot");
-            }
-            case "tavern", "inn" -> {
-                addFurniture(area, width / 2 + 4, 1, "interior_wall_window_small");
-                addFurniture(area, width - 6, 6, "interior_barrels");
-                addFurniture(area, 4, height - 5, roll % 2 == 0 ? "interior_stove" : "interior_oven");
-                addFurniture(area, 8, height - 5, "interior_cooking_station");
-                addFurniture(area, width - 8, height - 5, "interior_herb_pot");
-                addFurniture(area, width - 5, height - 6, "interior_floor_flower_planter");
-                addFurniture(area, width - 4, height - 5, "interior_traveler_trunk");
-                if (roll % 3 != 1) {
-                    addFurniture(area, width / 2 + 4, height - 4, "interior_inn_screen_chest");
-                }
-            }
-            case "shop" -> {
-                addFurniture(area, width / 2 + 4, 1, "interior_wall_herb_rack");
-                addFurniture(area, width - 5, height - 5, "interior_crates");
-                addFurniture(area, 3, height - 5, roll % 2 == 0 ? "interior_barrels" : "interior_bookshelf");
-                addFurniture(area, 12, height - 5, "interior_flower_pot");
-                addFurniture(area, 14, height - 5, "interior_herb_planter");
-                addFurniture(area, width - 8, height - 5, "interior_floor_bushy_planter");
-                if (roll % 3 == 2) {
-                    addFurniture(area, width / 2 + 2, 8, "interior_shop_counter");
-                }
-            }
-            case "study" -> {
-                addFurniture(area, width / 2 + 4, 1, "interior_wall_crystal_ornament");
-                addFurniture(area, width - 5, height - 5, "interior_hearth_pot");
-                addFurniture(area, 12, height - 5, "interior_mortar_pestle");
-                addFurniture(area, 3, height - 5, "interior_flower_vase");
-                addFurniture(area, width - 8, height - 5, "interior_aquarium_table");
-                if (roll % 2 == 0) {
-                    addFurniture(area, 4, height - 5, "interior_bookshelf");
-                }
-                if (roll % 4 == 1) {
-                    addTableSet(area, width / 2, height - 5);
-                }
-            }
-            default -> {
-                addFurniture(area, width / 2 + 3, 1, "interior_wall_window_small");
-                addFurniture(area, width - 4, height - 5, roll % 2 == 0 ? "interior_linen_shelf" : "interior_storage_counter");
-                addFurniture(area, width - 8, height - 5, "interior_planting_pot");
-                addFurniture(area, 4, height / 2 + 1, roll % 2 == 0 ? "interior_herb_pot" : "interior_flower_pot");
-                addFurniture(area, width - 5, height / 2 + 1, "interior_floor_leafy_plant");
-                if (roll % 3 == 0) {
-                    addFurniture(area, width - 5, height / 2 + 1, "interior_hearth_pot");
-                }
-                if (roll % 4 == 2) {
-                    addFurniture(area, 3, height - 4, "interior_chair_north");
-                }
-            }
-        }
     }
 
     private List<Npc> interiorNpcsFor(String mapId, String theme, int width, int height, int seed) {
@@ -6752,7 +6864,7 @@ public final class WorldMap {
             }
             case "inn" -> {
                 npcs.add(new Npc(mapId, "Innkeeper Senn", "npc_innkeeper", x - 1, y, List.of(
-                        "Beds upstairs, stew near the hearth, trouble preferably outside.",
+                        "Guest rooms through the side doors, stew by the hearth, trouble preferably outside.",
                         "Travelers talk in their sleep. The honest ones apologize."
                 ), null, "riverside"));
                 npcs.add(new Npc(mapId, "Road-Tired Traveler", "npc_citizen_woman", x + 2, y, List.of(
@@ -6815,6 +6927,7 @@ public final class WorldMap {
 
     private void addLocationProps(MapArea area) {
         for (LocationPatch patch : locationPatches) {
+            boolean primaryAdventurePatch = isPrimaryAdventurePatch(patch);
             for (int y = Math.max(2, patch.cy - patch.ry - 1); y <= Math.min(area.height() - 3, patch.cy + patch.ry + 1); y++) {
                 for (int x = Math.max(2, patch.cx - patch.rx - 1); x <= Math.min(area.width() - 3, patch.cx + patch.rx + 1); x++) {
                     if (!patch.contains(x, y)) {
@@ -6824,14 +6937,37 @@ public final class WorldMap {
                     if (tile == 'w' || tile == 'c' || tile == 'u' || tile == 'h' || tile == 'x') {
                         continue;
                     }
+                    if (patch.kind.equals("farmland") && invalidFarmlandTile(tile)) {
+                        continue;
+                    }
                     int seed = hash(x, y, patch.salt);
-                    String ground = locationGroundFor(patch, x, y, tile, seed);
-                    if (ground != null) {
+                    boolean entranceReserve = primaryAdventurePatch && isAdventureEntranceReserve(patch, x, y);
+                    String ground = entranceReserve
+                            ? adventureEntranceGroundFor(patch, x, y, tile, seed)
+                            : locationGroundFor(patch, x, y, tile, seed);
+                    if (!entranceReserve && ground != null && !shouldPlaceLocationGround(patch, x, y, tile, seed)) {
+                        ground = null;
+                    }
+                    if (ground != null && area.propAt(x, y) == null) {
                         area.addProp(new WorldProp(x, y, ground, 52));
+                    } else if (!entranceReserve && area.propAt(x, y) == null
+                            && shouldPlaceLocationFringe(patch, x, y, tile, seed)) {
+                        String fringe = locationFringeAssetFor(tile, seed);
+                        area.addProp(new WorldProp(x, y, fringe, locationPropSize(fringe, seed)));
                     }
                     String entrance = adventureEntranceFor(patch, tile);
                     if (entrance != null) {
                         area.addProp(new WorldProp(x, y, entrance, locationPropSize(entrance, seed)));
+                        addAdventureEntranceMarkers(area, patch, x, y, seed);
+                        continue;
+                    }
+                    if (entranceReserve) {
+                        continue;
+                    }
+                    if (hasBlockingLocationProp(area, x, y)) {
+                        continue;
+                    }
+                    if (usesStructuredLocationRules(patch.kind)) {
                         continue;
                     }
                     double centerPull = patch.centerPull(x, y);
@@ -6851,21 +6987,447 @@ public final class WorldMap {
                     if (seed % 100 >= chance) {
                         continue;
                     }
-                    String asset = locationDecorationFor(patch, x, y, seed);
+                    String asset = locationDecorationFor(patch, x, y, tile, seed);
+                    if (worldPropBlocksMovement(asset) && (Terrain.connectingRoad(tile) || isLocationGateOpening(patch, x, y))) {
+                        continue;
+                    }
                     area.addProp(new WorldProp(x, y, asset, locationPropSize(asset, seed)));
                 }
             }
+            if (usesStructuredLocationRules(patch.kind)) {
+                addStructuredLocationProps(area, patch, primaryAdventurePatch);
+            }
         }
+    }
+
+    private boolean usesStructuredLocationRules(String kind) {
+        return kind.equals("farmland")
+                || kind.equals("goblin_camp")
+                || kind.equals("bandit_camp")
+                || kind.equals("cave")
+                || kind.equals("crypt")
+                || kind.equals("graveyard")
+                || kind.equals("abandoned_castle")
+                || kind.equals("prison")
+                || kind.equals("sewer")
+                || kind.equals("old_road_marker")
+                || kind.equals("ruined_watchpost");
+    }
+
+    private void addStructuredLocationProps(MapArea area, LocationPatch patch, boolean primaryAdventurePatch) {
+        switch (patch.kind) {
+            case "farmland" -> addStructuredFieldProps(area, patch);
+            case "goblin_camp", "bandit_camp" -> addStructuredCampProps(area, patch);
+            case "cave" -> addStructuredCaveDungeonProps(area, patch, primaryAdventurePatch);
+            case "crypt", "graveyard", "abandoned_castle", "prison", "sewer" ->
+                    addStructuredDungeonApproachProps(area, patch, primaryAdventurePatch);
+            case "old_road_marker" -> addStructuredOldRoadMarkerProps(area, patch);
+            case "ruined_watchpost" -> addStructuredRuinedWatchpostProps(area, patch);
+            default -> {
+            }
+        }
+    }
+
+    private void addStructuredFieldProps(MapArea area, LocationPatch patch) {
+        placeLocationEdgeProps(area, patch, "location_farmland_fence", patch.salt + 11, 58, 2);
+        placeLocationSideAccentProps(area, patch, new String[]{
+                "location_farmland_hay_bales", "village_prop_farm_tools", "village_prop_produce_basket",
+                "deco_soft_grass_tuft", "deco_soft_yellow_flowers"
+        }, patch.salt + 12, 44, 2);
+        placeLocationRulePropNear(area, patch, patch.cx, patch.cy - 1, "location_farmland_scarecrow",
+                patch.salt + 13, false, Math.max(2, Math.min(patch.rx, patch.ry)));
+        placeLocationCluster(area, patch, patch.cx - Math.max(2, patch.rx - 2), patch.cy + Math.max(1, patch.ry - 2),
+                new String[]{"location_farmland_hay_bales", "village_prop_farm_tools", "village_prop_produce_basket"},
+                new int[][]{{0, 0}, {1, 0}, {0, 1}}, patch.salt + 17, false);
+        placeLocationCluster(area, patch, patch.cx + Math.max(2, patch.rx - 2), patch.cy - Math.max(1, patch.ry - 2),
+                new String[]{"location_farmland_hay_bales", "location_farmland_fence", "location_farmland_fence"},
+                new int[][]{{0, 0}, {-1, 0}, {0, 1}}, patch.salt + 23, false);
+        placeLocationInteriorScatter(area, patch, new String[]{
+                "location_farmland_wheat", "location_farmland_wheat", "location_farmland_wheat",
+                "location_farmland_tilled", "location_farmland_hay_bales", "deco_soft_grass_tuft"
+        }, patch.salt + 29, 30);
+    }
+
+    private void addStructuredCampProps(MapArea area, LocationPatch patch) {
+        boolean goblin = patch.kind.equals("goblin_camp");
+        placeLocationEdgeProps(area, patch, "location_camp_palisade", patch.salt + 31, 72, 2);
+        placeLocationSideAccentProps(area, patch, new String[]{
+                "location_camp_crates", "location_camp_tent", "location_graveyard_skull_marker",
+                "deco_imagen_road_camp"
+        }, patch.salt + 32, 52, 2);
+        placeLocationRuleProp(area, patch, patch.cx, patch.cy,
+                goblin ? "location_goblin_hut" : "location_bandit_outpost", patch.salt + 37, false);
+        placeLocationCluster(area, patch, patch.cx - 1, patch.cy + 2,
+                new String[]{"location_camp_fire", "location_camp_crates", "deco_imagen_road_camp"},
+                new int[][]{{0, 0}, {-1, 1}, {1, 1}}, patch.salt + 41, false);
+        placeLocationCluster(area, patch, patch.cx + Math.max(2, patch.rx - 1), patch.cy,
+                new String[]{"location_camp_tent", "location_camp_crates",
+                        goblin ? "location_graveyard_skull_marker" : "deco_imagen_signpost"},
+                new int[][]{{0, 0}, {0, 1}, {-1, 1}}, patch.salt + 43, false);
+        placeLocationCluster(area, patch, patch.cx - Math.max(2, patch.rx - 1), patch.cy - 1,
+                new String[]{"location_camp_tent", "location_camp_crates", "location_camp_palisade"},
+                new int[][]{{0, 0}, {1, 1}, {0, -1}}, patch.salt + 47, false);
+        placeLocationInteriorScatter(area, patch, new String[]{
+                "location_camp_crates", "location_camp_fire", "location_graveyard_skull_marker",
+                "dungeon_prop_relic_crate", "dungeon_prop_chain_stand"
+        }, patch.salt + 49, 20);
+    }
+
+    private void addStructuredCaveDungeonProps(MapArea area, LocationPatch patch, boolean primaryAdventurePatch) {
+        placeLocationCluster(area, patch, patch.cx - 3, patch.cy + 2,
+                new String[]{"location_dungeon_rubble_cairn", "deco_rocks", "deco_imagen_cairn_stack"},
+                new int[][]{{0, 0}, {-1, 1}, {1, 0}}, patch.salt + 53, false);
+        placeLocationCluster(area, patch, patch.cx + 3, patch.cy + 2,
+                new String[]{"location_dungeon_collapsed_wall", "location_dungeon_rubble_cairn", "dungeon_prop_cave_torch"},
+                new int[][]{{0, 0}, {1, 1}, {-1, 0}}, patch.salt + 59, false);
+        placeLocationCluster(area, patch, patch.cx - 1, patch.cy - Math.max(2, patch.ry - 1),
+                new String[]{"location_graveyard_dead_stump", "deco_rocks", "location_graveyard_skull_marker"},
+                new int[][]{{0, 0}, {-1, 0}, {1, 1}}, patch.salt + 61, false);
+        if (!primaryAdventurePatch) {
+            placeLocationRuleProp(area, patch, patch.cx, patch.cy, "location_overgrown_cave_entrance",
+                    patch.salt + 67, true);
+        }
+        placeLocationSideAccentProps(area, patch, new String[]{
+                "deco_rocks", "location_dungeon_rubble_cairn", "location_ruin_standing_stones",
+                "location_graveyard_dead_stump"
+        }, patch.salt + 68, 48, 2);
+        placeLocationInteriorScatter(area, patch, new String[]{
+                "deco_rocks", "location_dungeon_rubble_cairn", "deco_imagen_crystal_cluster",
+                "location_graveyard_skull_marker"
+        }, patch.salt + 69, 18);
+    }
+
+    private void addStructuredDungeonApproachProps(MapArea area, LocationPatch patch, boolean primaryAdventurePatch) {
+        String leftMarker = switch (patch.kind) {
+            case "abandoned_castle" -> "dungeon_prop_castle_statue";
+            case "prison" -> "dungeon_prop_chain_stand";
+            case "sewer" -> "dungeon_prop_lantern_stand";
+            default -> "location_dungeon_braziers";
+        };
+        String rightMarker = switch (patch.kind) {
+            case "sewer" -> "deco_soft_water_reeds_gold";
+            default -> "location_dungeon_braziers";
+        };
+        placeLocationRuleProp(area, patch, patch.cx - 2, patch.cy + 1, leftMarker, patch.salt + 71, true);
+        placeLocationRuleProp(area, patch, patch.cx + 2, patch.cy + 1, rightMarker, patch.salt + 73, true);
+
+        if (patch.kind.equals("graveyard") || patch.kind.equals("crypt")) {
+            placeLocationEdgeProps(area, patch, "location_graveyard_iron_fence", patch.salt + 79, 64, 2);
+            placeLocationSideAccentProps(area, patch, new String[]{
+                    "location_graveyard_tombstones", "location_dungeon_grave_slabs",
+                    "location_graveyard_dead_stump", "location_dungeon_rubble_cairn"
+            }, patch.salt + 80, 50, 2);
+            placeLocationCluster(area, patch, patch.cx - 3, patch.cy - 1,
+                    new String[]{"location_graveyard_tombstones", "location_dungeon_grave_slabs",
+                            "location_graveyard_dead_stump"},
+                    new int[][]{{0, 0}, {1, 0}, {0, 1}}, patch.salt + 83, false);
+            placeLocationCluster(area, patch, patch.cx + 3, patch.cy,
+                    new String[]{"location_graveyard_tombstones", "location_graveyard_skull_marker",
+                            "location_dungeon_rubble_cairn"},
+                    new int[][]{{0, 0}, {-1, 0}, {0, 1}}, patch.salt + 89, false);
+            placeLocationRuleProp(area, patch, patch.cx, patch.cy - 2,
+                    patch.kind.equals("crypt") ? "location_crypt_sarcophagus" : "location_dungeon_broken_altar",
+                    patch.salt + 97, false);
+            placeLocationInteriorScatter(area, patch, new String[]{
+                    "location_graveyard_tombstones", "location_graveyard_skull_marker",
+                    "location_dungeon_grave_slabs", "location_dungeon_rubble_cairn"
+            }, patch.salt + 99, 22);
+            return;
+        }
+
+        if (patch.kind.equals("sewer")) {
+            placeLocationCluster(area, patch, patch.cx - 3, patch.cy,
+                    new String[]{"deco_soft_water_wet_stones", "deco_soft_water_reeds_gold", "dungeon_prop_lantern_stand"},
+                    new int[][]{{0, 0}, {0, 1}, {1, 0}}, patch.salt + 101, false);
+            placeLocationCluster(area, patch, patch.cx + 3, patch.cy + 1,
+                    new String[]{"deco_imagen_marsh_bubble_pool", "location_dungeon_rubble_cairn",
+                            "deco_soft_water_wet_stones"},
+                    new int[][]{{0, 0}, {-1, 0}, {0, 1}}, patch.salt + 103, false);
+            placeLocationInteriorScatter(area, patch, new String[]{
+                    "deco_soft_water_wet_stones", "deco_soft_water_reeds_gold",
+                    "location_dungeon_rubble_cairn", "dungeon_prop_lantern_stand"
+            }, patch.salt + 105, 20);
+            return;
+        }
+
+        placeLocationEdgeProps(area, patch,
+                patch.kind.equals("prison") ? "location_graveyard_iron_fence" : "location_dungeon_collapsed_wall",
+                patch.salt + 107, 50, 3);
+        placeLocationSideAccentProps(area, patch, new String[]{
+                "location_dungeon_collapsed_wall", "location_dungeon_rubble_cairn",
+                "deco_imagen_flat_stone_stack", "dungeon_prop_lantern_stand"
+        }, patch.salt + 108, 44, 2);
+        placeLocationCluster(area, patch, patch.cx - 3, patch.cy - 1,
+                new String[]{"location_dungeon_collapsed_wall", "location_dungeon_rubble_cairn",
+                        "deco_imagen_flat_stone_stack"},
+                new int[][]{{0, 0}, {1, 0}, {0, 1}}, patch.salt + 109, false);
+        placeLocationCluster(area, patch, patch.cx + 3, patch.cy,
+                new String[]{patch.kind.equals("prison") ? "dungeon_prop_chain_stand" : "dungeon_prop_castle_candles",
+                        "location_dungeon_broken_altar", "location_dungeon_rubble_cairn"},
+                new int[][]{{0, 0}, {-1, 0}, {0, 1}}, patch.salt + 113, false);
+        if (!primaryAdventurePatch && patch.kind.equals("abandoned_castle")) {
+            placeLocationRuleProp(area, patch, patch.cx, patch.cy, "location_castle_ruins", patch.salt + 127, true);
+        }
+        placeLocationInteriorScatter(area, patch, new String[]{
+                "location_dungeon_rubble_cairn", "location_dungeon_grave_slabs",
+                patch.kind.equals("prison") ? "dungeon_prop_chain_stand" : "dungeon_prop_castle_rubble",
+                patch.kind.equals("prison") ? "location_camp_crates" : "dungeon_prop_castle_candles"
+        }, patch.salt + 129, 20);
+    }
+
+    private void addStructuredOldRoadMarkerProps(MapArea area, LocationPatch patch) {
+        placeLocationRulePropNear(area, patch, patch.cx, patch.cy, "quest_trail_marker_post",
+                patch.salt + 131, false, 2);
+        placeLocationRulePropNear(area, patch, patch.cx + 1, patch.cy - 1, "deco_imagen_milestone",
+                patch.salt + 133, false, 2);
+        placeLocationCluster(area, patch, patch.cx - 2, patch.cy + 1,
+                new String[]{"quest_broken_road_signs", "quest_roadwatch_warning_marks"},
+                new int[][]{{0, 0}, {-1, 1}}, patch.salt + 137, false);
+        placeLocationCluster(area, patch, patch.cx + 2, patch.cy + 1,
+                new String[]{"quest_supply_cache", "location_camp_crates"},
+                new int[][]{{0, 0}, {1, 0}}, patch.salt + 139, false);
+        placeLocationInteriorScatter(area, patch, new String[]{
+                "deco_soft_pebbles", "deco_soft_flat_stones", "deco_soft_dry_grass"
+        }, patch.salt + 141, 10);
+    }
+
+    private void addStructuredRuinedWatchpostProps(MapArea area, LocationPatch patch) {
+        placeLocationRulePropNear(area, patch, patch.cx, patch.cy, "quest_watchpost_signal",
+                patch.salt + 151, false, 2);
+        placeLocationCluster(area, patch, patch.cx - 2, patch.cy,
+                new String[]{"location_dungeon_collapsed_wall", "location_dungeon_rubble_cairn",
+                        "quest_trail_marker_post"},
+                new int[][]{{0, 0}, {-1, 1}, {0, 2}}, patch.salt + 157, false);
+        placeLocationCluster(area, patch, patch.cx + 2, patch.cy + 1,
+                new String[]{"quest_broken_road_signs", "location_camp_crates", "quest_supply_cache"},
+                new int[][]{{0, 0}, {1, 0}, {1, 1}}, patch.salt + 163, false);
+        placeLocationSideAccentProps(area, patch, new String[]{
+                "location_dungeon_rubble_cairn", "location_camp_palisade_side", "location_dungeon_collapsed_wall"
+        }, patch.salt + 167, 24, 2);
+        placeLocationInteriorScatter(area, patch, new String[]{
+                "deco_soft_flat_stones", "location_dungeon_rubble_cairn", "deco_soft_dry_grass"
+        }, patch.salt + 169, 8);
+    }
+
+    private void placeLocationCluster(MapArea area, LocationPatch patch, int anchorX, int anchorY,
+                                      String[] assets, int[][] offsets, int seed, boolean allowEntranceReserve) {
+        int count = Math.min(assets.length, offsets.length);
+        for (int i = 0; i < count; i++) {
+            placeLocationRuleProp(area, patch, anchorX + offsets[i][0], anchorY + offsets[i][1],
+                    assets[i], seed + i * 17, allowEntranceReserve);
+        }
+    }
+
+    private void placeLocationEdgeProps(MapArea area, LocationPatch patch, String baseAsset, int seed, int chance,
+                                        int spacing) {
+        for (int y = Math.max(2, patch.cy - patch.ry - 1); y <= Math.min(area.height() - 3, patch.cy + patch.ry + 1); y++) {
+            for (int x = Math.max(2, patch.cx - patch.rx - 1); x <= Math.min(area.width() - 3, patch.cx + patch.rx + 1); x++) {
+                if (!patch.contains(x, y) || patch.edgeFade(x, y) > 0.30 || isLocationGateOpening(patch, x, y)) {
+                    continue;
+                }
+                int roll = hash(x / Math.max(1, spacing), y / Math.max(1, spacing), seed) % 100;
+                if (roll >= chance || Math.floorMod(x + y + seed, spacing) != 0) {
+                    continue;
+                }
+                String asset = locationBarrierAsset(baseAsset, patch, x, y);
+                placeLocationRuleProp(area, patch, x, y, asset, seed + x * 19 + y * 23, false);
+            }
+        }
+    }
+
+    private void placeLocationSideAccentProps(MapArea area, LocationPatch patch, String[] assets, int seed, int chance,
+                                              int spacing) {
+        for (int y = Math.max(2, patch.cy - patch.ry - 1); y <= Math.min(area.height() - 3, patch.cy + patch.ry + 1); y++) {
+            for (int x = Math.max(2, patch.cx - patch.rx - 1); x <= Math.min(area.width() - 3, patch.cx + patch.rx + 1); x++) {
+                if (!patch.contains(x, y) || patch.edgeFade(x, y) > 0.42 || !needsVerticalLocationBarrier(patch, x, y)) {
+                    continue;
+                }
+                int roll = hash(x / Math.max(1, spacing), y / Math.max(1, spacing), seed) % 100;
+                if (roll >= chance || Math.floorMod(x + y + seed, spacing) != 0) {
+                    continue;
+                }
+                placeLocationRuleProp(area, patch, x, y, pick(assets, seed + x * 13 + y * 17),
+                        seed + x * 19 + y * 23, false);
+            }
+        }
+    }
+
+    private void placeLocationInteriorScatter(MapArea area, LocationPatch patch, String[] assets, int seed, int chance) {
+        for (int y = Math.max(2, patch.cy - patch.ry); y <= Math.min(area.height() - 3, patch.cy + patch.ry); y++) {
+            for (int x = Math.max(2, patch.cx - patch.rx); x <= Math.min(area.width() - 3, patch.cx + patch.rx); x++) {
+                if (!patch.contains(x, y) || patch.edgeFade(x, y) < 0.36 || isAdventureEntranceReserve(patch, x, y)) {
+                    continue;
+                }
+                int roll = hash(x / 2, y / 2, seed) % 100;
+                if (roll >= chance) {
+                    continue;
+                }
+                placeLocationRuleProp(area, patch, x, y, pick(assets, seed + x * 29 + y * 31),
+                        seed + x * 7 + y * 11, false);
+            }
+        }
+    }
+
+    private boolean placeLocationRuleProp(MapArea area, LocationPatch patch, int x, int y, String asset, int seed,
+                                          boolean allowEntranceReserve) {
+        if (!canPlaceLocationRuleProp(area, patch, x, y, asset, allowEntranceReserve)) {
+            return false;
+        }
+        area.addProp(new WorldProp(x, y, asset, locationPropSize(asset, seed)));
+        return true;
+    }
+
+    private boolean placeLocationRulePropNear(MapArea area, LocationPatch patch, int anchorX, int anchorY,
+                                              String asset, int seed, boolean allowEntranceReserve, int radius) {
+        for (int distance = 0; distance <= radius; distance++) {
+            for (int oy = -distance; oy <= distance; oy++) {
+                for (int ox = -distance; ox <= distance; ox++) {
+                    if (Math.abs(ox) + Math.abs(oy) != distance) {
+                        continue;
+                    }
+                    int x = anchorX + ox;
+                    int y = anchorY + oy;
+                    if (placeLocationRuleProp(area, patch, x, y, asset, seed + ox * 19 + oy * 23, allowEntranceReserve)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canPlaceLocationRuleProp(MapArea area, LocationPatch patch, int x, int y, String asset,
+                                             boolean allowEntranceReserve) {
+        if (x < 2 || y < 2 || x >= area.width() - 2 || y >= area.height() - 2 || !patch.contains(x, y)) {
+            return false;
+        }
+        if (!allowEntranceReserve && isAdventureEntranceReserve(patch, x, y)) {
+            return false;
+        }
+        char tile = area.tileAt(x, y);
+        if (tile == 'w' || tile == '~' || tile == 'c' || tile == 'u' || tile == 'h' || tile == 'x') {
+            return false;
+        }
+        if (patch.kind.equals("farmland") && invalidFarmlandTile(tile)) {
+            return false;
+        }
+        if (worldPropBlocksMovement(asset) && (Terrain.connectingRoad(tile) || isLocationGateOpening(patch, x, y))) {
+            return false;
+        }
+        return transitionAt(area.id, x, y) == null && !hasBlockingLocationProp(area, x, y);
+    }
+
+    private boolean needsVerticalLocationBarrier(LocationPatch patch, int x, int y) {
+        double nx = Math.abs(x - patch.cx) / Math.max(1.0, patch.rx);
+        double ny = Math.abs(y - patch.cy) / Math.max(1.0, patch.ry);
+        return nx > ny;
+    }
+
+    private boolean hasBlockingLocationProp(MapArea area, int x, int y) {
+        for (WorldProp prop : area.propsAt(x, y)) {
+            if (isLocationPlacementBlocker(prop.asset())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isLocationPlacementBlocker(String asset) {
+        return worldPropBlocksMovement(asset)
+                || isTallProp(asset)
+                || asset.startsWith("city_prop_")
+                || asset.startsWith("village_prop_")
+                || asset.startsWith("town_portal_");
+    }
+
+    private boolean isLocationGroundBaseAsset(String asset) {
+        return asset.equals("location_farmland_tilled")
+                || asset.equals("location_farmland_wheat")
+                || asset.equals("location_graveyard_dirt")
+                || asset.equals("location_graveyard_path")
+                || asset.equals("location_dungeon_approach_path")
+                || asset.equals("location_overgrown_landing")
+                || asset.startsWith("deco_soft_");
+    }
+
+    private boolean shouldPlaceLocationGround(LocationPatch patch, int x, int y, char tile, int seed) {
+        if (!isBlendSensitiveLocationPatch(patch.kind)) {
+            return true;
+        }
+        if (patch.kind.equals("farmland") && invalidFarmlandTile(tile)) {
+            return false;
+        }
+        double edgeFade = patch.edgeFade(x, y);
+        int chance = switch (patch.kind) {
+            case "farmland" -> 64 + (int) Math.round(Math.pow(edgeFade, 1.10) * 35.0);
+            case "goblin_camp", "bandit_camp" -> 48 + (int) Math.round(Math.pow(edgeFade, 1.10) * 50.0);
+            default -> 100;
+        };
+        if (Terrain.connectingRoad(tile)) {
+            chance -= 24;
+        }
+        if (tile == 'n' || tile == '~' || tile == 'P') {
+            chance -= 28;
+        } else if (tile == 'q' || tile == 'm') {
+            chance -= 14;
+        }
+        if (edgeFade > 0.78) {
+            chance = Math.max(chance, patch.kind.equals("farmland") ? 96 : 94);
+        }
+        chance = Math.max(0, Math.min(99, chance));
+        return seed % 100 < chance;
+    }
+
+    private boolean shouldPlaceLocationFringe(LocationPatch patch, int x, int y, char tile, int seed) {
+        if (!isBlendSensitiveLocationPatch(patch.kind) || tile == 'w' || tile == 'c' || tile == 'u' || tile == 'h' || tile == 'x') {
+            return false;
+        }
+        double edgeFade = patch.edgeFade(x, y);
+        boolean biomeMismatch = tile == 'n' || tile == 'q' || tile == 'm' || tile == 'P' || tile == '~';
+        int chance = edgeFade < 0.28 ? 34 : edgeFade < 0.56 ? 18 : biomeMismatch ? 12 : 0;
+        if (Terrain.connectingRoad(tile)) {
+            chance /= 2;
+        }
+        return seed % 100 < chance;
+    }
+
+    private boolean isBlendSensitiveLocationPatch(String kind) {
+        return kind.equals("farmland") || kind.equals("goblin_camp") || kind.equals("bandit_camp");
+    }
+
+    private String locationFringeAssetFor(char tile, int seed) {
+        return switch (tile) {
+            case 'f' -> pick(new String[]{
+                    "deco_soft_leaf_litter", "deco_soft_moss_stones", "deco_soft_grass_tuft",
+                    "deco_soft_blue_wildflowers"
+            }, seed);
+            case 's', 'b' -> pick(new String[]{
+                    "deco_soft_dry_grass", "deco_soft_pebbles", "deco_soft_pebble_cluster",
+                    "deco_soft_flat_stones"
+            }, seed);
+            case 'n' -> pick(new String[]{
+                    "deco_soft_frost_grass", "deco_soft_dense_snow_grass", "deco_soft_dense_snow_mound"
+            }, seed);
+            case 'v', '~' -> pick(new String[]{
+                    "deco_soft_dense_marsh_grass", "deco_soft_reeds", "deco_soft_water_reeds_gold",
+                    "deco_soft_water_weed_patch"
+            }, seed);
+            case 'q', 'm' -> pick(new String[]{
+                    "deco_soft_flat_stones", "deco_soft_pebbles", "deco_soft_mossy_rock"
+            }, seed);
+            default -> pick(new String[]{
+                    "deco_soft_grass_tuft", "deco_soft_clover_low", "deco_soft_daisy_small",
+                    "deco_soft_dense_meadow_flowers"
+            }, seed);
+        };
     }
 
     private String locationGroundFor(LocationPatch patch, int x, int y, char tile, int seed) {
         int dx = x - patch.cx;
         int dy = y - patch.cy;
         return switch (patch.kind) {
-            case "farmland" -> ((patch.salt + patch.cy + tile) / 2 + seed) % 3 == 0
-                    ? "location_farmland_wheat"
-                    : "location_farmland_tilled";
-            case "goblin_camp", "bandit_camp" -> seed % 4 == 0 ? "location_graveyard_path" : "location_graveyard_dirt";
+            case "farmland" -> farmlandGroundFor(patch, x, y, tile, seed);
+            case "goblin_camp", "bandit_camp" -> campGroundFor(patch, dx, dy, tile, seed);
             case "graveyard", "crypt", "abandoned_castle", "prison" -> {
                 if (tile == 'd' || (Math.abs(dx) <= 1 && dy >= 0 && dy <= patch.ry)) {
                     yield "location_dungeon_approach_path";
@@ -6908,6 +7470,42 @@ public final class WorldMap {
         };
     }
 
+    private String farmlandGroundFor(LocationPatch patch, int x, int y, char tile, int seed) {
+        if (invalidFarmlandTile(tile)) {
+            return null;
+        }
+        double edgeFade = patch.edgeFade(x, y);
+        int row = Math.floorMod(y + patch.salt, 5);
+        int clump = hash(x / 2, y / 2, patch.salt + 31) % 100;
+        int wheatChance = switch (row) {
+            case 1, 2 -> 82;
+            case 3 -> 66;
+            default -> 48;
+        };
+        wheatChance += clump < 38 ? 14 : clump > 84 ? -10 : 0;
+        wheatChance += (int) Math.round((edgeFade - 0.35) * 30.0);
+        if (tile == 's' || tile == 'b' || tile == 'n') {
+            wheatChance -= 12;
+        }
+        wheatChance = Math.max(24, Math.min(94, wheatChance));
+        return seed % 100 < wheatChance ? "location_farmland_wheat" : "location_farmland_tilled";
+    }
+
+    private boolean invalidFarmlandTile(char tile) {
+        return Terrain.connectingRoad(tile) || tile == 'q' || tile == 'm';
+    }
+
+    private String campGroundFor(LocationPatch patch, int dx, int dy, char tile, int seed) {
+        double edgeFade = patch.edgeFade(patch.cx + dx, patch.cy + dy);
+        boolean footpath = Math.abs(dx) <= 1 && dy >= -patch.ry / 2
+                || Math.abs(dy) <= 1 && Math.abs(dx) <= Math.max(2, patch.rx - 1)
+                || seed % 100 < 12 + (int) Math.round(edgeFade * 18.0);
+        if (Terrain.connectingRoad(tile) && seed % 3 == 0) {
+            footpath = true;
+        }
+        return footpath ? "location_graveyard_path" : "location_graveyard_dirt";
+    }
+
     private String adventureEntranceFor(LocationPatch patch, char tile) {
         if (tile != 'd' || !isPrimaryAdventurePatch(patch)) {
             return null;
@@ -6924,6 +7522,69 @@ public final class WorldMap {
         };
     }
 
+    private boolean isAdventureEntranceReserve(LocationPatch patch, int x, int y) {
+        int dx = x - patch.cx;
+        int dy = y - patch.cy;
+        return Math.abs(dx) <= 2 && dy >= -1 && dy <= 3;
+    }
+
+    private String adventureEntranceGroundFor(LocationPatch patch, int x, int y, char tile, int seed) {
+        int dx = Math.abs(x - patch.cx);
+        int dy = y - patch.cy;
+        if (tile == 'd' || dx <= 1 && dy >= 0) {
+            return "location_dungeon_approach_path";
+        }
+        if (dy <= 1 || seed % 3 != 0) {
+            return "location_overgrown_landing";
+        }
+        return "location_graveyard_path";
+    }
+
+    private void addAdventureEntranceMarkers(MapArea area, LocationPatch patch, int x, int y, int seed) {
+        String[] markers = adventureEntranceMarkerAssets(patch.kind);
+        placeAdventureEntranceMarker(area, x - 2, y + 1, markers[0], seed);
+        placeAdventureEntranceMarker(area, x + 2, y + 1, markers[1], seed + 17);
+        String accent = adventureEntranceAccentAsset(patch.kind, seed);
+        if (accent != null) {
+            placeAdventureEntranceMarker(area, x, y + 2, accent, seed + 31);
+        }
+    }
+
+    private String[] adventureEntranceMarkerAssets(String kind) {
+        return switch (kind) {
+            case "cave" -> new String[]{"deco_imagen_cairn_stack", "dungeon_prop_cave_torch"};
+            case "crypt", "graveyard" -> new String[]{"location_dungeon_braziers", "location_dungeon_braziers"};
+            case "abandoned_castle" -> new String[]{"dungeon_prop_castle_statue", "location_dungeon_braziers"};
+            case "prison" -> new String[]{"dungeon_prop_chain_stand", "location_dungeon_braziers"};
+            case "sewer" -> new String[]{"dungeon_prop_lantern_stand", "deco_soft_water_reeds_gold"};
+            case "goblin_camp" -> new String[]{"location_camp_palisade", "location_camp_fire"};
+            case "bandit_camp" -> new String[]{"location_camp_crates", "deco_imagen_signpost"};
+            default -> new String[]{"deco_imagen_milestone", "deco_imagen_milestone"};
+        };
+    }
+
+    private String adventureEntranceAccentAsset(String kind, int seed) {
+        return switch (kind) {
+            case "crypt", "graveyard" -> "deco_imagen_green_rune_stone";
+            case "abandoned_castle" -> seed % 2 == 0 ? "dungeon_prop_castle_candles" : "dungeon_prop_castle_rubble";
+            case "cave" -> "deco_imagen_green_rune_stone";
+            case "sewer" -> "deco_soft_water_wet_stones";
+            case "prison" -> "dungeon_prop_chain_stand";
+            default -> null;
+        };
+    }
+
+    private void placeAdventureEntranceMarker(MapArea area, int x, int y, String asset, int seed) {
+        if (x < 1 || y < 1 || x >= area.width() - 1 || y >= area.height() - 1 || area.propAt(x, y) != null) {
+            return;
+        }
+        char tile = area.tileAt(x, y);
+        if (tile == 'w' || tile == '~' || tile == 'c' || tile == 'u' || tile == 'x') {
+            return;
+        }
+        area.addProp(new WorldProp(x, y, asset, locationPropSize(asset, seed)));
+    }
+
     private boolean isPrimaryAdventurePatch(LocationPatch patch) {
         for (AdventureSite site : adventureSites) {
             if (site.x() == patch.cx && site.y() == patch.cy && site.kind().equals(patch.kind)) {
@@ -6933,13 +7594,22 @@ public final class WorldMap {
         return false;
     }
 
-    private String locationDecorationFor(LocationPatch patch, int x, int y, int seed) {
+    private boolean isLocationGateOpening(LocationPatch patch, int x, int y) {
+        if (!isBlendSensitiveLocationPatch(patch.kind)) {
+            return false;
+        }
+        int dx = x - patch.cx;
+        int dy = y - patch.cy;
+        return Math.abs(dx) <= 1 && Math.abs(dy) >= Math.max(2, patch.ry - 1);
+    }
+
+    private String locationDecorationFor(LocationPatch patch, int x, int y, char tile, int seed) {
         int dx = x - patch.cx;
         int dy = y - patch.cy;
         boolean edge = Math.abs(dx) >= Math.max(2, patch.rx - 1) || Math.abs(dy) >= Math.max(2, patch.ry - 1);
         if (patch.kind.equals("farmland")) {
             if (edge) {
-                return "location_farmland_fence";
+            return directionalBarrierAsset("location_farmland_fence", patch, x, y);
             }
             String[] options = {
                     "location_farmland_scarecrow", "location_farmland_hay_bales", "location_farmland_wheat",
@@ -6952,7 +7622,7 @@ public final class WorldMap {
                 return seed % 3 == 0 ? "location_goblin_hut" : seed % 2 == 0 ? "location_camp_fire" : "location_camp_tent";
             }
             if (edge) {
-                return "location_camp_palisade";
+            return directionalBarrierAsset("location_camp_palisade", patch, x, y);
             }
             String[] options = {
                     "location_goblin_hut", "location_camp_tent", "location_camp_crates", "location_camp_fire",
@@ -6965,7 +7635,7 @@ public final class WorldMap {
                 return "location_bandit_outpost";
             }
             if (edge) {
-                return "location_camp_palisade";
+            return directionalBarrierAsset("location_camp_palisade", patch, x, y);
             }
             String[] options = {
                     "location_bandit_outpost", "location_camp_tent", "location_camp_crates",
@@ -7114,6 +7784,22 @@ public final class WorldMap {
         return "deco_bush";
     }
 
+    private String directionalBarrierAsset(String baseAsset, LocationPatch patch, int x, int y) {
+        return locationBarrierAsset(baseAsset, patch, x, y);
+    }
+
+    private String locationBarrierAsset(String baseAsset, LocationPatch patch, int x, int y) {
+        if (!needsVerticalLocationBarrier(patch, x, y)) {
+            return baseAsset;
+        }
+        return switch (baseAsset) {
+            case "location_camp_palisade" -> "location_camp_palisade_side";
+            case "location_farmland_fence" -> "location_farmland_fence_side";
+            case "location_graveyard_iron_fence" -> "location_graveyard_iron_fence_side";
+            default -> baseAsset;
+        };
+    }
+
     private int locationPropSize(String asset, int seed) {
         int base = 42 + seed % 8;
         return switch (asset) {
@@ -7121,10 +7807,15 @@ public final class WorldMap {
             case "dungeon_prop_chain_stand", "dungeon_prop_lantern_stand" -> 40;
             case "deco_soft_water_wet_stones", "deco_soft_water_reeds_gold", "deco_imagen_marsh_bubble_pool" -> 42;
             case "quest_forest_relic", "quest_mushroom_samples", "quest_cave_rune_cache",
-                    "quest_trail_marker_post", "quest_watchpost_signal" -> 42;
+                    "quest_trail_marker_post", "quest_watchpost_signal",
+                    "quest_broken_road_signs", "quest_roadwatch_warning_marks", "quest_supply_cache",
+                    "quest_cassia_cracked_shield", "quest_cassia_gate_winch",
+                    "quest_cassia_burned_gate_banner" -> 42;
             case "location_dungeon_approach_path" -> 50;
-            case "location_farmland_fence", "location_graveyard_iron_fence" -> 46;
-            case "location_camp_tent", "location_camp_palisade", "location_farmland_scarecrow",
+            case "location_farmland_fence", "location_farmland_fence_side",
+                    "location_graveyard_iron_fence", "location_graveyard_iron_fence_side" -> 46;
+            case "location_camp_tent", "location_camp_palisade", "location_camp_palisade_side",
+                    "location_farmland_scarecrow",
                     "location_graveyard_tombstones" -> 54;
             case "location_ruin_standing_stones", "location_overgrown_landing" -> 58;
             case "location_crypt_sarcophagus" -> 56;
@@ -7134,6 +7825,7 @@ public final class WorldMap {
             case "location_goblin_hut" -> 62;
             case "location_bandit_outpost" -> 64;
             case "location_cave_entrance", "location_overgrown_cave_entrance" -> 68;
+            case "location_cave_dungeon_entrance" -> 86;
             case "location_crypt_entrance", "location_dungeon_stair_entrance" -> 72;
             case "location_dungeon_braziers" -> 66;
             case "location_castle_ruins" -> 74;
@@ -7174,7 +7866,7 @@ public final class WorldMap {
     private String forestDecorationFor(MapArea area, int x, int y, int roll, int patchSeed) {
         boolean forestCore = naturalNeighborCount(area, x, y, 'f') >= 16;
         boolean edge = distanceToDifferentNatural(area, x, y, 'f', 2) <= 1;
-        return weightedDecoration(roll, patchSeed, new DecorationOption[]{
+        return groveDecoration(area, x, y, roll, patchSeed, new DecorationOption[]{
                 option("deco_tree_oak", forestCore ? 28 : 12),
                 option("deco_tree_round", forestCore ? 28 : 12),
                 option("deco_tree_pine", forestCore ? 18 : 14),
@@ -7203,6 +7895,84 @@ public final class WorldMap {
                 option("deco_forest_shrine_stone", 2, 55),
                 option("deco_forest_fairy_pool", 1, 35)
         });
+    }
+
+    /** Shared habitat weights keep decorative trees and gathering nodes in the same groves. */
+    private String groveDecoration(MapArea area, int x, int y, int roll, int patchSeed,
+                                   DecorationOption[] options) {
+        int waterDistance = distanceToAny(area, x, y, 5, new char[]{'w', '~', 'B'});
+        String dominant = groveFamily(area, x, y, waterDistance);
+        String supporting = switch (dominant) {
+            case "willow" -> "ash";
+            case "birch" -> "oak";
+            case "maple" -> "oak";
+            default -> "birch";
+        };
+        int[] groupWeights = new int[3];
+        int totalTreeWeight = 0;
+        for (DecorationOption option : options) {
+            String family = treeFamily(option.asset);
+            if (family.isEmpty()) {
+                continue;
+            }
+            totalTreeWeight += option.weight;
+            if (family.equals("willow") && waterDistance > 3) {
+                continue;
+            }
+            int group = family.equals(dominant) ? 0 : family.equals(supporting) ? 1 : 2;
+            groupWeights[group] += option.weight;
+        }
+        DecorationOption[] local = new DecorationOption[options.length];
+        int[] shares = {75, 20, 5};
+        for (int i = 0; i < options.length; i++) {
+            DecorationOption option = options[i];
+            String family = treeFamily(option.asset);
+            int weight = option.weight * 100;
+            if (!family.isEmpty()) {
+                int group = family.equals(dominant) ? 0 : family.equals(supporting) ? 1 : 2;
+                weight = family.equals("willow") && waterDistance > 3 ? 0
+                        : totalTreeWeight * shares[group] * option.weight / Math.max(1, groupWeights[group]);
+            }
+            local[i] = new DecorationOption(option.asset, weight, option.rarity);
+        }
+        return weightedDecoration(roll, patchSeed, local);
+    }
+
+    private String groveFamily(MapArea area, int x, int y, int waterDistance) {
+        if (waterDistance <= 2) {
+            return "willow";
+        }
+        int salt = groveSeed + area.id.hashCode();
+        double grove = terrainNoise(x, y, 16, salt + 1709);
+        boolean coldEdge = distanceToAny(area, x, y, 5, new char[]{'n'}) <= 4;
+        boolean northern = area.id.equals(OVERWORLD_ID)
+                && (kingdomAt(x, y).id.equals("highwall") || kingdomAt(x, y).id.equals("northroad"));
+        // The story's northern pine valleys contrast with the broadleaf central basin.
+        if (coldEdge || (northern && grove < 0.76)) {
+            return "pine";
+        }
+        if (grove > 0.70) {
+            return "maple";
+        }
+        if (grove < 0.28) {
+            return "birch";
+        }
+        return "oak";
+    }
+
+    private String treeFamily(String asset) {
+        if (!isForestTree(asset)) {
+            return "";
+        }
+        if (asset.contains("willow")) return "willow";
+        if (asset.contains("pine")) return "pine";
+        if (asset.contains("birch")) return "birch";
+        if (asset.contains("maple")) return "maple";
+        if (asset.contains("ash_")) return "ash";
+        if (asset.contains("oak") || asset.equals("deco_tree_round") || asset.equals("deco_tree_young")) {
+            return "oak";
+        }
+        return "unusual";
     }
 
     private String desertDecorationFor(MapArea area, int x, int y, int roll, int patchSeed) {
@@ -7610,6 +8380,13 @@ public final class WorldMap {
         paintBiome(shifted(236, 4, 149, seedSalt), shifted(83, 3, 150, seedSalt), biomeRadius(28), biomeRadius(24), 'b', 'm', seedSalt + 149, land);
         paintBiome(shifted(186, 5, 151, seedSalt), shifted(242, 4, 152, seedSalt), biomeRadius(34), biomeRadius(24), 'b', 's', seedSalt + 151, land);
         paintBiome(shifted(121, 6, 157, seedSalt), shifted(142, 5, 158, seedSalt), biomeRadius(50), biomeRadius(36), 'f', 'g', seedSalt + 157, land);
+        paintBiome(shifted(304, 5, 161, seedSalt), shifted(60, 4, 162, seedSalt), biomeRadius(46), biomeRadius(28), 'n', 'm', seedSalt + 161, land);
+        paintBiome(shifted(319, 4, 163, seedSalt), shifted(121, 4, 164, seedSalt), biomeRadius(38), biomeRadius(32), 'v', 'f', seedSalt + 163, land);
+        paintBiome(shifted(334, 7, 165, seedSalt), shifted(82, 6, 166, seedSalt), biomeRadius(50), biomeRadius(24), 'm', 'n', seedSalt + 165, land);
+        paintBiome(shifted(354, 8, 167, seedSalt), shifted(145, 7, 168, seedSalt), biomeRadius(47), biomeRadius(42), 'v', 'f', seedSalt + 167, land);
+        paintBiome(shifted(258, 9, 169, seedSalt), shifted(278, 6, 170, seedSalt), biomeRadius(52), biomeRadius(30), 'b', 's', seedSalt + 169, land);
+        paintBiome(shifted(118, 8, 171, seedSalt), shifted(302, 6, 172, seedSalt), biomeRadius(48), biomeRadius(29), 's', 'b', seedSalt + 171, land);
+        paintBiome(shifted(65, 7, 173, seedSalt), shifted(170, 5, 174, seedSalt), biomeRadius(40), biomeRadius(48), 'f', 'g', seedSalt + 173, land);
         seedBiomeGranules(seedSalt, land);
 
         paintWaterBody(shifted(48, 3, 201, seedSalt), shifted(139, 6, 202, seedSalt), 18, 38, seedSalt + 201, land);
@@ -7618,6 +8395,8 @@ public final class WorldMap {
         paintWaterBody(shifted(228, 4, 207, seedSalt), shifted(261, 4, 208, seedSalt), 24, 30, seedSalt + 207, land);
         paintWaterBody(shifted(69, 4, 209, seedSalt), shifted(273, 3, 210, seedSalt), 27, 18, seedSalt + 209, land);
         paintWaterBody(shifted(178, 4, 211, seedSalt), shifted(34, 3, 212, seedSalt), 23, 15, seedSalt + 211, land);
+        paintWaterBody(shifted(346, 4, 213, seedSalt), shifted(106, 4, 214, seedSalt), 20, 28, seedSalt + 213, land);
+        paintWaterBody(shifted(304, 4, 215, seedSalt), shifted(232, 5, 216, seedSalt), 22, 24, seedSalt + 215, land);
         seedSmallLakes(seedSalt, land);
         seedRivers(seedSalt, land);
 
@@ -7629,8 +8408,17 @@ public final class WorldMap {
         raiseLandOval(268, 138, 15, 12, 'v', land);
         raiseLandOval(126, 269, 18, 10, 's', land);
         raiseLandOval(205, 254, 15, 11, 'b', land);
+        raiseLandOval(286, 42, 42, 24, 'n', land);
+        raiseLandOval(324, 56, 38, 24, 'n', land);
+        raiseLandOval(306, 88, 42, 28, 'f', land);
+        raiseLandOval(318, 122, 48, 34, 'v', land);
+        raiseLandOval(352, 128, 34, 36, 'v', land);
+        raiseLandOval(366, 160, 26, 20, 'v', land);
         raiseLandPath(List.of(new TilePoint(240, 153), new TilePoint(254, 145), new TilePoint(268, 138)), 2, 'v', land);
         raiseLandPath(List.of(new TilePoint(102, 245), new TilePoint(90, 257), new TilePoint(78, 266)), 2, 's', land);
+        raiseLandPath(List.of(new TilePoint(205, 78), new TilePoint(247, 58), new TilePoint(286, 42), new TilePoint(324, 56)), 8, 'n', land);
+        raiseLandPath(List.of(new TilePoint(286, 42), new TilePoint(304, 81), new TilePoint(318, 122), new TilePoint(268, 138)), 9, 'v', land);
+        raiseLandPath(List.of(new TilePoint(318, 122), new TilePoint(346, 132), new TilePoint(366, 160)), 8, 'v', land);
         seedBeachPatches(seedSalt, land);
 
         roadPath(List.of(new TilePoint(82, 105), new TilePoint(94, 123), START_POSITION, OAKHAVEN_POSITION, new TilePoint(132, 153), new TilePoint(152, 145)));
@@ -7653,6 +8441,9 @@ public final class WorldMap {
         roadPath(List.of(new TilePoint(102, 245), new TilePoint(90, 257), new TilePoint(78, 266)));
         roadPath(List.of(new TilePoint(150, 230), new TilePoint(137, 249), new TilePoint(126, 269)));
         roadPath(List.of(new TilePoint(150, 230), new TilePoint(177, 242), new TilePoint(205, 254)));
+        roadPath(List.of(new TilePoint(205, 78), new TilePoint(247, 58), new TilePoint(286, 42), new TilePoint(324, 56)));
+        roadPath(List.of(new TilePoint(286, 42), new TilePoint(304, 81), new TilePoint(318, 122), new TilePoint(268, 138)));
+        roadPath(List.of(new TilePoint(318, 122), new TilePoint(346, 132), new TilePoint(366, 160)));
 
         stampSettlement(82, 105, 'c', "Riverside Gate");
         stampSettlement(152, 145, 'c', "Archive Gate");
@@ -7664,6 +8455,8 @@ public final class WorldMap {
         stampSettlement(170, 180, 'c', "Moonspire");
         stampSettlement(259, 205, 'c', "Reedwatch");
         stampSettlement(126, 269, 'c', "Embermarket");
+        stampSettlement(286, 42, 'c', "Northwatch");
+        stampSettlement(318, 122, 'c', "Greyharbor");
 
         stampSettlement(START_POSITION.x(), START_POSITION.y(), 'u', "Oathstead Camp");
         stampSettlement(OAKHAVEN_POSITION.x(), OAKHAVEN_POSITION.y(), 'u', "Oakhaven");
@@ -7676,10 +8469,13 @@ public final class WorldMap {
         stampSettlement(268, 138, 'u', "Glimmerfen");
         stampSettlement(78, 266, 'u', "Sunmere");
         stampSettlement(205, 254, 'u', "Redcairn");
+        stampSettlement(324, 56, 'u', "Cairnvale");
+        stampSettlement(366, 160, 'u', "Stormfen");
 
         addLocationPatches(seedSalt);
         addAdventureSites(seedSalt);
         ensureOverworldTraversable();
+        expandSmallOverworldIslands();
         upgradeRoadsNearCitiesToCobblestone();
     }
 
@@ -7696,6 +8492,12 @@ public final class WorldMap {
                 129, 119, 1, 6, 5, 950, new TilePoint(131, 121));
         addAdventureSite("sewer", "dungeon_belltower_sluice_1", "Belltower Sluice",
                 238, 183, 1, 7, 5, 960, new TilePoint(228, 185));
+        addAdventureSite("cave", "dungeon_cairnspire_1", "Cairnspire Mine",
+                337, 74, 2, 6, 5, 970, new TilePoint(324, 56));
+        addAdventureSite("bandit_camp", "dungeon_greyhook_outpost_1", "Greyhook Outpost",
+                330, 137, 1, 6, 5, 975, new TilePoint(318, 122));
+        addAdventureSite("cave", "dungeon_stormfen_cave_1", "Stormfen Sinkhole",
+                382, 170, 1, 6, 5, 977, new TilePoint(366, 160));
 
         TilePoint goblinCamp = chooseLocationCenter(
                 980 + seedSalt, 176, 112, 38, 30,
@@ -7718,30 +8520,97 @@ public final class WorldMap {
 
     private void addAdventureSite(String kind, String id, String label, int x, int y, int depth,
                                   int rx, int ry, int salt, TilePoint roadAnchor) {
-        addLocationPatch(kind, x, y, rx, ry, salt);
-        stampAdventureSite(x, y, label);
-        adventureSites.add(new AdventureSite(kind, id, label, x, y, depth));
-        if (roadAnchor != null) {
-            roadPath(List.of(roadAnchor, new TilePoint(x, y)));
+        TilePoint site = resolveAdventureSiteCenter(kind, x, y, rx, ry, salt);
+        if (site == null) {
+            return;
         }
+        addLocationPatch(kind, site.x(), site.y(), rx, ry, salt);
+        stampAdventureSite(site.x(), site.y(), label);
+        adventureSites.add(new AdventureSite(kind, id, label, site.x(), site.y(), depth));
+        if (roadAnchor != null) {
+            roadPath(List.of(roadAnchor, site));
+        }
+    }
+
+    private TilePoint resolveAdventureSiteCenter(String kind, int preferredX, int preferredY, int rx, int ry, int salt) {
+        int clearance = adventureSettlementClearance(kind, rx, ry);
+        if (canPlaceAdventureSiteCenter(preferredX, preferredY, rx, ry, clearance, true)) {
+            return new TilePoint(preferredX, preferredY);
+        }
+        TilePoint best = null;
+        int bestScore = Integer.MAX_VALUE;
+        int searchRadius = Math.max(24, clearance + Math.max(rx, ry));
+        for (int radius = 1; radius <= searchRadius; radius++) {
+            for (int oy = -radius; oy <= radius; oy++) {
+                for (int ox = -radius; ox <= radius; ox++) {
+                    if (Math.abs(ox) + Math.abs(oy) != radius) {
+                        continue;
+                    }
+                    int x = preferredX + ox;
+                    int y = preferredY + oy;
+                    if (!canPlaceAdventureSiteCenter(x, y, rx, ry, clearance, false)) {
+                        continue;
+                    }
+                    int roadScore = nearAnyTile(x, y, new char[]{'r', 'T', 'K'}, 8) ? 0 : 90;
+                    int score = radius * 10 + roadScore + Math.floorMod(hash(x, y, salt), 7);
+                    if (score < bestScore) {
+                        bestScore = score;
+                        best = new TilePoint(x, y);
+                    }
+                }
+            }
+            if (best != null && radius >= 5) {
+                return best;
+            }
+        }
+        return best;
+    }
+
+    private int adventureSettlementClearance(String kind, int rx, int ry) {
+        int base = Math.max(rx, ry) + 8;
+        return switch (kind) {
+            case "goblin_camp", "bandit_camp" -> Math.max(base, 13);
+            default -> Math.max(base, 14);
+        };
+    }
+
+    private boolean canPlaceAdventureSiteCenter(int x, int y, int rx, int ry, int settlementClearance,
+                                                boolean allowExistingLocationAtCenter) {
+        if (x < rx + 4 || y < ry + 4 || x >= COLS - rx - 4 || y >= ROWS - ry - 4) {
+            return false;
+        }
+        char tile = tiles[y][x];
+        if (tile == 'w' || tile == '~' || tile == 'c' || tile == 'u' || tile == 'h' || tile == 'x') {
+            return false;
+        }
+        if (nearAnyTile(x, y, new char[]{'w', 'c', 'u', 'd'}, Math.max(4, Math.max(rx, ry) / 2))) {
+            return false;
+        }
+        return (allowExistingLocationAtCenter && locationAt(OVERWORLD_ID, x, y) != null
+                    || farFromLocations(x, y, Math.max(10, Math.max(rx, ry) + 4)))
+                && farFromSettlementTiles(x, y, settlementClearance);
     }
 
     private void addLocationPatches(int seedSalt) {
         int[][] farmAnchors = {
-                {112, 158}, {82, 105}, {152, 145}, {102, 245}, {56, 156}, {138, 165}, {78, 266}, {268, 138}
+                {112, 158}, {82, 105}, {152, 145}, {102, 245}, {56, 156}, {138, 165}, {78, 266}, {268, 138},
+                {324, 56}, {318, 122}, {366, 160}
         };
         for (int i = 0; i < farmAnchors.length; i++) {
-            TilePoint center = chooseLocationCenter(
+            int rx = 5 + hash(i, 713, 3) % 3;
+            int ry = 4 + hash(i, 719, 5) % 2;
+            TilePoint center = chooseFarmlandCenter(
                     700 + i * 37 + seedSalt, farmAnchors[i][0], farmAnchors[i][1],
-                    18, 16, new char[]{'g', 's'}, new char[]{'r', 'T', 'K', 'u', 'c'}, 6, 10
+                    18, 16, new char[]{'g', 's'}, new char[]{'r', 'T', 'K', 'u', 'c'}, 6, 10, rx, ry
             );
             if (center != null) {
-                addLocationPatch("farmland", center.x(), center.y(), 5 + hash(i, 713, 3) % 3, 4 + hash(i, 719, 5) % 2, 710 + i);
+                addLocationPatch("farmland", center.x(), center.y(), rx, ry, 710 + i);
             }
         }
 
         int[][] campAnchors = {
-                {96, 110}, {186, 115}, {221, 201}, {132, 222}, {210, 244}, {64, 171}, {230, 112}, {257, 213}
+                {96, 110}, {186, 115}, {221, 201}, {132, 222}, {210, 244}, {64, 171}, {230, 112}, {257, 213},
+                {303, 48}, {326, 129}, {374, 156}
         };
         for (int i = 0; i < campAnchors.length; i++) {
             TilePoint center = chooseLocationCenter(
@@ -7754,16 +8623,20 @@ public final class WorldMap {
         }
 
         int[][] dungeons = {
-                {196, 62}, {255, 177}, {72, 218}, {194, 235}
+                {196, 62}, {255, 177}, {72, 218}, {194, 235}, {337, 74}, {330, 137}, {382, 170}
         };
         for (int i = 0; i < dungeons.length; i++) {
             int x = dungeons[i][0];
             int y = dungeons[i][1];
+            if (!farFromSettlementTiles(x, y, 12)) {
+                continue;
+            }
             addLocationPatch("graveyard", x, y, 6 + hash(x, y, 907) % 2, 5 + hash(x, y, 911) % 2, 910 + i);
         }
 
         int[][] forestAnchors = {
-                {109, 91}, {153, 119}, {183, 171}, {232, 139}, {72, 183}, {211, 208}
+                {109, 91}, {153, 119}, {183, 171}, {232, 139}, {72, 183}, {211, 208},
+                {305, 74}, {329, 105}, {360, 146}
         };
         for (int i = 0; i < forestAnchors.length; i++) {
             TilePoint center = chooseLocationCenter(
@@ -7777,7 +8650,7 @@ public final class WorldMap {
         }
 
         int[][] caveMouthAnchors = {
-                {64, 215}, {202, 64}, {257, 183}, {184, 239}, {126, 226}
+                {64, 215}, {202, 64}, {257, 183}, {184, 239}, {126, 226}, {337, 74}, {382, 170}
         };
         for (int i = 0; i < caveMouthAnchors.length; i++) {
             TilePoint center = chooseLocationCenter(
@@ -7790,7 +8663,8 @@ public final class WorldMap {
         }
 
         int[][] roadAnchors = {
-                {132, 130}, {209, 105}, {234, 184}, {96, 247}, {169, 199}, {253, 224}
+                {132, 130}, {209, 105}, {234, 184}, {96, 247}, {169, 199}, {253, 224},
+                {290, 52}, {318, 112}, {358, 150}
         };
         for (int i = 0; i < roadAnchors.length; i++) {
             TilePoint center = chooseLocationCenter(
@@ -7821,6 +8695,9 @@ public final class WorldMap {
             if (!farFromLocations(x, y, minDistance)) {
                 continue;
             }
+            if (!farFromSettlementTiles(x, y, Math.max(minDistance, 10))) {
+                continue;
+            }
             if (fallback == null) {
                 fallback = new TilePoint(x, y);
             }
@@ -7829,6 +8706,62 @@ public final class WorldMap {
             }
         }
         return fallback;
+    }
+
+    private TilePoint chooseFarmlandCenter(int salt, int baseX, int baseY, int spreadX, int spreadY, char[] allowed,
+                                           char[] nearTiles, int nearRadius, int minDistance, int rx, int ry) {
+        TilePoint fallback = null;
+        for (int attempt = 0; attempt < 420; attempt++) {
+            int hx = hash(attempt, salt, 19);
+            int hy = hash(attempt, salt, 23);
+            int x = baseX + hx % (spreadX * 2 + 1) - spreadX;
+            int y = baseY + hy % (spreadY * 2 + 1) - spreadY;
+            if (x < rx + 3 || y < ry + 3 || x >= COLS - rx - 3 || y >= ROWS - ry - 3) {
+                continue;
+            }
+            if (!contains(allowed, tiles[y][x]) || nearAnyTile(x, y, new char[]{'w', 'c', 'u', 'd'}, 3)) {
+                continue;
+            }
+            if (!farFromLocations(x, y, minDistance)) {
+                continue;
+            }
+            if (!farFromSettlementTiles(x, y, Math.max(minDistance, 10))) {
+                continue;
+            }
+            if (!validFarmlandFootprint(x, y, rx, ry)) {
+                continue;
+            }
+            if (fallback == null) {
+                fallback = new TilePoint(x, y);
+            }
+            if (nearTiles == null || nearAnyTile(x, y, nearTiles, nearRadius)) {
+                return new TilePoint(x, y);
+            }
+        }
+        return fallback;
+    }
+
+    private boolean validFarmlandFootprint(int cx, int cy, int rx, int ry) {
+        LocationPatch footprint = new LocationPatch("farmland", cx, cy, rx, ry, 0);
+        int fieldTiles = 0;
+        int arableTiles = 0;
+        for (int y = cy - ry - 1; y <= cy + ry + 1; y++) {
+            for (int x = cx - rx - 1; x <= cx + rx + 1; x++) {
+                if (!insideOverworld(x, y) || !footprint.contains(x, y)) {
+                    continue;
+                }
+                char tile = tiles[y][x];
+                if (invalidFarmlandTile(tile) || tile == 'w' || tile == '~' || tile == 'c'
+                        || tile == 'u' || tile == 'h' || tile == 'x' || tile == 'd') {
+                    return false;
+                }
+                fieldTiles++;
+                if (tile == 'g' || tile == 's' || tile == 'b' || tile == 'f') {
+                    arableTiles++;
+                }
+            }
+        }
+        return fieldTiles > 0 && arableTiles * 100 >= fieldTiles * 75;
     }
 
     private boolean contains(char[] tiles, char tile) {
@@ -7868,7 +8801,29 @@ public final class WorldMap {
         return true;
     }
 
+    private boolean farFromSettlementTiles(int x, int y, int minDistance) {
+        int radius = Math.max(1, minDistance);
+        for (int oy = -radius; oy <= radius; oy++) {
+            for (int ox = -radius; ox <= radius; ox++) {
+                if (ox * ox + oy * oy > radius * radius) {
+                    continue;
+                }
+                int nx = x + ox;
+                int ny = y + oy;
+                if (!insideOverworld(nx, ny)) {
+                    continue;
+                }
+                char tile = tiles[ny][nx];
+                if (tile == 'c' || tile == 'u') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void addLocationPatch(String kind, int cx, int cy, int rx, int ry, int salt) {
+        groundRegionCache = null;
         LocationPatch patch = new LocationPatch(kind, cx, cy, rx, ry, salt);
         locationPatches.add(patch);
         landmarks.put(new TilePoint(cx, cy), patch.label());
@@ -7888,16 +8843,30 @@ public final class WorldMap {
 
     private record LocationPatch(String kind, int cx, int cy, int rx, int ry, int salt) {
         private boolean contains(int x, int y) {
-            double nx = (x - cx) / Math.max(1.0, rx);
-            double ny = (y - cy) / Math.max(1.0, ry);
-            double ripple = Math.sin(Math.atan2(ny, nx) * 3.0 + salt * 0.17) * 0.12;
-            return Math.hypot(nx, ny) <= 1.0 + ripple;
+            return normalizedDistance(x, y) <= boundaryLimit(x, y);
         }
 
         private double centerPull(int x, int y) {
             double dx = Math.abs(x - cx) / Math.max(1.0, rx);
             double dy = Math.abs(y - cy) / Math.max(1.0, ry);
             return Math.max(0.0, 1.0 - (dx + dy) * 0.5);
+        }
+
+        private double edgeFade(int x, int y) {
+            double remaining = boundaryLimit(x, y) - normalizedDistance(x, y);
+            return Math.max(0.0, Math.min(1.0, remaining / 0.72));
+        }
+
+        private double normalizedDistance(int x, int y) {
+            double nx = (x - cx) / Math.max(1.0, rx);
+            double ny = (y - cy) / Math.max(1.0, ry);
+            return Math.hypot(nx, ny);
+        }
+
+        private double boundaryLimit(int x, int y) {
+            double nx = (x - cx) / Math.max(1.0, rx);
+            double ny = (y - cy) / Math.max(1.0, ry);
+            return 1.0 + Math.sin(Math.atan2(ny, nx) * 3.0 + salt * 0.17) * 0.12;
         }
 
         private String label() {
@@ -7919,6 +8888,9 @@ public final class WorldMap {
         }
     }
 
+    public record AdventureMarker(String kind, String mapId, String label, int x, int y, int depth) {
+    }
+
     private record AdventureSite(String kind, String id, String label, int x, int y, int depth) {
     }
 
@@ -7934,26 +8906,48 @@ public final class WorldMap {
     private double islandScore(int x, int y, int seedSalt) {
         double phaseA = (seedSalt % 997) * 0.001;
         double phaseB = ((seedSalt >> 10) % 997) * 0.001;
-        double nx = (x - 151) / 143.0;
-        double ny = (y - 152) / 136.0;
-        double score = 1.0 - (nx * nx + ny * ny);
-        score += 0.14 * Math.sin(x * 0.051 + phaseA * 7.0) + 0.11 * Math.cos(y * 0.067 - phaseB * 6.0);
-        score += 0.08 * Math.sin((x + y) * 0.037 + phaseB * 9.0) - 0.07 * Math.cos((x - y) * 0.049 + phaseA * 5.0);
-        score += 0.05 * Math.sin((x * 2 + y) * 0.028 + phaseA * 11.0);
-        score += 0.06 * Math.sin((x * 0.031 + y * 0.017) + phaseB * 13.0);
-        if (x < 18 || x > COLS - 16 || y < 14 || y > ROWS - 14) {
-            score -= 0.45;
-        }
-        if (x < 48 && y < 70) {
-            score -= 0.35;
-        }
-        if (x > 250 && y < 70) {
-            score -= 0.22;
-        }
-        if (x > 258 && y > 238) {
-            score -= 0.30;
+        double nx = (x - COLS * 0.47) / (COLS * 0.45);
+        double ny = (y - ROWS * 0.49) / (ROWS * 0.44);
+        double score = 0.58 - (nx * nx + ny * ny) * 0.82;
+
+        score += landLobe(x, y, 92, 140, 95, 120, 0.52);
+        score += landLobe(x, y, 155, 176, 120, 118, 0.62);
+        score += landLobe(x, y, 224, 122, 112, 96, 0.57);
+        score += landLobe(x, y, 306, 84, 112, 70, 0.58);
+        score += landLobe(x, y, 320, 156, 95, 96, 0.48);
+        score += landLobe(x, y, 176, 270, 120, 88, 0.48);
+        score += landLobe(x, y, 80, 260, 86, 70, 0.28);
+
+        score -= waterBite(x, y, 36, 42, 64, 50, 0.43);
+        score -= waterBite(x, y, 380, 36, 70, 44, 0.45);
+        score -= waterBite(x, y, 380, 248, 96, 80, 0.42);
+        score -= waterBite(x, y, 248, 358, 120, 64, 0.31);
+
+        score += 0.16 * Math.sin(x * 0.041 + phaseA * 7.0) + 0.13 * Math.cos(y * 0.052 - phaseB * 6.0);
+        score += 0.11 * Math.sin((x + y) * 0.031 + phaseB * 9.0) - 0.10 * Math.cos((x - y) * 0.043 + phaseA * 5.0);
+        score += 0.08 * Math.sin((x * 2 + y) * 0.022 + phaseA * 11.0);
+        score += (terrainNoise(x, y, 31, seedSalt + 601) - 0.5) * 0.32;
+        score += (terrainNoise(x, y, 13, seedSalt + 607) - 0.5) * 0.16;
+
+        int edgeDistance = Math.min(Math.min(x, COLS - 1 - x), Math.min(y, ROWS - 1 - y));
+        if (edgeDistance < 24) {
+            score -= (24 - edgeDistance) * 0.035;
         }
         return score;
+    }
+
+    private double landLobe(int x, int y, int cx, int cy, int rx, int ry, double weight) {
+        double nx = (x - cx) / Math.max(1.0, rx);
+        double ny = (y - cy) / Math.max(1.0, ry);
+        double falloff = nx * nx + ny * ny;
+        return Math.max(0.0, 1.0 - falloff) * weight;
+    }
+
+    private double waterBite(int x, int y, int cx, int cy, int rx, int ry, double weight) {
+        double nx = (x - cx) / Math.max(1.0, rx);
+        double ny = (y - cy) / Math.max(1.0, ry);
+        double falloff = nx * nx + ny * ny;
+        return Math.max(0.0, 1.0 - falloff) * weight;
     }
 
     private boolean landAt(boolean[][] land, int x, int y) {
@@ -7996,7 +8990,13 @@ public final class WorldMap {
                 {'s', 87, 226, 65, 58, 27, 7, 7},
                 {'b', 178, 225, 55, 53, 17, 5, 8},
                 {'n', 68, 67, 65, 49, 22, 6, 9},
-                {'m', 143, 176, 78, 68, 22, 5, 10}
+                {'m', 143, 176, 78, 68, 22, 5, 10},
+                {'n', 306, 70, 72, 42, 28, 7, 12},
+                {'m', 328, 88, 68, 48, 24, 6, 13},
+                {'v', 330, 147, 70, 66, 30, 8, 14},
+                {'f', 286, 104, 64, 54, 20, 6, 15},
+                {'s', 148, 292, 92, 44, 24, 7, 16},
+                {'b', 246, 276, 76, 48, 20, 6, 17}
         };
         for (int[] spec : patchSpecs) {
             char tile = (char) spec[0];
@@ -8035,15 +9035,17 @@ public final class WorldMap {
     }
 
     private double organicMetric(int x, int y, int cx, int cy, int rx, int ry, int salt) {
-        double warpX = (terrainNoise(x, y, 19, salt + 11) - 0.5) * rx * 0.34;
-        double warpY = (terrainNoise(x, y, 17, salt + 23) - 0.5) * ry * 0.34;
+        double warpX = (terrainNoise(x, y, 23, salt + 11) - 0.5) * rx * 0.58;
+        double warpY = (terrainNoise(x, y, 19, salt + 23) - 0.5) * ry * 0.52;
         double nx = (x - cx + warpX) / Math.max(1.0, rx);
         double ny = (y - cy + warpY) / Math.max(1.0, ry);
         double angle = Math.atan2(ny, nx);
         double radial = Math.hypot(nx, ny);
-        double scallop = Math.sin(angle * 3.0 + salt * 0.17) * 0.12 + Math.cos(angle * 5.0 - salt * 0.11) * 0.08;
-        double grain = (terrainNoise(x, y, 11, salt + 37) - 0.5) * 0.28;
-        double fine = (terrainNoise(x, y, 5, salt + 41) - 0.5) * 0.12;
+        double scallop = Math.sin(angle * 3.0 + salt * 0.17) * 0.16
+                + Math.cos(angle * 5.0 - salt * 0.11) * 0.11
+                + Math.sin(angle * 8.0 + salt * 0.07) * 0.06;
+        double grain = (terrainNoise(x, y, 13, salt + 37) - 0.5) * 0.36;
+        double fine = (terrainNoise(x, y, 6, salt + 41) - 0.5) * 0.18;
         return radial - scallop - grain - fine;
     }
 
@@ -8076,7 +9078,8 @@ public final class WorldMap {
                 {228, 261, 5, 3, 507}, {69, 273, 5, 3, 509}, {178, 34, 4, 3, 511},
                 {62, 118, 3, 2, 521}, {171, 116, 3, 2, 523}, {221, 128, 3, 2, 529},
                 {83, 185, 3, 2, 531}, {174, 205, 3, 2, 533}, {218, 224, 3, 2, 541},
-                {65, 154, 3, 2, 547}, {151, 225, 3, 2, 557}
+                {65, 154, 3, 2, 547}, {151, 225, 3, 2, 557}, {328, 44, 4, 3, 563},
+                {370, 122, 5, 4, 569}, {302, 202, 4, 3, 571}, {144, 318, 5, 3, 577}
         };
         for (int[] spec : specs) {
             int anchorX = shifted(spec[0], 4, spec[4], seedSalt);
@@ -8168,7 +9171,9 @@ public final class WorldMap {
                 {62, 118, 7, 5, 301}, {116, 76, 6, 5, 307}, {171, 116, 7, 4, 311},
                 {221, 128, 8, 5, 313}, {249, 105, 6, 4, 317}, {83, 185, 6, 5, 331},
                 {129, 205, 5, 4, 337}, {174, 205, 7, 5, 347}, {218, 224, 6, 4, 349},
-                {111, 265, 8, 5, 353}, {54, 235, 5, 4, 359}, {202, 55, 6, 4, 367}
+                {111, 265, 8, 5, 353}, {54, 235, 5, 4, 359}, {202, 55, 6, 4, 367},
+                {300, 76, 6, 4, 371}, {344, 154, 8, 5, 373}, {274, 258, 7, 4, 379},
+                {164, 310, 8, 5, 383}
         };
         for (int[] spec : lakeSpecs) {
             int salt = seedSalt + spec[4];
@@ -8240,11 +9245,14 @@ public final class WorldMap {
     }
 
     private void raiseLandOval(int cx, int cy, int rx, int ry, char tile, boolean[][] land) {
-        for (int y = Math.max(0, cy - ry); y <= Math.min(ROWS - 1, cy + ry); y++) {
-            for (int x = Math.max(0, cx - rx); x <= Math.min(COLS - 1, cx + rx); x++) {
-                double nx = (x - cx) / Math.max(1.0, rx);
-                double ny = (y - cy) / Math.max(1.0, ry);
-                if (nx * nx + ny * ny <= 1.0) {
+        int margin = Math.max(5, (int) Math.round(Math.max(rx, ry) * 0.28));
+        int salt = cx * 37 + cy * 53 + tile * 97;
+        for (int y = Math.max(0, cy - ry - margin); y <= Math.min(ROWS - 1, cy + ry + margin); y++) {
+            for (int x = Math.max(0, cx - rx - margin); x <= Math.min(COLS - 1, cx + rx + margin); x++) {
+                double dist = organicMetric(x, y, cx, cy, rx, ry, salt);
+                boolean core = dist <= 0.96;
+                boolean edge = dist <= 1.18 && Math.floorMod(hash(x, y, salt + 29), 100) < (int) ((1.18 - dist) * 180.0);
+                if (core || edge) {
                     land[y][x] = true;
                     tiles[y][x] = tile;
                 }
@@ -8272,9 +9280,13 @@ public final class WorldMap {
     }
 
     private void markGround(int x, int y, int width, char tile, boolean[][] land) {
-        for (int oy = -width; oy <= width; oy++) {
-            for (int ox = -width; ox <= width; ox++) {
-                if (Math.abs(ox) + Math.abs(oy) > width + 1) {
+        int radius = width + 2;
+        int salt = x * 41 + y * 67 + tile * 131;
+        for (int oy = -radius; oy <= radius; oy++) {
+            for (int ox = -radius; ox <= radius; ox++) {
+                double distance = Math.hypot(ox, oy);
+                double edgeNoise = (terrainNoise(x + ox, y + oy, 5, salt + 17) - 0.5) * 2.4;
+                if (distance > width + edgeNoise) {
                     continue;
                 }
                 int tx = x + ox;
@@ -8288,26 +9300,11 @@ public final class WorldMap {
     }
 
     private void roadPath(List<TilePoint> points) {
-        int x = points.get(0).x();
-        int y = points.get(0).y();
-        markRoad(x, y);
-        int bridgeRun = isBridgeTile(x, y) ? 1 : 0;
-        for (TilePoint target : points.subList(1, points.size())) {
-            int guard = 0;
-            while ((x != target.x() || y != target.y()) && guard++ < 300) {
-                int sx = Integer.compare(target.x(), x);
-                int sy = Integer.compare(target.y(), y);
-                if (sx != 0 && (sy == 0 || guard % 3 != 0)) {
-                    x += sx;
-                } else if (sy != 0) {
-                    y += sy;
-                }
-                if (isBridgeableWaterTile(x, y) && bridgeRun >= MAX_CONTINUOUS_BRIDGE_SPAN) {
-                    stampBridgeLanding(x, y);
-                    bridgeRun = 0;
-                }
-                markRoad(x, y);
-                bridgeRun = isBridgeTile(x, y) ? bridgeRun + 1 : 0;
+        OverworldRoadPlanner planner = new OverworldRoadPlanner(tiles, MAX_CONTINUOUS_BRIDGE_SPAN);
+        for (int i = 1; i < points.size(); i++) {
+            List<TilePoint> route = planner.route(points.get(i - 1), points.get(i));
+            for (TilePoint point : route) {
+                markRoad(point.x(), point.y());
             }
         }
     }
@@ -8320,7 +9317,7 @@ public final class WorldMap {
             tiles[y][x] = 'B';
         } else if (tiles[y][x] == 'm') {
             tiles[y][x] = 'q';
-        } else if (tiles[y][x] != 'c' && tiles[y][x] != 'u' && tiles[y][x] != 'd') {
+        } else if (!Terrain.connectingRoad(tiles[y][x])) {
             tiles[y][x] = 'r';
         }
     }
@@ -8328,7 +9325,8 @@ public final class WorldMap {
     private void upgradeRoadsNearCitiesToCobblestone() {
         int[][] cityCenters = {
                 {82, 105}, {152, 145}, {205, 78}, {228, 185}, {150, 230},
-                {131, 121}, {225, 108}, {170, 180}, {259, 205}, {126, 269}
+                {131, 121}, {225, 108}, {170, 180}, {259, 205}, {126, 269},
+                {286, 42}, {318, 122}
         };
         for (int[] city : cityCenters) {
             upgradeConnectedCityApproachRoads(city[0], city[1]);
@@ -8357,34 +9355,10 @@ public final class WorldMap {
                     continue;
                 }
                 distance[ny][nx] = currentDistance + 1;
-                if (tiles[ny][nx] == Terrain.DIRT_ROAD || tiles[ny][nx] == 'q') {
+                if (tiles[ny][nx] == Terrain.DIRT_ROAD) {
                     tiles[ny][nx] = Terrain.COBBLESTONE_ROAD;
                 }
                 queue.addLast(new TilePoint(nx, ny));
-            }
-        }
-    }
-
-    private boolean isBridgeableWaterTile(int x, int y) {
-        if (x < 0 || y < 0 || x >= COLS || y >= ROWS) {
-            return false;
-        }
-        return tiles[y][x] == 'w' || tiles[y][x] == '~' || tiles[y][x] == 'B';
-    }
-
-    private boolean isBridgeTile(int x, int y) {
-        return x >= 0 && y >= 0 && x < COLS && y < ROWS && tiles[y][x] == 'B';
-    }
-
-    private void stampBridgeLanding(int cx, int cy) {
-        for (int oy = -1; oy <= 1; oy++) {
-            for (int ox = -1; ox <= 1; ox++) {
-                int x = cx + ox;
-                int y = cy + oy;
-                if (x < 0 || y < 0 || x >= COLS || y >= ROWS || !isBridgeableWaterTile(x, y)) {
-                    continue;
-                }
-                tiles[y][x] = Math.abs(ox) + Math.abs(oy) <= 1 ? 's' : '~';
             }
         }
     }
@@ -8398,7 +9372,9 @@ public final class WorldMap {
                 new TilePoint(131, 121), new TilePoint(225, 108), new TilePoint(170, 180),
                 new TilePoint(259, 205), new TilePoint(126, 269), new TilePoint(56, 156),
                 new TilePoint(118, 76), new TilePoint(138, 165), new TilePoint(268, 138),
-                new TilePoint(78, 266), new TilePoint(205, 254)
+                new TilePoint(78, 266), new TilePoint(205, 254),
+                new TilePoint(286, 42), new TilePoint(318, 122), new TilePoint(324, 56),
+                new TilePoint(366, 160)
         ));
         for (AdventureSite site : adventureSites) {
             anchors.add(new TilePoint(site.x, site.y));
@@ -8408,6 +9384,147 @@ public final class WorldMap {
                 roadPath(List.of(START_POSITION, target));
             }
         }
+    }
+
+    private void expandSmallOverworldIslands() {
+        boolean[][] seen = new boolean[ROWS][COLS];
+        for (int y = 1; y < ROWS - 1; y++) {
+            for (int x = 1; x < COLS - 1; x++) {
+                if (seen[y][x] || !isIslandGroundTile(tiles[y][x])) {
+                    continue;
+                }
+                List<TilePoint> component = new ArrayList<>();
+                ArrayDeque<TilePoint> queue = new ArrayDeque<>();
+                queue.add(new TilePoint(x, y));
+                seen[y][x] = true;
+                boolean touchesWater = false;
+                while (!queue.isEmpty()) {
+                    TilePoint current = queue.removeFirst();
+                    component.add(current);
+                    for (int[] dir : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+                        int nx = current.x() + dir[0];
+                        int ny = current.y() + dir[1];
+                        if (!insideOverworld(nx, ny)) {
+                            continue;
+                        }
+                        char neighbor = tiles[ny][nx];
+                        if (isIslandGroundTile(neighbor)) {
+                            if (!seen[ny][nx]) {
+                                seen[ny][nx] = true;
+                                queue.addLast(new TilePoint(nx, ny));
+                            }
+                        } else if (neighbor == 'w' || neighbor == '~') {
+                            touchesWater = true;
+                        }
+                    }
+                }
+                if (!touchesWater || component.size() >= MIN_TRAVERSABLE_ISLAND_GROUND_TILES) {
+                    continue;
+                }
+                int targetSize = Math.max(MIN_TRAVERSABLE_ISLAND_GROUND_TILES, component.size() + ISLAND_EXPANSION_BONUS_TILES);
+                growIslandGround(component, targetSize, islandGrowthTile(component));
+            }
+        }
+    }
+
+    private void growIslandGround(List<TilePoint> component, int targetSize, char fillTile) {
+        Set<TilePoint> island = new HashSet<>(component);
+        int sumX = 0;
+        int sumY = 0;
+        for (TilePoint point : component) {
+            sumX += point.x();
+            sumY += point.y();
+        }
+        double centerX = component.isEmpty() ? 0.0 : sumX / (double) component.size();
+        double centerY = component.isEmpty() ? 0.0 : sumY / (double) component.size();
+        while (island.size() < targetSize) {
+            TilePoint best = null;
+            int bestScore = Integer.MIN_VALUE;
+            for (TilePoint point : island) {
+                for (int oy = -1; oy <= 1; oy++) {
+                    for (int ox = -1; ox <= 1; ox++) {
+                        if (ox == 0 && oy == 0) {
+                            continue;
+                        }
+                        int nx = point.x() + ox;
+                        int ny = point.y() + oy;
+                        if (!insideOverworld(nx, ny) || nx == 0 || ny == 0 || nx == COLS - 1 || ny == ROWS - 1) {
+                            continue;
+                        }
+                        char tile = tiles[ny][nx];
+                        if (tile != 'w' && tile != '~') {
+                            continue;
+                        }
+                        TilePoint candidate = new TilePoint(nx, ny);
+                        if (island.contains(candidate)) {
+                            continue;
+                        }
+                        int adjacentGround = 0;
+                        int support = 0;
+                        for (int sy = -1; sy <= 1; sy++) {
+                            for (int sx = -1; sx <= 1; sx++) {
+                                if (sx == 0 && sy == 0) {
+                                    continue;
+                                }
+                                TilePoint neighbor = new TilePoint(nx + sx, ny + sy);
+                                if (!island.contains(neighbor)) {
+                                    continue;
+                                }
+                                support++;
+                                if (Math.abs(sx) + Math.abs(sy) == 1) {
+                                    adjacentGround++;
+                                }
+                            }
+                        }
+                        if (adjacentGround == 0) {
+                            continue;
+                        }
+                        int surroundingWater = 0;
+                        for (int[] dir : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+                            int wx = nx + dir[0];
+                            int wy = ny + dir[1];
+                            if (insideOverworld(wx, wy) && (tiles[wy][wx] == 'w' || tiles[wy][wx] == '~')) {
+                                surroundingWater++;
+                            }
+                        }
+                        int centerDistance = (int) Math.round(Math.abs(nx - centerX) + Math.abs(ny - centerY));
+                        int score = adjacentGround * 100 + support * 18 - surroundingWater * 9 - centerDistance * 2;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            best = candidate;
+                        }
+                    }
+                }
+            }
+            if (best == null) {
+                return;
+            }
+            tiles[best.y()][best.x()] = fillTile;
+            island.add(best);
+        }
+    }
+
+    private char islandGrowthTile(List<TilePoint> component) {
+        Map<Character, Integer> counts = new HashMap<>();
+        for (TilePoint point : component) {
+            char tile = tiles[point.y()][point.x()];
+            counts.merge(tile, 1, Integer::sum);
+        }
+        char best = 'P';
+        int bestCount = 0;
+        for (char candidate : new char[]{'g', 'f', 's', 'n', 'v', 'b', 'P'}) {
+            int count = counts.getOrDefault(candidate, 0);
+            if (count > bestCount) {
+                bestCount = count;
+                best = candidate;
+            }
+        }
+        return best;
+    }
+
+    private boolean isIslandGroundTile(char tile) {
+        return tile == 'g' || tile == 'f' || tile == 's' || tile == 'n'
+                || tile == 'v' || tile == 'b' || tile == 'P';
     }
 
     private boolean isReachable(TilePoint start, TilePoint target) {
@@ -8496,9 +9613,9 @@ public final class WorldMap {
         if (!insideOverworld(x, y)) {
             return;
         }
-        if (tiles[y][x] == 'w' || tiles[y][x] == '~' || tiles[y][x] == 'B') {
-            tiles[y][x] = 'B';
-        } else if (tiles[y][x] == 'm' || tiles[y][x] == 'q') {
+        // The three-tile gate apron belongs to the settlement foundation. Any crossing
+        // beyond it is planned bank-to-bank, never left as a one-ended bridge stub.
+        if (tiles[y][x] == 'm' || tiles[y][x] == 'q') {
             tiles[y][x] = 'q';
         } else {
             tiles[y][x] = 'r';
@@ -8557,12 +9674,11 @@ public final class WorldMap {
     }
 
     private void stampAdventureSite(int cx, int cy, String name) {
-        for (int oy = -2; oy <= 2; oy++) {
+        for (int oy = -1; oy <= 3; oy++) {
             for (int ox = -2; ox <= 2; ox++) {
                 int x = cx + ox;
                 int y = cy + oy;
-                if (x >= 0 && y >= 0 && x < COLS && y < ROWS
-                        && Math.abs(ox) <= 1 && oy > 0) {
+                if (x >= 0 && y >= 0 && x < COLS && y < ROWS && Math.abs(ox) + Math.max(0, -oy) <= 3) {
                     tiles[y][x] = 'r';
                 }
             }

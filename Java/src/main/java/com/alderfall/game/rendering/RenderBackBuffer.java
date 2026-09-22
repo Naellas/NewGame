@@ -36,7 +36,8 @@ final class RenderBackBuffer {
             }
         }
         if (bufferedImage == null || bufferedImage.getWidth() != width || bufferedImage.getHeight() != height) {
-            bufferedImage = new BufferedImage(Math.max(1, width), Math.max(1, height), BufferedImage.TYPE_INT_ARGB);
+            // GamePanel clears the entire frame to an opaque background before rendering.
+            bufferedImage = new BufferedImage(Math.max(1, width), Math.max(1, height), BufferedImage.TYPE_INT_RGB);
         }
         return bufferedImage.createGraphics();
     }
@@ -69,7 +70,7 @@ final class RenderBackBuffer {
             volatileImage = createVolatile(component, width, height);
         }
         if (volatileImage == null) {
-            bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         }
     }
 

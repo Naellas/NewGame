@@ -34,6 +34,9 @@ public final class RoamingWorldEventLayer {
             events.clear();
             return;
         }
+        if (triggerEnteredEvent(state)) {
+            return;
+        }
         if (state.worldTick < nextSpawnTick || events.size() >= MAX_EVENTS) {
             return;
         }
@@ -146,13 +149,15 @@ public final class RoamingWorldEventLayer {
             return Interaction.FISH_RUN;
         }
         if ("dungeon".equals(mapKind)) {
-            return random.nextBoolean() ? Interaction.UNSTABLE_SHRINE : Interaction.AMBUSH_TRACKS;
+            int pick = random.nextInt(3);
+            return pick == 0 ? Interaction.UNSTABLE_SHRINE : pick == 1 ? Interaction.HIDDEN_TRAP : Interaction.AMBUSH_TRACKS;
         }
         if (isNight(state) && random.nextDouble() < 0.35) {
             return Interaction.WOUNDED_TRAVELER;
         }
         if (Terrain.roadLike(tile) || tile == 'p' || tile == 'j' || tile == 'l' || tile == 'a') {
-            return random.nextBoolean() ? Interaction.LOST_SATCHEL : Interaction.AMBUSH_TRACKS;
+            int pick = random.nextInt(3);
+            return pick == 0 ? Interaction.LOST_SATCHEL : pick == 1 ? Interaction.HIDDEN_TRAP : Interaction.AMBUSH_TRACKS;
         }
         return random.nextBoolean() ? Interaction.UNSTABLE_SHRINE : Interaction.WOUNDED_TRAVELER;
     }
@@ -184,58 +189,33 @@ public final class RoamingWorldEventLayer {
     }
 
     private void resolveInteractiveEvent(GameState state, WorldEvent event) {
-        int roll = Math.floorMod(event.seed + state.player.dexterity + state.player.intelligence + state.worldTick, 100);
         switch (event.interaction) {
-            case LOST_SATCHEL -> {
-                int gold = 8 + roll % 18;
-                state.player.gold += gold;
-                state.player.addItem("trail_rations", 1);
-                state.openRoamingEventDialogue("Lost Satchel", "npc_merchant", List.of(
-                        "Lost Satchel: You search the straps, shake out road grit, and keep the dry supplies from spoiling.",
-                        "Recovered: " + gold + "g and trail rations.",
-                        "Minigame seed: sort fragile, wet, and useful items before the satchel collapses."
-                ));
+            case LOST_SATCHEL -> RoamingEventWorkflow.openLostSatchelPrompt(state, event.seed);
+            case UNSTABLE_SHRINE -> RoamingEventWorkflow.openShrinePrompt(state, event.seed);
+            case WOUNDED_TRAVELER -> RoamingEventWorkflow.openWoundedTravelerPrompt(state, event.seed);
+            case FISH_RUN -> RoamingEventWorkflow.openFishRunPrompt(state, event.seed);
+            case AMBUSH_TRACKS -> RoamingEventWorkflow.openAmbushPrompt(state, event.seed);
+            case HIDDEN_TRAP -> RoamingEventWorkflow.openTrapPrompt(state, event.seed);
+        }
+    }
+
+    private boolean triggerEnteredEvent(GameState state) {
+        for (Iterator<WorldEvent> iterator = events.iterator(); iterator.hasNext(); ) {
+            WorldEvent event = iterator.next();
+            if (event.interaction == null
+                    || !event.interaction.autoTriggerOnEnter
+                    || !event.mapId.equals(state.currentMapId)
+                    || event.tileX() != state.playerX
+                    || event.tileY() != state.playerY) {
+                continue;
             }
-            case UNSTABLE_SHRINE -> {
-                int xp = 10 + roll % 16;
-                state.player.gainXp(xp);
-                state.worldAbilityTimers.merge("battle_advantage", 80 + roll % 60, Math::max);
-                state.openRoamingEventDialogue("Unstable Shrine", "npc_rowan", List.of(
-                        "Unstable Shrine: The glyphs flare as you press the cracked stone back into its old rhythm.",
-                        "Result: +" + xp + " XP. Your next fight starts with battle advantage.",
-                        "Minigame seed: time rune pulses in sequence before the shrine overloads."
-                ));
-            }
-            case WOUNDED_TRAVELER -> {
-                int xp = 8 + roll % 12;
-                state.player.gainXp(xp);
-                state.player.hp = Math.min(state.player.maxHp, state.player.hp + 6 + roll % 8);
-                state.openRoamingEventDialogue("Wounded Traveler", "npc_mira_sunwarden", List.of(
-                        "Wounded Traveler: You keep their breathing steady long enough for the fear to loosen its grip.",
-                        "Result: +" + xp + " XP. Shared supplies restore a little health.",
-                        "Minigame seed: choose bandage, water, pressure, or reassurance under a short timer."
-                ));
-            }
-            case FISH_RUN -> {
-                state.player.addItem("quest_clean_water_skin", 1);
-                state.player.addItem("trail_rations", 1);
-                state.openRoamingEventDialogue("Fish Run", "npc_ren", List.of(
-                        "Fish Run: The water wrinkles in fast silver lines. You wait for the honest ripple and scoop.",
-                        "Recovered: clean water and trail rations.",
-                        "Minigame seed: tap on true ripple rings while false splashes try to bait you early."
-                ));
-            }
-            case AMBUSH_TRACKS -> {
-                int xp = 12 + roll % 14;
-                state.player.gainXp(xp);
-                state.worldAbilityTimers.merge("battle_advantage", 60 + roll % 50, Math::max);
-                state.openRoamingEventDialogue("Ambush Tracks", "npc_quartermaster", List.of(
-                        "Ambush Tracks: Heel marks, dragged brush, and one careless boot tell the road's secret before steel does.",
-                        "Result: +" + xp + " XP. Your next fight starts with battle advantage.",
-                        "Minigame seed: trace the correct track chain before wind covers the clues."
-                ));
+            iterator.remove();
+            if (event.interaction == Interaction.HIDDEN_TRAP) {
+                RoamingEventWorkflow.triggerTrapTile(state, event.seed);
+                return true;
             }
         }
+        return false;
     }
 
     private Kind chooseKind(GameState state, String mapKind) {
@@ -351,18 +331,25 @@ public final class RoamingWorldEventLayer {
         UNSTABLE_SHRINE("Unstable Shrine", "Stabilize", Kind.FIREFLY_CLUSTER, new Color(145, 213, 255)),
         WOUNDED_TRAVELER("Wounded Traveler", "Aid", Kind.GUST, new Color(235, 132, 112)),
         FISH_RUN("Fish Run", "Time", Kind.WATER_SKIPPERS, new Color(139, 224, 238)),
-        AMBUSH_TRACKS("Ambush Tracks", "Read", Kind.ROAD_DUST, new Color(232, 172, 91));
+        AMBUSH_TRACKS("Ambush Tracks", "Read", Kind.ROAD_DUST, new Color(232, 172, 91)),
+        HIDDEN_TRAP("Hidden Trap", "Inspect", Kind.ROAD_DUST, new Color(210, 88, 78), true);
 
         private final String target;
         private final String action;
         private final Kind visualKind;
         private final Color color;
+        private final boolean autoTriggerOnEnter;
 
         Interaction(String target, String action, Kind visualKind, Color color) {
+            this(target, action, visualKind, color, false);
+        }
+
+        Interaction(String target, String action, Kind visualKind, Color color, boolean autoTriggerOnEnter) {
             this.target = target;
             this.action = action;
             this.visualKind = visualKind;
             this.color = color;
+            this.autoTriggerOnEnter = autoTriggerOnEnter;
         }
     }
 

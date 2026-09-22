@@ -50,7 +50,7 @@ public final class ReactivePropLayer {
             }
             int seed = Math.abs(prop.asset().hashCode() + prop.x() * 928371 + prop.y() * 364479 + state.worldTick);
             if (distance == 0 || seed % 3 != 0) {
-                addPulse(state.currentMapId, prop, effectKind(prop.asset(), distance));
+                addPulse(state, prop, effectKind(prop.asset(), distance));
             }
             if (pulses.size() >= MAX_PULSES) {
                 return;
@@ -74,8 +74,8 @@ public final class ReactivePropLayer {
             double progress = pulse.age / (double) PULSE_LIFE;
             int baseX = (pulse.x - context.camX()) * context.tileSize();
             int baseY = (pulse.y - context.camY()) * context.tileSize();
-            int cx = baseX + context.tileSize() / 2;
-            int cy = baseY + context.tileSize() / 2;
+            int cx = baseX + (int) Math.round(pulse.anchorX * context.tileSize());
+            int cy = baseY + (int) Math.round(pulse.anchorY * context.tileSize());
             int radius = Math.max(4, (int) Math.round((0.28 + progress * 0.56) * context.tileSize()));
             float alpha = (float) ((1.0 - progress) * pulse.alpha);
             g.setComposite(AlphaComposite.SrcOver.derive(Math.max(0.0f, alpha)));
@@ -102,11 +102,14 @@ public final class ReactivePropLayer {
         g.setComposite(oldComposite);
     }
 
-    private void addPulse(String mapId, WorldProp prop, Kind kind) {
+    private void addPulse(GameState state, WorldProp prop, Kind kind) {
+        PropPlacement.Placement placement = PropPlacement.at(state.world, state.currentMapId, prop);
         pulses.add(new PropPulse(
-                mapId,
+                state.currentMapId,
                 prop.x(),
                 prop.y(),
+                placement.kind() == PropPlacement.Kind.FIXED ? 0.5 : placement.x(),
+                placement.kind() == PropPlacement.Kind.FIXED ? 0.5 : placement.y(),
                 prop.asset().hashCode() ^ prop.x() * 7349 ^ prop.y() * 9127,
                 kind,
                 colorFor(prop.asset(), kind),
@@ -180,16 +183,20 @@ public final class ReactivePropLayer {
         private final String mapId;
         private final int x;
         private final int y;
+        private final double anchorX;
+        private final double anchorY;
         private final int seed;
         private final Kind kind;
         private final Color color;
         private final float alpha;
         private int age;
 
-        private PropPulse(String mapId, int x, int y, int seed, Kind kind, Color color, float alpha) {
+        private PropPulse(String mapId, int x, int y, double anchorX, double anchorY, int seed, Kind kind, Color color, float alpha) {
             this.mapId = mapId;
             this.x = x;
             this.y = y;
+            this.anchorX = anchorX;
+            this.anchorY = anchorY;
             this.seed = seed;
             this.kind = kind;
             this.color = color;

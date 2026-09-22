@@ -12,8 +12,17 @@ final class LandmarkDiscoveryLog {
     private final Set<String> discoveredKeys = new HashSet<>();
 
     String discover(GameState state) {
-        if (state == null || !WorldMap.OVERWORLD_ID.equals(state.currentMapId)) {
+        if (state == null) {
             return "";
+        }
+        var area = state.world.area(state.currentMapId);
+        if (area != null) {
+            for (RegionalSettlementIdentity.District district : area.districts) {
+                if (manhattan(state.playerX, state.playerY, district.center().x(), district.center().y()) <= 3
+                        && discoveredKeys.add(state.currentMapId + ":district:" + district.name())) {
+                    return district.name() + ". " + district.dialogue().get(0);
+                }
+            }
         }
         List<WorldProp> nearby = state.world.propsInBounds(
                 state.currentMapId,
@@ -22,7 +31,9 @@ final class LandmarkDiscoveryLog {
                 state.playerX + DISCOVERY_RADIUS + 1,
                 state.playerY + DISCOVERY_RADIUS + 1
         ).stream()
-                .filter(this::isDiscoverable)
+                .filter(prop -> !WesternReachFolklore.observation(state.currentMapId, prop.asset()).isBlank()
+                        || !HearthlandsFolklore.observation(state.currentMapId, prop).isBlank()
+                        || (WorldMap.OVERWORLD_ID.equals(state.currentMapId) && isDiscoverable(prop)))
                 .filter(prop -> manhattan(state.playerX, state.playerY, prop.x(), prop.y()) <= DISCOVERY_RADIUS)
                 .sorted(Comparator
                         .comparingInt((WorldProp prop) -> manhattan(state.playerX, state.playerY, prop.x(), prop.y()))
@@ -31,6 +42,14 @@ final class LandmarkDiscoveryLog {
                         .thenComparing(WorldProp::asset))
                 .toList();
         for (WorldProp prop : nearby) {
+            String folklore = WesternReachFolklore.observation(state.currentMapId, prop.asset());
+            if (folklore.isBlank()) folklore = HearthlandsFolklore.observation(state.currentMapId, prop);
+            if (!folklore.isBlank() && discoveredKeys.add(state.currentMapId + ":folklore:" + prop.asset())) {
+                return folklore;
+            }
+            if (!folklore.isBlank()) {
+                continue;
+            }
             String key = state.currentMapId + ":" + prop.x() + ":" + prop.y() + ":" + prop.asset();
             if (discoveredKeys.add(key)) {
                 return lineFor(state, prop);

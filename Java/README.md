@@ -22,6 +22,20 @@ The current port is intentionally dependency-free Java 21/Swing so it can compil
 .\scripts\smoke-test.ps1
 ```
 
+## Rendering Performance
+
+Run a repeatable software rendering benchmark and rendering cache checks from the repository root:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Java\scripts\benchmark-render.ps1
+```
+
+The benchmark warms up each scene for 120 frames, then measures 240 frames at High render quality and 100% zoom in the starting village and overworld. Use `-Samples 480` for a longer run. It reports mean, median, and p95 frame times. These measurements exclude simulation updates and GPU/display presentation, so they are not an in-game FPS measurement. Other local settings remain in effect.
+
+The renderer caches the viewport vignette until its size or day/night colors change, uses opaque terrain images where all pixels are opaque, and uses an opaque software back buffer. Transparent terrain retains its alpha channel. Rendering and gameplay updates stay on the Swing event thread.
+
+For live profiling, `scripts/run-profile.ps1` enables average and maximum timings, including simulation updates, terrain, scenery, props, and lighting. Maximum timings help expose loading or cache rebuild stalls that averages can hide.
+
 ## Generated Files
 
 Build products under `out/` and `out-check/`, local saves, local settings, map-editor exports, compiled `.class` files, and Python `__pycache__` bytecode are ignored. From the repository root, existing tracked generated artifacts can be removed from the index without deleting local copies with:
@@ -90,7 +104,7 @@ The remaining `com.alderfall.game` classes are grouped into responsibility folde
 - Skills: click `Skills` or press `K`
 - Inventory: click `Inventory` or press `I`
 - Zoom: click `-`/`+` or use mouse wheel
-- Battle: click the action bar, or use `A`/`Space` attack, `1`-`3` abilities, `H` potion, `J` ether
+- Battle: click the action bar, or use `A`/`Space` attack, `R` run, `1`-`0` abilities, `H` use item
 - Dialog: click numbered conversation options, press `1`-`9`, or press `Enter`/`E` to advance
 - Shop: click `Buy`, `Hire`, or `Leave Shop`; number keys still buy matching items
 - Inventory: click item rows or use number keys

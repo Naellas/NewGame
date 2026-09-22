@@ -1,6 +1,8 @@
 package com.alderfall.game;
 
 import com.alderfall.game.map.WorldMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -41,6 +43,27 @@ final class AmbientNpcAi {
         CITIZEN
     }
 
+    private record DayPlan(
+            int dawnStartMinutes,
+            int workStartMinutes,
+            int middayStartMinutes,
+            int middayEndMinutes,
+            int duskStartMinutes,
+            int nightStartMinutes
+    ) {
+        DayPlan {
+            dawnStartMinutes = Math.max(0, dawnStartMinutes);
+            workStartMinutes = Math.max(dawnStartMinutes + 20, workStartMinutes);
+            middayStartMinutes = Math.max(workStartMinutes + 120, middayStartMinutes);
+            middayEndMinutes = Math.max(middayStartMinutes + 30, middayEndMinutes);
+            duskStartMinutes = Math.max(middayEndMinutes + 90, duskStartMinutes);
+            nightStartMinutes = Math.max(duskStartMinutes + 60, nightStartMinutes);
+        }
+    }
+
+    private record ScoredTarget(TilePoint target, int score) {
+    }
+
     record Routine(
             Activity activity,
             TilePoint target,
@@ -77,39 +100,126 @@ final class AmbientNpcAi {
         if (outdoorTown && weather == WeatherCondition.HEAT_HAZE && minutes >= 720 && minutes < 960 && !weatherHardy(archetype)) {
             return routine(Activity.RESTING, home(npc, world), 1, 3, 125, 100, 0.78);
         }
+        if (npc.job() != null && WorldMap.OVERWORLD_ID.equals(mapId) && npc.job().activeAt(minutes)) {
+            return commuterJobRoutine(npc, world, weather);
+        }
+        if (outdoorTown) {
+            for (RegionalSettlementIdentity.District district : world.area(mapId).districts) {
+                if (!district.keeperName().equals(npc.name())) continue;
+                if (minutes < 360 || minutes >= 1260) {
+                    return routine(Activity.SLEEPING, home(npc, world), 1, 48, 140, 80, 0.85);
+                }
+                boolean middayShade = RegionalSettlementIdentity.region(mapId) == RegionalSettlementIdentity.Region.SUN
+                        && minutes >= 720 && minutes < 960;
+                if (middayShade || minutes >= 1080) {
+                    return routine(middayShade ? Activity.RESTING : Activity.SOCIALIZING,
+                            district.gathering(), 1, 48, 80, 60, 0.55);
+                }
+                return routine(minutes < 480 ? Activity.ERRAND : Activity.WORKING,
+                        district.work(), 1, 48, 70, 50, 0.38);
+            }
+        }
 
-        int hour = minutes / 60;
-        if (hour < 5) {
+        if (archetype == Archetype.NIGHT_WATCH) {
+            return nightWatchRoutine(npc, world, mapId, dayNumber, minutes, weather);
+        }
+
+        DayPlan dayPlan = dayPlanFor(npc, mapId, archetype, dayNumber);
+        if (minutes < dayPlan.dawnStartMinutes()) {
             return nightRoutine(npc, world, mapId, archetype, dayNumber, true);
         }
-        if (hour < 7) {
-            return dawnRoutine(npc, world, mapId, archetype, dayNumber);
+        if (minutes < dayPlan.workStartMinutes()) {
+            return dawnRoutine(npc, world, mapId, archetype, dayNumber, weather);
         }
-        if (hour < 12) {
+        if (minutes < dayPlan.middayStartMinutes()) {
             return workRoutine(npc, world, mapId, archetype, dayNumber, weather, true);
         }
-        if (hour < 14) {
+        if (minutes < dayPlan.middayEndMinutes()) {
             return middayRoutine(npc, world, mapId, archetype, dayNumber, weather);
         }
-        if (hour < 17) {
+        if (minutes < dayPlan.duskStartMinutes()) {
             return workRoutine(npc, world, mapId, archetype, dayNumber + 7, weather, false);
         }
-        if (hour < 20) {
-            return duskRoutine(npc, world, mapId, archetype, dayNumber);
+        if (minutes < dayPlan.nightStartMinutes()) {
+            return duskRoutine(npc, world, mapId, archetype, dayNumber, weather);
         }
         return nightRoutine(npc, world, mapId, archetype, dayNumber, false);
     }
 
-    private static Routine dawnRoutine(Npc npc, WorldMap world, String mapId, Archetype archetype, int dayNumber) {
+    private static Routine nightWatchRoutine(Npc npc, WorldMap world, String mapId, int dayNumber, int minutes,
+                                             WeatherCondition weather) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 200);
+        int patrolStart = 17 * 60 + signed(hash, 30);
+        int latePatrol = 21 * 60 + signed(hash / 3, 35);
+        int sleepStart = 5 * 60 + signed(hash / 5, 20);
+        int sleepEnd = 12 * 60 + signed(hash / 7, 35);
+        if (minutes >= patrolStart || minutes < sleepStart) {
+            boolean deepNight = minutes < 4 * 60 || minutes >= latePatrol;
+            return routine(Activity.PATROLLING, patrolTarget(npc, world, mapId, dayNumber + 19), 1, 9, 55, 75,
+                    deepNight ? 0.26 : 0.18);
+        }
+        if (minutes < sleepEnd) {
+            return routine(Activity.SLEEPING, home(npc, world), 0, 2, 150, 140, 0.90);
+        }
+        if (severeWeather(weather)) {
+            return routine(Activity.SHELTERING, home(npc, world), 1, 2, 125, 105, 0.80);
+        }
+        if (minutes < 15 * 60) {
+            return routine(Activity.RESTING, home(npc, world), 1, 3, 110, 90, 0.76);
+        }
+        return routine(Activity.ERRAND, errandTarget(npc, world, mapId, dayNumber + 23), 1, 4, 90, 80, 0.54);
+    }
+
+    private static DayPlan dayPlanFor(Npc npc, String mapId, Archetype archetype, int dayNumber) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 500);
+        int dawnStart = switch (archetype) {
+            case GUARD, SCOUT -> 5 * 60 + signed(hash, 25);
+            case FORAGER, FISHER, COOK -> 5 * 60 + 30 + signed(hash, 30);
+            case SCHOLAR, HEALER -> 6 * 60 + 20 + signed(hash, 25);
+            case MERCHANT, CRAFTER, MINER, TAILOR, LEATHERWORKER -> 6 * 60 + signed(hash, 35);
+            default -> 6 * 60 + 10 + signed(hash, 35);
+        };
+        int workStart = dawnStart + 40 + Math.floorMod(hash / 3, 35);
+        int middayStart = 11 * 60 + 15 + signed(hash / 5, 30);
+        int middayEnd = middayStart + 50 + Math.floorMod(hash / 7, 35);
+        int duskStart = 17 * 60 + signed(hash / 11, 35);
+        int nightStart = 20 * 60 + 15 + signed(hash / 13, 35);
+        if (lighterWorkDay(archetype, hash)) {
+            middayStart -= 20;
+            middayEnd += 15;
+            duskStart -= 25;
+        }
+        if (marketDay(archetype, hash)) {
+            middayEnd += 20;
+            duskStart += 15;
+            nightStart += 10;
+        }
+        return new DayPlan(dawnStart, workStart, middayStart, middayEnd, duskStart, nightStart);
+    }
+
+    private static Routine dawnRoutine(Npc npc, WorldMap world, String mapId, Archetype archetype, int dayNumber,
+                                       WeatherCondition weather) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 41);
+        if (marketDay(archetype, hash) && marketFriendly(archetype)) {
+            return routine(Activity.ERRAND, marketTarget(npc, world, mapId, dayNumber), 1, 5, 85, 70, 0.36);
+        }
         return switch (archetype) {
             case COOK, FISHER, FORAGER -> workRoutine(npc, world, mapId, archetype, dayNumber, WeatherCondition.CLEAR, true);
             case MERCHANT -> routine(Activity.OPENING_SHOP, workTarget(npc, world, mapId, archetype, dayNumber), 1, 4, 80, 70, 0.42);
             case GUARD, SCOUT, NIGHT_WATCH -> routine(Activity.PATROLLING, patrolTarget(npc, world, mapId, dayNumber), 1, 8, 55, 60, 0.20);
-            default -> routine(Activity.ERRAND, offsetTarget(npc, world, mapId, dayNumber, 2, 2, 4), 1, 4, 90, 80, 0.55);
+            default -> routine(Activity.ERRAND, errandTarget(npc, world, mapId, dayNumber), 1, 4, 90, 80,
+                    wetWeather(weather) ? 0.62 : 0.55);
         };
     }
 
     private static Routine workRoutine(Npc npc, WorldMap world, String mapId, Archetype archetype, int dayNumber, WeatherCondition weather, boolean morning) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + (morning ? 61 : 67));
+        if (!morning && lighterWorkDay(archetype, hash) && socialArchetype(archetype)) {
+            return routine(Activity.ERRAND, errandTarget(npc, world, mapId, dayNumber + 7), 1, 5, 90, 85, 0.44);
+        }
+        if (!morning && marketDay(archetype, hash) && marketFriendly(archetype)) {
+            return routine(Activity.WORKING, marketTarget(npc, world, mapId, dayNumber + 7), 1, 6, 80, 85, 0.46);
+        }
         if (wetWeather(weather) && (archetype == Archetype.TAILOR || archetype == Archetype.MERCHANT || archetype == Archetype.SCHOLAR)) {
             return routine(Activity.WORKING, workTarget(npc, world, mapId, archetype, dayNumber), 1, 3, 105, 90, 0.66);
         }
@@ -124,21 +234,39 @@ final class AmbientNpcAi {
     }
 
     private static Routine middayRoutine(Npc npc, WorldMap world, String mapId, Archetype archetype, int dayNumber, WeatherCondition weather) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 89);
         if (severeWeather(weather)) {
             return routine(Activity.SHELTERING, home(npc, world), 1, weatherHardy(archetype) ? 4 : 2, 130, 110, 0.78);
         }
         if (archetype == Archetype.GUARD || archetype == Archetype.SCOUT || archetype == Archetype.NIGHT_WATCH) {
             return routine(Activity.PATROLLING, patrolTarget(npc, world, mapId, dayNumber + 3), 1, 8, 60, 70, 0.24);
         }
+        if (marketDay(archetype, hash) && marketFriendly(archetype)) {
+            return routine(Activity.SOCIALIZING, marketTarget(npc, world, mapId, dayNumber + 3), 2, 6, 75, 85, 0.38);
+        }
+        if (lighterWorkDay(archetype, hash) && !weatherHardy(archetype)) {
+            return routine(Activity.RETURNING_HOME, home(npc, world), 1, 4, 95, 90, 0.60);
+        }
+        if (archetype == Archetype.FISHER || archetype == Archetype.FORAGER) {
+            return routine(Activity.RESTING, mealTarget(npc, world, mapId, dayNumber + 5), 1, 5, 95, 95, 0.58);
+        }
         return routine(Activity.SOCIALIZING, socialTarget(npc, world, mapId, dayNumber), 2, 6, 80, 90, 0.48);
     }
 
-    private static Routine duskRoutine(Npc npc, WorldMap world, String mapId, Archetype archetype, int dayNumber) {
+    private static Routine duskRoutine(Npc npc, WorldMap world, String mapId, Archetype archetype, int dayNumber,
+                                       WeatherCondition weather) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 113);
         if (archetype == Archetype.GUARD || archetype == Archetype.SCOUT || archetype == Archetype.NIGHT_WATCH) {
             return routine(Activity.PATROLLING, patrolTarget(npc, world, mapId, dayNumber + 5), 1, 8, 55, 70, 0.22);
         }
-        if (archetype == Archetype.MERCHANT || archetype == Archetype.COOK) {
+        if (severeWeather(weather) && !weatherHardy(archetype)) {
+            return routine(Activity.RETURNING_HOME, home(npc, world), 1, 3, 105, 95, 0.68);
+        }
+        if (archetype == Archetype.MERCHANT || archetype == Archetype.COOK || socialEvening(archetype, hash)) {
             return routine(Activity.SOCIALIZING, socialTarget(npc, world, mapId, dayNumber + 2), 1, 5, 90, 90, 0.55);
+        }
+        if (lighterWorkDay(archetype, hash)) {
+            return routine(Activity.ERRAND, errandTarget(npc, world, mapId, dayNumber + 13), 1, 4, 92, 90, 0.50);
         }
         return routine(Activity.RETURNING_HOME, home(npc, world), 1, 4, 95, 95, 0.62);
     }
@@ -154,7 +282,29 @@ final class AmbientNpcAi {
         return new Routine(activity, target, roamRadius, maxDistance, thinkMin, thinkJitter, idleChance);
     }
 
+    private static Routine commuterJobRoutine(Npc npc, WorldMap world, WeatherCondition weather) {
+        TilePoint workSite = home(npc, world);
+        return switch (npc.job().kind()) {
+            case FARMER -> wetWeather(weather)
+                    ? routine(Activity.RESTING, workSite, 1, 3, 110, 90, 0.60)
+                    : routine(Activity.WORKING, workSite, 2, 6, 85, 85, 0.40);
+            case WOODCUTTER -> wetWeather(weather)
+                    ? routine(Activity.RESTING, workSite, 1, 3, 105, 90, 0.58)
+                    : routine(Activity.GATHERING, workSite, 2, 7, 70, 80, 0.30);
+            case HERBALIST -> severeWeather(weather)
+                    ? routine(Activity.RESTING, workSite, 1, 3, 115, 95, 0.62)
+                    : routine(Activity.GATHERING, workSite, 2, 6, 78, 82, 0.34);
+        };
+    }
+
     private static Archetype archetypeFor(Npc npc) {
+        if (npc.job() != null) {
+            return switch (npc.job().kind()) {
+                case FARMER -> Archetype.FORAGER;
+                case WOODCUTTER -> Archetype.CRAFTER;
+                case HERBALIST -> Archetype.HEALER;
+            };
+        }
         String text = ((npc.name() == null ? "" : npc.name()) + " "
                 + (npc.sprite() == null ? "" : npc.sprite()) + " "
                 + (npc.shopId() == null ? "" : npc.shopId()) + " "
@@ -244,6 +394,50 @@ final class AmbientNpcAi {
         };
     }
 
+    private static TilePoint errandTarget(Npc npc, WorldMap world, String mapId, int dayNumber) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 131);
+        TilePoint home = home(npc, world);
+        TilePoint errandProp = propTarget(npc, world, mapId, home, hash,
+                "well", "fountain", "notice", "market", "cart", "barrel", "wash_line", "bench", "street_lamp");
+        if (errandProp != null) {
+            return errandProp;
+        }
+        TilePoint errandBuilding = buildingTarget(world, mapId, home, hash,
+                "shop", "warehouse", "inn", "hall", "row", "house");
+        if (errandBuilding != null) {
+            return errandBuilding;
+        }
+        return offsetTarget(npc, world, mapId, hash, signed(hash, 3), 1 + signed(hash / 5, 2), 5);
+    }
+
+    private static TilePoint mealTarget(Npc npc, WorldMap world, String mapId, int dayNumber) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 149);
+        TilePoint home = home(npc, world);
+        TilePoint prop = propTarget(npc, world, mapId, home, hash,
+                "bench", "fountain", "well", "flower", "table", "barrel", "tree", "street_lamp");
+        if (prop != null && Math.floorMod(hash, 4) != 0) {
+            return prop;
+        }
+        TilePoint building = buildingTarget(world, mapId, home, hash, "inn", "restaurant", "house", "row");
+        return building != null ? building : home;
+    }
+
+    private static TilePoint marketTarget(Npc npc, WorldMap world, String mapId, int dayNumber) {
+        int hash = stableHash(npc.name(), mapId, dayNumber + 173);
+        TilePoint center = world.npcWorkTarget(npc, mapId);
+        if (center == null) {
+            center = home(npc, world);
+        }
+        TilePoint marketProp = propTarget(npc, world, mapId, center, hash,
+                "market", "kiosk", "cart", "crate", "barrel", "notice_board", "produce", "wagon");
+        if (marketProp != null) {
+            return marketProp;
+        }
+        TilePoint marketBuilding = buildingTarget(world, mapId, center, hash,
+                "shop", "warehouse", "inn", "restaurant", "hall", "guild");
+        return marketBuilding != null ? marketBuilding : socialTarget(npc, world, mapId, dayNumber + 1);
+    }
+
     private static TilePoint patrolTarget(Npc npc, WorldMap world, String mapId, int dayNumber) {
         int hash = stableHash(npc.name(), mapId, dayNumber);
         TilePoint patrolProp = propTarget(npc, world, mapId, home(npc, world), hash,
@@ -329,8 +523,7 @@ final class AmbientNpcAi {
 
     private static TilePoint propTarget(Npc npc, WorldMap world, String mapId, TilePoint center, int hash, String... keywords) {
         TilePoint home = home(npc, world);
-        TilePoint best = null;
-        int bestScore = Integer.MIN_VALUE;
+        List<ScoredTarget> candidates = new ArrayList<>();
         for (WorldProp prop : world.props(mapId)) {
             if (!propMatches(prop.asset(), keywords)) {
                 continue;
@@ -346,12 +539,9 @@ final class AmbientNpcAi {
             }
             int score = 120 - centerDistance * 5 - homeDistance * 2
                     + Math.floorMod(hash + prop.asset().hashCode() + prop.x() * 17 + prop.y() * 31, 29);
-            if (score > bestScore) {
-                bestScore = score;
-                best = spot;
-            }
+            addScoredCandidate(candidates, spot, score);
         }
-        return best;
+        return pickCandidate(candidates, hash, 3);
     }
 
     private static boolean propMatches(String asset, String... keywords) {
@@ -382,8 +572,7 @@ final class AmbientNpcAi {
     }
 
     private static TilePoint buildingTarget(WorldMap world, String mapId, TilePoint center, int hash, String... styles) {
-        TilePoint best = null;
-        int bestScore = Integer.MIN_VALUE;
+        List<ScoredTarget> candidates = new ArrayList<>();
         for (CityBuilding building : world.cityBuildings(mapId)) {
             if (!styleMatches(building.style(), styles)) {
                 continue;
@@ -397,12 +586,9 @@ final class AmbientNpcAi {
                 continue;
             }
             int score = 80 - distance * 4 + Math.floorMod(hash + building.key().hashCode(), 31);
-            if (score > bestScore) {
-                bestScore = score;
-                best = spot;
-            }
+            addScoredCandidate(candidates, spot, score);
         }
-        return best;
+        return pickCandidate(candidates, hash, 2);
     }
 
     private static boolean styleMatches(String style, String... styles) {
@@ -494,6 +680,73 @@ final class AmbientNpcAi {
 
     private static boolean wetWeather(WeatherCondition weather) {
         return List.of(WeatherCondition.RAIN, WeatherCondition.STORM, WeatherCondition.SNOW, WeatherCondition.BLIZZARD).contains(weather);
+    }
+
+    private static boolean marketDay(Archetype archetype, int hash) {
+        if (!marketFriendly(archetype)) {
+            return false;
+        }
+        int cadence = archetype == Archetype.MERCHANT ? 4 : 6;
+        return Math.floorMod(hash, cadence) == 0;
+    }
+
+    private static boolean lighterWorkDay(Archetype archetype, int hash) {
+        if (archetype == Archetype.GUARD || archetype == Archetype.SCOUT || archetype == Archetype.NIGHT_WATCH) {
+            return false;
+        }
+        if (archetype == Archetype.FISHER || archetype == Archetype.FORAGER) {
+            return Math.floorMod(hash, 7) == 0;
+        }
+        return Math.floorMod(hash, 6) == 0;
+    }
+
+    private static boolean socialEvening(Archetype archetype, int hash) {
+        if (archetype == Archetype.GUARD || archetype == Archetype.SCOUT || archetype == Archetype.NIGHT_WATCH) {
+            return false;
+        }
+        return socialArchetype(archetype) && Math.floorMod(hash, 3) == 0;
+    }
+
+    private static boolean socialArchetype(Archetype archetype) {
+        return archetype == Archetype.CITIZEN
+                || archetype == Archetype.SCHOLAR
+                || archetype == Archetype.HEALER
+                || archetype == Archetype.TAILOR
+                || archetype == Archetype.LEATHERWORKER
+                || archetype == Archetype.MERCHANT
+                || archetype == Archetype.COOK;
+    }
+
+    private static boolean marketFriendly(Archetype archetype) {
+        return archetype == Archetype.MERCHANT
+                || archetype == Archetype.COOK
+                || archetype == Archetype.TAILOR
+                || archetype == Archetype.LEATHERWORKER
+                || archetype == Archetype.CRAFTER
+                || archetype == Archetype.CITIZEN;
+    }
+
+    private static void addScoredCandidate(List<ScoredTarget> candidates, TilePoint target, int score) {
+        for (int i = 0; i < candidates.size(); i++) {
+            ScoredTarget existing = candidates.get(i);
+            if (existing.target().equals(target)) {
+                if (score > existing.score()) {
+                    candidates.set(i, new ScoredTarget(target, score));
+                }
+                return;
+            }
+        }
+        candidates.add(new ScoredTarget(target, score));
+    }
+
+    private static TilePoint pickCandidate(List<ScoredTarget> candidates, int hash, int topChoices) {
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        candidates.sort(Comparator.comparingInt(ScoredTarget::score).reversed());
+        int limit = Math.min(Math.max(1, topChoices), candidates.size());
+        int index = Math.floorMod(hash / 17, limit);
+        return candidates.get(index).target();
     }
 
     private static boolean containsAny(String text, String... needles) {

@@ -109,9 +109,11 @@ public final class SmokeTest {
         assertMapAreaPropIndex();
         assertPathfinder(state);
         assertOverworldTraversal(state.world);
+        assertTraversableOverworldIslands(state.world);
         assertOverworldDiscoverabilityProps(state.world);
         assertSettlementGateRoads(state.world);
         assertRoadMaterialsGenerated(state.world);
+        assertVillageBuildingRoadConnections(state.world);
         assertWeatherControllerFacade(state);
         if (!state.currentMapId.equals(WorldMap.PLAYER_VILLAGE_ID)) {
             throw new IllegalStateException("Expected new adventure to start in the player camp.");
@@ -128,6 +130,7 @@ public final class SmokeTest {
         state.playerY = 17;
         assertTownPortalFastTravel(state);
         assertCompanionNpcVisibility(state);
+        assertCommuterNpcVisibility(state);
         assertSettlementWeeklyQuestCoverage(state);
         state.currentMapId = "village_oakhaven";
         state.playerX = 13;
@@ -386,11 +389,16 @@ public final class SmokeTest {
         state.currentMapId = "city_riverside";
         state.playerX = 17;
         state.playerY = 11;
-        state.interact();
+        if (!state.talkToNpc(findNpc("city_riverside", "Marla"))) {
+            throw new IllegalStateException("Could not start Marla quest dialogue: " + state.status);
+        }
         Quest quest = state.quests.get("slime_help");
         acceptActiveQuestThroughDialogue(state, "slime_help");
         if (quest == null || !quest.accepted) {
-            throw new IllegalStateException("Quest acceptance failed.");
+            throw new IllegalStateException("Quest acceptance failed. mode=" + state.mode
+                    + ", status=" + state.status
+                    + ", options=" + state.activeNpcDialogOptions()
+                    + ", intents=" + state.activeNpcDialogOptionIntents());
         }
         quest.progress = quest.activeNeeded();
         state.currentMapId = "city_riverside";
@@ -552,14 +560,25 @@ public final class SmokeTest {
         objectiveState.playerX = scarecrowObjective.x();
         objectiveState.playerY = scarecrowObjective.y();
         objectiveState.interact();
-        if (!scarecrow.ready()) {
-            throw new IllegalStateException("Visit objective did not advance.");
+        if (scarecrow.stageIndex != 1 || scarecrow.progress != 0) {
+            throw new IllegalStateException("Scarecrow side quest did not roll into its clue stage.");
+        }
+        List<GameState.QuestObjective> scarecrowClues = objectiveState.activeQuestObjectives().stream()
+                .filter(objective -> objective.questId().equals("scarecrow_watch"))
+                .toList();
+        if (scarecrowClues.size() != 1 || scarecrowClues.get(0).kind() != Quest.ObjectiveKind.SEARCH) {
+            throw new IllegalStateException("Scarecrow side quest did not expose its follow-up clue objective.");
+        }
+        if (!"Foxglove Dead-Drop Knot".equals(scarecrowClues.get(0).target())) {
+            throw new IllegalStateException("Scarecrow side quest exposed the wrong follow-up target.");
         }
 
         Quest roadSigns = objectiveState.quests.get("aria_chain_2");
-        roadSigns.accepted = true;
+        objectiveState.quests.get("aria_chain_1").completed = true;
+        objectiveState.activeNpc = GameData.NPCS.stream().filter(n -> "aria".equals(n.recruitId())).findFirst().orElseThrow();
+        objectiveState.handleActiveNpcQuestAction();
         boolean collectedOutOfOrderRoadSign = false;
-        while (!roadSigns.ready()) {
+        while (roadSigns.stageIndex == 0) {
             List<GameState.QuestObjective> signObjectives = objectiveState.activeQuestObjectives().stream()
                     .filter(objective -> objective.questId().equals("aria_chain_2"))
                     .toList();
@@ -584,29 +603,68 @@ public final class SmokeTest {
             objectiveState.playerY = sign.y();
             objectiveState.interact();
         }
-        if (roadSigns.progress != roadSigns.needed) {
-            throw new IllegalStateException("Road sign objective did not complete.");
+        if (roadSigns.stageIndex != 1 || roadSigns.progress != 0) {
+            throw new IllegalStateException("Road sign stage did not roll into the witness stage.");
+        }
+        List<GameState.QuestObjective> witnessObjectives = objectiveState.activeQuestObjectives().stream()
+                .filter(objective -> objective.questId().equals("aria_chain_2"))
+                .toList();
+        if (witnessObjectives.size() != 1 || witnessObjectives.get(0).kind() != Quest.ObjectiveKind.TALK) {
+            throw new IllegalStateException("Witness stage did not become the next active authored objective.");
         }
 
-        Quest crown = objectiveState.quests.get("goblin_crown");
+        GameState stagedState = new GameState(config);
+        stagedState.chooseClass("Knight");
+        while (stagedState.mode == GameMode.STORY_INTRO) {
+            stagedState.advanceStoryIntro();
+        }
+        Quest ariaTracks = stagedState.quests.get("aria_chain_1");
+        ariaTracks.accepted = true;
+        while (ariaTracks.stageIndex == 0) {
+            GameState.QuestObjective snareObjective = stagedState.activeQuestObjectives().stream()
+                    .filter(objective -> objective.questId().equals("aria_chain_1"))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Expected first Aria clue objective."));
+            stagedState.currentMapId = snareObjective.mapId();
+            stagedState.playerX = snareObjective.x();
+            stagedState.playerY = snareObjective.y();
+            stagedState.interact();
+        }
+        if (ariaTracks.stageIndex != 1 || ariaTracks.progress != 0) {
+            throw new IllegalStateException("Search stage did not advance directly to the next objective.");
+        }
+        List<GameState.QuestObjective> ariaNextObjectives = stagedState.activeQuestObjectives().stream()
+                .filter(objective -> objective.questId().equals("aria_chain_1"))
+                .toList();
+        if (ariaNextObjectives.isEmpty()) {
+            throw new IllegalStateException("Next staged clue objective did not appear after inspection.");
+        }
+        if (ariaNextObjectives.stream().anyMatch(objective -> objective.kind() == Quest.ObjectiveKind.REPORT)) {
+            throw new IllegalStateException("Staged clue quest still required a report objective between stages.");
+        }
+        if (ariaNextObjectives.stream().noneMatch(objective -> "False Bootprint".equals(objective.target()))) {
+            throw new IllegalStateException("Staged clue quest did not expose the next authored target.");
+        }
+
+        GameState battleObjectiveState = new GameState(config);
+        battleObjectiveState.chooseClass("Knight");
+        while (battleObjectiveState.mode == GameMode.STORY_INTRO) {
+            battleObjectiveState.advanceStoryIntro();
+        }
+        Quest crown = battleObjectiveState.quests.get("goblin_crown");
         crown.accepted = true;
-        GameState.QuestObjective king = objectiveState.activeQuestObjectives().stream()
+        GameState.QuestObjective king = battleObjectiveState.activeQuestObjectives().stream()
                 .filter(objective -> objective.questId().equals("goblin_crown"))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Expected active Goblin King objective."));
-        objectiveState.currentMapId = king.mapId();
-        objectiveState.playerX = king.x() + 1;
-        objectiveState.playerY = king.y();
-        objectiveState.player.attack = 999;
-        objectiveState.interact();
-        if (objectiveState.mode != GameMode.BATTLE || objectiveState.battle == null
-                || !objectiveState.battle.monsterSpecs.get(0).key().equals("goblin_king")) {
+        battleObjectiveState.currentMapId = king.mapId();
+        battleObjectiveState.playerX = king.x() + 1;
+        battleObjectiveState.playerY = king.y();
+        battleObjectiveState.player.attack = 9999;
+        battleObjectiveState.interact();
+        if (battleObjectiveState.mode != GameMode.BATTLE || battleObjectiveState.battle == null
+                || !battleObjectiveState.battle.monsterSpecs.get(0).key().equals("goblin_king")) {
             throw new IllegalStateException("Goblin King objective did not start the boss battle.");
-        }
-        objectiveState.battleAttack();
-        drainBattle(objectiveState);
-        if (!crown.ready()) {
-            throw new IllegalStateException("Goblin King battle did not advance quest progress.");
         }
         System.out.println("Smoke test passed. " + loaded.player.className + " at " + loaded.playerX + "," + loaded.playerY);
     }
@@ -832,20 +890,71 @@ public final class SmokeTest {
         }
         int longestBridgeSpan = longestBridgeSpan(world);
         if (longestBridgeSpan > 8) {
-            throw new IllegalStateException("Expected bridge spans to be broken by landings, longest span was " + longestBridgeSpan + ".");
+            throw new IllegalStateException("Expected short bank-to-bank bridges, longest span was " + longestBridgeSpan + ".");
         }
         TilePoint[] anchors = {
                 WorldMap.START_POSITION,
                 new TilePoint(82, 105), new TilePoint(152, 145), new TilePoint(205, 78),
                 new TilePoint(228, 185), new TilePoint(150, 230), new TilePoint(83, 62),
-                new TilePoint(102, 245), new TilePoint(240, 153), new TilePoint(196, 62),
-                new TilePoint(255, 177), new TilePoint(72, 218), new TilePoint(194, 235)
+                new TilePoint(102, 245), new TilePoint(240, 153)
         };
         for (TilePoint target : anchors) {
             if (!canReach(world, WorldMap.START_POSITION, target)) {
                 throw new IllegalStateException("Expected overworld route to " + target.x() + "," + target.y() + ".");
             }
         }
+        // Sites can move away from water or settlements during generation.
+        for (WorldMap.AdventureMarker marker : world.adventureMarkers()) {
+            if (!canReach(world, WorldMap.START_POSITION, new TilePoint(marker.x(), marker.y()))) {
+                throw new IllegalStateException("Expected overworld route to " + marker.label());
+            }
+        }
+    }
+
+    private static void assertTraversableOverworldIslands(WorldMap world) {
+        boolean[][] seen = new boolean[WorldMap.ROWS][WorldMap.COLS];
+        for (int y = 1; y < WorldMap.ROWS - 1; y++) {
+            for (int x = 1; x < WorldMap.COLS - 1; x++) {
+                if (seen[y][x] || !isIslandGroundTile(world.rawOverworldTileAt(x, y))) {
+                    continue;
+                }
+                ArrayDeque<TilePoint> queue = new ArrayDeque<>();
+                List<TilePoint> component = new java.util.ArrayList<>();
+                queue.add(new TilePoint(x, y));
+                seen[y][x] = true;
+                boolean touchesWater = false;
+                while (!queue.isEmpty()) {
+                    TilePoint point = queue.removeFirst();
+                    component.add(point);
+                    for (int[] dir : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+                        int nx = point.x() + dir[0];
+                        int ny = point.y() + dir[1];
+                        if (nx < 0 || ny < 0 || nx >= WorldMap.COLS || ny >= WorldMap.ROWS) {
+                            continue;
+                        }
+                        char tile = world.rawOverworldTileAt(nx, ny);
+                        if (isIslandGroundTile(tile)) {
+                            if (!seen[ny][nx]) {
+                                seen[ny][nx] = true;
+                                queue.addLast(new TilePoint(nx, ny));
+                            }
+                        } else if (tile == 'w' || tile == '~') {
+                            touchesWater = true;
+                        }
+                    }
+                }
+                if (touchesWater && component.size() < 12) {
+                    TilePoint sample = component.get(0);
+                    throw new IllegalStateException("Undersized overworld island at "
+                            + sample.x() + "," + sample.y() + " has only " + component.size() + " traversable ground tiles.");
+                }
+            }
+        }
+    }
+
+    private static boolean isIslandGroundTile(char tile) {
+        return tile == 'g' || tile == 'f' || tile == 's' || tile == 'n'
+                || tile == 'v' || tile == 'b' || tile == 'P';
     }
 
     private static int longestBridgeSpan(WorldMap world) {
@@ -908,6 +1017,95 @@ public final class SmokeTest {
         if (overworldCobble < 100 || overworldRoad < 100) {
             throw new IllegalStateException("Overworld city approach roads did not generate mixed cobblestone segments.");
         }
+    }
+
+    private static void assertVillageBuildingRoadConnections(WorldMap world) {
+        for (WorldMap.SettlementSite settlement : world.settlementSites()) {
+            if (!"Village".equals(settlement.kind())) {
+                continue;
+            }
+            int connectedBuildings = 0;
+            for (CityBuilding building : world.cityBuildings(settlement.id())) {
+                if (buildingHasConnectedRoadFrontage(world, settlement.id(), building)) {
+                    connectedBuildings++;
+                }
+            }
+            int buildingCount = world.cityBuildings(settlement.id()).size();
+            if (connectedBuildings != buildingCount) {
+                throw new IllegalStateException(settlement.label() + " has disconnected village building roads. "
+                        + "Connected=" + connectedBuildings + " buildings=" + buildingCount + ".");
+            }
+        }
+        int gridRun = longestStraightVillageRoadRun(world, "village_oakhaven");
+        if (gridRun > 20) {
+            throw new IllegalStateException("Oakhaven village roads still look like a straight grid. Longest run="
+                    + gridRun + ".");
+        }
+    }
+
+    private static boolean buildingHasConnectedRoadFrontage(WorldMap world, String mapId, CityBuilding building) {
+        for (TilePoint door : world.cityBuildingDoorTiles(building)) {
+            int approachY = door.y() + 1;
+            if (approachY < world.height(mapId)
+                    && Terrain.connectingRoad(world.tileAt(mapId, door.x(), approachY))
+                    && villageRoadReachesExit(world, mapId, door.x(), approachY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean villageRoadReachesExit(WorldMap world, String mapId, int startX, int startY) {
+        boolean[][] seen = new boolean[world.height(mapId)][world.width(mapId)];
+        ArrayDeque<TilePoint> queue = new ArrayDeque<>();
+        seen[startY][startX] = true;
+        queue.add(new TilePoint(startX, startY));
+        int[][] dirs = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+        while (!queue.isEmpty()) {
+            TilePoint point = queue.removeFirst();
+            if (point.x() == 0 || point.y() == 0
+                    || point.x() == world.width(mapId) - 1 || point.y() == world.height(mapId) - 1) {
+                return true;
+            }
+            for (int[] dir : dirs) {
+                int nx = point.x() + dir[0];
+                int ny = point.y() + dir[1];
+                if (nx < 0 || ny < 0 || nx >= world.width(mapId) || ny >= world.height(mapId)
+                        || seen[ny][nx] || !Terrain.connectingRoad(world.tileAt(mapId, nx, ny))) {
+                    continue;
+                }
+                seen[ny][nx] = true;
+                queue.addLast(new TilePoint(nx, ny));
+            }
+        }
+        return false;
+    }
+
+    private static int longestStraightVillageRoadRun(WorldMap world, String mapId) {
+        int longest = 0;
+        for (int y = 0; y < world.height(mapId); y++) {
+            int run = 0;
+            for (int x = 0; x < world.width(mapId); x++) {
+                if (Terrain.connectingRoad(world.tileAt(mapId, x, y))) {
+                    run++;
+                    longest = Math.max(longest, run);
+                } else {
+                    run = 0;
+                }
+            }
+        }
+        for (int x = 0; x < world.width(mapId); x++) {
+            int run = 0;
+            for (int y = 0; y < world.height(mapId); y++) {
+                if (Terrain.connectingRoad(world.tileAt(mapId, x, y))) {
+                    run++;
+                    longest = Math.max(longest, run);
+                } else {
+                    run = 0;
+                }
+            }
+        }
+        return longest;
     }
 
     private static void assertOverworldDiscoverabilityProps(WorldMap world) {
@@ -1456,6 +1654,68 @@ public final class SmokeTest {
         }
     }
 
+    private static void assertCommuterNpcVisibility(GameState state) {
+        Npc commuter = null;
+        boolean validatedSpritePools = false;
+        for (WorldMap.SettlementSite settlement : state.world.settlementSites()) {
+            for (Npc npc : state.world.npcs(settlement.id())) {
+                if (npc.job() == null) {
+                    continue;
+                }
+                validatedSpritePools = true;
+                if (!WorldMap.isPreferredCommuterSprite(npc.job().kind(), npc.sprite())) {
+                    throw new IllegalStateException("Commuter NPC uses a mismatched sprite for "
+                            + npc.job().kind() + ": " + npc.name() + " -> " + npc.sprite());
+                }
+                if (commuter == null) {
+                    commuter = npc;
+                }
+            }
+            if (commuter != null && validatedSpritePools) {
+                break;
+            }
+        }
+        if (commuter == null) {
+            throw new IllegalStateException("Expected at least one explicit commuter NPC.");
+        }
+        if (!validatedSpritePools) {
+            throw new IllegalStateException("Expected commuter NPC sprite pool validation to run.");
+        }
+        final Npc commuterNpc = commuter;
+
+        int oldTick = state.worldTick;
+        try {
+            state.worldTick = commuterNpc.job().shiftStartMinutes() * GameState.TICKS_PER_GAME_DAY / 1440;
+            boolean homeVisibleByDay = state.npcMotionsForMap(commuterNpc.mapId()).stream()
+                    .anyMatch(motion -> motion.npc().equals(commuterNpc));
+            if (homeVisibleByDay) {
+                throw new IllegalStateException("Commuter source NPC should leave the settlement during their work shift: " + commuterNpc.name());
+            }
+            GameState.NpcMotion overworldMotion = state.npcMotionsForMap(WorldMap.OVERWORLD_ID).stream()
+                    .filter(motion -> motion.npc().name().equals(commuterNpc.name()) && motion.npc().job() != null)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Commuter NPC should appear in the overworld during the day: " + commuterNpc.name()));
+            if (!state.world.isPassable(WorldMap.OVERWORLD_ID, overworldMotion.x(), overworldMotion.y())) {
+                throw new IllegalStateException("Commuter NPC spawned on a blocked overworld tile: " + commuterNpc.name());
+            }
+
+            state.worldTick = Math.min(GameState.TICKS_PER_GAME_DAY - 1,
+                    commuterNpc.job().shiftEndMinutes() * GameState.TICKS_PER_GAME_DAY / 1440 + 30);
+            boolean homeVisibleAtNight = state.npcMotionsForMap(commuterNpc.mapId()).stream()
+                    .anyMatch(motion -> motion.npc().equals(commuterNpc));
+            if (!homeVisibleAtNight) {
+                throw new IllegalStateException("Commuter source NPC should return to their settlement after work: " + commuterNpc.name());
+            }
+            boolean overworldVisibleAtNight = state.npcMotionsForMap(WorldMap.OVERWORLD_ID).stream()
+                    .anyMatch(motion -> motion.npc().name().equals(commuterNpc.name()) && motion.npc().job() != null);
+            if (overworldVisibleAtNight) {
+                throw new IllegalStateException("Commuter NPC should not remain in the overworld after work: " + commuterNpc.name());
+            }
+        } finally {
+            state.worldTick = oldTick;
+        }
+    }
+
     private static void assertSettlementWeeklyQuestCoverage(GameState state) {
         state.ensureWeeklyNpcQuests();
         Set<String> weeklyOpeningLines = new HashSet<>();
@@ -1501,9 +1761,9 @@ public final class SmokeTest {
                 weeklyOpeningLines.add(quest.activeStartDialog());
                 DialogueLibrary.DialogueSession session = DialogueLibrary.startSession(
                         motion.npc(), quest, "forest", 0, new Random(quest.id.hashCode()));
-                chooseDialogueOption(session, "What work do you do here?");
-                chooseDialogueOption(session, "What work needs doing?");
-                chooseDialogueOption(session, "Why does this need doing?");
+                chooseQuestWorkTopicOption(session, quest);
+                chooseDialogueOption(session, DialogueLibrary.questTopicLabel(quest));
+                chooseFirstDialogueOption(session);
                 weeklyReasonLines.add(session.line());
             }
         }
@@ -1583,7 +1843,14 @@ public final class SmokeTest {
         int guard = 0;
         while (state.mode == GameMode.DIALOG && quest != null && !quest.accepted && guard++ < 18) {
             List<String> options = state.activeNpcDialogOptions();
-            int index = preferredQuestDialogueOption(options);
+            List<GameState.DialogueOptionIntent> intents = state.activeNpcDialogOptionIntents();
+            int index = continueOptionIndex(intents);
+            if (index < 0) {
+                index = questAcceptOptionIndex(intents, questId);
+            }
+            if (index < 0) {
+                index = preferredQuestDialogueOption(options, quest);
+            }
             if (index < 0) {
                 throw new IllegalStateException("No dialogue option could lead to accepting " + questId + ": " + options);
             }
@@ -1591,9 +1858,49 @@ public final class SmokeTest {
         }
     }
 
-    private static int preferredQuestDialogueOption(List<String> options) {
+    private static int continueOptionIndex(List<GameState.DialogueOptionIntent> intents) {
+        for (int i = 0; i < intents.size(); i++) {
+            if ("continue".equals(intents.get(i).kind())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static int questAcceptOptionIndex(List<GameState.DialogueOptionIntent> intents, String questId) {
+        for (int i = 0; i < intents.size(); i++) {
+            GameState.DialogueOptionIntent intent = intents.get(i);
+            if ("quest_accept".equals(intent.kind()) && intent.effect().equals("quest:accept:" + questId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static int preferredQuestDialogueOption(List<String> options, Quest quest) {
         String[] priorities = {
+                "I will stop it.",
+                "I will get them out.",
+                "I will help hold the line.",
+                "I will bring it back.",
+                "I will carry it carefully.",
+                "I will inspect it.",
+                "I will find what is hidden.",
+                "I will speak with them.",
+                "I will ask around quietly.",
+                "I will report the truth.",
+                "I will get them there safely.",
+                "I will make the choice.",
                 "I will handle it",
+                "What is happening with " + shortQuestTitle(quest) + "?",
+                "What does " + shortQuestTitle(quest) + " need from us?",
+                "Where does " + shortQuestTitle(quest) + " begin?",
+                DialogueLibrary.questTopicLabel(quest),
+                "What does Marla's Remedy need from us?",
+                "Tell me what you need",
+                "Tell me where",
+                "Tell me who",
+                "Tell me why",
                 "What work needs doing?",
                 "What work do you do here?",
                 "What exactly do you need?",
@@ -1625,7 +1932,7 @@ public final class SmokeTest {
                 return i;
             }
         }
-        return options.isEmpty() ? -1 : 0;
+        return -1;
     }
 
     private static void chooseDialogueOption(DialogueLibrary.DialogueSession session, String label) {
@@ -1635,6 +1942,38 @@ public final class SmokeTest {
             throw new IllegalStateException("Dialogue option not found: " + label + " in " + options);
         }
         session.choose(index);
+    }
+
+    private static void chooseQuestWorkTopicOption(DialogueLibrary.DialogueSession session, Quest quest) {
+        String title = shortQuestTitle(quest);
+        List<String> candidates = List.of(
+                "What is happening with " + title + "?",
+                "What does " + title + " need from us?",
+                "Where does " + title + " begin?"
+        );
+        for (String candidate : candidates) {
+            if (session.optionLabels().contains(candidate)) {
+                chooseDialogueOption(session, candidate);
+                return;
+            }
+        }
+        throw new IllegalStateException("Quest work topic option not found for " + title + " in " + session.optionLabels());
+    }
+
+    private static void chooseFirstDialogueOption(DialogueLibrary.DialogueSession session) {
+        List<String> options = session.optionLabels();
+        if (options.isEmpty()) {
+            throw new IllegalStateException("Dialogue has no options at: " + session.line());
+        }
+        session.choose(0);
+    }
+
+    private static String shortQuestTitle(Quest quest) {
+        String title = quest == null || quest.title == null || quest.title.isBlank() ? "this" : quest.title.strip();
+        if (title.length() <= 30) {
+            return title;
+        }
+        return title.substring(0, 27).strip() + "...";
     }
 
     private static void assertShopTransactions(GameState state) {

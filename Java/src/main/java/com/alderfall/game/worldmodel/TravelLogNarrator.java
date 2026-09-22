@@ -99,7 +99,7 @@ final class TravelLogNarrator {
             return "";
         }
         String trimmed = status.trim();
-        String transition = transitionLine(trimmed);
+        String transition = transitionLine(state, trimmed);
         if (transition != null) {
             return transition;
         }
@@ -110,9 +110,11 @@ final class TravelLogNarrator {
         return trimmed;
     }
 
-    private static String transitionLine(String status) {
+    private static String transitionLine(GameState state, String status) {
         if (status.startsWith("You enter ") && status.endsWith(".")) {
             String place = status.substring("You enter ".length(), status.length() - 1);
+            String local = state == null ? "" : RegionalSettlementIdentity.arrival(state.currentMapId);
+            if (!local.isEmpty()) return "You enter " + place + ". " + local;
             return "You enter " + place + "; lantern light and local voices draw near.";
         }
         if (status.startsWith("You leave ") && status.endsWith(".")) {

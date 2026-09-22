@@ -244,7 +244,7 @@ public final class SaveSystem {
         readVillageInteriorTiles(props.getProperty("villageInteriorTiles", ""), state);
         readVillageInteriorProps(props.getProperty("villageInteriorProps", ""), state);
         state.ensureWeeklyNpcQuests();
-        readQuests(props.getProperty("quests", ""), state);
+        String questMigrationNote = readQuests(props.getProperty("quests", ""), state);
         readQuestBranchOutcomes(props.getProperty("questBranchOutcomes", ""), state);
         readHarvestedQuestResources(props.getProperty("harvestedQuestResources", ""), state);
         readHarvestedResourceNodes(props.getProperty("harvestedResourceNodes", ""), state);
@@ -290,7 +290,7 @@ public final class SaveSystem {
         state.refreshPlayerVillageGrowth();
         state.resetNpcRuntime();
         state.resetDungeonMonsterRuntime();
-        state.status = "Loaded save.";
+        state.status = "Loaded save." + questMigrationNote;
         return true;
     }
 
@@ -669,7 +669,11 @@ public final class SaveSystem {
     private String writeQuests(GameState state) {
         StringJoiner joiner = new StringJoiner(",");
         for (Quest quest : state.quests.values()) {
-            joiner.add(quest.id + ":" + quest.accepted + ":" + quest.completed + ":" + quest.progress + ":" + quest.stageIndex);
+            joiner.add(quest.id + ":" + quest.accepted + ":" + quest.completed + ":" + quest.progress + ":" + quest.stageIndex
+                    + ":" + escape(quest.activeStage().id()) + ":" + quest.contentRevision
+                    + ":" + escape(String.join("|", quest.observedStages))
+                    + ":" + escape(quest.cargo.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                            .collect(java.util.stream.Collectors.joining("|"))));
         }
         return joiner.toString();
     }
@@ -973,6 +977,16 @@ public final class SaveSystem {
         }
         for (String resource : value.split(",")) {
             if (!resource.isBlank()) {
+                for (Quest quest : state.quests.values()) {
+                    if (quest.contentRevision != 0) continue;
+                    for (int i = 0; i < quest.stages.size(); i++) {
+                        String legacy = quest.id + "@stage" + i + ":";
+                        if (resource.contains(legacy)) {
+                            resource = resource.replace(legacy, quest.id + "@" + quest.stages.get(i).id() + ":");
+                            break;
+                        }
+                    }
+                }
                 state.harvestedQuestResources.add(resource);
             }
         }
@@ -1492,18 +1506,21 @@ public final class SaveSystem {
         }
     }
 
-    private void readQuests(String value, GameState state) {
+    private String readQuests(String value, GameState state) {
+        List<String> revisedInvestigations = new ArrayList<>();
         for (Quest quest : state.quests.values()) {
             quest.accepted = false;
             quest.completed = false;
             quest.progress = 0;
             quest.stageIndex = 0;
+            quest.observedStages.clear();
+            quest.cargo.clear();
         }
         if (value.isBlank()) {
-            return;
+            return "";
         }
         for (String part : value.split(",")) {
-            String[] fields = part.split(":");
+            String[] fields = part.split(":", -1);
             if (fields.length < 4) {
                 continue;
             }
@@ -1525,7 +1542,46 @@ public final class SaveSystem {
                     quest.stageIndex = 0;
                 }
             }
+            int savedRevision = fields.length >= 7 ? parseInt(fields[6], 0) : 0;
+            if (quest.completed && savedRevision != quest.contentRevision) {
+                quest.stageIndex = quest.stages.size() - 1;
+                quest.progress = quest.activeNeeded();
+                continue;
+            }
+            if (!quest.completed && savedRevision != quest.contentRevision) {
+                quest.stageIndex = 0;
+                quest.progress = 0;
+                if (quest.accepted) revisedInvestigations.add(quest.title);
+                continue;
+            }
+            if (fields.length >= 6) {
+                String stageId = unescape(fields[5]);
+                for (int i = 0; i < quest.stages.size(); i++) {
+                    if (quest.stages.get(i).id().equals(stageId)) {
+                        quest.stageIndex = i;
+                        break;
+                    }
+                }
+            }
+            quest.progress = Math.max(0, Math.min(quest.progress, quest.activeNeeded()));
+            if (fields.length >= 9) {
+                for (String cargo : unescape(fields[8]).split("\\|")) {
+                    String[] entry = cargo.split("=", 2);
+                    if (entry.length == 2 && parseInt(entry[1], 0) > 0)
+                        quest.cargo.put(entry[0], parseInt(entry[1], 0));
+                }
+            }
+            if (fields.length >= 8 && !fields[7].isBlank()) {
+                for (String id : unescape(fields[7]).split("\\|")) {
+                    if (quest.stages.stream().anyMatch(stage -> stage.id().equals(id))) quest.observedStages.add(id);
+                }
+            } else if (savedRevision == quest.contentRevision) {
+                for (int i = 0; i < quest.stageIndex; i++) quest.observedStages.add(quest.stages.get(i).id());
+                if (quest.ready() || quest.completed) quest.observedStages.add(quest.activeStage().id());
+            }
         }
+        return revisedInvestigations.isEmpty() ? "" : " Revised investigations need their new evidence checked: "
+                + String.join(", ", revisedInvestigations) + ". Completed quests and rewards were preserved.";
     }
 
     private void readQuestBranchOutcomes(String value, GameState state) {

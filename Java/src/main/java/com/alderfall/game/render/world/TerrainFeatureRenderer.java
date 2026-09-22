@@ -342,7 +342,10 @@ public final class TerrainFeatureRenderer {
         if (stormIntensity > rippleThreshold) {
             drawWaterRainRings(g, wx, wy, px, py, tileSize, seed, true, stormIntensity);
         }
-        drawWaterShoreFoam(g, wx, wy, px, py, tileSize, wave);
+        // Overworld shorelines now follow a continuous coverage mask, not tile-edge lines.
+        if (!"overworld".equals(state.world.kind(state.currentMapId))) {
+            drawWaterShoreFoam(g, wx, wy, px, py, tileSize, wave);
+        }
         g.setComposite(oldComposite);
         g.setStroke(oldStroke);
         g.setPaint(oldPaint);
@@ -440,7 +443,8 @@ public final class TerrainFeatureRenderer {
                 int wx = camX + sx;
                 int wy = camY + sy;
                 char tile = state.world.tileAt(state.currentMapId, wx, wy);
-                if (!Terrain.connectingRoad(tile)) {
+                // These roads already have a complete timber/earth surface in the terrain layer.
+                if (!Terrain.connectingRoad(tile) || tile == Terrain.PLANK_ROAD || tile == Terrain.PACKED_ROAD) {
                     continue;
                 }
                 if (isSettlementRoadNode(tile)) {
@@ -481,6 +485,17 @@ public final class TerrainFeatureRenderer {
     }
 
     private void drawTexturedRoadTile(Graphics2D g, int wx, int wy, int px, int py, char tile, boolean settlementRoad) {
+        double campCoverage = "overworld".equals(state.world.kind(state.currentMapId))
+                ? state.world.campGroundCoverage(wx + 0.5, wy + 0.5) : 0;
+        if (campCoverage > 0.99) return;
+        Graphics2D road = (Graphics2D) g.create();
+        road.setComposite(AlphaComposite.SrcOver.derive((float) (1 - campCoverage)));
+        drawTexturedRoadSurface(road, wx, wy, px, py, tile, settlementRoad, (float) (1 - campCoverage));
+        road.dispose();
+    }
+
+    private void drawTexturedRoadSurface(Graphics2D g, int wx, int wy, int px, int py, char tile,
+                                         boolean settlementRoad, float opacity) {
         int ts = tileSize();
         if (tile == Terrain.VILLAGE_ROAD || tile == Terrain.COBBLESTONE_ROAD) {
             drawRoadMaterialTexture(g, wx, wy, px, py, tile, settlementRoad);
@@ -488,7 +503,7 @@ public final class TerrainFeatureRenderer {
         int bits = roadBits(wx, wy);
         String suffix = "0" + Integer.toHexString(bits);
         String asset = "road_overlay_" + suffix.substring(suffix.length() - 2);
-        float alpha = roadOverlayAlpha(tile);
+        float alpha = roadOverlayAlpha(tile) * opacity;
         Composite oldComposite = g.getComposite();
         if (alpha < 1f) {
             g.setComposite(AlphaComposite.SrcOver.derive(alpha));
@@ -519,6 +534,8 @@ public final class TerrainFeatureRenderer {
             for (int sx = 0; sx < context.visibleCols() - 1; sx++) {
                 int wx = camX + sx;
                 int wy = camY + sy;
+                if ("overworld".equals(state.world.kind(state.currentMapId))
+                        && state.world.campGroundCoverage(wx + 1.0, wy + 1.0) > 0.1) continue;
                 if (!isRoadJunctionFill(wx, wy)) {
                     continue;
                 }
@@ -1045,105 +1062,114 @@ public final class TerrainFeatureRenderer {
     private void drawBridgeTile(Graphics2D g, int wx, int wy, int px, int py) {
         int ts = tileSize();
         int bits = roadBits(wx, wy);
-        if (bits == 0) {
+        int bridgeBits = 0;
+        if (isBridgeAt(wx, wy - 1)) bridgeBits |= 1;
+        if (isBridgeAt(wx, wy + 1)) bridgeBits |= 2;
+        if (isBridgeAt(wx - 1, wy)) bridgeBits |= 4;
+        if (isBridgeAt(wx + 1, wy)) bridgeBits |= 8;
+        // A road beside a bank must not turn a straight span into a T-junction.
+        if (bridgeBits != 0 && (bridgeBits & 3) == 0) {
+            bits = 12;
+        } else if (bridgeBits != 0 && (bridgeBits & 12) == 0) {
+            bits = 3;
+        } else if (bits == 0) {
             bits = 3;
         }
+        int half = tileRelative(15, ts);
+        int rail = tileRelative(3, ts);
+        java.awt.geom.Area deck = bridgeDeckShape(px, py, ts, half, bits);
         Graphics2D bridgeG = (Graphics2D) g.create();
-        bridgeG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Each tile owns exactly its pixels. Arms extend beyond the clip so their
+        // outlines cannot leave transverse caps or repaint the neighboring tile.
+        bridgeG.clipRect(px, py, ts, ts);
+        bridgeG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        bridgeG.setColor(new Color(35, 29, 22, 95));
+        bridgeG.setStroke(new BasicStroke(rail + tileRelative(4, ts), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        bridgeG.draw(deck);
+        bridgeG.setColor(new Color(127, 91, 56));
+        bridgeG.fill(deck);
 
-        int centerX = px + ts / 2;
-        int centerY = py + ts / 2;
-        int edgeInset = scaled(1);
-        drawBridgeStroke(bridgeG, centerX, centerY, px + ts / 2, py - edgeInset, bits, 1);
-        drawBridgeStroke(bridgeG, centerX, centerY, px + ts / 2, py + ts + edgeInset, bits, 2);
-        drawBridgeStroke(bridgeG, centerX, centerY, px - edgeInset, py + ts / 2, bits, 4);
-        drawBridgeStroke(bridgeG, centerX, centerY, px + ts + edgeInset, py + ts / 2, bits, 8);
-        if (isBridgeJoint(bits)) {
-            bridgeG.setColor(new Color(64, 42, 28, 180));
-            bridgeG.fillOval(centerX - scaled(18), centerY - scaled(18), scaled(36), scaled(36));
-            bridgeG.setColor(new Color(139, 96, 55));
-            bridgeG.fillOval(centerX - scaled(15), centerY - scaled(15), scaled(30), scaled(30));
+        Graphics2D boards = (Graphics2D) bridgeG.create();
+        boards.clip(deck);
+        boolean vertical = (bits & 3) != 0;
+        int plankCount = 7;
+        int thin = tileRelative(1, ts);
+        for (int i = 0; i < plankCount; i++) {
+            int start = i * ts / plankCount;
+            int end = (i + 1) * ts / plankCount;
+            int grain = Math.floorMod((vertical ? wy : wx) * 17 + i * 13, 5);
+            boards.setColor(new Color(145 + grain * 4, 107 + grain * 3, 66 + grain * 2));
+            if (vertical) boards.fillRect(px, py + start, ts, end - start);
+            else boards.fillRect(px + start, py, end - start, ts);
+            boards.setColor(new Color(83, 58, 36));
+            if (vertical) boards.fillRect(px, py + start, ts, thin);
+            else boards.fillRect(px + start, py, thin, ts);
+            boards.setColor(new Color(199, 153, 96, 145));
+            if (vertical) boards.fillRect(px, py + start + thin, ts, thin);
+            else boards.fillRect(px + start + thin, py, thin, ts);
+            int c = ts / 2;
+            int inset = half - tileRelative(5, ts);
+            int middle = (start + end) / 2;
+            boards.setColor(new Color(61, 49, 37, 170));
+            if (vertical) {
+                boards.fillRect(px + c - inset, py + middle, thin, thin);
+                boards.fillRect(px + c + inset - thin, py + middle, thin, thin);
+            } else {
+                boards.fillRect(px + middle, py + c - inset, thin, thin);
+                boards.fillRect(px + middle, py + c + inset - thin, thin, thin);
+            }
         }
-
-        drawBridgePlanks(bridgeG, px, py, bits);
-        drawBridgeRails(bridgeG, px, py, bits);
+        boards.dispose();
+        bridgeG.setColor(new Color(67, 47, 30));
+        bridgeG.setStroke(new BasicStroke(rail, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        bridgeG.draw(deck);
+        bridgeG.setColor(new Color(182, 139, 85));
+        bridgeG.setStroke(new BasicStroke(thin, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        bridgeG.draw(deck);
+        drawBridgePosts(bridgeG, px, py, ts, half, bits, bridgeBits, wx, wy);
         bridgeG.dispose();
     }
 
-    private boolean isBridgeJoint(int bits) {
-        return bits != 3 && bits != 12;
+    private boolean isBridgeAt(int x, int y) {
+        return state.world.tileAt(state.currentMapId, x, y) == 'B';
     }
 
-    private void drawBridgeStroke(Graphics2D g, int cx, int cy, int ex, int ey, int bits, int bit) {
-        if ((bits & bit) == 0) {
-            return;
-        }
-        g.setStroke(new BasicStroke(scaled(36), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.setColor(new Color(49, 32, 22, 150));
-        g.drawLine(cx, cy + scaled(2), ex, ey + scaled(2));
-        g.setStroke(new BasicStroke(scaled(32), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.setColor(new Color(68, 45, 29, 210));
-        g.drawLine(cx, cy, ex, ey);
-        g.setStroke(new BasicStroke(scaled(26), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.setColor(new Color(142, 98, 55));
-        g.drawLine(cx, cy, ex, ey);
-        g.setStroke(new BasicStroke(scaled(18), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.setColor(new Color(174, 128, 73, 150));
-        g.drawLine(cx, cy - scaled(1), ex, ey - scaled(1));
-    }
-
-    private void drawBridgePlanks(Graphics2D g, int px, int py, int bits) {
-        int ts = tileSize();
+    private java.awt.geom.Area bridgeDeckShape(int px, int py, int ts, int half, int bits) {
         int c = ts / 2;
-        g.setStroke(new BasicStroke(Math.max(1, scaled(1)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.setColor(new Color(73, 48, 31, 175));
-        if ((bits & 1) != 0 || (bits & 2) != 0) {
-            int startY = (bits & 1) != 0 ? scaled(3) : c - scaled(12);
-            int endY = (bits & 2) != 0 ? ts - scaled(3) : c + scaled(12);
-            for (int y = startY; y <= endY; y += scaled(7)) {
-                g.drawLine(px + c - scaled(13), py + y, px + c + scaled(13), py + y);
-            }
-        }
-        if ((bits & 4) != 0 || (bits & 8) != 0) {
-            int startX = (bits & 4) != 0 ? scaled(3) : c - scaled(12);
-            int endX = (bits & 8) != 0 ? ts - scaled(3) : c + scaled(12);
-            for (int x = startX; x <= endX; x += scaled(7)) {
-                g.drawLine(px + x, py + c - scaled(13), px + x, py + c + scaled(13));
-            }
+        int extension = ts;
+        java.awt.geom.Area shape = new java.awt.geom.Area(new Rectangle(px + c - half, py + c - half, half * 2, half * 2));
+        if ((bits & 1) != 0) shape.add(new java.awt.geom.Area(new Rectangle(px + c - half, py - extension, half * 2, c + extension)));
+        if ((bits & 2) != 0) shape.add(new java.awt.geom.Area(new Rectangle(px + c - half, py + c, half * 2, ts + extension - c)));
+        if ((bits & 4) != 0) shape.add(new java.awt.geom.Area(new Rectangle(px - extension, py + c - half, c + extension, half * 2)));
+        if ((bits & 8) != 0) shape.add(new java.awt.geom.Area(new Rectangle(px + c, py + c - half, ts + extension - c, half * 2)));
+        return shape;
+    }
+
+    private void drawBridgePosts(Graphics2D g, int px, int py, int ts, int half, int bits,
+                                 int bridgeBits, int wx, int wy) {
+        int size = tileRelative(5, ts);
+        int c = ts / 2;
+        int bankInset = tileRelative(4, ts);
+        if (bits == 3) {
+            if ((bridgeBits & 1) == 0) bridgePostPair(g, px + c, py + bankInset, half, size, true);
+            if ((bridgeBits & 2) == 0) bridgePostPair(g, px + c, py + ts - bankInset, half, size, true);
+            if (bridgeBits == 3 && Math.floorMod(wy, 2) == 0) bridgePostPair(g, px + c, py + c, half, size, true);
+        } else if (bits == 12) {
+            if ((bridgeBits & 4) == 0) bridgePostPair(g, px + bankInset, py + c, half, size, false);
+            if ((bridgeBits & 8) == 0) bridgePostPair(g, px + ts - bankInset, py + c, half, size, false);
+            if (bridgeBits == 12 && Math.floorMod(wx, 2) == 0) bridgePostPair(g, px + c, py + c, half, size, false);
         }
     }
 
-    private void drawBridgeRails(Graphics2D g, int px, int py, int bits) {
-        int ts = tileSize();
-        int c = ts / 2;
-        int rail = scaled(16);
-        g.setStroke(new BasicStroke(Math.max(2, scaled(3)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.setColor(new Color(55, 36, 24, 210));
-        if ((bits & 1) != 0 || (bits & 2) != 0) {
-            int startY = (bits & 1) != 0 ? -scaled(2) : c - scaled(14);
-            int endY = (bits & 2) != 0 ? ts + scaled(2) : c + scaled(14);
-            g.drawLine(px + c - rail, py + startY, px + c - rail, py + endY);
-            g.drawLine(px + c + rail, py + startY, px + c + rail, py + endY);
-        }
-        if ((bits & 4) != 0 || (bits & 8) != 0) {
-            int startX = (bits & 4) != 0 ? -scaled(2) : c - scaled(14);
-            int endX = (bits & 8) != 0 ? ts + scaled(2) : c + scaled(14);
-            g.drawLine(px + startX, py + c - rail, px + endX, py + c - rail);
-            g.drawLine(px + startX, py + c + rail, px + endX, py + c + rail);
-        }
-        g.setStroke(new BasicStroke(Math.max(1, scaled(1)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.setColor(new Color(197, 151, 87, 145));
-        if ((bits & 1) != 0 || (bits & 2) != 0) {
-            int startY = (bits & 1) != 0 ? -scaled(2) : c - scaled(14);
-            int endY = (bits & 2) != 0 ? ts + scaled(2) : c + scaled(14);
-            g.drawLine(px + c - rail, py + startY, px + c - rail, py + endY);
-            g.drawLine(px + c + rail, py + startY, px + c + rail, py + endY);
-        }
-        if ((bits & 4) != 0 || (bits & 8) != 0) {
-            int startX = (bits & 4) != 0 ? -scaled(2) : c - scaled(14);
-            int endX = (bits & 8) != 0 ? ts + scaled(2) : c + scaled(14);
-            g.drawLine(px + startX, py + c - rail, px + endX, py + c - rail);
-            g.drawLine(px + startX, py + c + rail, px + endX, py + c + rail);
+    private void bridgePostPair(Graphics2D g, int cx, int cy, int half, int size, boolean vertical) {
+        for (int side : new int[]{-1, 1}) {
+            int x = cx + (vertical ? side * half : 0) - size / 2;
+            int y = cy + (vertical ? 0 : side * half) - size / 2;
+            g.setColor(new Color(65, 45, 29));
+            g.fillRect(x, y, size, size);
+            g.setColor(new Color(192, 153, 98));
+            int edge = Math.max(1, size / 4);
+            g.fillRect(x + edge, y + edge, Math.max(1, size - edge * 2), Math.max(1, size - edge * 2));
         }
     }
 

@@ -8,16 +8,19 @@ public final class Terrain {
     public static final char DIRT_ROAD = 'r';
     public static final char VILLAGE_ROAD = 'T';
     public static final char COBBLESTONE_ROAD = 'K';
+    public static final char PLANK_ROAD = '7';
+    public static final char PACKED_ROAD = '8';
 
     public static final Set<Character> PASSABLE = Set.of(
             'g', 'f', 's', 'n', 'v', 'b', 'P', 'q', 'A', 'B', 'r', 'T', 'K', 'c', 'u', 'd', 'p', 'j', 'l', 'a', 'y', 't', 'i', 'e', 'z',
-            'C', 'G', 'V', 'U', 'D', 'F', 'M', 'R', 'S', 'L', 'N', 'I', 'J', 'H', 'Q'
+            'C', 'G', 'V', 'U', 'D', 'F', 'M', 'R', 'S', 'L', 'N', 'E', 'I', 'J', 'H', 'Q',
+            '1', '2', '3', '4', '5', '6', PLANK_ROAD, PACKED_ROAD
     );
     public static final Set<Character> ROAD_LIKE = Set.of(
-            'r', 'T', 'K', 'q', 'B', 'c', 'p', 'j', 'l', 'a', 'C', 'G', 'V', 'U'
+            'r', 'T', 'K', 'q', 'B', 'c', 'p', 'j', 'l', 'a', 'C', 'G', 'V', 'U', PLANK_ROAD, PACKED_ROAD
     );
     public static final Set<Character> CONNECTING_ROAD = Set.of(
-            'r', 'T', 'K', 'q', 'B', 'c', 'u', 'd'
+            'r', 'T', 'K', 'q', 'B', 'c', 'u', 'd', PLANK_ROAD, PACKED_ROAD
     );
 
     private static final Map<Character, String> NAMES = Map.ofEntries(
@@ -49,6 +52,8 @@ public final class Terrain {
             Map.entry('G', "Brick Crosswalk"),
             Map.entry('V', "Packed Earth"),
             Map.entry('U', "Plank Walk"),
+            Map.entry(PLANK_ROAD, "Plank Walk"),
+            Map.entry(PACKED_ROAD, "Packed Earth"),
             Map.entry('D', "Mosaic Floor"),
             Map.entry('F', "Cracked Flagstone"),
             Map.entry('M', "Mossy Dungeon Floor"),
@@ -56,12 +61,22 @@ public final class Terrain {
             Map.entry('S', "Sigil Floor"),
             Map.entry('L', "Torchlit Flagstone"),
             Map.entry('N', "Natural Cavern Floor"),
+            Map.entry('E', "Cave Rubble Floor"),
             Map.entry('I', "Iron Prison Floor"),
             Map.entry('J', "Sewer Walkway"),
             Map.entry('H', "Castle Flagstone"),
             Map.entry('Q', "Crypt Ossuary Floor"),
+            Map.entry('1', "Castle Rubble Floor"),
+            Map.entry('2', "Castle Ceremonial Floor"),
+            Map.entry('3', "Castle Candlelit Floor"),
+            Map.entry('4', "Castle Sigil Floor"),
+            Map.entry('5', "Stairs Up"),
+            Map.entry('6', "Stairs Down"),
             Map.entry('O', "Cavern Wall"),
+            Map.entry('Y', "Cave Water"),
             Map.entry('W', "Sewer Channel"),
+            Map.entry('X', "Castle Wall"),
+            Map.entry('Z', "Void"),
             Map.entry('t', "Tower"),
             Map.entry('h', "Building"),
             Map.entry('x', "Wall"),
@@ -101,6 +116,8 @@ public final class Terrain {
             Map.entry('G', "town_brick_crosswalk"),
             Map.entry('V', "village_packed_earth"),
             Map.entry('U', "village_plank_walk"),
+            Map.entry(PLANK_ROAD, "village_plank_walk"),
+            Map.entry(PACKED_ROAD, "village_packed_earth"),
             Map.entry('D', "dungeon_mosaic_floor"),
             Map.entry('F', "dungeon_cracked_flagstone"),
             Map.entry('M', "dungeon_moss_floor"),
@@ -108,12 +125,22 @@ public final class Terrain {
             Map.entry('S', "dungeon_boss_sigil_floor"),
             Map.entry('L', "dungeon_torch_floor"),
             Map.entry('N', "dungeon_cave_floor"),
+            Map.entry('E', "dungeon_cave_rubble_floor"),
             Map.entry('I', "dungeon_prison_floor"),
             Map.entry('J', "dungeon_sewer_walkway"),
             Map.entry('H', "dungeon_castle_floor"),
             Map.entry('Q', "dungeon_crypt_floor"),
+            Map.entry('1', "dungeon_castle_floor_variant_2"),
+            Map.entry('2', "dungeon_castle_ceremonial_floor"),
+            Map.entry('3', "dungeon_castle_candle_floor"),
+            Map.entry('4', "dungeon_castle_boss_sigil"),
+            Map.entry('5', "dungeon_castle_stair_up"),
+            Map.entry('6', "dungeon_castle_stair_down"),
             Map.entry('O', "dungeon_cave_wall"),
+            Map.entry('Y', "dungeon_cave_water"),
             Map.entry('W', "dungeon_sewer_water"),
+            Map.entry('X', "dungeon_castle_wall"),
+            Map.entry('Z', "dungeon_void"),
             Map.entry('t', "city_cobble"),
             Map.entry('h', "city"),
             Map.entry('x', "dungeon_wall"),
@@ -153,6 +180,8 @@ public final class Terrain {
             Map.entry('G', new Color(121, 91, 75)),
             Map.entry('V', new Color(138, 105, 65)),
             Map.entry('U', new Color(111, 82, 48)),
+            Map.entry(PLANK_ROAD, new Color(111, 82, 48)),
+            Map.entry(PACKED_ROAD, new Color(138, 105, 65)),
             Map.entry('D', new Color(64, 58, 72)),
             Map.entry('F', new Color(58, 57, 62)),
             Map.entry('M', new Color(51, 68, 61)),
@@ -160,12 +189,22 @@ public final class Terrain {
             Map.entry('S', new Color(70, 61, 80)),
             Map.entry('L', new Color(93, 70, 50)),
             Map.entry('N', new Color(55, 58, 62)),
+            Map.entry('E', new Color(63, 55, 43)),
             Map.entry('I', new Color(50, 51, 58)),
             Map.entry('J', new Color(48, 60, 55)),
             Map.entry('H', new Color(76, 72, 76)),
             Map.entry('Q', new Color(63, 58, 65)),
+            Map.entry('1', new Color(73, 69, 64)),
+            Map.entry('2', new Color(55, 58, 67)),
+            Map.entry('3', new Color(96, 75, 48)),
+            Map.entry('4', new Color(58, 59, 75)),
+            Map.entry('5', new Color(69, 71, 77)),
+            Map.entry('6', new Color(51, 53, 60)),
             Map.entry('O', new Color(37, 39, 42)),
+            Map.entry('Y', new Color(35, 87, 111)),
             Map.entry('W', new Color(43, 78, 64)),
+            Map.entry('X', new Color(31, 34, 41)),
+            Map.entry('Z', new Color(4, 4, 5)),
             Map.entry('t', new Color(121, 115, 112)),
             Map.entry('h', new Color(154, 98, 62)),
             Map.entry('x', new Color(84, 82, 90)),

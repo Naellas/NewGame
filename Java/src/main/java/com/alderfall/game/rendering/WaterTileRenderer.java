@@ -72,6 +72,7 @@ public final class WaterTileRenderer {
             case HIGH -> 9;
             case BALANCED -> 7;
             case PERFORMANCE -> 5;
+            case LOW_SPEC -> 2;
         };
         for (int i = 0; i < count; i++) {
             int localSeed = Math.abs(seed + i * 13757);
@@ -91,7 +92,11 @@ public final class WaterTileRenderer {
     }
 
     private void drawCrossRipples(Graphics2D g, int tileSize, int seed, double t, double wave, WeatherQuality quality) {
-        int count = quality == WeatherQuality.PERFORMANCE ? 2 : 3;
+        int count = switch (quality) {
+            case HIGH, BALANCED -> 3;
+            case PERFORMANCE -> 2;
+            case LOW_SPEC -> 0;
+        };
         g.setStroke(new BasicStroke(Math.max(1f, relStroke(tileSize, 0.55f)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         for (int i = 0; i < count; i++) {
             int localSeed = Math.abs(seed + i * 42073);
@@ -106,7 +111,7 @@ public final class WaterTileRenderer {
     }
 
     private void drawGlints(Graphics2D g, int tileSize, int seed, double t, double wave, WeatherQuality quality) {
-        if (quality == WeatherQuality.PERFORMANCE || wave < 0.25) {
+        if (quality == WeatherQuality.PERFORMANCE || quality == WeatherQuality.LOW_SPEC || wave < 0.25) {
             return;
         }
         int count = quality == WeatherQuality.HIGH ? 2 : 1;
@@ -144,6 +149,7 @@ public final class WaterTileRenderer {
             case HIGH -> 18;
             case BALANCED -> 14;
             case PERFORMANCE -> 10;
+            case LOW_SPEC -> 4;
         };
     }
 
@@ -152,6 +158,7 @@ public final class WaterTileRenderer {
             case HIGH -> 1;
             case BALANCED -> 2;
             case PERFORMANCE -> 3;
+            case LOW_SPEC -> 6;
         };
     }
 

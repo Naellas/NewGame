@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 public final class Battle {
     public static final int MAX_ENEMIES = 5;
     public static final int MAX_PLAYER_COMPANIONS = 3;
+    private static final int INTRO_TOTAL_TICKS = 84;
     private final Random random;
     private final Map<Actor, Map<String, EffectStack>> statuses = new IdentityHashMap<>();
     private final Map<Actor, Map<String, Integer>> monsterCooldowns = new IdentityHashMap<>();
@@ -67,8 +68,11 @@ public final class Battle {
     public final Queue<String> log = new ArrayDeque<>();
     public final List<FloatingText> floaters = new ArrayList<>();
     public final String backdrop;
+    public final char terrain;
+    public final String mapKind;
     public boolean finished;
     public boolean victory;
+    public boolean fled;
     public boolean questRecorded;
     public boolean lootGranted;
     public boolean companionTrustGranted;
@@ -83,6 +87,11 @@ public final class Battle {
     public String effectKind = "";
     public Actor effectSource;
     public Actor effectTarget;
+    private int introTimer;
+    private int introTotalTicks;
+    private String introStyleLabel = "";
+    private String introEncounterLine = "";
+    private String introPartyBark = "";
 
     public Battle(Actor player, GameData.MonsterSpec monsterSpec, Random random) {
         this(player, List.of(), monsterSpec, random, 'g', "overworld");
@@ -108,6 +117,8 @@ public final class Battle {
         this.player = player;
         this.random = random == null ? new Random() : random;
         this.backdrop = chooseBackdrop(terrain, mapKind);
+        this.terrain = terrain;
+        this.mapKind = mapKind == null ? "overworld" : mapKind;
         this.monsterLevelScaling = Math.max(0.0, Math.min(1.0, monsterLevelScaling));
         List<GameData.MonsterSpec> specs = monsterSpecs == null || monsterSpecs.isEmpty()
                 ? List.of(GameData.MONSTERS.get("slime"))
@@ -473,7 +484,7 @@ public final class Battle {
     }
 
     public boolean canAcceptInput() {
-        return !finished && actionAnimation == null && !enemyPhase;
+        return !finished && actionAnimation == null && !enemyPhase && !introActive();
     }
 
     public boolean isAnimating() {
@@ -482,6 +493,42 @@ public final class Battle {
 
     public BattleActionAnimation activeAnimation() {
         return actionAnimation;
+    }
+
+    public void configureIntro(String styleLabel, String encounterLine, String partyBark) {
+        introStyleLabel = styleLabel == null ? "" : styleLabel.trim();
+        introEncounterLine = encounterLine == null ? "" : encounterLine.trim();
+        introPartyBark = partyBark == null ? "" : partyBark.trim();
+        boolean hasIntroText = !introStyleLabel.isBlank() || !introEncounterLine.isBlank() || !introPartyBark.isBlank();
+        introTotalTicks = hasIntroText ? INTRO_TOTAL_TICKS : 0;
+        introTimer = introTotalTicks;
+    }
+
+    public boolean introActive() {
+        return introTimer > 0;
+    }
+
+    public void skipIntro() {
+        introTimer = 0;
+    }
+
+    public double introProgress() {
+        if (introTotalTicks <= 0) {
+            return 1.0;
+        }
+        return 1.0 - introTimer / (double) introTotalTicks;
+    }
+
+    public String introStyleLabel() {
+        return introStyleLabel;
+    }
+
+    public String introEncounterLine() {
+        return introEncounterLine;
+    }
+
+    public String introPartyBark() {
+        return introPartyBark;
     }
 
     public boolean effectReleased() {
@@ -516,6 +563,10 @@ public final class Battle {
     }
 
     public void tick() {
+        if (introTimer > 0) {
+            introTimer--;
+            return;
+        }
         shake = Math.max(0, shake - 1);
         monsterOffset = shake * (shake % 2 == 0 ? 1 : -1);
         playerOffset = (shake / 2) * (shake % 2 == 0 ? -1 : 1);
@@ -678,6 +729,32 @@ public final class Battle {
                     addLog(actor.name + " slips into evasive footwork, gaining +2 MP.");
                 },
                 () -> afterPartyAction(actor)
+        );
+    }
+
+    public void playerRun() {
+        Actor actor = activeActor();
+        if (!canPartyAct(actor)) {
+            return;
+        }
+        if (hasBossEnemy()) {
+            addLog(actor.name + " cannot escape this fight.");
+            return;
+        }
+        setGuard(actor, false);
+        beginAnimatedAction(
+                "dust",
+                actor,
+                actor,
+                5,
+                1,
+                6,
+                () -> resolveRunAttempt(actor),
+                () -> {
+                    if (!finished) {
+                        afterPartyAction(actor);
+                    }
+                }
         );
     }
 
@@ -2341,6 +2418,46 @@ public final class Battle {
         for (String note : notes) {
             addLog(note.contains("Level ") ? "Level up! " + note : note);
         }
+    }
+
+    private void resolveRunAttempt(Actor actor) {
+        double chance = runChance(actor);
+        int percent = (int) Math.round(chance * 100.0);
+        if (random.nextDouble() < chance) {
+            finished = true;
+            victory = false;
+            fled = true;
+            floaters.add(new FloatingText("Escaped", floaterX(actor), floaterY(actor), 34, new Color(200, 225, 255)));
+            addLog(actor.name + " breaks away from combat. Escape chance: " + percent + "%.");
+            return;
+        }
+        applyStatus(actor, "evasive", Math.max(8, 8 + actor.dexterity / 3));
+        floaters.add(new FloatingText("Failed", floaterX(actor), floaterY(actor), 28, new Color(231, 196, 119)));
+        addLog(actor.name + " tries to run, but the enemy keeps pace. Escape chance: " + percent + "%.");
+    }
+
+    public double runChance(Actor actor) {
+        if (actor == null) {
+            return 0.0;
+        }
+        double enemyPressure = livingEnemies().stream()
+                .mapToDouble(foe -> foe.dexterity * 0.65 + foe.attack * 0.22 + foe.defense * 0.12)
+                .max()
+                .orElse(8.0);
+        double escapeScore = actor.dexterity * 1.25 + actor.constitution * 0.55 + actor.level * 0.45;
+        double chance = 0.46 + (escapeScore - enemyPressure) * 0.018;
+        chance -= Math.max(0, livingEnemies().size() - livingParty().size()) * 0.055;
+        if (statusBucket(actor).containsKey("haste")) {
+            chance += 0.08;
+        }
+        if (statusBucket(actor).containsKey("evasive")) {
+            chance += 0.10;
+        }
+        return Math.max(0.15, Math.min(0.85, chance));
+    }
+
+    private boolean hasBossEnemy() {
+        return livingEnemies().stream().anyMatch(this::isBossEnemy);
     }
 
     public void addLog(String message) {

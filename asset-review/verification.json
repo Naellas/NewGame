@@ -1,0 +1,12 @@
+{
+  "files_moved": 437,
+  "bytes_moved": 5221117,
+  "checksums_verified": 437,
+  "runtime_assets_before": 2831,
+  "runtime_assets_after": 2438,
+  "unreferenced_names_removed": 393,
+  "identical_companion_path_changes": 9,
+  "other_runtime_path_changes": 0,
+  "restore_script_syntax": "passed",
+  "mage_cast_10_frame_geometry": "passed"
+}

@@ -197,6 +197,53 @@ def inspection_cache() -> None:
     save("quest_inspection_cache", image)
 
 
+def cassia_cracked_shield() -> None:
+    image, draw = canvas()
+    shadow(draw)
+    draw.polygon([(32, 10), (48, 17), (45, 38), (32, 53), (19, 38), (16, 17)],
+                 fill=(55, 60, 66, 255))
+    draw.polygon([(32, 14), (44, 20), (41, 36), (32, 48), (23, 36), (20, 20)],
+                 fill=(134, 145, 151, 255))
+    draw.polygon([(32, 17), (39, 22), (37, 35), (32, 43), (27, 35), (25, 22)],
+                 fill=(83, 93, 105, 255))
+    draw.line((23, 24, 33, 33, 29, 43), fill=(34, 38, 43, 255), width=2)
+    draw.line((34, 18, 30, 28, 38, 39), fill=(216, 210, 165, 255), width=1)
+    draw.arc((19, 14, 46, 35), 205, 330, fill=(202, 158, 72, 255), width=2)
+    save("quest_cassia_cracked_shield", image)
+
+
+def cassia_gate_winch() -> None:
+    image, draw = canvas()
+    shadow(draw)
+    draw.rectangle((18, 37, 47, 48), fill=(72, 46, 30, 255))
+    draw.rectangle((20, 39, 45, 46), fill=(139, 89, 45, 255))
+    draw.ellipse((17, 16, 43, 42), fill=(56, 59, 62, 255))
+    draw.ellipse((21, 20, 39, 38), fill=(126, 131, 132, 255))
+    draw.ellipse((27, 26, 33, 32), fill=(57, 42, 31, 255))
+    for angle in [(30, 30, 48, 18), (30, 30, 12, 42), (30, 30, 45, 44)]:
+        draw.line(angle, fill=(71, 45, 30, 255), width=4)
+        draw.line(angle, fill=(171, 113, 55, 255), width=2)
+    draw.line((42, 14, 50, 9), fill=(72, 46, 30, 255), width=4)
+    draw.line((45, 13, 52, 9), fill=(180, 118, 56, 255), width=2)
+    save("quest_cassia_gate_winch", image)
+
+
+def cassia_burned_gate_banner() -> None:
+    image, draw = canvas()
+    shadow(draw)
+    draw.line((20, 12, 20, 51), fill=(62, 43, 30, 255), width=4)
+    draw.line((22, 13, 22, 50), fill=(137, 91, 48, 255), width=2)
+    draw.rectangle((21, 14, 48, 18), fill=(66, 47, 34, 255))
+    draw.polygon([(23, 18), (47, 18), (43, 44), (35, 38), (29, 49), (24, 42)],
+                 fill=(86, 36, 32, 255), outline=(45, 30, 26, 255))
+    draw.polygon([(26, 20), (43, 20), (40, 37), (34, 33), (30, 42), (26, 37)],
+                 fill=(156, 55, 43, 255))
+    draw.line((30, 24, 39, 34), fill=(214, 153, 71, 255), width=2)
+    draw.line((39, 24, 30, 34), fill=(214, 153, 71, 255), width=2)
+    draw.arc((33, 38, 51, 55), 195, 300, fill=(235, 125, 48, 220), width=2)
+    save("quest_cassia_burned_gate_banner", image)
+
+
 def supply_cache() -> None:
     image, draw = canvas()
     shadow(draw)
@@ -222,6 +269,9 @@ def main() -> None:
     lamp_supplies()
     foxglove()
     inspection_cache()
+    cassia_cracked_shield()
+    cassia_gate_winch()
+    cassia_burned_gate_banner()
     supply_cache()
     print(f"Wrote quest objective assets to {OUT_DIR}")
 

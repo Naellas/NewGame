@@ -6,7 +6,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -30,20 +29,18 @@ public final class WorldPropRenderer {
             drawVillageFenceProp(g, prop, context);
             return;
         }
-        int size = propRenderSize(asset, prop.size(), context.tileSize());
+        int size = placedSize(prop, context.tileSize());
         int drawW = interiorPropWidth(asset, size);
         int drawH = interiorPropHeight(asset, size);
-        int px = (prop.x() - context.camX()) * context.tileSize() + (context.tileSize() - drawW) / 2;
-        int py = (prop.y() - context.camY()) * context.tileSize() + context.tileSize() - drawH;
-        if (asset.startsWith("interior_")) {
-            px += interiorPropOffsetX(asset, context.tileSize());
-            py += interiorPropOffsetY(asset, context.tileSize());
-        }
-
+        java.awt.Rectangle placed = propBounds(prop, context.tileSize(), context.camX(), context.camY());
+        int px = placed.x;
+        int py = placed.y;
         if (isSoftGroundProp(asset)) {
-            int seed = prop.x() * 928371 + prop.y() * 364479 + asset.hashCode();
-            px += scaled(Math.floorMod(seed, 7) - 3);
-            py += scaled(Math.floorMod(seed / 13, 5) - 2);
+            if (!com.alderfall.game.map.WorldMap.OVERWORLD_ID.equals(state.currentMapId)) {
+                int seed = prop.x() * 928371 + prop.y() * 364479 + asset.hashCode();
+                px += scaled(Math.floorMod(seed, 7) - 3);
+                py += scaled(Math.floorMod(seed / 13, 5) - 2);
+            }
             drawPropGroundBlend(g, prop.x(), prop.y(), px, py, size, 0.32f, true);
             drawAnimatedPropImage(g, prop, asset, px, py, size, 0.90f, context.frame());
             drawPropGroundVeil(g, prop.x(), prop.y(), px, py, size, 0.16f);
@@ -63,7 +60,7 @@ public final class WorldPropRenderer {
         }
         if (asset.startsWith("interior_")) {
             drawPropImage(g, asset, px, py, drawW, drawH, 1.0f);
-            drawPropAmbientAnimation(g, prop, px, py, Math.max(drawW, drawH), context.frame());
+            drawInteriorEmbers(g, prop, px, py, drawW, drawH, context.frame());
             return;
         }
         drawAnimatedPropImage(g, prop, asset, px, py, size, 1.0f, context.frame());
@@ -71,6 +68,30 @@ public final class WorldPropRenderer {
             drawPropGroundVeil(g, prop.x(), prop.y(), px, py, size, 0.08f);
         }
         drawPropAmbientAnimation(g, prop, px, py, size, context.frame());
+    }
+
+    public java.awt.Rectangle interiorBounds(WorldProp prop, int tileSize, int camX, int camY) {
+        String asset = prop.asset();
+        int size = propRenderSize(asset, prop.size(), tileSize);
+        int width = interiorPropWidth(asset, size), height = interiorPropHeight(asset, size);
+        int[] footprint = state.world.interiorVisualFootprint(asset);
+        return new java.awt.Rectangle((prop.x() - camX) * tileSize + (footprint[0] * tileSize - width) / 2
+                + interiorPropOffsetX(asset, tileSize),
+                (prop.y() - camY + footprint[1]) * tileSize - height + interiorPropOffsetY(asset, tileSize), width, height);
+    }
+
+    public int placedSize(WorldProp prop, int tileSize) {
+        return Math.max(1, (int) Math.round(propRenderSize(prop.asset(), prop.size(), tileSize)
+                * PropPlacement.at(state.world, state.currentMapId, prop).scale()));
+    }
+
+    public java.awt.Rectangle propBounds(WorldProp prop, int tileSize, int camX, int camY) {
+        if (prop.asset().startsWith("interior_")) return interiorBounds(prop, tileSize, camX, camY);
+        PropPlacement.Placement placement = PropPlacement.at(state.world, state.currentMapId, prop);
+        int size = placedSize(prop, tileSize);
+        int width = interiorPropWidth(prop.asset(), size), height = interiorPropHeight(prop.asset(), size);
+        return new java.awt.Rectangle((prop.x() - camX) * tileSize + (int) Math.round(placement.x() * tileSize - width / 2.0),
+                (prop.y() - camY) * tileSize + (int) Math.round(placement.y() * tileSize) - height, width, height);
     }
 
     public void drawFallingGatheredProp(Graphics2D g, WorldRenderer.PropContext context) {
@@ -91,11 +112,12 @@ public final class WorldPropRenderer {
                 || prop.y() > context.camY() + context.visibleRows()) {
             return;
         }
-        int size = propRenderSize(asset, prop.size(), context.tileSize());
+        int size = placedSize(prop, context.tileSize());
         int drawW = interiorPropWidth(asset, size);
         int drawH = interiorPropHeight(asset, size);
-        int baseX = (prop.x() - context.camX()) * context.tileSize() + context.tileSize() / 2;
-        int baseY = (prop.y() - context.camY()) * context.tileSize() + context.tileSize();
+        java.awt.Rectangle bounds = propBounds(prop, context.tileSize(), context.camX(), context.camY());
+        int baseX = bounds.x + bounds.width / 2;
+        int baseY = bounds.y + bounds.height;
         double progress = Math.min(1.0, age / 34.0);
         double eased = 1.0 - Math.pow(1.0 - progress, 3.0);
         double direction = Math.floorMod(prop.x() * 31 + prop.y() * 17 + asset.hashCode(), 2) == 0 ? -1.0 : 1.0;
@@ -124,7 +146,7 @@ public final class WorldPropRenderer {
     }
 
     public BufferedImage propImage(String asset, int width, int height) {
-        return asset.startsWith("interior_")
+        return asset.startsWith("interior_wall_")
                 ? assets.image(asset, width, height)
                 : assets.spriteFit(asset, width, height);
     }
@@ -372,7 +394,7 @@ public final class WorldPropRenderer {
             return tileRelative(2, tileSize);
         }
         if (asset.equals("interior_bookshelf")) {
-            return -tileRelative(14, tileSize);
+            return 0;
         }
         if (asset.equals("interior_bakery_oven") || asset.equals("interior_traveler_trunk")
                 || asset.equals("interior_resident_bed") || asset.equals("interior_herb_drying_rack_v")
@@ -380,7 +402,7 @@ public final class WorldPropRenderer {
                 || asset.equals("interior_grain_sacks_v") || asset.equals("interior_inn_screen_chest")
                 || asset.equals("interior_table_v_top") || asset.equals("interior_table_v_middle")
                 || asset.equals("interior_table_v_bottom") || asset.equals("interior_bench_v")) {
-            return -tileRelative(8, tileSize);
+            return 0;
         }
         return 0;
     }
@@ -495,10 +517,33 @@ public final class WorldPropRenderer {
     }
 
     static boolean isFireProp(String asset) {
-        return asset.contains("camp_fire") || asset.contains("campfire") || asset.contains("fire")
+        return asset.contains("camp_fire") || asset.contains("campfire")
                 || asset.contains("forge") || asset.contains("oven") || asset.contains("stove")
-                || asset.contains("hearth") || asset.contains("cookpot") || asset.contains("cooking_station")
+                || asset.contains("hearth")
                 || asset.contains("sconce") || asset.contains("tabletop_candle");
+    }
+
+    private void drawInteriorEmbers(Graphics2D g, WorldProp prop, int x, int y, int width, int height, int frame) {
+        if (!isFireProp(prop.asset())) return;
+        boolean enclosed = prop.asset().contains("sconce") || prop.asset().contains("oven");
+        double phase = frame * 0.19 + prop.x() * 2.7 + prop.y();
+        int cx = x + width / 2;
+        int cy = y + Math.round(height * (prop.asset().contains("candle") ? 0.24f : 0.62f));
+        // The painted fire is already in the sprite. Animate its light and a few
+        // tiny embers, never paste a second geometric flame over the furniture.
+        effects.drawRadialGlow(g, cx, cy, Math.max(4, Math.min(width, height) / 3),
+                new Color(255, 171, 64), (float) (0.10 + Math.sin(phase) * 0.035));
+        if (enclosed || prop.asset().contains("candle")) return;
+        Graphics2D ember = (Graphics2D) g.create();
+        int pixel = Math.max(1, width / 32);
+        for (int i = 0; i < 3; i++) {
+            double life = Math.floorMod(frame + prop.x() * 13 + i * 19, 61) / 61.0;
+            ember.setColor(new Color(255, 197, 96, (int) ((1 - life) * 150)));
+            int ex = cx + (int) (Math.sin(phase * 0.4 + i) * width * 0.07);
+            int ey = cy - (int) (life * height * 0.25);
+            ember.fillRect(ex, ey, pixel, pixel);
+        }
+        ember.dispose();
     }
 
     static boolean isMagicGlowProp(String asset) {
@@ -528,45 +573,7 @@ public final class WorldPropRenderer {
     }
 
     private void drawFirePropAnimation(Graphics2D g, WorldProp prop, int x, int y, int size, int frame) {
-        int seed = Math.abs(prop.x() * 928371 + prop.y() * 364479 + prop.asset().hashCode());
-        double flicker = Math.sin(frame * 0.42 + seed * 0.01) * 0.5 + Math.sin(frame * 0.77 + seed * 0.03) * 0.5;
-        int cx = x + size / 2 + scaled((int) Math.round(flicker));
-        int baseY = y + Math.round(size * 0.68f);
-        int flameH = Math.max(scaled(11), (int) Math.round(size * (0.34 + flicker * 0.035)));
-        int flameW = Math.max(scaled(8), (int) Math.round(size * 0.24));
-
-        effects.drawRadialGlow(g, cx, baseY - flameH / 3, Math.max(scaled(18), size / 2), new Color(255, 143, 44), 0.18f);
-
-        Composite oldComposite = g.getComposite();
-        g.setComposite(AlphaComposite.SrcOver.derive(0.82f));
-        Polygon outer = new Polygon(
-                new int[]{cx - flameW / 2, cx + scaled((int) Math.round(flicker * 2)), cx + flameW / 2},
-                new int[]{baseY, baseY - flameH, baseY},
-                3
-        );
-        g.setColor(new Color(255, 92, 34, 220));
-        g.fillPolygon(outer);
-
-        g.setComposite(AlphaComposite.SrcOver.derive(0.86f));
-        Polygon inner = new Polygon(
-                new int[]{cx - flameW / 4, cx - scaled((int) Math.round(flicker)), cx + flameW / 4},
-                new int[]{baseY - scaled(1), baseY - flameH * 3 / 4, baseY - scaled(1)},
-                3
-        );
-        g.setColor(new Color(255, 220, 98, 235));
-        g.fillPolygon(inner);
-
-        for (int i = 0; i < 5; i++) {
-            double life = Math.floorMod(frame * 4 + seed + i * 23, 80) / 80.0;
-            int sparkX = cx + scaled(Math.floorMod(seed / (i + 3) + i * 11, 13) - 6);
-            int sparkY = baseY - (int) Math.round(life * size * 0.82);
-            int sparkSize = Math.max(scaled(2), scaled(4) - (int) Math.round(life * scaled(2)));
-            float alpha = (float) ((1.0 - life) * 0.46);
-            g.setComposite(AlphaComposite.SrcOver.derive(alpha));
-            g.setColor(new Color(255, 214, 112));
-            g.fillOval(sparkX - sparkSize / 2, sparkY - sparkSize / 2, sparkSize, sparkSize);
-        }
-        g.setComposite(oldComposite);
+        drawInteriorEmbers(g, prop, x, y, size, size, frame);
     }
 
     private void drawMagicPropAnimation(Graphics2D g, WorldProp prop, int x, int y, int size, int frame) {
@@ -702,13 +709,16 @@ public final class WorldPropRenderer {
     }
 
     private boolean castsPropShadow(String asset) {
+        if (asset.startsWith("interior_")) {
+            return !isInteriorWallDecorAsset(asset) && !isInteriorTabletopAsset(asset)
+                    && !asset.startsWith("interior_rug_");
+        }
         return !asset.equals("location_farmland_tilled")
                 && !asset.equals("location_farmland_wheat")
                 && !asset.equals("location_graveyard_dirt")
                 && !asset.equals("location_graveyard_path")
                 && !asset.equals("location_dungeon_approach_path")
                 && !asset.startsWith("town_park_accent_")
-                && !asset.startsWith("interior_")
                 && !isSoftGroundProp(asset)
                 && !isFeatheryGroundProp(asset);
     }

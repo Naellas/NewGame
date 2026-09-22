@@ -109,16 +109,20 @@ public final class WorldMapOverlayRenderer {
     }
 
     public static void drawQuestMarker(Graphics2D g, WorldMapViewport viewport, Quest.ObjectiveKind kind,
-                                       String title, TilePoint marker, Color color) {
+                                       String title, TilePoint marker, Color color,
+                                       boolean mainStory, boolean dungeonHazard) {
         int px = screenX(viewport, marker.x() + 0.5);
         int py = screenY(viewport, marker.y() + 0.5);
+        if (dungeonHazard) {
+            drawSkull(g, px, py - 18);
+        }
         g.setColor(new Color(0, 0, 0, 155));
         g.fillOval(px - 8, py - 9, 17, 17);
         g.setColor(color);
         g.fillOval(px - 6, py - 7, 13, 13);
         Polygon tail = new Polygon(new int[]{px - 4, px + 4, px}, new int[]{py + 2, py + 2, py + 10}, 3);
         g.fillPolygon(tail);
-        g.setColor(new Color(245, 246, 236));
+        g.setColor(mainStory ? new Color(255, 212, 82) : new Color(245, 246, 236));
         g.drawOval(px - 7, py - 8, 15, 15);
         g.drawPolygon(tail);
         g.setColor(new Color(18, 20, 24));
@@ -141,6 +145,18 @@ public final class WorldMapOverlayRenderer {
         FontMetrics metrics = g.getFontMetrics();
         g.drawString(glyph, px - metrics.stringWidth(glyph) / 2, py + 3);
         drawMapLabel(g, title, px + 13, py - 10, new Color(245, 246, 236));
+    }
+
+    private static void drawSkull(Graphics2D g, int cx, int cy) {
+        g.setColor(new Color(0, 0, 0, 155));
+        g.fillOval(cx - 7, cy - 7, 14, 14);
+        g.setColor(new Color(246, 247, 232, 235));
+        g.fillOval(cx - 6, cy - 6, 12, 12);
+        g.fillRect(cx - 4, cy + 1, 8, 5);
+        g.setColor(new Color(28, 24, 26, 230));
+        g.fillOval(cx - 4, cy - 2, 3, 3);
+        g.fillOval(cx + 1, cy - 2, 3, 3);
+        g.drawLine(cx - 3, cy + 5, cx + 3, cy + 5);
     }
 
     public static void drawLegend(Graphics2D g, int x, int y, int width,
@@ -169,11 +185,15 @@ public final class WorldMapOverlayRenderer {
         rowY += 34;
         drawLegendSettlement(g, x, rowY, "Settlement");
         rowY += 26;
-        drawLegendQuest(g, x, rowY, new Color(112, 220, 128), "Gather");
+        drawLegendQuest(g, x, rowY, new Color(112, 220, 128), "Provision");
         rowY += 26;
-        drawLegendQuest(g, x, rowY, new Color(114, 191, 255), "Visit");
+        drawLegendQuest(g, x, rowY, new Color(203, 157, 232), "Talk");
         rowY += 26;
         drawLegendQuest(g, x, rowY, new Color(233, 89, 83), "Battle");
+        rowY += 26;
+        drawLegendQuest(g, x, rowY, new Color(220, 50, 47), "Story");
+        rowY += 26;
+        drawLegendQuest(g, x, rowY, new Color(233, 89, 83), "Dungeon");
         rowY += 26;
         drawLegendPlayer(g, x, rowY, "You");
         if (showKingdoms) {

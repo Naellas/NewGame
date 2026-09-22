@@ -2,6 +2,7 @@ package com.alderfall.game.map;
 
 import com.alderfall.game.TilePoint;
 import com.alderfall.game.WorldProp;
+import com.alderfall.game.RegionalSettlementIdentity.District;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ public final class MapArea {
     public final String label;
     public final String kind;
     public final char[][] tiles;
+    public final java.util.Set<TilePoint> interiorRugs = new java.util.HashSet<>();
     public final Map<TilePoint, String> landmarks = new HashMap<>();
     public final List<WorldProp> props = new IndexedPropList();
+    public final List<District> districts = new ArrayList<>();
     private final List<WorldProp> orderedProps = new ArrayList<>();
     private final Map<TilePoint, List<WorldProp>> propsByTile = new HashMap<>();
 
@@ -24,6 +27,11 @@ public final class MapArea {
         this.label = label;
         this.kind = kind;
         this.tiles = tiles;
+        if ("interior".equals(kind)) {
+            for (int y = 0; y < tiles.length; y++) for (int x = 0; x < tiles[y].length; x++) {
+                if (tiles[y][x] == 'z') interiorRugs.add(new TilePoint(x, y));
+            }
+        }
     }
 
     public int width() {

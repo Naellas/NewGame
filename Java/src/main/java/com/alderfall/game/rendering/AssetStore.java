@@ -94,6 +94,9 @@ public final class AssetStore {
         int x = selectedFrame * frameWidth;
         int sourceWidth = Math.min(frameWidth, sheet.getWidth() - x);
         BufferedImage source = sheet.getSubimage(x, 0, sourceWidth, sheet.getHeight());
+        if (usesMovementFit(action)) {
+            source = cropTransparent(source);
+        }
         BufferedImage fitted = fit(source, width, height, pixelated(name));
         cache.put(key, fitted);
         return fitted;
@@ -306,6 +309,13 @@ public final class AssetStore {
             return source;
         }
         return source.getSubimage(minX, minY, maxX - minX + 1, maxY - minY + 1);
+    }
+
+    private boolean usesMovementFit(String action) {
+        return switch (action) {
+            case "walk", "start_walk", "stop_walk", "idle" -> true;
+            default -> false;
+        };
     }
 
     private int inferHorizontalFrameCount(BufferedImage sheet, double targetAspect) {

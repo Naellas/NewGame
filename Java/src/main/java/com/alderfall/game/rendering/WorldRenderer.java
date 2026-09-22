@@ -2,7 +2,9 @@ package com.alderfall.game;
 
 import com.alderfall.game.render.world.WorldPropRenderer;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -19,6 +21,7 @@ public final class WorldRenderer {
     private final TerrainPainter terrainPainter;
     private final WorldPropRenderer propRenderer;
     private final LightingPainter lightingPainter;
+    private final LayeredTerrainRenderer layeredTerrain;
     private final Map<TerrainChunkKey, TerrainChunk> terrainChunkCache = new LinkedHashMap<>(64, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<TerrainChunkKey, TerrainChunk> eldest) {
@@ -31,6 +34,7 @@ public final class WorldRenderer {
         this.terrainPainter = terrainPainter;
         this.propRenderer = propRenderer;
         this.lightingPainter = lightingPainter;
+        this.layeredTerrain = new LayeredTerrainRenderer(assets);
     }
 
     void drawTerrainBase(Graphics2D g, TerrainContext context) {
@@ -63,6 +67,12 @@ public final class WorldRenderer {
                 if (wx < 0 || wy < 0 || wx >= context.mapWidth() || wy >= context.mapHeight()) {
                     continue;
                 }
+                if ("overworld".equals(context.mapKind())) {
+                    if (nearWater(context, wx, wy)) {
+                        drawLayeredWater(g, context, wx, wy, sx * context.tileSize(), sy * context.tileSize());
+                    }
+                    continue;
+                }
                 char tile = context.state().world.tileAt(mapId, wx, wy);
                 char terrainTile = terrainPainter.visibleTerrainTile(tile, wx, wy);
                 if (terrainTile == 'w' || terrainTile == '~') {
@@ -87,6 +97,12 @@ public final class WorldRenderer {
                 }
                 char tile = context.state().world.tileAt(mapId, wx, wy);
                 char terrainTile = terrainPainter.visibleTerrainTile(tile, wx, wy);
+                if ("overworld".equals(context.mapKind())) {
+                    g.drawImage(layeredTerrain.tile(context.state(), terrainPainter, wx, wy, context.tileSize()).image(), px, py, null);
+                    if (drawAnimations && nearWater(context, wx, wy)) drawLayeredWater(g, context, wx, wy, px, py);
+                    drawTileOverlay(g, context, tile, wx, wy, px, py);
+                    continue;
+                }
                 String terrainImage = terrainPainter.terrainImageName(terrainTile, wx, wy);
                 if ("dungeon".equals(context.mapKind()) && terrainImage.startsWith("dungeon")) {
                     g.setColor(new Color(22, 23, 30));
@@ -102,6 +118,30 @@ public final class WorldRenderer {
                 drawTileOverlay(g, context, tile, wx, wy, px, py);
             }
         }
+    }
+
+    private boolean nearWater(TerrainContext context, int x, int y) {
+        for (int oy = -1; oy <= 1; oy++) {
+            for (int ox = -1; ox <= 1; ox++) {
+                char tile = context.state().world.tileAt(context.state().currentMapId, x + ox, y + oy);
+                if (tile == 'w' || tile == '~' || tile == 'B') return true;
+            }
+        }
+        return false;
+    }
+
+    private void drawLayeredWater(Graphics2D g, TerrainContext context, int wx, int wy, int px, int py) {
+        LayeredTerrainRenderer.Surface surface = layeredTerrain.tile(context.state(), terrainPainter, wx, wy, context.tileSize());
+        if (!surface.hasWater()) return;
+        if (surface.waterClip() instanceof java.awt.geom.Rectangle2D) {
+            terrainPainter.drawWaterAnimation(g, wx, wy, px, py, context.tileSize());
+            return;
+        }
+        Graphics2D water = (Graphics2D) g.create();
+        water.translate(px, py);
+        water.clip(surface.waterClip());
+        terrainPainter.drawWaterAnimation(water, wx, wy, 0, 0, context.tileSize());
+        water.dispose();
     }
 
     private BufferedImage cachedTerrainChunk(TerrainContext context, int chunkX, int chunkY, int originX, int originY) {
@@ -137,14 +177,37 @@ public final class WorldRenderer {
                 context.mapKind()
         ), false);
         chunkGraphics.dispose();
+        image = opaqueTerrainImage(image);
         terrainChunkCache.put(key, new TerrainChunk(image, fingerprint));
         return image;
+    }
+
+    // Opaque chunks can use Java2D's copy path instead of blending every pixel each frame.
+    // Keep alpha for tilesets with transparent gaps; the check runs only when a chunk is built.
+    private BufferedImage opaqueTerrainImage(BufferedImage image) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int[] row = new int[width];
+        for (int y = 0; y < height; y++) {
+            image.getRGB(0, y, width, 1, row, 0, width);
+            for (int pixel : row) {
+                if ((pixel >>> 24) != 255) {
+                    return image;
+                }
+            }
+        }
+        BufferedImage opaque = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = opaque.createGraphics();
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
+        return opaque;
     }
 
     private long terrainChunkFingerprint(TerrainContext context, int originX, int originY) {
         String mapId = context.state().currentMapId;
         long hash = 1469598103934665603L;
         hash = mix(hash, mapId.hashCode());
+        hash = mix(hash, System.identityHashCode(context.state().world));
         hash = mix(hash, context.mapKind().hashCode());
         hash = mix(hash, context.mapWidth());
         hash = mix(hash, context.mapHeight());
@@ -159,6 +222,9 @@ public final class WorldRenderer {
                 hash = mix(hash, wx);
                 hash = mix(hash, wy);
                 hash = mix(hash, context.state().world.tileAt(mapId, wx, wy));
+                if ("interior".equals(context.mapKind())) {
+                    hash = mix(hash, context.state().world.interiorRugAt(mapId, wx, wy) ? 1 : 0);
+                }
                 String landmark = context.state().world.landmarkAt(mapId, wx, wy);
                 if (landmark != null) {
                     hash = mix(hash, landmark.hashCode());
@@ -199,21 +265,66 @@ public final class WorldRenderer {
             if (!isGroundProp(prop.asset())) {
                 continue;
             }
+            if (usesLayeredCampGround(context, prop)) continue;
             if (!isWorldPropVisible(prop, context)) {
                 continue;
             }
-            int px = (prop.x() - context.camX()) * context.tileSize() - inset;
-            int py = (prop.y() - context.camY()) * context.tileSize() - inset;
-            g.drawImage(assets.image(prop.asset(), context.tileSize() + inset * 2, context.tileSize() + inset * 2), px, py, null);
+            drawGroundPropOverlay(g, prop, context, inset);
         }
+    }
+
+    private boolean usesLayeredCampGround(PropContext context, WorldProp prop) {
+        if (!com.alderfall.game.map.WorldMap.OVERWORLD_ID.equals(context.state().currentMapId)
+                || prop.asset().equals("location_farmland_tilled")) return false;
+        return context.state().world.campGroundCoverage(prop.x() + 0.5, prop.y() + 0.5) > 0.01;
+    }
+
+    private void drawGroundPropOverlay(Graphics2D g, WorldProp prop, PropContext context, int inset) {
+        int px = (prop.x() - context.camX()) * context.tileSize();
+        int py = (prop.y() - context.camY()) * context.tileSize();
+        int cropPad = Math.max(inset * 3, scaled(5, context.zoom()));
+        int sourceSize = context.tileSize() + cropPad * 4;
+        int seed = prop.x() * 928371 + prop.y() * 364479 + prop.asset().hashCode();
+        int jitterRange = cropPad * 2 + 1;
+        int cropX = cropPad * 2 + Math.floorMod(seed, jitterRange) - cropPad;
+        int cropY = cropPad * 2 + Math.floorMod(seed / 17, jitterRange) - cropPad;
+        Composite oldComposite = g.getComposite();
+        g.setComposite(AlphaComposite.SrcOver.derive(groundPropOpacity(prop.asset())));
+        g.drawImage(
+                assets.image(prop.asset(), sourceSize, sourceSize),
+                px, py, px + context.tileSize(), py + context.tileSize(),
+                cropX, cropY, cropX + context.tileSize(), cropY + context.tileSize(),
+                null
+        );
+        g.setComposite(oldComposite);
     }
 
     void drawVisibleProps(Graphics2D g, PropContext context, List<WorldProp> nearbyProps, List<WorldProp> visibleProps) {
         visibleProps.clear();
         for (WorldProp prop : nearbyProps) {
+            if (prop.asset().equals("location_overgrown_landing") && usesLayeredCampGround(context, prop)) continue;
             if (!isGroundProp(prop.asset()) && isWorldPropVisible(prop, context)) {
                 visibleProps.add(prop);
             }
+        }
+        if ("interior".equals(context.state().world.kind(context.state().currentMapId))) {
+            visibleProps.sort(java.util.Comparator.comparingDouble(prop -> {
+                int[] footprint = context.state().world.interiorVisualFootprint(prop.asset());
+                double bottom = prop.y() + footprint[1];
+                return bottom + (prop.asset().startsWith("interior_tabletop_")
+                        || prop.asset().equals("interior_seed_bowl") || prop.asset().equals("interior_flower_vase")
+                        || prop.asset().equals("interior_mortar_pestle") ? 0.1 : 0);
+            }));
+        } else if (com.alderfall.game.map.WorldMap.OVERWORLD_ID.equals(context.state().currentMapId)) {
+            Map<WorldProp, PropPlacement.Placement> placements = new java.util.HashMap<>();
+            for (WorldProp prop : visibleProps) placements.put(prop,
+                    PropPlacement.at(context.state().world, context.state().currentMapId, prop));
+            visibleProps.sort(java.util.Comparator.<WorldProp>comparingInt(prop ->
+                            placements.get(prop).kind() == PropPlacement.Kind.COVER
+                                    || prop.asset().equals("location_overgrown_landing") ? 0 : 1)
+                    .thenComparingDouble(prop -> placements.get(prop).footY(prop))
+                    .thenComparingDouble(prop -> prop.x() + placements.get(prop).x())
+                    .thenComparing(WorldProp::asset).thenComparingInt(WorldProp::size));
         }
         for (WorldProp prop : visibleProps) {
             propRenderer.drawWorldProp(g, prop, context);
@@ -222,6 +333,14 @@ public final class WorldRenderer {
 
     int propRenderSize(String asset, int logicalSize, int tileSize) {
         return propRenderer.propRenderSize(asset, logicalSize, tileSize);
+    }
+
+    java.awt.Rectangle propBounds(WorldProp prop, int tileSize, int camX, int camY) {
+        return propRenderer.propBounds(prop, tileSize, camX, camY);
+    }
+
+    java.awt.Rectangle interiorPropBounds(WorldProp prop, int tileSize, int camX, int camY) {
+        return propRenderer.interiorBounds(prop, tileSize, camX, camY);
     }
 
     int propWidth(String asset, int size) {
@@ -250,6 +369,12 @@ public final class WorldRenderer {
         light.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         lightingPainter.drawBiomeLightTints(light, context.camX(), context.camY(), context.visibleCols(), context.visibleRows(), context.tileSize());
         lightingPainter.drawLightTileSpill(light, context.camX(), context.camY(), context.visibleCols(), context.visibleRows(), context.tileSize());
+        light.dispose();
+    }
+
+    void drawVignette(Graphics2D g, int width, int height) {
+        Graphics2D light = (Graphics2D) g.create();
+        light.setClip(0, 0, width, height);
         lightingPainter.drawWorldVignette(light);
         light.dispose();
     }
@@ -286,9 +411,9 @@ public final class WorldRenderer {
     }
 
     private static boolean isWorldPropVisible(WorldProp prop, PropContext context) {
-        return prop.x() >= context.camX() && prop.y() >= context.camY()
-                && prop.x() < context.camX() + context.visibleCols()
-                && prop.y() < context.camY() + context.visibleRows();
+        return prop.x() >= context.camX() - 3 && prop.y() >= context.camY() - 3
+                && prop.x() < context.camX() + context.visibleCols() + 2
+                && prop.y() < context.camY() + context.visibleRows() + 2;
     }
 
     private static boolean isGroundProp(String asset) {
@@ -296,6 +421,15 @@ public final class WorldRenderer {
                 || asset.equals("location_graveyard_dirt")
                 || asset.equals("location_graveyard_path")
                 || asset.equals("location_dungeon_approach_path");
+    }
+
+    private static float groundPropOpacity(String asset) {
+        return switch (asset) {
+            case "location_graveyard_dirt" -> 0.88f;
+            case "location_graveyard_path" -> 0.90f;
+            case "location_farmland_tilled" -> 0.92f;
+            default -> 0.95f;
+        };
     }
 
     private record TerrainChunkKey(

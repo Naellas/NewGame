@@ -53,7 +53,7 @@ public final class DialogueRenderer {
                 displayName, npcTooltip(npc));
         g.setFont(new Font("SansSerif", Font.PLAIN, 18));
         g.setColor(new Color(218, 220, 226));
-        String line = state.activeNpcDialogLine();
+        String line = state.revealedActiveNpcDialogLine();
         effects.drawWrapped(g, line, textX, panelY + 88, textW, 24, 3);
         Quest quest = state.questForNpc(npc);
 
@@ -61,7 +61,7 @@ public final class DialogueRenderer {
         int optionsY = panelY + 172;
         g.setColor(new Color(196, 198, 205));
         g.setFont(new Font("SansSerif", Font.BOLD, 13));
-        g.drawString("Conversation options", textX, optionsY - 12);
+        g.drawString(state.roamingEventPromptActive() ? "Available actions" : "Conversation options", textX, optionsY - 12);
         int listW = Math.min(760, textW);
         int listH = Math.max(112, panelY + panelH - optionsY - 28);
         drawDialogOptionList(g, options, textX, optionsY, listW, listH);
@@ -118,7 +118,7 @@ public final class DialogueRenderer {
 
         int dialogueBottom = drawCompanionDialogueLine(
                 g,
-                state.activeNpcDialogLineParts(),
+                state.revealedActiveNpcDialogLineParts(),
                 textX,
                 panelY + 124,
                 textW,
@@ -131,8 +131,8 @@ public final class DialogueRenderer {
         int optionsY = Math.max(panelY + 214, dialogueBottom + 18);
         g.setColor(new Color(196, 198, 205));
         g.setFont(new Font("SansSerif", Font.BOLD, 13));
-        g.drawString("Conversation options", textX, optionsY - 12);
-        int listW = Math.min(textW, 780);
+        g.drawString(state.roamingEventPromptActive() ? "Available actions" : "Conversation options", textX, optionsY - 12);
+        int listW = textW;
         int listH = Math.max(126, panelY + panelH - optionsY - 28);
         drawDialogOptionList(g, options, textX, optionsY, listW, listH);
     }
@@ -197,17 +197,30 @@ public final class DialogueRenderer {
         g.fillRoundRect(x, y, w, h, 8, 8);
         g.setColor(new Color(93, 107, 143, 145));
         g.drawRoundRect(x, y, w, h, 8, 8);
-        int rowH = 28;
-        int gap = 4;
+        int columns = w >= 680 ? 2 : 1;
+        int rowH = columns == 2 ? 52 : 46;
+        int gap = 5;
+        int columnGap = columns == 2 ? 8 : 0;
         int visibleRows = Math.max(1, (h - 14 + gap) / (rowH + gap));
-        int maxScroll = Math.max(0, options.size() - visibleRows);
+        int totalRows = Math.max(1, (options.size() + columns - 1) / columns);
+        int maxScroll = Math.max(0, totalRows - visibleRows);
         effects.setDialogOptionScroll(effects.clamp(effects.dialogOptionScroll(), 0, maxScroll));
-        int rowW = maxScroll > 0 ? w - 30 : w - 16;
-        int start = effects.dialogOptionScroll();
-        int end = Math.min(options.size(), start + visibleRows);
-        for (int i = start; i < end; i++) {
-            int rowY = y + 7 + (i - start) * (rowH + gap);
-            drawDialogOptionRow(g, x + 8, rowY, rowW, rowH, i - start + 1, options.get(i));
+        int contentW = maxScroll > 0 ? w - 30 : w - 16;
+        int rowW = columns == 1
+                ? contentW
+                : Math.max(180, (contentW - columnGap) / 2);
+        int startRow = effects.dialogOptionScroll();
+        int endRow = Math.min(totalRows, startRow + visibleRows);
+        for (int row = startRow; row < endRow; row++) {
+            int rowY = y + 7 + (row - startRow) * (rowH + gap);
+            for (int col = 0; col < columns; col++) {
+                int optionIndex = row * columns + col;
+                if (optionIndex >= options.size()) {
+                    break;
+                }
+                int rowX = x + 8 + col * (rowW + columnGap);
+                drawDialogOptionRow(g, rowX, rowY, rowW, rowH, optionIndex + 1, options.get(optionIndex));
+            }
         }
         if (maxScroll <= 0) {
             return;
@@ -217,7 +230,7 @@ public final class DialogueRenderer {
         int trackH = h - 16;
         g.setColor(new Color(35, 39, 54, 190));
         g.fillRoundRect(trackX, trackY, 6, trackH, 4, 4);
-        int thumbH = Math.max(22, (int) Math.round(trackH * (visibleRows / (double) options.size())));
+        int thumbH = Math.max(22, (int) Math.round(trackH * (visibleRows / (double) totalRows)));
         int thumbTravel = Math.max(1, trackH - thumbH);
         int thumbY = trackY + (int) Math.round(effects.dialogOptionScroll() / (double) maxScroll * thumbTravel);
         g.setColor(new Color(145, 166, 214, 190));
@@ -377,7 +390,7 @@ public final class DialogueRenderer {
             case "cassia" -> "Bright hair, polished steel, and a guarded throat-scarf carry Highwall's old breach into every sentence.";
             case "lyra" -> "White cloth, teal trim, and travel-worn boots say healer first, but not helpless.";
             case "samir" -> "Gold sunbursts over white vestments make his doubt feel brighter, not weaker.";
-            case "vesper" -> "Pale hair, green winter cloth, and a branch staff make her seem half-buried in snow and half-rooted under it.";
+            case "vesper" -> "Pale hair, green winter cloth, and a branch staff mark her as a Snowrest druid used to harsh weather and harder questions.";
             case "rafiq" -> "Cream desert robes, a purple sash, and a curved blade give his jokes the shape of a duel.";
             case "calder" -> "Moss-brown work leathers, mud boots, and a hammer make every answer sound load-bearing.";
             default -> "Their clothes and posture say as much as their words.";
@@ -400,38 +413,67 @@ public final class DialogueRenderer {
     }
 
     private void drawDialogOptionRow(Graphics2D g, int x, int y, int w, int h, int number, DialogOption option) {
+        Rectangle bounds = new Rectangle(x, y, w, h);
+        boolean hovered = option.enabled() && effects.hoverPoint() != null && bounds.contains(effects.hoverPoint());
         if (option.enabled()) {
-            effects.addButton(new Rectangle(x, y, w, h), option.label(), () -> {
+            effects.addButton(bounds, option.label(), () -> {
+                if (!state.activeDialogueRevealComplete()) {
+                    state.revealActiveDialogueLineInstantly();
+                    effects.repaintPanel();
+                    return;
+                }
                 option.action().run();
                 effects.repaintPanel();
             });
         }
-        g.setColor(option.enabled() ? option.fill() : new Color(42, 44, 52));
-        g.fillRoundRect(x, y, w, h, 6, 6);
-        g.setColor(option.enabled() ? option.border() : new Color(73, 75, 84));
-        g.drawRoundRect(x, y, w, h, 6, 6);
-        g.setFont(new Font("SansSerif", Font.BOLD, Math.max(11, Math.min(13, h - 12))));
-        g.setColor(option.enabled() ? new Color(238, 239, 244) : new Color(142, 146, 156));
-        FontMetrics metrics = g.getFontMetrics();
-        String numberLabel = number + ".";
-        g.drawString(numberLabel, x + 12, y + h / 2 + 5);
-        String label = option.label();
-        int labelX = x + 42;
-        int maxW = w - 56;
-        while (metrics.stringWidth(label) > maxW && label.length() > 4) {
-            label = label.substring(0, label.length() - 4) + "...";
+        effects.addTooltip(bounds, "Player response", option.label());
+        int drawY = hovered ? y - 1 : y;
+        Color fill = option.enabled() ? option.fill() : new Color(42, 44, 52);
+        Color border = option.enabled() ? option.border() : new Color(73, 75, 84);
+        if (hovered) {
+            fill = brighten(fill, 18);
+            border = brighten(border, 30);
+            g.setColor(new Color(0, 0, 0, 72));
+            g.fillRoundRect(x + 2, drawY + 3, w - 4, h, 6, 6);
         }
-        g.drawString(label, labelX, y + h / 2 + 5);
+        g.setColor(fill);
+        g.fillRoundRect(x, drawY, w, h, 6, 6);
+        if (hovered) {
+            g.setColor(new Color(border.getRed(), border.getGreen(), border.getBlue(), 70));
+            g.drawRoundRect(x - 1, drawY - 1, w + 2, h + 2, 8, 8);
+            g.setColor(new Color(255, 255, 255, 28));
+            g.fillRoundRect(x + 1, drawY + 1, Math.max(12, w / 3), 8, 6, 6);
+        }
+        g.setColor(border);
+        g.drawRoundRect(x, drawY, w, h, 6, 6);
+        if (hovered) {
+            g.setColor(new Color(border.getRed(), border.getGreen(), border.getBlue(), 200));
+            g.fillRoundRect(x + 8, drawY + 7, 4, h - 14, 3, 3);
+        }
+        g.setFont(new Font("SansSerif", Font.BOLD, 13));
+        g.setColor(option.enabled()
+                ? hovered ? new Color(252, 252, 255) : new Color(238, 239, 244)
+                : new Color(142, 146, 156));
+        String numberLabel = number + ".";
+        g.drawString(numberLabel, x + 18, drawY + 18);
+        int labelX = x + 48;
+        int maxW = w - 56;
+        effects.drawWrapped(g, option.label(), labelX, drawY + 17, maxW, 16, 2);
     }
 
     public List<DialogOption> dialogOptions(Npc npc, Quest quest) {
         List<DialogOption> options = new ArrayList<>();
         List<String> lines = state.activeNpcDialogOptions();
+        List<GameState.DialogueOptionIntent> intents = state.activeNpcDialogOptionIntents();
         for (int i = 0; i < lines.size(); i++) {
             int index = i;
-            Color fill = index == state.dialogIndex ? new Color(66, 80, 111) : new Color(35, 39, 54);
-            Color border = index == state.dialogIndex ? new Color(145, 166, 214) : new Color(86, 98, 128);
-            options.add(new DialogOption(dialogOptionTopic(lines.get(i), i), () -> state.selectDialogOption(index), fill, border, true));
+            GameState.DialogueOptionIntent intent = optionIntent(intents, index);
+            DialogOptionStyle style = dialogOptionStyle(intent, index == state.dialogIndex);
+            options.add(new DialogOption(dialogOptionLabel(lines.get(i), i, intent), () -> state.selectDialogOption(index),
+                    style.fill(), style.border(), true));
+        }
+        if (state.roamingEventPromptActive()) {
+            return options;
         }
         if (state.activePartyTalkActor != null) {
             String questActionLabel = questActionLabel(quest);
@@ -485,19 +527,87 @@ public final class DialogueRenderer {
     }
 
     private String dialogOptionTopic(String line, int index) {
-        int colon = line.indexOf(':');
-        if (colon > 0 && colon <= 18) {
-            return line.substring(0, colon);
-        }
         String compact = line.replaceAll("\\s+", " ").strip();
-        int sentence = compact.indexOf('.');
-        if (sentence > 8 && sentence < 34) {
-            compact = compact.substring(0, sentence);
-        }
-        if (compact.length() > 34) {
-            compact = compact.substring(0, 31) + "...";
-        }
         return compact.isBlank() ? "Talk " + (index + 1) : compact;
+    }
+
+    private GameState.DialogueOptionIntent optionIntent(List<GameState.DialogueOptionIntent> intents, int index) {
+        if (index >= 0 && index < intents.size()) {
+            return intents.get(index);
+        }
+        return new GameState.DialogueOptionIntent("topic", "", 0);
+    }
+
+    private String dialogOptionLabel(String line, int index, GameState.DialogueOptionIntent intent) {
+        String topic = dialogOptionTopic(line, index);
+        String prefix = intentPrefix(intent);
+        if (prefix.isBlank()) {
+            return topic;
+        }
+        String lowered = topic.toLowerCase();
+        if (lowered.startsWith(prefix.toLowerCase() + ":") || lowered.startsWith(prefix.toLowerCase() + " ")) {
+            return topic;
+        }
+        return prefix + ": " + topic;
+    }
+
+    private String intentPrefix(GameState.DialogueOptionIntent intent) {
+        String kind = intent == null ? "" : intent.kind();
+        return switch (kind) {
+            case "quest_accept" -> "Accept quest";
+            case "quest_turnin" -> "Turn in";
+            case "quest_choice" -> "Choose";
+            case "recruit" -> "Recruit";
+            case "romance" -> "Romance";
+            case "romance_end" -> "Set boundary";
+            case "marriage" -> "Marriage";
+            case "milestone" -> "Trust";
+            case "promise" -> "Promise";
+            case "scene" -> "Scene";
+            default -> "";
+        };
+    }
+
+    private DialogOptionStyle dialogOptionStyle(GameState.DialogueOptionIntent intent, boolean selected) {
+        String kind = intent == null ? "topic" : intent.kind();
+        Color fill = switch (kind) {
+            case "quest_accept" -> new Color(58, 83, 48);
+            case "quest_turnin" -> new Color(88, 73, 44);
+            case "quest_choice" -> new Color(73, 58, 96);
+            case "recruit", "romance", "marriage", "milestone", "promise", "scene" -> new Color(76, 58, 92);
+            case "romance_end", "rapport_risk" -> new Color(84, 55, 54);
+            case "rapport_gain" -> new Color(48, 75, 58);
+            case "shop", "shop_info", "info" -> new Color(52, 72, 92);
+            case "continue" -> new Color(45, 58, 76);
+            default -> new Color(35, 39, 54);
+        };
+        Color border = switch (kind) {
+            case "quest_accept" -> new Color(128, 188, 96);
+            case "quest_turnin" -> new Color(169, 137, 74);
+            case "quest_choice" -> new Color(156, 124, 206);
+            case "recruit", "romance", "marriage", "milestone", "promise", "scene" -> new Color(151, 118, 184);
+            case "romance_end", "rapport_risk" -> new Color(168, 96, 88);
+            case "rapport_gain" -> new Color(104, 170, 116);
+            case "shop", "shop_info", "info" -> new Color(92, 140, 170);
+            case "continue" -> new Color(106, 130, 166);
+            default -> new Color(86, 98, 128);
+        };
+        if (!selected) {
+            return new DialogOptionStyle(fill, border);
+        }
+        return new DialogOptionStyle(brighten(fill, 24), brighten(border, 34));
+    }
+
+    private Color brighten(Color color, int amount) {
+        return new Color(
+                Math.min(255, color.getRed() + amount),
+                Math.min(255, color.getGreen() + amount),
+                Math.min(255, color.getBlue() + amount),
+                color.getAlpha()
+        );
+    }
+
+    private record DialogOptionStyle(Color fill, Color border) {
     }
 
     public boolean activeDialogWillOpenShop(Npc npc) {
@@ -654,7 +764,7 @@ public final class DialogueRenderer {
             return DialogueLibrary.questCommitLabel(quest);
         }
         if (quest.ready()) {
-            return quest.companionQuest() ? "Tell them what happened" : "Report back";
+            return quest.companionQuest() ? "Turn in quest: Tell them what happened" : "Turn in quest: Report back";
         }
         if (quest.companionQuest()) {
             return DialogueLibrary.questTopicLabel(quest);
@@ -699,5 +809,7 @@ public final class DialogueRenderer {
         int clamp(int value, int min, int max);
 
         void drawNpcPortraitCard(Graphics2D g, Npc npc, int x, int y, int w, int h);
+
+        Point hoverPoint();
     }
 }

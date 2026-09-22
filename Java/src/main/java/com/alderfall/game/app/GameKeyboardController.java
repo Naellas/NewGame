@@ -4,10 +4,13 @@ import com.alderfall.game.map.WorldMap;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 final class GameKeyboardController extends KeyAdapter {
     private final GamePanel panel;
+    private final Set<Integer> pressedKeys = new HashSet<>();
 
     GameKeyboardController(GamePanel panel) {
         this.panel = panel;
@@ -16,6 +19,7 @@ final class GameKeyboardController extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent event) {
             int code = event.getKeyCode();
+            boolean repeatedKeyPress = !pressedKeys.add(code);
             if (panel.state.mode == GameMode.MAIN_MENU) {
                 if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_N) {
                     panel.state.openClassSelect();
@@ -177,7 +181,7 @@ final class GameKeyboardController extends KeyAdapter {
             } else if (code == KeyEvent.VK_P) {
                 panel.state.openPauseMenu();
             } else if (panel.state.mode == GameMode.BATTLE) {
-                handleBattleKey(event);
+                handleBattleKey(event, repeatedKeyPress);
             } else if (panel.state.mode == GameMode.DEFENSE) {
                 if (panel.state.defenseRaid != null && !panel.state.defenseRaid.pendingLevelChoices().isEmpty()
                         && code >= KeyEvent.VK_1 && code <= KeyEvent.VK_3) {
@@ -366,6 +370,7 @@ final class GameKeyboardController extends KeyAdapter {
 
         @Override
         public void keyReleased(KeyEvent event) {
+            pressedKeys.remove(event.getKeyCode());
             boolean handled = panel.state.mode == GameMode.DEFENSE
                     ? panel.handleDefenseMovementKeyReleased(event.getKeyCode())
                     : panel.handleMovementKeyReleased(event.getKeyCode());
@@ -374,8 +379,11 @@ final class GameKeyboardController extends KeyAdapter {
             }
         }
 
-        private void handleBattleKey(KeyEvent event) {
+        private void handleBattleKey(KeyEvent event, boolean repeatedKeyPress) {
             int code = event.getKeyCode();
+            if (repeatedKeyPress) {
+                return;
+            }
             if (code == KeyEvent.VK_A || code == KeyEvent.VK_SPACE) {
                 panel.state.battleAttack();
             } else if (code == KeyEvent.VK_S) {
@@ -402,10 +410,10 @@ final class GameKeyboardController extends KeyAdapter {
                 panel.state.leaveFinishedBattle();
             } else if (code == KeyEvent.VK_R && panel.state.battle != null && panel.state.battle.finished && !panel.state.battle.victory) {
                 panel.state.revive();
+            } else if (code == KeyEvent.VK_R) {
+                panel.state.battleRun();
             } else if (code == KeyEvent.VK_H) {
-                panel.state.useItem("potion_small");
-            } else if (code == KeyEvent.VK_J) {
-                panel.state.useItem("ether");
+                panel.toggleBattleItemPicker();
             }
         }
 

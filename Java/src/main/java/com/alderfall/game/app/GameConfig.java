@@ -31,6 +31,7 @@ public final class GameConfig {
     public int cameraSmoothing = 68;
     public boolean cameraLookAhead = true;
     public String movementSpeed = "normal";
+    public String renderQuality = "high";
     public String weatherQuality = "high";
 
     private GameConfig(
@@ -90,7 +91,8 @@ public final class GameConfig {
             config.cameraSmoothing = readInt(props, "cameraSmoothing", config.cameraSmoothing);
             config.cameraLookAhead = readBoolean(props, "cameraLookAhead", config.cameraLookAhead);
             config.movementSpeed = readChoice(props, "movementSpeed", config.movementSpeed, "relaxed", "normal", "quick");
-            config.weatherQuality = readChoice(props, "weatherQuality", config.weatherQuality, "high", "balanced", "performance");
+            config.renderQuality = readChoice(props, "renderQuality", config.renderQuality, "high", "balanced", "performance", "low_spec");
+            config.weatherQuality = readChoice(props, "weatherQuality", config.weatherQuality, "high", "balanced", "performance", "low_spec");
         } catch (IOException ignored) {
         }
         return config;
@@ -115,6 +117,7 @@ public final class GameConfig {
         props.setProperty("cameraSmoothing", Integer.toString(cameraSmoothing));
         props.setProperty("cameraLookAhead", Boolean.toString(cameraLookAhead));
         props.setProperty("movementSpeed", movementSpeed);
+        props.setProperty("renderQuality", renderQuality);
         props.setProperty("weatherQuality", weatherQuality);
         try (var out = Files.newOutputStream(settingsPath)) {
             props.store(out, "Echoes of Alderfall Java settings");

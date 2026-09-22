@@ -181,7 +181,9 @@ public final class WorldAtmosphereRenderer {
 
     public void drawInteriorTimeOverlay(Graphics2D g, int width, int height) {
         double daylight = state.daylightLevel();
-        float dimAlpha = (float) ((1.0 - daylight) * 0.34);
+        float dimAlpha = "interior".equals(state.world.kind(state.currentMapId))
+                ? (float) (0.14 + (1.0 - daylight) * 0.22)
+                : (float) ((1.0 - daylight) * 0.34);
         if (dimAlpha <= 0.02f) {
             return;
         }

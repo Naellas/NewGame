@@ -232,6 +232,8 @@ public final class CompanionDialogueQaExport {
             quest.stageIndex = Math.max(0, quest.stages.size() - 1);
             quest.progress = quest.activeNeeded();
         }
+        for (int i = 0; i < quest.stageIndex; i++) quest.observedStages.add(quest.stages.get(i).id());
+        if (quest.ready() || quest.completed) quest.observedStages.add(quest.activeStage().id());
         return quest;
     }
 
@@ -262,27 +264,54 @@ public final class CompanionDialogueQaExport {
                 .append("/")
                 .append(quest.activeNeeded())
                 .append(")\n\n");
-        appendPath(report, companion, quest, trust, context, questPath(quest));
+        appendPath(report, companion, quest, trust, context, questPath(companion, quest));
     }
 
-    private static String questPath(Quest quest) {
-        String root = quest.completed
-                ? "What changed after"
-                : quest.ready()
-                ? "I found what you needed"
-                : quest.accepted
-                ? "Where do things stand"
-                : quest.title;
-        if (!quest.accepted) {
-            return root + "|Start from the beginning|" + acceptanceProbe(quest);
+    private static String questPath(Npc companion, Quest quest) {
+        String root = "Discuss " + quest.title;
+        if (!quest.accepted) return root + "|Why does this matter now";
+        if (quest.completed) return root + "|What have we actually established";
+        if (quest.ready()) return root + "|Report the completed work";
+        return root + "|What still needs to be done";
+    }
+
+    private static String offerClarifyProbe(Npc companion, Quest quest) {
+        if (companion != null && "vesper".equals(companion.recruitId())) {
+            return "Is anyone in Snowrest hurt";
         }
-        if (quest.completed) {
-            return root + "|What is still unresolved";
-        }
-        if (quest.ready()) {
-            return root;
-        }
-        return root + "|Where do I start";
+        return switch (quest.activeObjectiveKind()) {
+            case DEFEAT -> "Who gets hurt if this keeps hunting";
+            case RESCUE -> "Who are we trying not to lose";
+            case DEFEND -> "What breaks if this place falls";
+            case RAID_DEFENSE -> "What are they trying to take";
+            case GATHER -> "Why does this need to come back";
+            case DELIVER -> "Why can this not pass";
+            case VISIT -> "What made this place worth checking";
+            case SEARCH -> "What are we looking for";
+            case TALK -> "Why does this conversation matter";
+            case ASK_AROUND -> "Which rumor could get someone killed";
+            case REPORT -> "Who needs the unpolished truth";
+            case ESCORT -> "Why does this road need protection";
+            case CHOICE -> "Why put the choice in my hands";
+        };
+    }
+
+    private static String practicalProbe(Quest quest) {
+        return switch (quest.activeObjectiveKind()) {
+            case DEFEAT -> "Where was it last seen";
+            case RESCUE -> "Where do I reach them";
+            case DEFEND -> "Where does the line need to hold";
+            case RAID_DEFENSE -> "Where do we make our stand";
+            case GATHER -> "Where do I find what you need";
+            case DELIVER -> "Where does this need to land";
+            case VISIT -> "Show me the place";
+            case SEARCH -> "Where do I start looking";
+            case TALK -> "Where do I find the right person";
+            case ASK_AROUND -> "Where should I start asking";
+            case REPORT -> "Where do I bring the answer";
+            case ESCORT -> "Which road are we taking";
+            case CHOICE -> "Where does the decision happen";
+        };
     }
 
     private static String acceptanceProbe(Quest quest) {
@@ -294,7 +323,9 @@ public final class CompanionDialogueQaExport {
             case "lyra" -> "I will help before more people get hurt";
             case "samir" -> "I will carry the question";
             case "aria" -> "I know the road may be bait";
-            case "vesper" -> "I will be careful with what is buried";
+            case "vesper" -> quest != null && "vesper_chain_1".equals(quest.id)
+                    ? "I will inspect the root circle before judging it"
+                    : "I will inspect the road breaks before cutting roots";
             case "rafiq" -> "I will help you survive the truth";
             case "calder" -> "I will show up with both hands";
             default -> "I will";
@@ -336,7 +367,7 @@ public final class CompanionDialogueQaExport {
             for (Quest questState : questStates(firstQuest)) {
                 int trust = questState.completed ? 150 : 100;
                 DialogueLibrary.DialogueContext context = contextFor(companion, knownNames, trust, false);
-                checkPathSample(findings, companion, questState, trust, context, questPath(questState), true);
+                checkPathSample(findings, companion, questState, trust, context, questPath(companion, questState), true);
             }
         }
         for (String path : DETAIL_PATHS) {
@@ -369,9 +400,9 @@ public final class CompanionDialogueQaExport {
             DialogueLibrary.DialogueSession session = session(companion, quest, trust, context);
             String sampleName = "trust " + trust + " snapshot";
             checkNodeBasics(findings, sampleName, "root", session.line(trust), session.optionLabels(), false);
-            String milestoneLabel = pendingMilestoneLabel(trust);
-            if (!milestoneLabel.isBlank() && !containsOption(session.optionLabels(), "Can we talk about " + milestoneLabel)) {
-                findings.add("Missing expected trust option in " + sampleName + ": `Can we talk about " + milestoneLabel + "`.");
+            String milestonePrompt = pendingMilestonePrompt(trust);
+            if (!milestonePrompt.isBlank() && !containsOption(session.optionLabels(), milestonePrompt)) {
+                findings.add("Missing expected trust option in " + sampleName + ": `" + milestonePrompt + "`.");
             }
         }
     }
@@ -647,11 +678,22 @@ public final class CompanionDialogueQaExport {
 
     private static String pendingMilestoneLabel(int trust) {
         return switch (pendingMilestoneTrust(trust)) {
-            case 50 -> "guarded respect";
+            case 50 -> "where we stand";
             case 100 -> "what changed between us";
-            case 150 -> "loyalty";
+            case 150 -> "staying together by choice";
             case 180 -> "what this feeling is becoming";
             case 250 -> "the future";
+            default -> "";
+        };
+    }
+
+    private static String pendingMilestonePrompt(int trust) {
+        return switch (pendingMilestoneTrust(trust)) {
+            case 50 -> "Can we talk about where we stand?";
+            case 100 -> "Can we talk about what changed between us?";
+            case 150 -> "Can we talk about staying together by choice?";
+            case 180 -> "Can we talk about what this feeling is becoming?";
+            case 250 -> "Can we talk about the future?";
             default -> "";
         };
     }
@@ -707,12 +749,29 @@ public final class CompanionDialogueQaExport {
         }
         Map<String, String> outcomes = new LinkedHashMap<>();
         switch (companion.recruitId()) {
-            case "seraphine" -> outcomes.put("seraphine_oathstead_promise", "freedom-kept");
+            case "seraphine" -> {
+                outcomes.put("seraphine_first_lie", "witness_first");
+                outcomes.put("seraphine_clerk_truth", "witness_protected");
+                outcomes.put("seraphine_red_notary", "names_reclaimed");
+                outcomes.put("seraphine_oathstead_promise", "chosen_daily");
+            }
             case "maera" -> outcomes.put("maera_oathstead_archive", "open-record");
             case "cassia" -> outcomes.put("cassia_oathstead_duty", "chosen-duty");
             case "lyra" -> outcomes.put("lyra_oathstead_clinic", "care-first");
-            case "aria" -> outcomes.put("aria_oathstead_future", "roadwatch");
-            case "vesper" -> outcomes.put("vesper_oathstead_growth", "patient-bloom");
+            case "aria" -> {
+                outcomes.put("aria_false_trail_choice", "protect");
+                outcomes.put("aria_oathstead_roadmarks", "hidden-markers");
+                outcomes.put("aria_sister_truth", "hope-named");
+                outcomes.put("aria_oathstead_future", "roadwatch");
+            }
+            case "vesper" -> {
+                outcomes.put("vesper_first_root", "truth");
+                outcomes.put("vesper_practical_care", "protect");
+                outcomes.put("vesper_family_grove", "accountability");
+                outcomes.put("vesper_buried_spring", "mercy");
+                outcomes.put("vesper_spring_return", "protect");
+                outcomes.put("vesper_oathstead_growth", "patient-bloom");
+            }
             case "rafiq" -> outcomes.put("rafiq_oathstead_chance", "stay-before-earned");
             case "calder" -> outcomes.put("calder_oathstead_work", "shared-foundation");
             default -> {

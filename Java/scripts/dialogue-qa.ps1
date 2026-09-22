@@ -9,7 +9,8 @@ if (Test-Path $qaOut) {
 }
 New-Item -ItemType Directory -Force -Path $qaOut | Out-Null
 
-javac -d $qaOut -sourcepath src\main\java src\main\java\com\alderfall\game\CompanionDialogueQaExport.java
+$sources = Get-ChildItem -Path (Join-Path $root "src\main\java") -Recurse -Filter *.java
+javac -d $qaOut $sources.FullName
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }

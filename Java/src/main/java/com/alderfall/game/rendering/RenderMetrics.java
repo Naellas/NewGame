@@ -59,7 +59,11 @@ public final class RenderMetrics {
             line.append(' ')
                     .append(entry.getKey())
                     .append('=')
-                    .append(DebugMetrics.millis(metric.averageNanos()));
+                    .append(DebugMetrics.millis(metric.averageNanos()))
+                    .append(' ')
+                    .append(entry.getKey())
+                    .append(".max=")
+                    .append(DebugMetrics.millis(metric.maxNanos));
             metric.reset();
         }
         for (Map.Entry<String, SampleMetric> entry : samples.entrySet()) {
@@ -80,10 +84,12 @@ public final class RenderMetrics {
 
     private static final class Metric {
         private long totalNanos;
+        private long maxNanos;
         private int samples;
 
         void add(long nanos) {
             totalNanos += nanos;
+            maxNanos = Math.max(maxNanos, nanos);
             samples++;
         }
 
@@ -93,6 +99,7 @@ public final class RenderMetrics {
 
         void reset() {
             totalNanos = 0L;
+            maxNanos = 0L;
             samples = 0;
         }
     }

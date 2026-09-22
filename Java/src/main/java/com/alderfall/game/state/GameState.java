@@ -16,6 +16,13 @@ import java.util.Set;
 public final class GameState {
     public record DialogueVideoPrompt(String key, String title, String caption, String assetPath) {
     }
+    public record RoamingEventChoice(String label, Runnable action) {
+    }
+    public record RoamingEventPrompt(String title, String sprite, String description, List<RoamingEventChoice> choices) {
+        public RoamingEventPrompt {
+            choices = choices == null ? List.of() : List.copyOf(choices);
+        }
+    }
 
     public static final int TICKS_PER_GAME_DAY = 7200;
     private static final int VILLAGE_PRODUCTION_TICKS = 900;
@@ -27,13 +34,15 @@ public final class GameState {
     public static final int MAX_COMPANION_TRUST = 300;
     private static final int MAX_ACTIVE_COMPANIONS = 3;
     private static final int MAX_ENEMY_GROUP_SIZE = 5;
-    private static final int MAIN_STORY_TRUST_RELATIONSHIP = 18;
     private static final int MAX_COMPANION_MEMORIES = 18;
+    private static final int TRAVEL_BANTER_DURATION_TICKS = 360;
+    private static final int TRAVEL_COMMENT_DURATION_TICKS = 520;
+    private static final int TOWN_CONVERSATION_DURATION_TICKS = 220;
     public static final List<String> STORY_INTRO = List.of(
-            "You followed rumors of a ritual at an old road shrine and found Vaelthara, Demon Queen of Mercy. She beat you without effort, then let you breathe so fear could travel faster than fire.",
-            "Oathstead Camp is muddy, unfinished, and frightened. The five kingdoms still argue over roads, ledgers, bells, graves, shrines, and blame while the old wards fail quietly.",
-            "Maelis believes your fear because it looks real. Selene will need records, Odrick roads, Solari rites, Ysra bells, Mirella proof, and every kingdom trust earned in practical work.",
-            "The old portal answers only to twelve socket stones. Gather them, wake the Old Gate of Alderfall, and return to Vaelthara on terms she did not choose."
+            "You went to an old road shrine to investigate a reported ritual. Vaelthara was there. The ward broke, the shrine burned, and you escaped wounded. You do not yet know why its protection failed.",
+            "Maelis brought you to Oathstead, a camp sheltering people driven from the road. Its palisade is unfinished. If the same failure reaches its wards, the people who took you in will have nowhere safe to go.",
+            "Across Alderfall, communities keep different protections: northern cairns, southern shrine flames, western river charms, and the bells of the Fenlands. Their keepers know parts of a craft that no single kingdom fully understands.",
+            "Maelis asks you to examine the burned shrine. Recover what survived, find someone who can read it, and help Oathstead prepare. Defeating Vaelthara will take more than surviving her a second time."
     );
     private static final String[] BUILDING_OWNER_NAMES = {
             "Bran", "Torin", "Marla", "Elowen", "Kael", "Liora", "Mira", "Orin",
@@ -133,9 +142,13 @@ public final class GameState {
     public int dialogIndex;
     private DialogueLibrary.DialogueSession activeDialogueSession;
     private DialogueVideoPrompt activeDialogueVideo;
+    private RoamingEventPrompt activeRoamingEventPrompt;
     private String activeNpcIntroLine = "";
     private String activeQuestDialogueLine = "";
     private String activeShopDialogueBuildingKey = "";
+    private String activeDialogueRevealKey = "";
+    private int activeDialogueRevealChars = Integer.MAX_VALUE;
+    private long activeDialogueRevealStartedAtMs;
     private List<VillageRecruitOption> settlementRecruitOptions = List.of();
     public int zoom = 100;
     public int worldTick;
@@ -144,6 +157,7 @@ public final class GameState {
     public String status = "Choose New Adventure or load an existing save.";
     private final Map<Npc, NpcRuntime> npcRuntime = new LinkedHashMap<>();
     private final Map<String, List<Npc>> npcListCache = new LinkedHashMap<>();
+    private final Map<String, TilePoint> commuterWorkSiteCache = new LinkedHashMap<>();
     private int npcListCacheTick = -1;
     private final Map<String, List<DungeonMonsterRuntime>> dungeonMonsterRuntime = new LinkedHashMap<>();
     private final Set<String> defeatedDungeonMonsters = new HashSet<>();
@@ -166,7 +180,12 @@ public final class GameState {
     private TravelBanterPrompt activeTravelBanter;
     private final List<PendingCompanionComment> pendingCompanionComments = new ArrayList<>();
     private final Map<String, Integer> recentTravelBanterKeys = new LinkedHashMap<>();
+    private AmbientNpcConversation activeTownConversation;
+    private final Map<String, Integer> recentTownConversationKeys = new LinkedHashMap<>();
     private int nextTravelBanterTick = 420;
+    private int nextTownConversationTick = 240;
+    private static final int DIALOGUE_REVEAL_MS_PER_CHAR = 12;
+    private static final int DIALOGUE_REVEAL_INITIAL_CHARS = 2;
 
     public GameState(GameConfig config) {
         this.config = config;
@@ -193,7 +212,9 @@ public final class GameState {
         activeShopDialogueBuildingKey = "";
         dialogIndex = 0;
         activeTravelBanter = null;
+        activeTownConversation = null;
         pendingCompanionComments.clear();
+        recentTownConversationKeys.clear();
         mode = GameMode.MAIN_MENU;
         status = "Choose New Adventure or load an existing save.";
     }
@@ -213,7 +234,9 @@ public final class GameState {
         activeShopDialogueBuildingKey = "";
         dialogIndex = 0;
         activeTravelBanter = null;
+        activeTownConversation = null;
         pendingCompanionComments.clear();
+        recentTownConversationKeys.clear();
         mode = GameMode.CLASS_SELECT;
         status = "Choose a class.";
     }
@@ -278,8 +301,11 @@ public final class GameState {
         settlementVisits.clear();
         buildingKnowledge.clear();
         activeTravelBanter = null;
+        activeTownConversation = null;
         pendingCompanionComments.clear();
+        recentTownConversationKeys.clear();
         nextTravelBanterTick = 420;
+        nextTownConversationTick = 240;
         recordSettlementVisit(currentMapId);
         battle = null;
         defenseRaid = null;
@@ -469,7 +495,7 @@ public final class GameState {
         activeDialogueSession = startDialogueSessionFor(npc);
         dialogIndex = 0;
         mode = GameMode.DIALOG;
-        String questNote = recordConversationQuestObjectives(npc);
+        String questNote = ""; // A greeting is not testimony, delivery, or a decision.
         status = "Talking to " + npc.name() + "." + questNote;
         return true;
     }
@@ -500,7 +526,8 @@ public final class GameState {
                 sourceNpc == null ? null : sourceNpc.shopId(),
                 sourceNpc == null ? null : sourceNpc.recruitId(),
                 0,
-                ally.professionXp
+                ally.professionXp,
+                null
         );
         introducedNpcKeys.add(npcRelationshipKey(npc));
         recordNpcKnowledge(npc, 1);
@@ -513,7 +540,7 @@ public final class GameState {
         activeDialogueSession = startDialogueSessionFor(npc);
         dialogIndex = 0;
         mode = GameMode.DIALOG;
-        String questNote = recordConversationQuestObjectives(npc);
+        String questNote = "";
         status = "Talking to " + ally.name + "." + questNote;
         return true;
     }
@@ -529,6 +556,7 @@ public final class GameState {
         activeNpc = npc;
         activePartyTalkActor = null;
         activeShop = null;
+        activeRoamingEventPrompt = null;
         activeNpcIntroLine = "";
         activeQuestDialogueLine = "";
         activeShopDialogueBuildingKey = "";
@@ -536,6 +564,69 @@ public final class GameState {
         dialogIndex = 0;
         mode = GameMode.DIALOG;
         status = "Encounter: " + safeTitle + ".";
+    }
+
+    public void openRoamingEventPrompt(String title, String sprite, String description, List<RoamingEventChoice> choices) {
+        String safeTitle = title == null || title.isBlank() ? "Roadside Event" : title.strip();
+        String safeSprite = sprite == null || sprite.isBlank() ? "npc_merchant" : sprite.strip();
+        String safeDescription = description == null || description.isBlank()
+                ? safeTitle + ": The road gives you a choice before moving on."
+                : description.strip();
+        List<RoamingEventChoice> safeChoices = choices == null || choices.isEmpty()
+                ? List.of(new RoamingEventChoice("Leave it alone", () -> resolveRoamingEventPrompt(
+                safeTitle + ": You leave the sign undisturbed and return to the road.",
+                "You leave the encounter alone.")))
+                : List.copyOf(choices);
+        activeRoamingEventPrompt = new RoamingEventPrompt(safeTitle, safeSprite, safeDescription, safeChoices);
+        Npc npc = new Npc(currentMapId, safeTitle, safeSprite, playerX, playerY, List.of(safeDescription), null, null);
+        introducedNpcKeys.add(npcRelationshipKey(npc));
+        activeNpc = npc;
+        activePartyTalkActor = null;
+        activeShop = null;
+        activeNpcIntroLine = "";
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
+        activeDialogueSession = null;
+        dialogIndex = 0;
+        mode = GameMode.DIALOG;
+        status = "Encounter: " + safeTitle + ". Choose an approach.";
+    }
+
+    public boolean roamingEventPromptActive() {
+        return activeRoamingEventPrompt != null;
+    }
+
+    public void resolveRoamingEventPrompt(String resultLine, String statusText) {
+        if (activeRoamingEventPrompt == null) {
+            return;
+        }
+        String title = activeRoamingEventPrompt.title();
+        activeRoamingEventPrompt = null;
+        activeDialogueSession = null;
+        activeQuestDialogueLine = resultLine == null || resultLine.isBlank()
+                ? title + ": The moment passes."
+                : resultLine.strip();
+        activeShopDialogueBuildingKey = "";
+        dialogIndex = 0;
+        status = statusText == null || statusText.isBlank() ? title + " resolved." : statusText.strip();
+    }
+
+    public void startRoamingEventBattle(List<String> monsterKeys, String statusText) {
+        List<String> keys = monsterKeys == null || monsterKeys.isEmpty() ? List.of("bandit_cutthroat") : monsterKeys;
+        List<GameData.MonsterSpec> specs = monsterSpecsForKeys(keys);
+        battle = createBattle(specs, world.tileAt(currentMapId, playerX, playerY), world.kind(currentMapId));
+        prepareBattleKnowledge(battle);
+        activeRoamingEventPrompt = null;
+        activeNpc = null;
+        activePartyTalkActor = null;
+        activeShop = null;
+        activeDialogueSession = null;
+        activeQuestDialogueLine = "";
+        activeShopDialogueBuildingKey = "";
+        activeNpcIntroLine = "";
+        dialogIndex = 0;
+        mode = GameMode.BATTLE;
+        status = statusText == null || statusText.isBlank() ? "The encounter turns violent." : statusText.strip();
     }
 
     private List<String> partyAllyDialog(Actor ally) {
@@ -641,6 +732,14 @@ public final class GameState {
         }
         Npc npc = npcAtPlayer();
         if (npc == null) {
+            for (WorldProp prop : world.propsInBounds(currentMapId, playerX - 1, playerY - 1, playerX + 2, playerY + 2)) {
+                String observation = WesternReachFolklore.observation(currentMapId, prop.asset());
+                if (observation.isEmpty()) observation = HearthlandsFolklore.observation(currentMapId, prop);
+                if (!observation.isEmpty()) {
+                    status = observation;
+                    return;
+                }
+            }
             status = "No one is close enough to talk.";
             return;
         }
@@ -684,7 +783,7 @@ public final class GameState {
 
     private void interactStoryPortal() {
         if (mainStoryComplete()) {
-            status = "The Old Gate is quiet. Alderfall was never saved by crowns; it was saved by promises kept.";
+            status = "The Old Gate is quiet. Vaelthara is defeated; the settlements still have wards to repair and promises to keep.";
             return;
         }
         Quest gateQuest = quests.get("ms_twelve_stones_gate");
@@ -705,7 +804,8 @@ public final class GameState {
         prepareBattleKnowledge(battle);
         demonQueenBattleActive = true;
         mode = GameMode.BATTLE;
-        status = "Vaelthara: So. The little survivor gathers stones and calls it courage. Maelis: You should have killed them.";
+        status = "Vaelthara: You saw one shrine fall and built a refuge behind another ward. Give me the stones. I will keep Oathstead fed and its gates guarded. Its people will remain under my protection until I release them.";
+        battle.addLog(status);
     }
 
     private int magicStoneCount() {
@@ -989,6 +1089,11 @@ public final class GameState {
         if (activeNpc == null) {
             return List.of();
         }
+        if (activeRoamingEventPrompt != null) {
+            return activeRoamingEventPrompt.choices().stream()
+                    .map(RoamingEventChoice::label)
+                    .toList();
+        }
         if (activeDialogueSession == null) {
             activeDialogueSession = startDialogueSessionFor(activeNpc);
         }
@@ -1019,11 +1124,108 @@ public final class GameState {
         return options;
     }
 
+    public List<DialogueOptionIntent> activeNpcDialogOptionIntents() {
+        if (activeNpc == null) {
+            return List.of();
+        }
+        if (activeRoamingEventPrompt != null) {
+            return activeRoamingEventPrompt.choices().stream()
+                    .map(choice -> new DialogueOptionIntent("action", "", 0))
+                    .toList();
+        }
+        if (activeDialogueSession == null) {
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+        }
+        if (!activeNpcIntroLine.isBlank()) {
+            return List.of(new DialogueOptionIntent("continue", "", 0));
+        }
+        if (!activeQuestDialogueLine.isBlank()) {
+            if (activeShopDialogueBuilding() != null) {
+                return List.of(
+                        new DialogueOptionIntent("shop", "", 0),
+                        new DialogueOptionIntent("continue", "", 0)
+                );
+            }
+            return List.of(new DialogueOptionIntent("continue", "", 0));
+        }
+        List<DialogueOptionIntent> intents = new ArrayList<>(activeDialogueSession.optionPreviews().stream()
+                .map(GameState::dialogueOptionIntent)
+                .toList());
+        if (activePartyTalkActor != null) {
+            return intents;
+        }
+        if (!activeNpcDialogueAtRoot()) {
+            return intents;
+        }
+        CityBuilding inquiryBuilding = activeNpcPlaceInquiryBuilding();
+        if (inquiryBuilding != null) {
+            intents.add(new DialogueOptionIntent("info", "", 0));
+        }
+        CityBuilding shopBuilding = activeNpcAssignedShopBuilding();
+        if (shopBuilding != null) {
+            intents.add(new DialogueOptionIntent("shop_info", "", 0));
+        }
+        return intents;
+    }
+
+    private static DialogueOptionIntent dialogueOptionIntent(DialogueLibrary.DialogueChoicePreview preview) {
+        String effect = preview == null ? "" : preview.effect();
+        int delta = preview == null ? 0 : preview.relationshipDelta();
+        return new DialogueOptionIntent(dialogueIntentKind(effect, delta), effect, delta);
+    }
+
+    private static String dialogueIntentKind(String effect, int relationshipDelta) {
+        if (effect == null || effect.isBlank()) {
+            if (relationshipDelta > 0) {
+                return "rapport_gain";
+            }
+            if (relationshipDelta < 0) {
+                return "rapport_risk";
+            }
+            return "topic";
+        }
+        if (effect.startsWith("quest:accept:")) {
+            return "quest_accept";
+        }
+        if (effect.startsWith("quest:turnin:")) {
+            return "quest_turnin";
+        }
+        if (effect.startsWith("quest:outcome:")) {
+            return "quest_choice";
+        }
+        if (effect.startsWith("dialogue_video:")) {
+            return "scene";
+        }
+        if (effect.startsWith("recruit:")) {
+            return "recruit";
+        }
+        if (effect.startsWith("milestone:")) {
+            return "milestone";
+        }
+        return switch (effect) {
+            case "romance:start", "romance:date_plan", "romance:date" -> "romance";
+            case "romance:end" -> "romance_end";
+            case "marriage:accept" -> "marriage";
+            case "companion_request:accept" -> "promise";
+            default -> relationshipDelta > 0 ? "rapport_gain" : relationshipDelta < 0 ? "rapport_risk" : "action";
+        };
+    }
+
+    public record DialogueOptionIntent(String kind, String effect, int relationshipDelta) {
+        public DialogueOptionIntent {
+            kind = kind == null ? "topic" : kind.strip();
+            effect = effect == null ? "" : effect.strip();
+        }
+    }
+
     public boolean activeNpcIntroductionPending() {
         return activeNpc != null && !activeNpcIntroLine.isBlank();
     }
 
     public boolean activeNpcDialogueAtRoot() {
+        if (activeRoamingEventPrompt != null) {
+            return false;
+        }
         if (activeNpc == null
                 || activeNpcIntroLine != null && !activeNpcIntroLine.isBlank()
                 || activeQuestDialogueLine != null && !activeQuestDialogueLine.isBlank()) {
@@ -1036,24 +1238,41 @@ public final class GameState {
     }
 
     public String activeNpcDialogLine() {
-        if (activeNpc == null) {
-            return "...";
-        }
-        if (activeDialogueSession == null) {
-            activeDialogueSession = startDialogueSessionFor(activeNpc);
-        }
-        if (!activeNpcIntroLine.isBlank()) {
-            return activeNpcIntroLine;
-        }
-        if (!activeQuestDialogueLine.isBlank()) {
-            return activeQuestDialogueLine;
-        }
-        return activeDialogueSession.line(npcRelationship(activeNpc));
+        return currentActiveDialogueLineParts().combined();
+    }
+
+    public String revealedActiveNpcDialogLine() {
+        return revealedActiveNpcDialogLineParts().combined();
     }
 
     public DialogueLibrary.DialogueLine activeNpcDialogLineParts() {
+        return currentActiveDialogueLineParts();
+    }
+
+    public DialogueLibrary.DialogueLine revealedActiveNpcDialogLineParts() {
+        DialogueLibrary.DialogueLine line = currentActiveDialogueLineParts();
+        syncDialogueReveal(line);
+        return revealedDialogueLine(line);
+    }
+
+    public boolean activeDialogueRevealComplete() {
+        DialogueLibrary.DialogueLine line = currentActiveDialogueLineParts();
+        syncDialogueReveal(line);
+        return activeDialogueRevealChars >= dialogueRevealLength(line);
+    }
+
+    public void revealActiveDialogueLineInstantly() {
+        DialogueLibrary.DialogueLine line = currentActiveDialogueLineParts();
+        syncDialogueReveal(line);
+        activeDialogueRevealChars = Integer.MAX_VALUE;
+    }
+
+    private DialogueLibrary.DialogueLine currentActiveDialogueLineParts() {
         if (activeNpc == null) {
             return new DialogueLibrary.DialogueLine("", "...");
+        }
+        if (activeRoamingEventPrompt != null) {
+            return DialogueLibrary.DialogueLine.from(activeRoamingEventPrompt.description());
         }
         if (activeDialogueSession == null) {
             activeDialogueSession = startDialogueSessionFor(activeNpc);
@@ -1065,6 +1284,55 @@ public final class GameState {
             return DialogueLibrary.DialogueLine.from(activeQuestDialogueLine);
         }
         return activeDialogueSession.structuredLine(npcRelationship(activeNpc));
+    }
+
+    private void syncDialogueReveal(DialogueLibrary.DialogueLine line) {
+        String key = dialogueRevealKey(line);
+        if (!key.equals(activeDialogueRevealKey)) {
+            activeDialogueRevealKey = key;
+            activeDialogueRevealStartedAtMs = System.currentTimeMillis();
+            activeDialogueRevealChars = DIALOGUE_REVEAL_INITIAL_CHARS;
+        }
+        int total = dialogueRevealLength(line);
+        if (total <= DIALOGUE_REVEAL_INITIAL_CHARS) {
+            activeDialogueRevealChars = Integer.MAX_VALUE;
+            return;
+        }
+        if (activeDialogueRevealChars >= total) {
+            return;
+        }
+        long elapsed = Math.max(0L, System.currentTimeMillis() - activeDialogueRevealStartedAtMs);
+        int progressed = DIALOGUE_REVEAL_INITIAL_CHARS + (int) (elapsed / DIALOGUE_REVEAL_MS_PER_CHAR);
+        activeDialogueRevealChars = Math.min(total, Math.max(activeDialogueRevealChars, progressed));
+    }
+
+    private String dialogueRevealKey(DialogueLibrary.DialogueLine line) {
+        return (activeNpc == null ? "" : npcRelationshipKey(activeNpc))
+                + "|" + (line == null ? "" : line.narration())
+                + "\u0000"
+                + (line == null ? "" : line.speech());
+    }
+
+    private int dialogueRevealLength(DialogueLibrary.DialogueLine line) {
+        if (line == null) {
+            return 0;
+        }
+        return line.narration().length() + line.speech().length();
+    }
+
+    private DialogueLibrary.DialogueLine revealedDialogueLine(DialogueLibrary.DialogueLine line) {
+        if (line == null) {
+            return new DialogueLibrary.DialogueLine("", "");
+        }
+        int remaining = Math.max(0, activeDialogueRevealChars);
+        String narration = line.narration();
+        String speech = line.speech();
+        int narrationChars = Math.min(narration.length(), remaining);
+        String revealedNarration = narration.substring(0, narrationChars);
+        remaining = Math.max(0, remaining - narration.length());
+        int speechChars = Math.min(speech.length(), remaining);
+        String revealedSpeech = speech.substring(0, speechChars);
+        return new DialogueLibrary.DialogueLine(revealedNarration, revealedSpeech);
     }
 
     public DialogueVideoPrompt activeDialogueVideo() {
@@ -1088,6 +1356,8 @@ public final class GameState {
         activeQuestDialogueLine = "";
         activeShopDialogueBuildingKey = "";
         dialogIndex = 0;
+        activeDialogueRevealKey = "";
+        activeDialogueRevealChars = Integer.MAX_VALUE;
         if (activeNpc != null) {
             status = "Talking to " + activeNpc.name() + ".";
         }
@@ -1095,6 +1365,17 @@ public final class GameState {
 
     public void selectDialogOption(int index) {
         if (mode != GameMode.DIALOG || activeNpc == null) {
+            return;
+        }
+        if (!activeDialogueRevealComplete()) {
+            revealActiveDialogueLineInstantly();
+            return;
+        }
+        if (activeRoamingEventPrompt != null) {
+            List<RoamingEventChoice> choices = activeRoamingEventPrompt.choices();
+            if (index >= 0 && index < choices.size()) {
+                choices.get(index).action().run();
+            }
             return;
         }
         if (!activeNpcIntroLine.isBlank()) {
@@ -1132,6 +1413,11 @@ public final class GameState {
             }
         }
         if (index >= 0 && index < baseOptions.size()) {
+            if (!activeDialogueSession.matches(questForNpc(activeNpc))) {
+                activeDialogueSession = startDialogueSessionFor(activeNpc);
+                status = "The situation changed. Review the current conversation before choosing.";
+                return;
+            }
             DialogueLibrary.DialogueChoiceResult result = activeDialogueSession.choose(index);
             recordActiveCompanionDialogueTopic(result.repeatKey());
             activeShopDialogueBuildingKey = "";
@@ -1139,7 +1425,22 @@ public final class GameState {
                 adjustNpcRelationship(activeNpc, result.relationshipDelta());
             }
             if (result.effect() != null && !result.effect().isBlank()) {
+                String selectedReply = activeDialogueSession.line(npcRelationship(activeNpc));
                 applyDialogueEffect(result.effect());
+                if (activeDialogueSession != null && !activeDialogueSession.matches(questForNpc(activeNpc))) {
+                    activeDialogueSession = startDialogueSessionFor(activeNpc);
+                }
+                if (result.effect().startsWith("quest:outcome:")) {
+                    String[] decision = result.effect().split(":", 5);
+                    Quest decided = decision.length == 5 ? quests.get(decision[2]) : null;
+                    String decisionKey = decided == null ? "" : decided.stages.stream()
+                            .filter(stage -> stage.id().equals(decision[3])).map(Quest.QuestStage::branchOutcomeKey)
+                            .filter(key -> !key.isBlank()).findFirst().orElse(decided.id);
+                    if (decided != null && decided.observedStages.contains(decision[3])
+                            && decision[4].equals(questBranchOutcomes.get(decisionKey))) {
+                        activeQuestDialogueLine = questSpeakerLine(selectedReply);
+                    }
+                }
             }
             dialogIndex = 0;
             if (result.relationshipDelta() == 0 && (result.effect() == null || result.effect().isBlank())) {
@@ -1337,6 +1638,30 @@ public final class GameState {
     }
 
     private void applyDialogueEffect(String effect) {
+        if (effect != null && effect.startsWith("quest:discuss:")) {
+            String[] parts = effect.split(":", 4);
+            Quest quest = parts.length == 4 ? quests.get(parts[2]) : null;
+            if (quest != null && quest.accepted && !quest.completed && !quest.ready()
+                    && quest.activeStage().id().equals(parts[3]) && quest.activeObjectiveKind() != Quest.ObjectiveKind.CHOICE
+                    && quest.activeObjectiveKind().conversationObjective() && conversationObjectiveMatches(quest, activeNpc)) {
+                String result = quest.activeReadyDialog();
+                String stageId = quest.activeStage().id();
+                if (!CompanionQuestContent.canHandOver(quest)) {
+                    activeQuestDialogueLine = "The required supplies or preparation are missing. " + quest.activeProgressDialog();
+                    status = activeQuestDialogueLine;
+                    return;
+                }
+                String note = recordConversationQuestObjective(quest, activeNpc);
+                activeQuestDialogueLine = quest.observedStages.contains(stageId) ? questSpeakerLine(result)
+                        : note.isBlank() ? "We have already recorded this exchange. Speak to another marked contact."
+                        : "Your account is recorded. We still need the other marked contacts before drawing a conclusion.";
+                status = note;
+                activeDialogueSession = startDialogueSessionFor(activeNpc);
+            } else {
+                activeQuestDialogueLine = "That exchange is no longer available. Check the current objective.";
+            }
+            return;
+        }
         if (effect != null && effect.startsWith("dialogue_video:")) {
             triggerDialogueVideo(effect.substring("dialogue_video:".length()).strip());
             return;
@@ -1481,18 +1806,30 @@ public final class GameState {
         if (effect == null) {
             return;
         }
-        String[] fields = effect.split(":", 4);
-        if (fields.length != 4) {
+        String[] fields = effect.split(":", 5);
+        if (fields.length != 5) {
             return;
         }
         Quest quest = quests.get(fields[2].strip());
-        if (quest == null || quest.completed) {
+        if (quest == null || !quest.accepted || quest.completed || quest.ready()
+                || quest.activeObjectiveKind() != Quest.ObjectiveKind.CHOICE
+                || !quest.activeStage().id().equals(fields[3])
+                || activeNpc == null || !conversationObjectiveMatches(quest, activeNpc)) {
             return;
         }
-        String outcome = normalizeQuestOutcome(fields[3]);
-        if (outcome.isBlank()) {
+        String outcome = normalizeQuestOutcome(fields[4]);
+        if (outcome.isBlank()) return;
+        String recorded = questBranchOutcomes.get(quest.outcomeKey());
+        if (recorded != null) {
+            if (!recorded.equals(outcome)) return;
+            // Revised segments may need new evidence, but an old decision remains binding.
+            quest.recordConversation();
+            invalidateQuestObjectiveCache();
+            status = "Your earlier decision is retained: " + readableQuestOutcome(recorded) + ".";
+            if (quest.ready()) autoAdvanceReadyQuestStage(quest);
             return;
         }
+        if (!DialogueLibrary.allowedQuestOutcome(activeNpc, quest, outcome)) return;
         questBranchOutcomes.put(quest.outcomeKey(), outcome);
         if (quest.accepted && !quest.ready() && quest.activeObjectiveKind() == Quest.ObjectiveKind.CHOICE) {
             quest.recordConversation();
@@ -1511,6 +1848,9 @@ public final class GameState {
                 quest.companionQuest());
         status = "Choice recorded: " + label + ".";
         if (quest.ready()) {
+            if (autoAdvanceReadyQuestStage(quest)) {
+                return;
+            }
             status += " " + quest.activeReadyDialog();
         }
     }
@@ -1520,12 +1860,12 @@ public final class GameState {
         String owner = quest == null ? "" : quest.chainOwnerId;
         return switch (owner == null ? "" : owner) {
             case "seraphine" -> "Agreed to help Seraphine expose the first lie behind " + title + " without dressing it as heroics.";
-            case "maera" -> "Agreed to follow Maera's evidence through " + title + ", even where the official record resists.";
+            case "maera" -> "Agreed to help Maera keep the map, route record, and witness in " + title + " together before the Archive could separate them.";
             case "cassia" -> "Agreed to stand with Cassia at the breach opened by " + title + ".";
             case "lyra" -> "Agreed to help Lyra before " + title + " could turn more people into patients.";
             case "samir" -> "Agreed to carry Samir's question through " + title + " without forcing easy certainty.";
             case "aria" -> "Accepted Aria's warning that the road in " + title + " might be bait and chose to follow anyway.";
-            case "vesper" -> "Agreed to help Vesper uncover what was buried in " + title + " without tearing up the living root.";
+            case "vesper" -> "Agreed to help Vesper inspect the Snowrest road breaks and trace black sap back through " + title + ".";
             case "rafiq" -> "Agreed to help Rafiq face the truth behind " + title + " before charm could improve the story.";
             case "calder" -> "Agreed to help Calder carry the weight behind " + title + " with both hands.";
             default -> "Started " + title + " together.";
@@ -1538,12 +1878,12 @@ public final class GameState {
         String owner = quest == null ? "" : quest.chainOwnerId;
         return switch (owner == null ? "" : owner) {
             case "seraphine" -> "Finished " + stage + " in " + title + "; Seraphine noticed which piece of ink finally made the lie nervous.";
-            case "maera" -> "Finished " + stage + " in " + title + "; Maera kept the contradiction instead of sanding it smooth.";
+            case "maera" -> "Finished " + stage + " in " + title + "; Maera kept the physical evidence and witness account in the same record.";
             case "cassia" -> "Finished " + stage + " in " + title + "; Cassia watched the facts hold under pressure.";
             case "lyra" -> "Finished " + stage + " in " + title + "; Lyra remembered who would have suffered if the player had waited.";
             case "samir" -> "Finished " + stage + " in " + title + "; Samir let the evidence trouble the old lesson.";
             case "aria" -> "Finished " + stage + " in " + title + "; Aria noticed the player reading the second trail before trusting the first.";
-            case "vesper" -> "Finished " + stage + " in " + title + "; Vesper saw the player touch the buried thing carefully.";
+            case "vesper" -> "Finished " + stage + " in " + title + "; Vesper saw the player check sap, witnesses, and risk before cutting roots.";
             case "rafiq" -> "Finished " + stage + " in " + title + "; Rafiq remembered the moment truth became harder to joke around.";
             case "calder" -> "Finished " + stage + " in " + title + "; Calder saw the player check the strain before praising the repair.";
             default -> "Completed " + stage + " in " + title + ".";
@@ -1555,12 +1895,12 @@ public final class GameState {
         String owner = quest == null ? "" : quest.chainOwnerId;
         return switch (owner == null ? "" : owner) {
             case "seraphine" -> "Completed " + title + "; Seraphine keeps thinking about the moment the player made the lie answer back.";
-            case "maera" -> "Completed " + title + "; Maera added the player's choice to the living record, not the official one.";
+            case "maera" -> "Completed " + title + "; Maera remembers the player preserving the proof before deciding who should hear it.";
             case "cassia" -> "Completed " + title + "; Cassia remembers that the player stood where the line actually moved.";
             case "lyra" -> "Completed " + title + "; Lyra remembers the player choosing care while there was still time for it to matter.";
             case "samir" -> "Completed " + title + "; Samir remembers the player letting doubt become guidance instead of shame.";
             case "aria" -> "Completed " + title + "; Aria remembers the player spotting the false trail and still walking beside her.";
-            case "vesper" -> "Completed " + title + "; Vesper remembers the player letting what was buried live at its own pace.";
+            case "vesper" -> "Completed " + title + "; Vesper remembers the player tracing the road damage back to the sealed grove.";
             case "rafiq" -> "Completed " + title + "; Rafiq remembers the player staying when the truth stopped being charming.";
             case "calder" -> "Completed " + title + "; Calder remembers the player helping carry the weight after the first crack showed.";
             default -> "Completed " + title + " together.";
@@ -1572,17 +1912,40 @@ public final class GameState {
         String owner = quest == null ? "" : quest.chainOwnerId;
         String choice = label == null || label.isBlank() ? readableQuestOutcome(outcome) : label;
         return switch (owner == null ? "" : owner) {
-            case "seraphine" -> "Chose " + choice + " during " + title + "; Seraphine noticed whether freedom was treated as a fact or a performance.";
-            case "maera" -> "Chose " + choice + " during " + title + "; Maera kept the reasoning in the margin where it could not be simplified.";
+            case "seraphine" -> seraphineQuestChoiceMemory(title, outcome, choice);
+            case "maera" -> "Chose " + choice + " during " + title + "; Maera recorded which proof was protected, which witness was risked, and why.";
             case "cassia" -> "Chose " + choice + " during " + title + "; Cassia measured the choice by who had to stand behind it.";
             case "lyra" -> "Chose " + choice + " during " + title + "; Lyra remembers who the choice protected and who it could not.";
             case "samir" -> "Chose " + choice + " during " + title + "; Samir kept returning to the mercy or truth inside the decision.";
             case "aria" -> "Chose " + choice + " during " + title + "; Aria watched whether the player named the trap or stepped around it.";
-            case "vesper" -> "Chose " + choice + " during " + title + "; Vesper remembers what the decision allowed to keep growing.";
+            case "vesper" -> "Chose " + choice + " during " + title + "; Vesper remembers what happened to the road, grove, and spring afterward.";
             case "rafiq" -> "Chose " + choice + " during " + title + "; Rafiq noticed whether the truth survived style.";
             case "calder" -> "Chose " + choice + " during " + title + "; Calder remembers whether the decision could bear weight afterward.";
             default -> "Chose " + choice + " during " + title + ".";
         };
+    }
+
+    private String seraphineQuestChoiceMemory(String title, String outcome, String choice) {
+        String detail = switch (outcome == null ? "" : outcome) {
+            case "clause_copied" -> "Seraphine noticed that leverage came before theater.";
+            case "public_record" -> "Seraphine noticed that public truth still needed exits for the vulnerable.";
+            case "witness_first" -> "Seraphine noticed that the living witness came before the beautiful proof.";
+            case "witness_protected" -> "Seraphine remembered the clerk being protected before his testimony was useful.";
+            case "testimony_public" -> "Seraphine remembered the testimony being made too public to quietly erase.";
+            case "leverage_traded" -> "Seraphine remembered the risk of making a frightened clerk useful.";
+            case "survival_named" -> "Seraphine remembered the player naming desperation without calling it consent.";
+            case "legal_lie_named" -> "Seraphine remembered the contract being named legal enough to wound and false enough to fight.";
+            case "blame_signed" -> "Seraphine remembered the old shame being placed too near the people trapped by it.";
+            case "ledger_published" -> "Seraphine remembered the contract burning while the ledger became public evidence.";
+            case "names_reclaimed" -> "Seraphine remembered the records being kept where victims could reclaim their names.";
+            case "safety_bargain" -> "Seraphine remembered safety being bought with leverage and counted the later cost.";
+            case "records_burned" -> "Seraphine remembered the clean fire and the names that still needed proof.";
+            case "refuge_ledger" -> "Seraphine remembered Oathstead's ledger desk being built for people leaving chains.";
+            case "witness_bench" -> "Seraphine remembered witness days being placed before any new oath.";
+            case "chosen_daily" -> "Seraphine remembered the promise being left open enough to choose again.";
+            default -> "Seraphine noticed whether freedom was treated as a fact or a performance.";
+        };
+        return "Chose " + choice + " during " + title + "; " + detail;
     }
 
     private String normalizeQuestOutcome(String outcome) {
@@ -1679,6 +2042,10 @@ public final class GameState {
         Npc questSource = questNpcSourceFor(npc);
         if (questSource != null) {
             return questSource;
+        }
+        Npc commuterSource = commuterSourceNpcFor(npc);
+        if (commuterSource != null) {
+            return commuterSource;
         }
         if (npc == null || !syntheticVillageAllyNpc(npc)) {
             return null;
@@ -1846,11 +2213,11 @@ public final class GameState {
 
     private String relationshipMilestoneLabel(int threshold) {
         return switch (threshold) {
-            case 50 -> "guarded respect";
-            case 100 -> "personal admission";
-            case 150 -> "loyalty";
-            case 180 -> "romance possible";
-            case 250 -> "future promise";
+            case 50 -> "where we stand";
+            case 100 -> "what changed between us";
+            case 150 -> "staying together by choice";
+            case 180 -> "what this feeling is becoming";
+            case 250 -> "the future";
             default -> "";
         };
     }
@@ -2212,7 +2579,10 @@ public final class GameState {
         }
         if (quest.accepted && !quest.ready()) {
             recordStoryInventoryObjective(quest);
-            if (quest.activeObjectiveKind().conversationObjective()) {
+            if (autoAdvanceReadyQuestStage(quest)) {
+                return true;
+            }
+            if (quest.activeObjectiveKind().conversationObjective() && quest.activeObjectiveKind() != Quest.ObjectiveKind.CHOICE) {
                 String note = recordConversationQuestObjective(quest, activeNpc);
                 if (!note.isBlank()) {
                     status = note;
@@ -2263,13 +2633,7 @@ public final class GameState {
                 String completedStage = quest.activeStage().title();
                 String stageCompleteLine = quest.activeCompleteDialog();
                 quest.advanceStage();
-                questMonsterRuntime.remove(quest.id);
-                questNpcRuntime.remove(quest.id);
-                invalidateQuestObjectiveCache();
-                invalidateNpcListCache();
-                activeQuestMonster = activeQuestMonster != null && quest.id.equals(activeQuestMonster.questId)
-                        ? null
-                        : activeQuestMonster;
+                clearQuestStageRuntime(quest);
                 activeQuestDialogueLine = questSpeakerLine(stageCompleteLine.isBlank()
                         ? quest.activeStartDialog()
                         : stageCompleteLine + " " + quest.activeStartDialog());
@@ -2282,7 +2646,14 @@ public final class GameState {
                 status = "Quest stage complete: " + stageLabel + ". " + quest.activeStartDialog();
                 return true;
             }
+            Npc reportRecipient = questGiver(quest.id);
+            if (reportRecipient != null && !activeNpcMatchesQuestGiver(quest)) {
+                activeQuestDialogueLine = "Take this report to " + reportRecipient.name() + " in " + world.label(reportRecipient.mapId()) + ".";
+                status = activeQuestDialogueLine;
+                return true;
+            }
             quest.completed = true;
+            quest.observedStages.add(quest.activeStage().id());
             invalidateQuestObjectiveCache();
             invalidateNpcListCache();
             player.gold += quest.rewardGold;
@@ -2374,6 +2745,60 @@ public final class GameState {
         return "A new lead opens: speak with " + giver.name() + " in " + world.label(giver.mapId()) + ".";
     }
 
+    private boolean autoAdvanceReadyQuestStage(Quest quest) {
+        if (quest == null || quest.completed || !quest.ready() || quest.finalStage()) {
+            return false;
+        }
+        String completedStage = quest.activeStage().title();
+        String stageReadyLine = quest.activeReadyDialog();
+        quest.advanceStage();
+        clearQuestStageRuntime(quest);
+        if (quest.companionQuest()) {
+            Npc giver = questGiver(quest.id);
+            if (giver != null) {
+                recordCompanionMemoryForNpc(giver, "quest_stage", companionQuestStageMemory(quest, completedStage));
+            }
+        }
+        if (activeNpc != null) {
+            activeDialogueSession = startDialogueSessionFor(activeNpc);
+            activeShopDialogueBuildingKey = "";
+            activeQuestDialogueLine = activeNpcMatchesQuestGiver(quest)
+                    ? questSpeakerLine(quest.activeStartDialog())
+                    : "";
+        }
+        String stageLabel = completedStage == null || completedStage.isBlank() ? "stage" : completedStage;
+        StringBuilder note = new StringBuilder("Quest stage complete: " + stageLabel + ".");
+        if (stageReadyLine != null && !stageReadyLine.isBlank()) {
+            note.append(" ").append(stageReadyLine);
+        }
+        if (!quest.activeStartDialog().isBlank()) {
+            note.append(" ").append(quest.activeStartDialog());
+        }
+        status = note.toString();
+        return true;
+    }
+
+    private boolean activeNpcMatchesQuestGiver(Quest quest) {
+        if (quest == null || activeNpc == null) {
+            return false;
+        }
+        Npc giver = questGiver(quest.id);
+        return giver != null && npcRelationshipKey(giver).equals(npcRelationshipKey(activeNpc));
+    }
+
+    private void clearQuestStageRuntime(Quest quest) {
+        if (quest == null) {
+            return;
+        }
+        questMonsterRuntime.remove(quest.id);
+        questNpcRuntime.remove(quest.id);
+        invalidateQuestObjectiveCache();
+        invalidateNpcListCache();
+        activeQuestMonster = activeQuestMonster != null && quest.id.equals(activeQuestMonster.questId)
+                ? null
+                : activeQuestMonster;
+    }
+
     private String recordConversationQuestObjectives(Npc npc) {
         if (npc == null) {
             return "";
@@ -2392,10 +2817,14 @@ public final class GameState {
     }
 
     private String recordConversationQuestObjective(Quest quest, Npc npc) {
-        if (quest == null || npc == null || !conversationObjectiveMatches(quest, npc)) {
+        if (quest == null || npc == null || !quest.accepted || quest.completed || quest.ready()
+                || quest.activeObjectiveKind() == Quest.ObjectiveKind.CHOICE || !conversationObjectiveMatches(quest, npc)) {
             return "";
         }
         String key = conversationObjectiveKey(quest, npc);
+        if (!CompanionQuestContent.canHandOver(quest)) {
+            return "The handover needs the requested quest supplies and preparation. " + quest.activeProgressDialog();
+        }
         if (harvestedQuestResources.contains(key)) {
             return "";
         }
@@ -2409,19 +2838,25 @@ public final class GameState {
         String note = quest.objectiveAction() + " objective updated: " + quest.title + " "
                 + quest.progress + "/" + quest.activeNeeded() + ".";
         if (quest.ready()) {
+            if (autoAdvanceReadyQuestStage(quest)) {
+                return status;
+            }
             note += " " + quest.activeReadyDialog();
         }
         return note;
     }
 
     private boolean conversationObjectiveMatches(Quest quest, Npc npc) {
+        if (npc == null) return false;
+        if (questForQuestNpc(npc) == quest) return true;
         if (quest.activeObjectiveKind() == Quest.ObjectiveKind.ASK_AROUND) {
-            Npc giver = questGiver(quest.id);
-            return giver == null || !npcRelationshipKey(giver).equals(npcRelationshipKey(npc)) || quest.activeNeeded() <= 1;
+            return conversationObjectiveMarkerNpcs(quest).stream()
+                    .anyMatch(witness -> npcRelationshipKey(witness).equals(npcRelationshipKey(npc)));
         }
         if (targetNpcMatches(quest.activeTargetNpcId(), npc)) {
             return true;
         }
+        if (quest.activeTargetNpcId() != null && !quest.activeTargetNpcId().isBlank()) return false;
         String npcName = normalizeQuestMatchText(npc.name());
         String npcRecruitId = normalizeQuestMatchText(npc.recruitId());
         String npcKey = normalizeQuestMatchText(npcRelationshipKey(npc));
@@ -2435,6 +2870,7 @@ public final class GameState {
             }
         }
         Npc giver = questGiver(quest.id);
+        if (questTemporaryNpcObjective(quest) && quest.activeObjectiveKind() != Quest.ObjectiveKind.CHOICE) return false;
         return giver != null && npcRelationshipKey(giver).equals(npcRelationshipKey(npc));
     }
 
@@ -2486,12 +2922,6 @@ public final class GameState {
             status = "The Old Gate oath needs all twelve socket stones before Maelis will send you there.";
             return false;
         }
-        boolean deeperReveal = activeNpc.questId() != null && !activeNpc.questId().equals(quest.id);
-        if (deeperReveal && npcRelationship(activeNpc) < MAIN_STORY_TRUST_RELATIONSHIP) {
-            status = activeNpc.name() + " withholds the next part of the Demon Queen puzzle. Relationship "
-                    + npcRelationship(activeNpc) + "/" + MAIN_STORY_TRUST_RELATIONSHIP + " needed.";
-            return false;
-        }
         return true;
     }
 
@@ -2511,6 +2941,12 @@ public final class GameState {
         Quest questNpcQuest = questForQuestNpc(npc);
         if (questNpcQuest != null) {
             return questNpcQuest;
+        }
+        for (Quest active : quests.values()) {
+            if (active.accepted && !active.completed && !active.ready()
+                    && active.activeObjectiveKind().conversationObjective()
+                    && active.activeObjectiveKind() != Quest.ObjectiveKind.CHOICE
+                    && conversationObjectiveMatches(active, npc)) return active;
         }
         Quest authored = authoredQuestForNpc(npc);
         if (authored != null && !authored.completed) {
@@ -2614,8 +3050,11 @@ public final class GameState {
         weeklyQuestBlock = block;
         weeklyNpcQuestIds.clear();
         for (Npc npc : weeklyQuestCandidates()) {
+            if (npc.recruitId() != null) {
+                continue;
+            }
             Quest authored = authoredQuestForNpc(npc);
-            if (authored != null && !authored.completed) {
+            if (authored != null && (authored.mainStoryQuest() || authored.companionQuest() || !authored.completed)) {
                 continue;
             }
             String id = weeklyQuestId(npc, block);
@@ -3076,6 +3515,7 @@ public final class GameState {
         activeShop = null;
         activeDialogueSession = null;
         activeDialogueVideo = null;
+        activeRoamingEventPrompt = null;
         activeNpcIntroLine = "";
         activeQuestDialogueLine = "";
         activeShopDialogueBuildingKey = "";
@@ -3189,6 +3629,9 @@ public final class GameState {
         invalidateQuestObjectiveCache();
         String update = " " + quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ".";
         if (quest.ready()) {
+            if (autoAdvanceReadyQuestStage(quest)) {
+                return " " + status;
+            }
             update += " " + quest.activeReadyDialog();
         }
         return update;
@@ -5660,6 +6103,7 @@ public final class GameState {
         updateDungeonMonsterMovement();
         updateQuestMonsterMovement();
         updateTravelBanter();
+        updateAmbientTownConversation();
     }
 
     private void tickVillageProduction() {
@@ -5746,10 +6190,112 @@ public final class GameState {
                 banterReplyDeltas(draft.tags(), 1),
                 draft.tags(),
                 banterResponseLines(speaker, draft.tags(), 1),
-                worldTick + 520
+                worldTick + TRAVEL_BANTER_DURATION_TICKS
         );
         markBanterUsed(speaker.name, draft.key());
         nextTravelBanterTick = worldTick + 1200 + random.nextInt(1600);
+    }
+
+    private void updateAmbientTownConversation() {
+        if (activeTownConversation != null) {
+            if (!currentMapId.equals(activeTownConversation.mapId()) || worldTick >= activeTownConversation.expiresAtTick()) {
+                activeTownConversation = null;
+                nextTownConversationTick = worldTick + 260 + random.nextInt(420);
+            } else {
+                return;
+            }
+        }
+        if (activeTravelBanter != null || worldTick < nextTownConversationTick) {
+            return;
+        }
+        String kind = world.kind(currentMapId);
+        if (!"city".equals(kind) && !"village".equals(kind)) {
+            nextTownConversationTick = worldTick + 300;
+            return;
+        }
+        List<Npc> npcs = npcsForMap(currentMapId);
+        if (npcs.size() < 2) {
+            nextTownConversationTick = worldTick + 360;
+            return;
+        }
+        List<NpcPair> pairs = nearbyConversationPairs(npcs);
+        if (pairs.isEmpty() || random.nextDouble() > 0.065) {
+            nextTownConversationTick = worldTick + 150 + random.nextInt(220);
+            return;
+        }
+        NpcPair pair = pairs.get(random.nextInt(pairs.size()));
+        int draftSeed = worldTick / 90 + pair.speaker().name().hashCode() * 31 + pair.listener().name().hashCode();
+        AmbientTownConversationLibrary.Draft draft = AmbientTownConversationLibrary.draftFor(
+                pair.speaker(),
+                pair.listener(),
+                dayPhaseLabel(),
+                world.label(currentMapId),
+                draftSeed
+        );
+        if (draft.speakerLine().isBlank() || draft.listenerLine().isBlank() || recentlyUsedTownConversation(draft.key())) {
+            nextTownConversationTick = worldTick + 180 + random.nextInt(260);
+            return;
+        }
+        activeTownConversation = new AmbientNpcConversation(
+                currentMapId,
+                npcRelationshipKey(pair.speaker()),
+                npcRelationshipKey(pair.listener()),
+                draft.speakerLine(),
+                draft.listenerLine(),
+                worldTick + TOWN_CONVERSATION_DURATION_TICKS + random.nextInt(70)
+        );
+        markTownConversationUsed(draft.key());
+        nextTownConversationTick = worldTick + 520 + random.nextInt(760);
+    }
+
+    private List<NpcPair> nearbyConversationPairs(List<Npc> npcs) {
+        List<NpcPair> pairs = new ArrayList<>();
+        for (int i = 0; i < npcs.size(); i++) {
+            Npc speaker = npcs.get(i);
+            if (speaker == null || speaker.equals(activeNpc)) {
+                continue;
+            }
+            TilePoint speakerPosition = npcPosition(speaker);
+            for (int j = i + 1; j < npcs.size(); j++) {
+                Npc listener = npcs.get(j);
+                if (listener == null || listener.equals(activeNpc)) {
+                    continue;
+                }
+                TilePoint listenerPosition = npcPosition(listener);
+                int distance = Math.abs(speakerPosition.x() - listenerPosition.x()) + Math.abs(speakerPosition.y() - listenerPosition.y());
+                if (distance == 0 || distance > 3) {
+                    continue;
+                }
+                if (speakerPosition.x() <= listenerPosition.x()) {
+                    pairs.add(new NpcPair(speaker, listener));
+                } else {
+                    pairs.add(new NpcPair(listener, speaker));
+                }
+            }
+        }
+        return pairs;
+    }
+
+
+    private boolean recentlyUsedTownConversation(String key) {
+        cleanupRecentTownConversationKeys();
+        return key != null && !key.isBlank() && recentTownConversationKeys.containsKey(key);
+    }
+
+    private void markTownConversationUsed(String key) {
+        cleanupRecentTownConversationKeys();
+        if (key == null || key.isBlank()) {
+            return;
+        }
+        recentTownConversationKeys.put(key, worldTick);
+        while (recentTownConversationKeys.size() > 24) {
+            String oldest = recentTownConversationKeys.keySet().iterator().next();
+            recentTownConversationKeys.remove(oldest);
+        }
+    }
+
+    private void cleanupRecentTownConversationKeys() {
+        recentTownConversationKeys.entrySet().removeIf(entry -> worldTick - entry.getValue() > 1800);
     }
 
     private BanterDraft travelBanterDraft(Actor speaker) {
@@ -6066,6 +6612,17 @@ public final class GameState {
         return activeTravelBanter;
     }
 
+    public AmbientNpcConversation activeTownConversation() {
+        if (activeTownConversation == null || !currentMapId.equals(activeTownConversation.mapId())) {
+            return null;
+        }
+        return activeTownConversation;
+    }
+
+    public String npcRenderKey(Npc npc) {
+        return npcRelationshipKey(npc);
+    }
+
     public void replyToTravelBanter(int optionIndex) {
         if (activeTravelBanter == null || optionIndex < 0 || optionIndex >= activeTravelBanter.options().size()) {
             return;
@@ -6100,7 +6657,7 @@ public final class GameState {
                     List.of(0),
                     tagged(activeTravelBanter.tags(), "banter_response"),
                     List.of(""),
-                    worldTick + 520
+                    worldTick + TRAVEL_BANTER_DURATION_TICKS
             );
             if (ally != null && delta > 0) {
                 recordBanterMemory(ally, activeTravelBanter.tags(), optionIndex);
@@ -6488,7 +7045,7 @@ public final class GameState {
             String bossKey = chooseDungeonBoss(mapId);
             monsters.add(new DungeonMonsterRuntime(mapId + ":boss", GameData.MONSTERS.getOrDefault(bossKey, GameData.MONSTERS.get("wraith")), true, bossPoint.x(), bossPoint.y(), seeded.nextInt(80)));
         }
-        int count = Math.min(candidates.size(), 5 + Math.min(3, dungeonDepth(mapId)));
+        int count = Math.min(candidates.size(), dungeonRoamerCount(mapId));
         for (int i = 0; i < count; i++) {
             int index = seeded.nextInt(candidates.size());
             TilePoint point = candidates.remove(index);
@@ -6513,7 +7070,8 @@ public final class GameState {
 
     private boolean isDungeonFloor(char tile) {
         return tile == 'd' || tile == 'D' || tile == 'F' || tile == 'M' || tile == 'R' || tile == 'S' || tile == 'L'
-                || tile == 'N' || tile == 'I' || tile == 'J' || tile == 'H' || tile == 'Q';
+                || tile == 'N' || tile == 'E' || tile == 'I' || tile == 'J' || tile == 'H' || tile == 'Q'
+                || tile == '1' || tile == '2' || tile == '3' || tile == '4' || tile == '5' || tile == '6';
     }
 
     private int dungeonDepth(String mapId) {
@@ -6527,40 +7085,83 @@ public final class GameState {
         return mapId.contains("deep") ? 2 : 1;
     }
 
-    private String chooseDungeonBoss(String mapId) {
+    private int dungeonRoamerCount(String mapId) {
+        return switch (dungeonSpawnTheme(mapId)) {
+            case "bandit", "goblin" -> 4 + Math.min(2, dungeonDepth(mapId));
+            default -> 3 + Math.min(2, dungeonDepth(mapId));
+        };
+    }
+
+    private String dungeonSpawnTheme(String mapId) {
         if (mapId.contains("redcap")) {
-            return "goblin_warlord";
+            return "goblin";
         }
         if (mapId.contains("crowhook")) {
-            return "bandit_captain";
+            return "bandit";
         }
-        if (mapId.contains("frost")) {
-            return dungeonDepth(mapId) > 1 ? "frost_troll" : "ice_golem";
+        if (mapId.contains("frosthollow") || mapId.contains("frost")) {
+            return "frost_cave";
         }
-        if (mapId.contains("mire")) {
-            return dungeonDepth(mapId) > 1 ? "swamp_troll" : "crypt_revenant";
+        if (mapId.contains("miredepth") || mapId.contains("mire")) {
+            return "mire_cave";
         }
-        if (mapId.contains("blackvault") || dungeonDepth(mapId) > 1) {
-            return mapId.contains("blackvault") ? "elder_dragon" : "elder_wraith";
+        if (mapId.contains("blackvault")) {
+            return "castle";
         }
-        return "bone_knight";
+        if (mapId.contains("ironbarrow")) {
+            return "prison";
+        }
+        if (mapId.contains("belltower_sluice")) {
+            return "sewer";
+        }
+        if (mapId.contains("stonegate")) {
+            return "crypt";
+        }
+        return "crypt";
+    }
+
+    private String chooseDungeonBoss(String mapId) {
+        int depth = dungeonDepth(mapId);
+        return switch (dungeonSpawnTheme(mapId)) {
+            case "goblin" -> "goblin_warlord";
+            case "bandit" -> "bandit_captain";
+            case "frost_cave" -> depth > 2 ? "mountain_drake" : "frost_troll";
+            case "mire_cave" -> depth > 2 ? "marsh_drake" : "swamp_troll";
+            case "castle" -> depth > 2 ? "nameless_warden" : "void_knight";
+            case "prison" -> depth > 2 ? "void_knight" : "bone_knight";
+            case "sewer" -> depth > 2 ? "swamp_troll" : "bog_beast";
+            case "crypt" -> depth > 2 ? "elder_wraith" : "bone_knight";
+            default -> "bone_knight";
+        };
     }
 
     private String chooseDungeonRoamer(String mapId, Random seeded) {
-        List<String> pool;
-        if (mapId.contains("redcap")) {
-            pool = List.of("goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher", "goblin_shaman");
-        } else if (mapId.contains("crowhook")) {
-            pool = List.of("bandit_cutthroat", "bandit_archer", "goblin_skirmisher", "orc_raider", "orc_shieldbearer", "bandit_captain");
-        } else if (mapId.contains("frost")) {
-            pool = List.of("crypt_bat", "frost_wolf", "skeleton", "mountain_drake", "frost_troll", "ice_golem");
-        } else if (mapId.contains("mire")) {
-            pool = List.of("slime", "spider", "reed_serpent", "bog_beast", "marsh_drake", "swamp_troll", "wraith");
-        } else if (mapId.contains("blackvault")) {
-            pool = List.of("skeleton", "wraith", "orc_berserker", "ash_scorpion", "stone_giant", "elder_dragon");
-        } else {
-            pool = List.of("crypt_bat", "skeleton", "spider", "wraith", "bandit_cutthroat", "orc_raider");
-        }
+        int depth = dungeonDepth(mapId);
+        List<String> pool = switch (dungeonSpawnTheme(mapId)) {
+            case "goblin" -> List.of(
+                    "goblin_scout", "goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher", "goblin_shaman");
+            case "bandit" -> List.of(
+                    "bandit_cutthroat", "bandit_cutthroat", "bandit_archer", "bandit_archer", "bandit_captain", "orc_raider");
+            case "frost_cave" -> depth > 1
+                    ? List.of("crypt_bat", "spider", "frost_wolf", "frost_wolf", "frost_troll", "ice_golem", "mountain_drake", "bandit_cutthroat")
+                    : List.of("crypt_bat", "spider", "spider", "frost_wolf", "bandit_cutthroat");
+            case "mire_cave" -> depth > 1
+                    ? List.of("slime", "spider", "reed_serpent", "bog_beast", "bog_beast", "marsh_drake", "swamp_troll")
+                    : List.of("slime", "spider", "spider", "reed_serpent", "bog_beast");
+            case "castle" -> depth > 1
+                    ? List.of("skeleton", "skeleton", "wraith", "bone_knight", "crypt_revenant", "void_knight", "elder_wraith")
+                    : List.of("skeleton", "skeleton", "wraith", "bone_knight", "crypt_revenant");
+            case "prison" -> depth > 1
+                    ? List.of("skeleton", "bone_knight", "wraith", "crypt_revenant", "void_knight", "bandit_cutthroat")
+                    : List.of("skeleton", "skeleton", "bone_knight", "wraith", "bandit_cutthroat");
+            case "sewer" -> depth > 1
+                    ? List.of("slime", "slime", "river_eel", "reed_serpent", "spider", "bog_beast", "swamp_troll")
+                    : List.of("slime", "slime", "river_eel", "reed_serpent", "spider", "bog_beast");
+            case "crypt" -> depth > 1
+                    ? List.of("skeleton", "skeleton", "crypt_bat", "wraith", "bone_knight", "crypt_revenant", "elder_wraith")
+                    : List.of("skeleton", "skeleton", "crypt_bat", "wraith", "bone_knight");
+            default -> List.of("crypt_bat", "skeleton", "spider", "wraith");
+        };
         return pool.get(seeded.nextInt(pool.size()));
     }
 
@@ -6658,13 +7259,22 @@ public final class GameState {
         List<QuestObjective> objectives = new ArrayList<>();
         pruneQuestMonsterRuntime();
         for (Quest quest : quests.values()) {
-            if (!quest.accepted || quest.completed || quest.ready()) {
+            if (!quest.accepted || quest.completed) {
+                continue;
+            }
+            if (quest.ready()) {
+                addQuestReturnObjective(objectives, quest);
+                continue;
+            }
+            if (quest.activeObjectiveKind().conversationObjective()) {
+                addConversationQuestObjectives(objectives, quest);
                 continue;
             }
             if (quest.activeObjectiveKind().defenseMinigameObjective()) {
                 String mapId = raidDefenseMapId(quest);
                 TilePoint point = raidDefenseObjectivePoint(quest, mapId);
-                objectives.add(new QuestObjective(
+                objectives.add(questObjective(
+                        quest,
                         quest.id,
                         quest.title,
                         quest.activeTarget(),
@@ -6676,13 +7286,15 @@ public final class GameState {
                                 : quest.activeObjectiveAsset(),
                         quest.activeObjectiveKind(),
                         quest.activeMonsterKey(),
+                        false,
                         false
                 ));
                 continue;
             }
             if (quest.activeObjectiveKind().combatObjective()) {
                 for (QuestMonsterRuntime monster : questMonstersForQuest(quest)) {
-                    objectives.add(new QuestObjective(
+                    objectives.add(questObjective(
+                            quest,
                             quest.id,
                             quest.title,
                             quest.activeTarget(),
@@ -6692,7 +7304,8 @@ public final class GameState {
                             monster.spec.sprite(),
                             quest.activeObjectiveKind(),
                             monster.spec.key(),
-                            true
+                            true,
+                            false
                     ));
                 }
                 continue;
@@ -6711,7 +7324,8 @@ public final class GameState {
                 if (questObjectiveSlotHandled(quest, point, asset)) {
                     continue;
                 }
-                objectives.add(new QuestObjective(
+                objectives.add(questObjective(
+                        quest,
                         quest.id,
                         quest.title,
                         quest.activeTarget(),
@@ -6721,7 +7335,8 @@ public final class GameState {
                         asset,
                         quest.activeObjectiveKind(),
                         quest.activeMonsterKey(),
-                        quest.activeObjectiveKind().combatObjective()
+                        quest.activeObjectiveKind().combatObjective(),
+                        false
                 ));
                 added++;
             }
@@ -6730,11 +7345,202 @@ public final class GameState {
         return activeQuestObjectiveCache;
     }
 
+    private void addQuestReturnObjective(List<QuestObjective> objectives, Quest quest) {
+        Npc giver = questGiver(quest.id);
+        if (giver == null) {
+            return;
+        }
+        TilePoint home = world.npcHome(giver);
+        objectives.add(questObjective(
+                quest,
+                quest.id,
+                "Return to " + world.label(giver.mapId()),
+                giver.name(),
+                giver.mapId(),
+                home.x(),
+                home.y(),
+                giver.sprite(),
+                Quest.ObjectiveKind.REPORT,
+                quest.activeMonsterKey(),
+                false,
+                true
+        ));
+    }
+
+    private void addConversationQuestObjectives(List<QuestObjective> objectives, Quest quest) {
+        int remaining = Math.max(0, quest.activeNeeded() - quest.progress);
+        if (remaining <= 0) {
+            return;
+        }
+        int added = 0;
+        for (Npc npc : conversationObjectiveMarkerNpcs(quest)) {
+            if (added >= remaining) {
+                break;
+            }
+            if (harvestedQuestResources.contains(conversationObjectiveKey(quest, npc))) {
+                continue;
+            }
+            TilePoint home = world.npcHome(npc);
+            objectives.add(questObjective(
+                    quest,
+                    quest.id,
+                    quest.objectiveAction() + ": " + world.label(npc.mapId()),
+                    npc.name(),
+                    npc.mapId(),
+                    home.x(),
+                    home.y(),
+                    npc.sprite(),
+                    quest.activeObjectiveKind(),
+                    quest.activeMonsterKey(),
+                    false,
+                    true
+            ));
+            added++;
+        }
+    }
+
+    private List<Npc> conversationObjectiveMarkerNpcs(Quest quest) {
+        if (quest == null) {
+            return List.of();
+        }
+        if (questNeedsQuestNpc(quest)) {
+            return questNpcsForQuest(quest).stream()
+                    .map(runtime -> runtime.npc)
+                    .toList();
+        }
+        Npc target = questTargetSourceNpc(quest);
+        if (target != null) {
+            return List.of(target);
+        }
+        if (quest.activeObjectiveKind() == Quest.ObjectiveKind.ASK_AROUND) {
+            Npc giver = questGiver(quest.id);
+            if (giver == null) {
+                return List.of();
+            }
+            return GameData.NPCS.stream()
+                    .filter(npc -> npc.mapId().equals(giver.mapId()))
+                    .filter(npc -> !npcRelationshipKey(npc).equals(npcRelationshipKey(giver)))
+                    .filter(npc -> npc.questId() == null)
+                    .filter(npc -> !harvestedQuestResources.contains(conversationObjectiveKey(quest, npc)))
+                    .limit(Math.max(1, quest.activeNeeded() - quest.progress))
+                    .toList();
+        }
+        Npc giver = questGiver(quest.id);
+        return giver == null ? List.of() : List.of(giver);
+    }
+
+    private QuestObjective questObjective(
+            Quest quest,
+            String questId,
+            String title,
+            String target,
+            String mapId,
+            int x,
+            int y,
+            String asset,
+            Quest.ObjectiveKind kind,
+            String monsterKey,
+            boolean blocking,
+            boolean markerOnly
+    ) {
+        WorldMap.AdventureMarker dungeon = markerOnly && quest != null && quest.ready() ? null : dungeonMarkerFor(quest);
+        String markerLabel = questMarkerLabel(quest, title, target, mapId, dungeon);
+        return new QuestObjective(
+                questId,
+                title,
+                target,
+                mapId,
+                x,
+                y,
+                asset,
+                kind,
+                monsterKey,
+                blocking,
+                markerLabel,
+                markerOnly,
+                quest != null && quest.mainStoryQuest(),
+                dungeon != null,
+                dungeon == null ? -1 : dungeon.x(),
+                dungeon == null ? -1 : dungeon.y(),
+                quest == null ? "" : quest.activeStage().id()
+        );
+    }
+
+    private String questMarkerLabel(Quest quest, String title, String target, String mapId, WorldMap.AdventureMarker dungeon) {
+        StoryLocationCatalog.Place fixedPlace = quest == null ? null : StoryLocationCatalog.forQuest(quest.id);
+        if (fixedPlace != null && fixedPlace.outdoorSite() && !quest.ready())
+            return fixedPlace.name() + ": " + target;
+        if (dungeon != null) {
+            return title + ": " + dungeon.label();
+        }
+        String kind = mapId == null ? "" : world.kind(mapId);
+        if ("city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
+            String sourceMap = "interior".equals(kind) ? sourceMapForInterior(mapId) : mapId;
+            String place = sourceMap == null || sourceMap.isBlank() ? world.label(mapId) : world.label(sourceMap);
+            if (quest != null && quest.ready()) {
+                return "Return to " + place;
+            }
+            if (quest != null && quest.activeObjectiveKind().conversationObjective()) {
+                return quest.objectiveAction() + ": " + target + " in " + place;
+            }
+            return title + ": " + place;
+        }
+        return title;
+    }
+
+    private WorldMap.AdventureMarker dungeonMarkerFor(Quest quest) {
+        if (quest == null) {
+            return null;
+        }
+        StoryLocationCatalog.Place fixedPlace = StoryLocationCatalog.forQuest(quest.id);
+        if (fixedPlace != null && fixedPlace.outdoorSite()) {
+            return world.adventureMarkers().stream().filter(m -> m.mapId().equals(fixedPlace.adventureId()))
+                    .findFirst().orElse(null);
+        }
+        String mapId = quest.activeObjectiveMapId();
+        if (mapId != null && "dungeon".equals(world.kind(mapId))) {
+            TilePoint entrance = world.overworldEntranceFor(mapId);
+            if (entrance != null) {
+                return new WorldMap.AdventureMarker("dungeon", mapId, world.label(mapId), entrance.x(), entrance.y(), 1);
+            }
+        }
+        String locationKind = quest.activeObjectiveLocationKind();
+        if (dungeonLocationKind(locationKind)) {
+            WorldMap.AdventureMarker marker = world.adventureMarker(locationKind, quest.activeObjectiveLocationIndex());
+            if (marker != null) {
+                return marker;
+            }
+        }
+        String questText = normalizeQuestMatchText(quest.title + " " + quest.description + " " + quest.activeStartDialog());
+        for (WorldMap.AdventureMarker marker : world.adventureMarkers()) {
+            if (questText.contains(normalizeQuestMatchText(marker.label()))) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    private boolean dungeonLocationKind(String locationKind) {
+        if (locationKind == null) {
+            return false;
+        }
+        return switch (locationKind) {
+            case "cave", "crypt", "abandoned_castle", "prison", "sewer", "bandit_camp", "goblin_camp" -> true;
+            default -> false;
+        };
+    }
+
     private boolean questObjectiveSlotHandled(Quest quest, TilePoint point, String asset) {
         return harvestedQuestResources.contains(resourceKey(questStageResourceId(quest), quest.activeObjectiveMapId(), point.x(), point.y(), asset));
     }
 
     private TilePoint uniqueQuestObjectivePoint(Quest quest, int variant, String asset, Set<TilePoint> used) {
+        variant = MainStoryContent.objectiveVariant(quest, variant);
+        if ("story".equals(quest.activeObjectiveLocationKind())) {
+            TilePoint point = world.storyObjectivePoint(quest.activeObjectiveMapId(), quest.activeObjectiveLocationIndex() + variant);
+            used.add(point);
+            return point;
+        }
         TilePoint first = null;
         for (int attempt = 0; attempt < 72; attempt++) {
             TilePoint candidate = world.objectivePoint(quest.activeObjectiveLocationKind(), quest.activeObjectiveLocationIndex(), variant + attempt, asset);
@@ -7127,7 +7933,8 @@ public final class GameState {
                 source.shopId(),
                 source.recruitId(),
                 source.recruitCost(),
-                source.professionXp()
+                source.professionXp(),
+                source.job()
         );
     }
 
@@ -7137,6 +7944,8 @@ public final class GameState {
                 : quest.activeObjectiveMapId();
         TilePoint center = quest.activeObjectiveLocationKind() == null || quest.activeObjectiveLocationKind().isBlank()
                 ? questMonsterSpawnCenter(quest, 0)
+                : "story".equals(quest.activeObjectiveLocationKind())
+                ? world.storyObjectivePoint(mapId, quest.activeObjectiveLocationIndex())
                 : world.objectivePoint(quest.activeObjectiveLocationKind(), quest.activeObjectiveLocationIndex(), 0,
                 quest.activeObjectiveAsset() == null || quest.activeObjectiveAsset().isBlank() ? source == null ? "" : source.sprite() : quest.activeObjectiveAsset());
         Random seeded = new Random(quest.id.hashCode() * 2862933555777941757L + (source == null ? 0 : source.name().hashCode()));
@@ -7317,6 +8126,14 @@ public final class GameState {
         updateAfterBattleAction();
     }
 
+    public void battleRun() {
+        if (battle == null) {
+            return;
+        }
+        battle.playerRun();
+        updateAfterBattleAction();
+    }
+
     public void battleAbility(int index) {
         if (battle == null) {
             return;
@@ -7446,6 +8263,16 @@ public final class GameState {
         }
     }
 
+    private void leaveEscapedBattle() {
+        battle = null;
+        activeDungeonMonster = null;
+        activeQuestMonster = null;
+        demonQueenBattleActive = false;
+        mode = GameMode.EXPLORE;
+        invalidateQuestObjectiveCache();
+        status = "Escaped from battle. " + world.describe(currentMapId, playerX, playerY);
+    }
+
     public void applyTransition(WorldTransition transition) {
         String previousMapId = currentMapId;
         currentMapId = transition.targetMapId();
@@ -7502,6 +8329,12 @@ public final class GameState {
     }
 
     public String generatedBuildingName(CityBuilding building) {
+        String western = WesternReachFolklore.buildingName(currentMapId, building);
+        if (!western.isEmpty()) return western;
+        String local = HearthlandsFolklore.buildingName(currentMapId, building);
+        if (!local.isEmpty()) return local;
+        String regional = RegionalBuildingTypes.name(currentMapId, building);
+        if (!regional.isEmpty()) return regional;
         if (building == null) {
             return "Building";
         }
@@ -7948,6 +8781,9 @@ public final class GameState {
         QuestObjective best = null;
         int bestScore = Integer.MAX_VALUE;
         for (QuestObjective objective : activeQuestObjectives()) {
+            if (objective.markerOnly()) {
+                continue;
+            }
             if (!objective.mapId().equals(currentMapId)) {
                 continue;
             }
@@ -7998,6 +8834,9 @@ public final class GameState {
             invalidateQuestObjectiveCache();
             status = "Gathered " + interactible.target() + ". " + quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ".";
             if (quest.ready()) {
+                if (autoAdvanceReadyQuestStage(quest)) {
+                    return;
+                }
                 status += " " + quest.activeReadyDialog();
             }
         }
@@ -8005,7 +8844,9 @@ public final class GameState {
 
     private void interactQuestObjective(QuestObjective objective) {
         Quest quest = quests.get(objective.questId());
-        if (quest == null || quest.completed) {
+        if (quest == null || !quest.accepted || quest.completed || quest.ready()
+                || !quest.activeStage().id().equals(objective.stageId())
+                || quest.activeObjectiveKind() != objective.kind()) {
             return;
         }
         if (objective.kind().gatherObjective()) {
@@ -8040,9 +8881,13 @@ public final class GameState {
             case "shadow_beast" -> monsterSpecsForKeys(List.of("shadow_beast", "wraith", "goblin_shaman"));
             case "void_knight" -> monsterSpecsForKeys(List.of("void_knight", "bone_knight"));
             case "kharvok_banner_bound" -> monsterSpecsForKeys(List.of("kharvok_banner_bound", "orc_raider", "orc_shieldbearer"));
+            case "gate_ash_raider" -> monsterSpecsForKeys(List.of("gate_ash_raider", "orc_raider", "orc_shieldbearer"));
             case "velmora_bell_drowned" -> monsterSpecsForKeys(List.of("velmora_bell_drowned", "wraith", "skeleton"));
             case "rootmaw_stag" -> monsterSpecsForKeys(List.of("rootmaw_stag", "thornling", "bramble_boar"));
+            case "masked_trail_hunter" -> monsterSpecsForKeys(List.of("masked_trail_hunter", "bandit_archer", "goblin_trapper"));
+            case "briar_snare_beast" -> monsterSpecsForKeys(List.of("briar_snare_beast", "thornling", "bramble_boar"));
             case "nameless_warden" -> monsterSpecsForKeys(List.of("nameless_warden", "bone_knight", "skeleton"));
+            case "oathbreaker_echo" -> monsterSpecsForKeys(List.of("oathbreaker_echo", "bone_knight", "wraith"));
             case "hailback_broodmother" -> monsterSpecsForKeys(List.of("hailback_broodmother", "spider", "frost_wolf"));
             case "sareth_cinder_knife" -> monsterSpecsForKeys(List.of("sareth_cinder_knife", "ember_imp", "ember_imp"));
             case "morvane_mercy_taker" -> monsterSpecsForKeys(List.of("morvane_mercy_taker", "void_knight", "ember_imp"));
@@ -8061,7 +8906,218 @@ public final class GameState {
     private Battle createBattle(List<GameData.MonsterSpec> specs, char tile, String kind) {
         Battle created = new Battle(player, activeAllies(), specs, random, tile, kind, config.monsterLevelScaling);
         applyWorldBattleAdvantage(created);
+        configureBattleIntro(created, specs, tile, kind);
         return created;
+    }
+
+    private void configureBattleIntro(Battle battle, List<GameData.MonsterSpec> specs, char tile, String kind) {
+        if (battle == null) {
+            return;
+        }
+        int seed = battleIntroSeed(specs, tile, kind);
+        battle.configureIntro(
+                battleIntroStyleLabel(tile, kind),
+                battleIntroEncounterLine(specs, tile, kind, seed),
+                battleIntroPartyBark(specs, tile, kind, seed)
+        );
+    }
+
+    private int battleIntroSeed(List<GameData.MonsterSpec> specs, char tile, String kind) {
+        int seed = worldTick * 31 + playerX * 131 + playerY * 197 + tile * 17 + (kind == null ? 0 : kind.hashCode());
+        if (specs != null) {
+            for (GameData.MonsterSpec spec : specs) {
+                if (spec != null) {
+                    seed = seed * 31 + spec.key().hashCode();
+                }
+            }
+        }
+        return seed;
+    }
+
+    private String battleIntroStyleLabel(char tile, String kind) {
+        if ("dungeon".equals(kind)) {
+            return "Vault Awakening";
+        }
+        return switch (tile) {
+            case 'f' -> "Oldwood Ambush";
+            case 'v' -> "Fenwater Ambush";
+            case 's' -> "Sunsteppe Clash";
+            case 'b' -> "Badlands Clash";
+            case 'n' -> "Frostfield Clash";
+            case 'm', 'q' -> "Pass of Stone";
+            case 'r', 'p', 'j', 'l', 'a' -> "Roadside Clash";
+            default -> "Meadow Clash";
+        };
+    }
+
+    private String battleIntroEncounterLine(List<GameData.MonsterSpec> specs, char tile, String kind, int seed) {
+        String entrance = battleIntroEnemyEntrance(specs, tile, seed);
+        if ("dungeon".equals(kind)) {
+            return "Torchlight buckles against old stone as " + entrance + ".";
+        }
+        WeatherCondition weather = currentWeather();
+        String weatherLead = switch (weather) {
+            case RAIN -> "Rain needles across the ground as ";
+            case STORM -> "Thunder rolls overhead as ";
+            case FOG -> "Fog parts at the last second as ";
+            case SNOW -> "Snow swirls around your footing as ";
+            case BLIZZARD -> "White wind breaks apart and reveals ";
+            case DUST -> "Dust sheets over the trail as ";
+            case HEAT_HAZE -> "Heat shimmer blurs the distance until ";
+            case CLOUDY -> "Cloudshadow sweeps low as ";
+            case CLEAR -> switch (dayPhaseLabel()) {
+                case "Night" -> "Night presses close as ";
+                case "Dusk" -> "Dusk light catches steel and eyes as ";
+                case "Dawn" -> "Dawn has barely opened when ";
+                default -> "";
+            };
+        };
+        if (!weatherLead.isBlank()) {
+            return weatherLead + entrance + ".";
+        }
+        return switch (tile) {
+            case 'f' -> "Branches shiver once, then " + entrance + ".";
+            case 'v' -> "Reeds lean away from the path as " + entrance + ".";
+            case 's', 'b' -> "Dust lifts off the hard ground as " + entrance + ".";
+            case 'n' -> "Cold breath hangs in the air as " + entrance + ".";
+            case 'm', 'q' -> "Loose stone skips downhill as " + entrance + ".";
+            case 'r', 'p', 'j', 'l', 'a' -> "The road gives one empty breath before " + entrance + ".";
+            default -> "Grass folds under sudden motion as " + entrance + ".";
+        };
+    }
+
+    private String battleIntroEnemyEntrance(List<GameData.MonsterSpec> specs, char tile, int seed) {
+        GameData.MonsterSpec primary = specs == null || specs.isEmpty() ? GameData.MONSTERS.get("slime") : specs.get(0);
+        String species = primary == null ? "" : primary.species();
+        boolean singular = specs == null || specs.size() <= 1;
+        String location = switch (tile) {
+            case 'f' -> "breaks from the tree line";
+            case 'v' -> "surges out of the reeds";
+            case 's', 'b' -> "cuts through the open dust";
+            case 'n' -> "emerges through the pale wind";
+            case 'm', 'q' -> "comes down the pass";
+            case 'r', 'p', 'j', 'l', 'a' -> "steps into the road";
+            default -> "closes out of the open ground";
+        };
+        if (singular) {
+            String name = primary == null ? "Something hostile" : primary.name();
+            return switch (species) {
+                case "bandit", "orc" -> name + " steps into view";
+                case "goblin" -> name + " darts into view";
+                case "undead" -> name + " lurches into view";
+                case "demon" -> name + " tears into view";
+                case "elemental" -> name + " forms in the open";
+                default -> name + " " + location;
+            };
+        }
+        String group = battleIntroGroupLabel(specs);
+        return switch (species) {
+            case "bandit", "orc" -> group + " step into the road";
+            case "goblin" -> group + " spill out shrieking";
+            case "undead" -> group + " lurch into the open";
+            case "demon" -> group + " tear through the stillness";
+            case "elemental" -> group + " gather shape at once";
+            default -> group + " " + location;
+        };
+    }
+
+    private String battleIntroGroupLabel(List<GameData.MonsterSpec> specs) {
+        if (specs == null || specs.isEmpty()) {
+            return "enemies";
+        }
+        GameData.MonsterSpec primary = specs.get(0);
+        String species = primary == null ? "" : primary.species();
+        boolean sameName = specs.stream().filter(spec -> spec != null).map(GameData.MonsterSpec::name).distinct().count() == 1;
+        if (sameName && primary != null) {
+            return pluralizeMonsterName(primary.name()).toLowerCase(Locale.ROOT);
+        }
+        return switch (species) {
+            case "bandit" -> "bandits";
+            case "goblin" -> "goblins";
+            case "undead" -> "the dead";
+            case "orc" -> "orcs";
+            case "demon" -> "demons";
+            case "elemental" -> "elementals";
+            default -> "a hunting pack";
+        };
+    }
+
+    private String pluralizeMonsterName(String name) {
+        if (name == null || name.isBlank()) {
+            return "Enemies";
+        }
+        String[] parts = name.split("\\s+");
+        String last = parts[parts.length - 1];
+        String pluralLast = switch (last.toLowerCase(Locale.ROOT)) {
+            case "wolf" -> "Wolves";
+            case "knife" -> "Knives";
+            case "life" -> "Lives";
+            case "thief" -> "Thieves";
+            default -> last.endsWith("y") && last.length() > 1
+                    ? last.substring(0, last.length() - 1) + "ies"
+                    : last.endsWith("s") ? last : last + "s";
+        };
+        parts[parts.length - 1] = pluralLast;
+        return String.join(" ", parts);
+    }
+
+    private String battleIntroPartyBark(List<GameData.MonsterSpec> specs, char tile, String kind, int seed) {
+        List<Actor> party = activeAllies();
+        if (!party.isEmpty()) {
+            Actor speaker = party.get(Math.floorMod(seed, party.size()));
+            String recruitId = recruitIdForAlly(speaker);
+            String line = recruitId == null || recruitId.isBlank()
+                    ? genericBattleIntroBark(speaker.className, tile, kind)
+                    : companionBattleIntroBark(speaker.name, recruitId, tile, kind);
+            if (!line.isBlank()) {
+                return line;
+            }
+        }
+        return playerBattleIntroBark(tile, kind, specs);
+    }
+
+    private String companionBattleIntroBark(String speakerName, String recruitId, char tile, String kind) {
+        return switch (recruitId) {
+            case "seraphine" -> speakerName + ": They chose a messy opening. Good. I dislike tidy predators.";
+            case "maera" -> speakerName + ": Remember the ground. The wrong footing ends more fights than brilliance.";
+            case "cassia" -> speakerName + ": Hold the edge. Make them spend the first mistake.";
+            case "lyra" -> speakerName + ": Fast hands, clean work, no heroic bleeding.";
+            case "samir" -> speakerName + ": The stillness is lying. Break it.";
+            case "aria" -> switch (tile) {
+                case 'f' -> speakerName + ": Tree line to tree line. Do not give them the flank.";
+                case 'm', 'q' -> speakerName + ": Bad footing. Pick the shot, then move.";
+                case 'v' -> speakerName + ": Reeds hide bad angles. Keep them where we can count them.";
+                default -> speakerName + ": Eyes up. They picked the ground; now we take it back.";
+            };
+            case "vesper" -> switch (tile) {
+                case 'f' -> speakerName + ": The wood was warning us.";
+                case 'v' -> speakerName + ": The fen is restless. End this before it swallows the noise.";
+                case 'n' -> speakerName + ": Cold makes panic brittle. Use that.";
+                default -> speakerName + ": The land felt them before we did.";
+            };
+            case "rafiq" -> speakerName + ": Dramatic entrance. Generous of them to announce where to lose.";
+            case "calder" -> speakerName + ": Plant your feet. Let them waste the first rush.";
+            default -> "";
+        };
+    }
+
+    private String genericBattleIntroBark(String className, char tile, String kind) {
+        if (className == null) {
+            return "";
+        }
+        return switch (className) {
+            case "Mage" -> "Mage: Keep them off my casting line.";
+            case "Knight", "Ironwall", "Sunwarden" -> "Knight: Forward guard. We meet them here.";
+            case "Ranger", "Scout" -> "Ranger: Clear lanes. I want the first mover.";
+            case "Cleric", "Battle Medic", "Grovekeeper" -> "Cleric: Stay close. I can keep this from becoming worse.";
+            case "Rogue", "Nightblade", "Veilrunner" -> "Rogue: Good. Close enough to punish.";
+            default -> "";
+        };
+    }
+
+    private String playerBattleIntroBark(char tile, String kind, List<GameData.MonsterSpec> specs) {
+        String line = genericBattleIntroBark(player.className, tile, kind);
+        return line.isBlank() ? player.className + ": We finish this fast." : line;
     }
 
     public List<WorldAbilityOption> worldAbilityOptions() {
@@ -8212,6 +9268,10 @@ public final class GameState {
         if (battle != null) {
             absorbBattleVulnerabilityDiscoveries();
         }
+        if (battle != null && battle.finished && battle.fled) {
+            leaveEscapedBattle();
+            return;
+        }
         if (battle != null && battle.finished && battle.victory) {
             if (!battle.questRecorded) {
                 for (String defeatedName : battle.defeatedMonsterNames()) {
@@ -8248,7 +9308,7 @@ public final class GameState {
                 }
                 demonQueenDefeated = true;
                 demonQueenBattleActive = false;
-                status = "Vaelthara's mercy breaks. Alderfall was never saved by crowns. It was saved by people who kept their promises. Press Enter to continue.";
+                status = "Vaelthara is defeated. Oathstead survives beyond her command. The damaged wards and the people bound to them still need an answer. Press Enter to continue.";
             } else {
                 status = "Victory. Press Enter to continue.";
             }
@@ -8586,7 +9646,7 @@ public final class GameState {
         }
         markBanterUsed(comment.speaker(), comment.line());
         if (activeTravelBanter == null && mode == GameMode.EXPLORE) {
-            activeTravelBanter = comment.toPrompt(worldTick + 900);
+            activeTravelBanter = comment.toPrompt(worldTick + TRAVEL_COMMENT_DURATION_TICKS);
             nextTravelBanterTick = worldTick + 1300;
             return;
         }
@@ -8601,7 +9661,7 @@ public final class GameState {
             return;
         }
         PendingCompanionComment comment = pendingCompanionComments.remove(0);
-        activeTravelBanter = comment.toPrompt(worldTick + 900);
+        activeTravelBanter = comment.toPrompt(worldTick + TRAVEL_COMMENT_DURATION_TICKS);
         nextTravelBanterTick = worldTick + 1300;
     }
 
@@ -8648,7 +9708,7 @@ public final class GameState {
                 banterReplyDeltas(postCombatTags(speaker, majorFight, hardFight), hardFight ? -1 : 1),
                 postCombatTags(speaker, majorFight, hardFight),
                 banterResponseLines(speaker, postCombatTags(speaker, majorFight, hardFight), hardFight ? -1 : 1),
-                worldTick + 900
+                worldTick + TRAVEL_COMMENT_DURATION_TICKS
         );
         markBanterUsed(speaker.name, "combat:" + (majorFight ? "major" : hardFight ? "hard" : "normal"));
         nextTravelBanterTick = worldTick + 1300;
@@ -8711,7 +9771,7 @@ public final class GameState {
         if (quest == null || !quest.stagedQuest()) {
             return quest == null ? "" : quest.id;
         }
-        return quest.id + "@stage" + quest.stageIndex;
+        return quest.id + "@" + quest.activeStage().id();
     }
 
     private String resourceNodeKey(String mapId, int x, int y, String asset) {
@@ -8831,6 +9891,9 @@ public final class GameState {
             invalidateQuestObjectiveCache();
             status = verb + " " + objective.target() + ". " + quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ".";
             if (quest.ready()) {
+                if (autoAdvanceReadyQuestStage(quest)) {
+                    return;
+                }
                 status += " " + quest.activeReadyDialog();
             }
         }
@@ -8940,16 +10003,34 @@ public final class GameState {
 
     private void recordQuestProgress(String defeatedTarget) {
         for (Quest quest : quests.values()) {
+            if ((quest.mainStoryQuest() || quest.companionQuest())
+                    && quest.activeObjectiveLocationKind() != null && !quest.activeObjectiveLocationKind().isBlank()
+                    && !combatEncounterMatchesQuest(quest)) {
+                continue;
+            }
             int oldProgress = quest.progress;
             quest.record(defeatedTarget);
             if (quest.progress > oldProgress) {
                 invalidateQuestObjectiveCache();
                 status = quest.title + ": " + quest.progress + "/" + quest.activeNeeded() + ".";
                 if (quest.ready()) {
+                    if (autoAdvanceReadyQuestStage(quest)) {
+                        return;
+                    }
                     status += " " + quest.activeReadyDialog();
                 }
             }
         }
+    }
+
+    private boolean combatEncounterMatchesQuest(Quest quest) {
+        if (activeQuestMonster != null && quest.id.equals(activeQuestMonster.questId)) return true;
+        if (activeDungeonMonster == null || !"dungeon".equals(world.kind(currentMapId))) return false;
+        WorldMap.AdventureMarker destination = dungeonMarkerFor(quest);
+        if (destination != null && destination.mapId().equals(currentMapId)) return true;
+        // A named campaign boss remains valid in its actual dungeon as well as its quest encounter.
+        return quest.mainStoryQuest() && quest.activeNeeded() == 1 && activeDungeonMonster.boss
+                && activeDungeonMonster.spec.key().equals(quest.activeMonsterKey());
     }
 
     private void updateDungeonMonsterMovement() {
@@ -9258,17 +10339,24 @@ public final class GameState {
         List<Npc> npcs = new ArrayList<>();
         ensureActiveQuestNpcRuntime();
         for (Npc npc : GameData.NPCS) {
-            if (npc.mapId().equals(mapId) && !recruitedCompanionNpc(npc) && !npcRelocatedByQuest(npc)) {
+            if (npc.mapId().equals(mapId) && !recruitedCompanionNpc(npc) && !npcRelocatedByQuest(npc)
+                    && commuterSourceVisible(npc, mapId)) {
                 npcs.add(npc);
             }
         }
-        npcs.addAll(world.npcs(mapId));
+        for (Npc npc : world.npcs(mapId)) {
+            if (commuterSourceVisible(npc, mapId)) {
+                npcs.add(npc);
+            }
+        }
+        addCommuterNpcs(npcs, mapId);
         if (WorldMap.PLAYER_VILLAGE_ID.equals(mapId)) {
             addAssignedVillageNpcs(npcs);
         } else if (mapId.startsWith("house_" + WorldMap.PLAYER_VILLAGE_ID + "_")) {
             addAssignedInteriorNpc(npcs, mapId);
         }
         addQuestNpcs(npcs, mapId);
+        npcs.addAll(CompanionQuestContent.aftermath(quests, world, mapId));
         List<Npc> snapshot = List.copyOf(npcs);
         npcListCache.put(mapId, snapshot);
         return snapshot;
@@ -9282,6 +10370,251 @@ public final class GameState {
                 }
             }
         }
+    }
+
+    private boolean commuterSourceVisible(Npc npc, String mapId) {
+        if (npc == null || npc.job() == null || !mapId.equals(npc.mapId())) {
+            return true;
+        }
+        return commuterNpcForSource(npc) == null;
+    }
+
+    private void addCommuterNpcs(List<Npc> npcs, String mapId) {
+        if (!WorldMap.OVERWORLD_ID.equals(mapId)) {
+            return;
+        }
+        for (Npc source : commuterSourceNpcs()) {
+            Npc commuter = commuterNpcForSource(source);
+            if (commuter != null) {
+                npcs.add(commuter);
+            }
+        }
+    }
+
+    private List<Npc> commuterSourceNpcs() {
+        List<Npc> sources = new ArrayList<>();
+        for (Npc npc : GameData.NPCS) {
+            if (eligibleCommuterSourceNpc(npc)) {
+                sources.add(npc);
+            }
+        }
+        for (WorldMap.SettlementSite settlement : world.settlementSites()) {
+            for (Npc npc : world.npcs(settlement.id())) {
+                if (eligibleCommuterSourceNpc(npc)) {
+                    sources.add(npc);
+                }
+            }
+        }
+        return sources;
+    }
+
+    private boolean eligibleCommuterSourceNpc(Npc npc) {
+        return npc != null
+                && npc.job() != null
+                && npc.recruitId() == null
+                && npc.questId() == null
+                && npc.shopId() == null
+                && !storyNpc(npc)
+                && world.overworldEntranceFor(npc.mapId()) != null
+                && !npcRelocatedByQuest(npc);
+    }
+
+    private boolean storyNpc(Npc npc) {
+        return npc != null && npc.sprite() != null && npc.sprite().startsWith("npc_story_");
+    }
+
+    private Npc commuterNpcForSource(Npc source) {
+        if (!eligibleCommuterSourceNpc(source) || !source.job().activeAt(timeOfDayMinutes())) {
+            return null;
+        }
+        TilePoint workSite = commuterWorkSite(source);
+        if (workSite == null) {
+            return null;
+        }
+        List<String> dialog = new ArrayList<>(source.dialog());
+        String place = world.label(source.mapId());
+        dialog.add(source.name() + ": I am on the day shift outside " + place + ". I head back before dark.");
+        dialog.add("Work: " + source.job().roleLabel() + " duty keeps me between the gate and the nearest good ground.");
+        return new Npc(
+                WorldMap.OVERWORLD_ID,
+                source.name(),
+                source.sprite(),
+                workSite.x(),
+                workSite.y(),
+                dialog,
+                source.questId(),
+                source.shopId(),
+                source.recruitId(),
+                source.recruitCost(),
+                source.professionXp(),
+                source.job()
+        );
+    }
+
+    private Npc commuterSourceNpcFor(Npc npc) {
+        if (npc == null || npc.job() == null || !WorldMap.OVERWORLD_ID.equals(npc.mapId())) {
+            return null;
+        }
+        TilePoint position = new TilePoint(npc.x(), npc.y());
+        for (Npc source : commuterSourceNpcs()) {
+            TilePoint workSite = commuterWorkSite(source);
+            if (source.job() != null
+                    && source.job().kind() == npc.job().kind()
+                    && source.name().equals(npc.name())
+                    && position.equals(workSite)) {
+                return source;
+            }
+        }
+        return null;
+    }
+
+    private TilePoint commuterWorkSite(Npc source) {
+        String key = rawNpcStateKey(source) + ":" + source.job().kind();
+        TilePoint cached = commuterWorkSiteCache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        TilePoint entrance = world.overworldEntranceFor(source.mapId());
+        if (entrance == null) {
+            return null;
+        }
+        int seed = Math.abs(key.hashCode());
+        TilePoint site = commuterPropWorkSite(source, entrance, seed);
+        if (site == null) {
+            site = commuterLocationWorkSite(source, entrance, seed);
+        }
+        if (site == null) {
+            site = closestPassableOverworldPoint(entrance, 6 + Math.floorMod(seed, 6), seed);
+        }
+        if (site != null) {
+            commuterWorkSiteCache.put(key, site);
+        }
+        return site;
+    }
+
+    private TilePoint commuterPropWorkSite(Npc source, TilePoint entrance, int seed) {
+        TilePoint best = null;
+        int bestScore = Integer.MIN_VALUE;
+        for (WorldProp prop : world.props(WorldMap.OVERWORLD_ID)) {
+            if (!matchesCommuterProp(source.job().kind(), prop.asset())) {
+                continue;
+            }
+            int distance = Math.abs(prop.x() - entrance.x()) + Math.abs(prop.y() - entrance.y());
+            if (distance > commuterSearchRadius(source.job().kind())) {
+                continue;
+            }
+            TilePoint site = commuterInteractionSpot(prop, seed);
+            if (site == null) {
+                continue;
+            }
+            int score = 220 - distance * 5
+                    + commuterLocationBonus(source.job().kind(), world.locationKindAt(WorldMap.OVERWORLD_ID, prop.x(), prop.y()))
+                    + Math.floorMod(seed + prop.asset().hashCode() + prop.x() * 13 + prop.y() * 29, 23);
+            if (score > bestScore) {
+                bestScore = score;
+                best = site;
+            }
+        }
+        return best;
+    }
+
+    private TilePoint commuterLocationWorkSite(Npc source, TilePoint entrance, int seed) {
+        TilePoint best = null;
+        int bestScore = Integer.MIN_VALUE;
+        int radius = commuterSearchRadius(source.job().kind());
+        for (int y = Math.max(1, entrance.y() - radius); y <= Math.min(world.height(WorldMap.OVERWORLD_ID) - 2, entrance.y() + radius); y++) {
+            for (int x = Math.max(1, entrance.x() - radius); x <= Math.min(world.width(WorldMap.OVERWORLD_ID) - 2, entrance.x() + radius); x++) {
+                if (!world.isPassable(WorldMap.OVERWORLD_ID, x, y)) {
+                    continue;
+                }
+                String locationKind = world.locationKindAt(WorldMap.OVERWORLD_ID, x, y);
+                int locationBonus = commuterLocationBonus(source.job().kind(), locationKind);
+                if (locationBonus <= 0) {
+                    continue;
+                }
+                int distance = Math.abs(x - entrance.x()) + Math.abs(y - entrance.y());
+                int score = 150 + locationBonus - distance * 4 + Math.floorMod(seed + x * 17 + y * 31, 19);
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = new TilePoint(x, y);
+                }
+            }
+        }
+        return best;
+    }
+
+    private TilePoint commuterInteractionSpot(WorldProp prop, int seed) {
+        int[][] offsets = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+        int start = Math.floorMod(seed + prop.x() * 7 + prop.y() * 11, offsets.length);
+        for (int i = 0; i < offsets.length; i++) {
+            int[] offset = offsets[(start + i) % offsets.length];
+            int x = prop.x() + offset[0];
+            int y = prop.y() + offset[1];
+            if (world.isPassable(WorldMap.OVERWORLD_ID, x, y) && world.propAt(WorldMap.OVERWORLD_ID, x, y) == null) {
+                return new TilePoint(x, y);
+            }
+        }
+        return world.isPassable(WorldMap.OVERWORLD_ID, prop.x(), prop.y()) ? new TilePoint(prop.x(), prop.y()) : null;
+    }
+
+    private TilePoint closestPassableOverworldPoint(TilePoint center, int radius, int seed) {
+        if (world.isPassable(WorldMap.OVERWORLD_ID, center.x(), center.y())) {
+            return center;
+        }
+        int[][] ring = {{0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}};
+        int start = Math.floorMod(seed, ring.length);
+        for (int r = 1; r <= radius; r++) {
+            for (int i = 0; i < ring.length; i++) {
+                int[] direction = ring[(start + i) % ring.length];
+                for (int step = 1; step <= r; step++) {
+                    int x = center.x() + direction[0] * step;
+                    int y = center.y() + direction[1] * step;
+                    if (world.isPassable(WorldMap.OVERWORLD_ID, x, y)) {
+                        return new TilePoint(x, y);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean matchesCommuterProp(NpcJob.Kind kind, String asset) {
+        if (asset == null) {
+            return false;
+        }
+        String lower = asset.toLowerCase(Locale.ROOT);
+        return switch (kind) {
+            case FARMER -> lower.contains("farmland_wheat") || lower.contains("hay") || lower.contains("tilled");
+            case WOODCUTTER -> (lower.contains("tree") || lower.contains("log") || lower.contains("stump"))
+                    && (lower.contains("harvestable") || lower.contains("fallen") || lower.contains("wood"));
+            case HERBALIST -> lower.contains("herb") || lower.contains("flower") || lower.contains("mushroom") || lower.contains("root");
+        };
+    }
+
+    private int commuterLocationBonus(NpcJob.Kind kind, String locationKind) {
+        if (locationKind == null || locationKind.isBlank()) {
+            return 0;
+        }
+        return switch (kind) {
+            case FARMER -> "farmland".equals(locationKind) ? 60 : 0;
+            case WOODCUTTER -> switch (locationKind) {
+                case "hidden_grove", "forest_shrine" -> 45;
+                default -> 0;
+            };
+            case HERBALIST -> switch (locationKind) {
+                case "hidden_grove", "forest_shrine" -> 60;
+                case "farmland" -> 24;
+                default -> 0;
+            };
+        };
+    }
+
+    private int commuterSearchRadius(NpcJob.Kind kind) {
+        return switch (kind) {
+            case FARMER -> 44;
+            case WOODCUTTER -> 52;
+            case HERBALIST -> 48;
+        };
     }
 
     private void addAssignedVillageNpcs(List<Npc> npcs) {
@@ -9347,7 +10680,8 @@ public final class GameState {
                 sourceNpc == null ? null : sourceNpc.shopId(),
                 sourceNpc == null ? null : sourceNpc.recruitId(),
                 0,
-                ally.professionXp
+                ally.professionXp,
+                null
         );
     }
 
@@ -9519,8 +10853,30 @@ public final class GameState {
             String asset,
             Quest.ObjectiveKind kind,
             String monsterKey,
-            boolean blocking
+            boolean blocking,
+            String markerLabel,
+            boolean markerOnly,
+            boolean mainStory,
+            boolean dungeonHazard,
+            int worldMapX,
+            int worldMapY,
+            String stageId
     ) {
+        public QuestObjective(
+                String questId,
+                String title,
+                String target,
+                String mapId,
+                int x,
+                int y,
+                String asset,
+                Quest.ObjectiveKind kind,
+                String monsterKey,
+                boolean blocking
+        ) {
+            this(questId, title, target, mapId, x, y, asset, kind, monsterKey, blocking,
+                    title, false, false, false, -1, -1, "");
+        }
     }
 
     public record QuestInteractible(
@@ -9589,6 +10945,16 @@ public final class GameState {
             tags = tags == null ? List.of() : List.copyOf(tags);
             optionResponseLines = optionResponseLines == null ? List.of() : List.copyOf(optionResponseLines);
         }
+    }
+
+    public record AmbientNpcConversation(
+            String mapId,
+            String speakerNpcKey,
+            String listenerNpcKey,
+            String speakerLine,
+            String listenerLine,
+            int expiresAtTick
+    ) {
     }
 
     public record CompanionMemory(
@@ -9664,6 +11030,9 @@ public final class GameState {
             tags = tags == null ? List.of() : List.copyOf(tags);
             key = key == null || key.isBlank() ? line : key.strip();
         }
+    }
+
+    private record NpcPair(Npc speaker, Npc listener) {
     }
 
     private static final class NpcRuntime {

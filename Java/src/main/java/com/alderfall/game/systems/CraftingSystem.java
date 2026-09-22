@@ -833,7 +833,10 @@ public final class CraftingSystem {
         int xp = 8 + output.values().stream().mapToInt(Integer::intValue).sum() * 2;
         int characterXp = Math.max(1, (int) Math.round((4 + output.values().stream().mapToInt(Integer::intValue).sum()) * 0.80));
         activeTask = new ActiveTask(label, ticks, output, 6, profession, xp, characterXp, participants);
-        return label + " near " + candidate.label() + "...";
+        String location = candidate.label();
+        boolean labelAlreadyNamesLocation = location != null && !location.isBlank()
+                && label.toLowerCase().contains(location.toLowerCase());
+        return label + (labelAlreadyNamesLocation ? "" : " near " + location) + "...";
     }
 
     private static boolean isGatherableProp(String asset) {

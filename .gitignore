@@ -1,9 +1,14 @@
 # Root build output
 /out/
 
+# Workspace-local scratch data and legacy runtime saves
+/temp/
+/saves/
+
 # Java project generated output and local runtime state
 /Java/out/
 /Java/out-check/
+/Java/out-*/
 /Java/saves/
 /Java/config/settings.properties
 /Java/exports/

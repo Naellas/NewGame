@@ -260,9 +260,8 @@ public final class QuestLogRenderer {
         rowY = drawQuestTimelineStep(g, quest, x, rowY, w, bottom, "In Progress",
                 cleanQuestDialogueLine(quest, quest.activeProgressDialog()), quest.progress > 0 || quest.ready() || quest.completed,
                 !quest.completed && !quest.ready() && quest.progress > 0);
-        rowY = drawQuestTimelineStep(g, quest, x, rowY, w, bottom, "Ready",
-                cleanQuestDialogueLine(quest, quest.activeReadyDialog()), quest.ready() || quest.completed,
-                quest.ready());
+        rowY = drawQuestTimelineStep(g, quest, x, rowY, w, bottom, "Recorded Findings",
+                QuestNarrative.findings(quest), !quest.observedStages.isEmpty(), quest.ready());
         drawQuestTimelineStep(g, quest, x, rowY, w, bottom, "Completed",
                 cleanQuestDialogueLine(quest, quest.activeCompleteDialog()), quest.completed, quest.completed);
     }
@@ -780,13 +779,15 @@ public final class QuestLogRenderer {
                 ? state.questReturnLocation(quest.id)
                 : state.world.label(quest.activeObjectiveMapId());
         String place = quest.activeObjectiveLocationKind() == null || quest.activeObjectiveLocationKind().isBlank()
+                || "story".equals(quest.activeObjectiveLocationKind())
                 ? ""
                 : " The work points toward " + readableId(quest.activeObjectiveLocationKind()) + ".";
         String outcome = state.questBranchOutcome(quest);
         String branch = outcome.isBlank()
                 ? ""
                 : " Remembered choice: " + state.readableQuestOutcome(outcome) + ".";
-        return quest.description + " " + questFlavorText(quest) + " Objective area: " + map + "." + place + branch;
+        return quest.description + " " + questFlavorText(quest) + " Objective area: " + map + "." + place + branch
+                + CompanionQuestContent.cargoSummary(quest);
     }
 
     private String questDialogueDetail(Quest quest) {

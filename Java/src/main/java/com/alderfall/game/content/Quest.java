@@ -2,6 +2,8 @@ package com.alderfall.game;
 
 import com.alderfall.game.map.WorldMap;
 import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public final class Quest {
     public enum ObjectiveKind {
@@ -114,6 +116,10 @@ public final class Quest {
     public int progress;
     public boolean accepted;
     public boolean completed;
+    public int contentRevision;
+    public final Set<String> observedStages = new LinkedHashSet<>();
+    /** Quest-bound supplies: not ordinary sellable inventory. */
+    public final java.util.Map<String, Integer> cargo = new java.util.LinkedHashMap<>();
 
     public Quest(String id, String title, String description, String target, int needed, int rewardGold, int rewardXp) {
         this(id, title, description, target, needed, rewardGold, rewardXp,
@@ -267,6 +273,9 @@ public final class Quest {
         quest.progress = progress;
         quest.accepted = accepted;
         quest.completed = completed;
+        quest.contentRevision = contentRevision;
+        quest.observedStages.addAll(observedStages);
+        quest.cargo.putAll(cargo);
         return quest;
     }
 
@@ -305,6 +314,7 @@ public final class Quest {
     }
 
     public void advanceStage() {
+        if (ready()) observedStages.add(activeStage().id());
         if (!finalStage()) {
             stageIndex++;
             progress = 0;
@@ -370,6 +380,7 @@ public final class Quest {
     public void record(String defeatedTarget) {
         if (accepted && !completed && activeObjectiveKind().combatObjective() && combatTargetMatches(defeatedTarget)) {
             progress = Math.min(activeNeeded(), progress + 1);
+            rememberReadyStage();
         }
     }
 
@@ -385,21 +396,35 @@ public final class Quest {
     }
 
     public void recordGather(String gatheredTarget) {
-        if (accepted && !completed && activeObjectiveKind().gatherObjective() && activeTarget().equals(gatheredTarget)) {
+        if (accepted && !completed && !ready() && activeObjectiveKind().gatherObjective() && activeTarget().equals(gatheredTarget)) {
+            String cargoKey = CompanionQuestContent.gatheredCargo(activeStage().id());
+            if (!cargoKey.isBlank()) cargo.merge(cargoKey, 1, Integer::sum);
             progress = Math.min(activeNeeded(), progress + 1);
+            rememberReadyStage();
         }
     }
 
     public void recordVisit(String visitedTarget) {
         if (accepted && !completed && activeObjectiveKind().inspectObjective() && activeTarget().equals(visitedTarget)) {
             progress = Math.min(activeNeeded(), progress + 1);
+            rememberReadyStage();
         }
     }
 
     public void recordConversation() {
-        if (accepted && !completed && activeObjectiveKind().conversationObjective()) {
+        if (accepted && !completed && !ready() && activeObjectiveKind().conversationObjective()
+                && CompanionQuestContent.canHandOver(this)) {
+            CompanionQuestContent.requiredCargo(activeStage().id()).forEach((key, amount) -> {
+                int remaining = cargo.getOrDefault(key, 0) - amount;
+                if (remaining == 0) cargo.remove(key); else cargo.put(key, remaining);
+            });
             progress = Math.min(activeNeeded(), progress + 1);
+            rememberReadyStage();
         }
+    }
+
+    private void rememberReadyStage() {
+        if (ready()) observedStages.add(activeStage().id());
     }
 
     public boolean ready() {

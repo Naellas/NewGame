@@ -34,6 +34,7 @@ public final class WorldLightingRenderer {
     private final GameState state;
     private final Effects effects;
     private final List<WorldLight> activeWorldLights = new ArrayList<>();
+    private final InteriorLightField interiorLightField = new InteriorLightField();
     private final Map<String, BufferedImage> shadowMaskCache = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, BufferedImage> eldest) {
@@ -43,6 +44,12 @@ public final class WorldLightingRenderer {
     private RenderContext context = new RenderContext(0, 0, 0, 1, 1, GameConfig.TILE, GameConfig.WIDTH - GameConfig.SIDEBAR_WIDTH, GameConfig.HEIGHT, 0.0, 0.0);
     private double shadowWorldOffsetX;
     private double shadowWorldOffsetY;
+    private int maxActiveWorldLights = MAX_ACTIVE_WORLD_LIGHTS;
+    private boolean casterShadowsEnabled = true;
+    private boolean glowEffectsEnabled = true;
+    private BufferedImage vignetteCache;
+    private int vignetteInnerAlpha = -1;
+    private int vignetteOuterAlpha = -1;
 
     public WorldLightingRenderer(GameState state, Effects effects) {
         this.state = state;
@@ -51,6 +58,12 @@ public final class WorldLightingRenderer {
 
     public void useContext(RenderContext context) {
         this.context = context;
+    }
+
+    public void configurePerformance(int maxActiveWorldLights, boolean casterShadowsEnabled, boolean glowEffectsEnabled) {
+        this.maxActiveWorldLights = Math.max(1, Math.min(MAX_ACTIVE_WORLD_LIGHTS, maxActiveWorldLights));
+        this.casterShadowsEnabled = casterShadowsEnabled;
+        this.glowEffectsEnabled = glowEffectsEnabled;
     }
 
     public int activeLightCount() {
@@ -89,6 +102,17 @@ public final class WorldLightingRenderer {
     }
 
     public void drawShadow(Graphics2D g, int x, int y, int w, int h) {
+        if (isHouseInterior()) {
+            Graphics2D contact = (Graphics2D) g.create();
+            clipInteriorFloor(contact);
+            drawSimpleShadow(contact, x, y, w, h);
+            contact.dispose();
+            return;
+        }
+        if (!casterShadowsEnabled) {
+            drawSimpleShadow(g, x, y, w, h);
+            return;
+        }
         double altitude = sunAltitude();
         double horizon = 1.0 - altitude;
         double direction = shadowCastX();
@@ -177,7 +201,14 @@ public final class WorldLightingRenderer {
 
     public void drawCasterShadow(Graphics2D g, BufferedImage image, String cacheKey,
                                   int x, int y, int width, int height, boolean flipHorizontal, float baseAlpha) {
+        if (!casterShadowsEnabled) {
+            return;
+        }
         if (image == null || width <= scaled(10) || height <= scaled(10)) {
+            return;
+        }
+        if (isHouseInterior()) {
+            drawInteriorCasterShadow(g, image, cacheKey, x, y, width, height, flipHorizontal, baseAlpha);
             return;
         }
         double footX = x + width / 2.0;
@@ -263,6 +294,57 @@ public final class WorldLightingRenderer {
         return mask;
     }
 
+    private boolean isHouseInterior() {
+        return "interior".equals(state.world.kind(state.currentMapId));
+    }
+
+    private void clipInteriorFloor(Graphics2D g) {
+        if (interiorLightField.floor() != null) {
+            g.clip(java.awt.geom.AffineTransform.getTranslateInstance(-shadowWorldOffsetX, -shadowWorldOffsetY)
+                    .createTransformedShape(interiorLightField.floor()));
+        }
+    }
+
+    private void drawInteriorCasterShadow(Graphics2D g, BufferedImage image, String key,
+                                          int x, int y, int width, int height, boolean flip, float alpha) {
+        double fx = x + width / 2.0, fy = y + height - 2;
+        double wx = fx + shadowWorldOffsetX, wy = fy + shadowWorldOffsetY;
+        WorldLight strongest = null;
+        double strength = 0;
+        for (WorldLight light : activeWorldLights) {
+            double distance = Math.hypot(wx - light.x, wy - light.y);
+            if (!light.affectsShadows || distance < context.tileSize() * 0.4 || distance >= light.radius * 1.8) continue;
+            if (!interiorLightField.visible(state.world, light.x, light.y, light.radius * 2, context.tileSize())
+                    .contains(wx, wy)) continue;
+            double influence = light.alpha * (1 - distance / (light.radius * 1.8));
+            if (influence > strength) { strength = influence; strongest = light; }
+        }
+        if (strongest == null) return;
+        double distance = Math.max(1, Math.hypot(wx - strongest.x, wy - strongest.y));
+        double length = Math.min(height * 0.6, context.tileSize() * 0.85);
+        double dx = (wx - strongest.x) / distance * length;
+        double dy = (wy - strongest.y) / distance * length;
+        Graphics2D shadow = (Graphics2D) g.create();
+        clipInteriorFloor(shadow);
+        shadow.setComposite(AlphaComposite.SrcOver.derive(Math.min(0.30f, alpha * (float) (0.4 + strength))));
+        // Keep the silhouette's foot fixed; project its top away from the emitter.
+        shadow.translate(fx, fy);
+        shadow.transform(new java.awt.geom.AffineTransform(flip ? -1 : 1, 0, -dx / height, -dy / height, 0, 0));
+        shadow.drawImage(shadowMask(key, image), -width / 2, -height, width, height, null);
+        shadow.dispose();
+    }
+
+    private void drawSimpleShadow(Graphics2D g, int x, int y, int w, int h) {
+        Graphics2D shadow = (Graphics2D) g.create();
+        Composite oldComposite = shadow.getComposite();
+        shadow.setComposite(AlphaComposite.SrcOver.derive(0.20f * shadowStrength()));
+        shadow.setColor(new Color(0, 0, 0));
+        int inset = Math.max(1, w / 10);
+        shadow.fillOval(x + inset / 2, y, Math.max(1, w - inset), h);
+        shadow.setComposite(oldComposite);
+        shadow.dispose();
+    }
+
 
 
     private double shadowCastX() {
@@ -287,6 +369,7 @@ public final class WorldLightingRenderer {
 
     public void rebuildWorldLights(List<WorldProp> nearbyWorldProps, int camX, int camY, int visibleCols, int visibleRows, int tileSize) {
         activeWorldLights.clear();
+        if (isHouseInterior()) interiorLightField.update(state.world, state.currentMapId, tileSize);
         for (WorldProp prop : nearbyWorldProps) {
             Color glow = propGlowColor(prop.asset());
             if (glow == null) {
@@ -294,6 +377,18 @@ public final class WorldLightingRenderer {
             }
             int cx = worldTileCenter(prop.x(), tileSize);
             int cy = worldTileCenter(prop.y(), tileSize);
+            PropPlacement.Placement placement = PropPlacement.at(state.world, state.currentMapId, prop);
+            if (placement.kind() != PropPlacement.Kind.FIXED) {
+                cx += (int) Math.round((placement.x() - 0.5) * tileSize);
+                cy += (int) Math.round((placement.y() - 1.0) * tileSize);
+            }
+            if (prop.asset().startsWith("interior_")) {
+                int[] footprint = state.world.interiorVisualFootprint(prop.asset());
+                cx = Math.round((prop.x() + footprint[0] * 0.5f) * tileSize);
+                cy = Math.round((prop.y() + footprint[1] * 0.62f) * tileSize);
+                if (prop.asset().contains("sconce")) cy = Math.round((prop.y() + 0.4f) * tileSize);
+                if (prop.asset().contains("tabletop_candle")) cy = Math.round((prop.y() + 0.32f) * tileSize);
+            }
             float pulse = propGlowPulse(prop);
             addWorldLight(cx, cy, propGlowRadius(prop.asset()), glow, propGlowAlpha(prop.asset()) * lightVisibilityForAsset(prop.asset()) * pulse, true);
         }
@@ -308,7 +403,7 @@ public final class WorldLightingRenderer {
         }
 
         addSettlementWorldLights(tileSize, camX, camY, visibleCols, visibleRows);
-        addPlayerWorldLight(tileSize);
+        if (!isHouseInterior()) addPlayerWorldLight(tileSize);
     }
 
     private void addTerrainWindowWorldLights(int tileSize, int camX, int camY, int visibleCols, int visibleRows, float visibility) {
@@ -470,7 +565,7 @@ public final class WorldLightingRenderer {
             return;
         }
         WorldLight candidate = new WorldLight(x, y, Math.max(1, radius), color, Math.min(1.0f, alpha), affectsShadows);
-        if (activeWorldLights.size() < MAX_ACTIVE_WORLD_LIGHTS) {
+        if (activeWorldLights.size() < maxActiveWorldLights) {
             activeWorldLights.add(candidate);
             return;
         }
@@ -510,8 +605,11 @@ public final class WorldLightingRenderer {
                     || cy - spreadRadius >= visibleRows * tileSize + tileSize) {
                 continue;
             }
-            drawRadialGlow(g, cx, cy, spreadRadius, light.color, Math.min(0.11f, light.alpha * 0.30f));
-            drawRadialGlow(g, cx, cy, coreRadius, light.color, Math.min(0.20f, light.alpha * 0.82f));
+            Graphics2D spill = (Graphics2D) g.create();
+            clipInteriorLight(spill, light, camX * (double) tileSize, camY * (double) tileSize, tileSize);
+            drawRadialGlow(spill, cx, cy, spreadRadius, light.color, Math.min(0.11f, light.alpha * 0.30f));
+            drawRadialGlow(spill, cx, cy, coreRadius, light.color, Math.min(0.20f, light.alpha * 0.82f));
+            spill.dispose();
         }
     }
 
@@ -574,12 +672,22 @@ public final class WorldLightingRenderer {
                     || cx - light.radius >= effects.gameAreaWidth() || cy - light.radius >= effects.viewHeight()) {
                 continue;
             }
-            drawRadialGlow(lights, cx, cy, light.radius, light.color, light.alpha);
+            Graphics2D glow = (Graphics2D) lights.create();
+            clipInteriorLight(glow, light, camX * (double) tileSize + cameraOffsetX,
+                    camY * (double) tileSize + cameraOffsetY, tileSize);
+            drawRadialGlow(glow, cx, cy, light.radius, light.color, light.alpha);
+            glow.dispose();
             if (light.radius <= scaled(36) || light.alpha > 0.26f) {
                 drawSpark(lights, cx, cy, light.color, Math.min(0.48f, light.alpha * 1.35f));
             }
         }
         lights.dispose();
+    }
+
+    private void clipInteriorLight(Graphics2D g, WorldLight light, double ox, double oy, int tileSize) {
+        if (!isHouseInterior()) return;
+        java.awt.Shape visible = interiorLightField.visible(state.world, light.x, light.y, light.radius * 2, tileSize);
+        g.clip(java.awt.geom.AffineTransform.getTranslateInstance(-ox, -oy).createTransformedShape(visible));
     }
 
 
@@ -597,6 +705,7 @@ public final class WorldLightingRenderer {
 
 
     public Color propGlowColor(String asset) {
+        if (asset.startsWith("interior_wall_window")) return new Color(187, 214, 239);
         if (asset.startsWith("town_portal_")) {
             if (asset.contains("snow")) {
                 return new Color(112, 220, 255);
@@ -612,11 +721,11 @@ public final class WorldLightingRenderer {
             }
             return new Color(116, 178, 255);
         }
-        if (asset.contains("camp_fire") || asset.contains("campfire") || asset.contains("fire")) {
+        if (asset.contains("camp_fire") || asset.contains("campfire")) {
             return new Color(255, 151, 58);
         }
         if (asset.contains("forge") || asset.contains("oven") || asset.contains("stove")
-                || asset.contains("hearth") || asset.contains("cookpot") || asset.contains("cooking_station")) {
+                || asset.contains("hearth")) {
             return new Color(255, 154, 72);
         }
         if (asset.contains("street_lamp") || asset.contains("lantern") || asset.contains("sconce")
@@ -675,6 +784,10 @@ public final class WorldLightingRenderer {
     }
 
     public float lightVisibilityForAsset(String asset) {
+        if (isHouseInterior()) {
+            if (asset.startsWith("interior_wall_window")) return (float) state.daylightLevel();
+            return 0.88f + nightFactor() * 0.12f;
+        }
         float night = nightFactor();
         if (asset.startsWith("town_portal_")) {
             return 0.44f + night * 0.94f;
@@ -694,6 +807,7 @@ public final class WorldLightingRenderer {
     }
 
     private int propGlowRadius(String asset) {
+        if (asset.startsWith("interior_wall_window")) return scaled(130);
         if (asset.contains("camp_fire") || asset.contains("campfire") || asset.contains("fire")) {
             return scaled(96);
         }
@@ -738,6 +852,15 @@ public final class WorldLightingRenderer {
     }
 
     public void drawRadialGlow(Graphics2D g, int cx, int cy, int radius, Color color, float alpha) {
+        if (!glowEffectsEnabled) {
+            Composite oldComposite = g.getComposite();
+            g.setComposite(AlphaComposite.SrcOver.derive(Math.max(0.0f, Math.min(0.18f, alpha * 0.7f))));
+            g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 150));
+            int simpleRadius = Math.max(1, radius / 3);
+            g.fillOval(cx - simpleRadius, cy - simpleRadius, simpleRadius * 2, simpleRadius * 2);
+            g.setComposite(oldComposite);
+            return;
+        }
         Composite oldComposite = g.getComposite();
         Paint oldPaint = g.getPaint();
         Color[] colors = {
@@ -755,24 +878,32 @@ public final class WorldLightingRenderer {
     public void drawWorldVignette(Graphics2D g) {
         int width = effects.gameAreaWidth();
         int height = effects.viewHeight();
-        int radius = Math.max(width, height);
-        Paint oldPaint = g.getPaint();
-        Composite oldComposite = g.getComposite();
         float edgeAlpha = 0.10f + nightFactor() * 0.12f;
-        g.setComposite(AlphaComposite.SrcOver);
-        g.setPaint(new RadialGradientPaint(
+        int innerAlpha = Math.round(edgeAlpha * 70);
+        int outerAlpha = Math.round(edgeAlpha * 255);
+        if (vignetteCache == null || vignetteCache.getWidth() != width || vignetteCache.getHeight() != height
+                || vignetteInnerAlpha != innerAlpha || vignetteOuterAlpha != outerAlpha) {
+            vignetteCache = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D vignette = vignetteCache.createGraphics();
+            vignette.setPaint(new RadialGradientPaint(
                 width * 0.46f,
                 height * 0.42f,
-                radius * 0.68f,
+                Math.max(width, height) * 0.68f,
                 new float[]{0.0f, 0.74f, 1.0f},
                 new Color[]{
                         new Color(0, 0, 0, 0),
-                        new Color(10, 13, 20, Math.round(edgeAlpha * 70)),
-                        new Color(8, 10, 18, Math.round(edgeAlpha * 255))
+                        new Color(10, 13, 20, innerAlpha),
+                        new Color(8, 10, 18, outerAlpha)
                 }
-        ));
-        g.fillRect(0, 0, width, height);
-        g.setPaint(oldPaint);
+            ));
+            vignette.fillRect(0, 0, width, height);
+            vignette.dispose();
+            vignetteInnerAlpha = innerAlpha;
+            vignetteOuterAlpha = outerAlpha;
+        }
+        Composite oldComposite = g.getComposite();
+        g.setComposite(AlphaComposite.SrcOver);
+        g.drawImage(vignetteCache, 0, 0, null);
         g.setComposite(oldComposite);
     }
 
