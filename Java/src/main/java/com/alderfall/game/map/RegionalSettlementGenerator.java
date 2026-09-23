@@ -12,10 +12,12 @@ final class RegionalSettlementGenerator {
     static List<Npc> populate(WorldMap world, MapArea area) {
         Region region = RegionalSettlementIdentity.region(area.id);
         if (region == Region.NONE) return List.of();
-        // Old city wall rows can cross the approach to a corner dwelling.
-        for (CityBuilding building : world.cityBuildings(area.id)) for (TilePoint door : world.cityBuildingDoorTiles(building)) {
-            int x = door.x(), y = door.y() + 1;
-            if (area.tileAt(x, y) == 'x' && world.cityBuildingAt(area.id, x, y) == null) area.tiles[y][x] = 'K';
+        // Villages can still inherit an obsolete blocker. Authored city rings are never carved here.
+        if (!"city".equals(area.kind)) {
+            for (CityBuilding building : world.cityBuildings(area.id)) for (TilePoint door : world.cityBuildingDoorTiles(building)) {
+                int x = door.x(), y = door.y() + 1;
+                if (area.tileAt(x, y) == 'x' && world.cityBuildingAt(area.id, x, y) == null) area.tiles[y][x] = 'K';
+            }
         }
         connectDoorApproaches(world, area);
         Set<TilePoint> before = reachable(world, area, entrance(world, area));
@@ -23,6 +25,7 @@ final class RegionalSettlementGenerator {
         boolean[][] protectedTiles = protectedTiles(world, area);
         List<TilePoint> centers = centers(world, area, before, protectedTiles);
         paintSurfaces(world, area, region);
+        paintFunctionalDistricts(world, area, region, centers, protectedTiles);
         Set<TilePoint> water = new HashSet<>();
         if (!centers.isEmpty()) paintWater(area, region, centers.get(0), protectedTiles, water);
         restoreAccess(world, area, before, water);
@@ -45,7 +48,8 @@ final class RegionalSettlementGenerator {
             place(world, area, center.x() + 2, center.y(), props[2], 40);
             TilePoint work = freeNear(world, area, center, 1);
             TilePoint gathering = index == 0 ? freeNear(world, area, center, 3) : area.districts.get(0).gathering();
-            String name = RegionalSettlementIdentity.districtName(region, index);
+            String townName = RegionalSettlementIdentity.townDistrictName(area.id, index);
+            String name = townName == null ? RegionalSettlementIdentity.districtName(region, index) : townName;
             String keeper = RegionalSettlementIdentity.role(region) + " " + (index == 0 ? "Eren" : "Tala");
             District district = new District(name, center, work, gathering, keeper,
                     RegionalSettlementIdentity.dialogue(region, index));
@@ -64,23 +68,26 @@ final class RegionalSettlementGenerator {
     private static void clearRegionalRoofClutter(WorldMap world, MapArea area) {
         for (CityBuilding building : world.cityBuildings(area.id)) {
             RegionalBuildingTypes.Type type = RegionalBuildingTypes.type(area.id, building);
-            if (type == null) continue;
-            int rows = switch (type) {
+            boolean village = "village".equals(area.kind);
+            if (type == null && !village) continue;
+            int rows = type == null ? 1 : switch (type) {
                 case REMEMBRANCE_HALL, BELLHOUSE -> 3;
                 case CARAVANSERAI, RESCUE_LODGE, GRANARY -> 2;
                 default -> 1;
             };
             // Older decorative yards were composed for short cottages. Keep their props off taller roofs.
             area.props.removeIf(p -> p.x() >= building.x1() && p.x() <= building.x2()
-                    && p.y() < building.y1() && p.y() >= building.y1() - rows
+                    && (village ? p.y() <= building.y2() : p.y() < building.y1()) && p.y() >= building.y1() - rows
                     && !area.landmarks.containsKey(new TilePoint(p.x(), p.y()))
                     && world.transitionAt(area.id, p.x(), p.y()) == null
                     && !p.asset().contains("fence") && !p.asset().contains("palisade")
-                    && (plant(p) || p.asset().startsWith("city_prop_") || p.asset().startsWith("village_prop_")));
+                    && (plant(p) || village && p.asset().startsWith("deco_")
+                    || p.asset().startsWith("city_prop_") || p.asset().startsWith("village_prop_")));
         }
     }
 
     private static void connectDoorApproaches(WorldMap world, MapArea area) {
+        boolean mayCarveLegacyWall = !"city".equals(area.kind);
         Set<TilePoint> reached = reachable(world, area, entrance(world, area));
         for (CityBuilding building : world.cityBuildings(area.id)) {
             List<TilePoint> approaches = world.cityBuildingDoorTiles(building).stream()
@@ -103,7 +110,7 @@ final class RegionalSettlementGenerator {
                 for (int[] dir : STEPS) {
                     TilePoint n = new TilePoint(p.x() + dir[0], p.y() + dir[1]);
                     if (n.x() < 0 || n.y() < 0 || n.x() >= area.width() || n.y() >= area.height()) continue;
-                    boolean wall = area.tileAt(n.x(), n.y()) == 'x'
+                    boolean wall = mayCarveLegacyWall && area.tileAt(n.x(), n.y()) == 'x'
                             && world.cityBuildingAt(area.id, n.x(), n.y()) == null && area.propAt(n.x(), n.y()) == null;
                     if (!wall && !world.isPassable(area.id, n.x(), n.y())) continue;
                     int cost = step.cost() + (wall ? 20 : 1);
@@ -112,7 +119,7 @@ final class RegionalSettlementGenerator {
                 }
             }
             for (TilePoint p = end; p != null; p = previous.get(p)) {
-                if (area.tileAt(p.x(), p.y()) == 'x') area.tiles[p.y()][p.x()] = 'K';
+                if (mayCarveLegacyWall && area.tileAt(p.x(), p.y()) == 'x') area.tiles[p.y()][p.x()] = 'K';
             }
             reached = reachable(world, area, entrance(world, area));
         }
@@ -121,19 +128,23 @@ final class RegionalSettlementGenerator {
     private static void paintSurfaces(WorldMap world, MapArea area, Region region) {
         double phase = Math.floorMod(area.id.hashCode(), 31) / 5.0;
         boolean harbor = area.id.equals("town_greyharbor");
+        boolean village = "village".equals(area.kind);
         for (int y = 1; y < area.height() - 1; y++) {
             for (int x = 1; x < area.width() - 1; x++) {
                 char tile = area.tileAt(x, y);
-                if (!Terrain.passable(tile) || "Buedt".indexOf(tile) >= 0) continue;
+                if (!Terrain.passable(tile) || "Buedt".indexOf(tile) >= 0
+                        || world.cityBuildingAt(area.id, x, y) != null) continue;
+                if (tile == Terrain.CITY_GATE) continue;
                 if (Terrain.connectingRoad(tile) || tile == 'U') {
                     if (region == Region.FEN && tile != 'B') area.tiles[y][x] = Terrain.PLANK_ROAD;
-                    else if (region == Region.SUN && x != 16 && x != 17 && y != 11 && y != 12) area.tiles[y][x] = Terrain.PACKED_ROAD;
+                    else if (region == Region.SUN && (village || x != 16 && x != 17 && y != 11 && y != 12)) area.tiles[y][x] = Terrain.PACKED_ROAD;
                     continue;
                 }
                 double patch = Math.sin(x / 5.0 + phase) + Math.cos(y / 6.0 - phase)
                         + Math.sin((x + y) / 9.0 + phase) * 0.5;
                 boolean front = world.cityBuildingAt(area.id, x, y - 1) != null;
-                boolean civicCore = Math.abs(x - 17) + Math.abs(y - 12) < 6;
+                boolean civicCore = village ? Math.pow((x - 14) / 3.2, 2) + Math.pow((y - 10) / 2.4, 2) < 1
+                        : Math.abs(x - 17) + Math.abs(y - 12) < 6;
                 area.tiles[y][x] = switch (region) {
                     case FEN -> front || civicCore ? 'U' : 'v';
                     case SUN -> front || civicCore ? 'V' : patch > 1.6 ? 'b' : 's';
@@ -144,6 +155,41 @@ final class RegionalSettlementGenerator {
                 };
             }
         }
+    }
+
+    /** Irregular material fields make the two named quarters readable without fencing them into boxes. */
+    private static void paintFunctionalDistricts(WorldMap world, MapArea area, Region region,
+                                                 List<TilePoint> centers, boolean[][] protectedTiles) {
+        if (!area.id.startsWith("town_")) return;
+        for (int index = 0; index < centers.size(); index++) {
+            TilePoint center = centers.get(index);
+            char material = districtMaterial(region, index);
+            for (int y = center.y() - 5; y <= center.y() + 5; y++) {
+                for (int x = center.x() - 6; x <= center.x() + 6; x++) {
+                    if (x <= 1 || y <= 1 || x >= area.width() - 2 || y >= area.height() - 2
+                            || protectedTiles[y][x] || world.cityBuildingAt(area.id, x, y) != null) continue;
+                    char tile = area.tileAt(x, y);
+                    if (!Terrain.passable(tile) || Terrain.connectingRoad(tile) || tile == 'w' || tile == '~') continue;
+                    double distance = Math.pow((x - center.x()) / 6.0, 2) + Math.pow((y - center.y()) / 5.0, 2);
+                    int edge = Math.floorMod(x * 37 + y * 19 + area.id.hashCode() + index * 101, 100);
+                    if (distance < 0.52 && edge < 58 || distance < 1.0 && edge < 26) {
+                        area.tiles[y][x] = material;
+                    }
+                }
+            }
+        }
+    }
+
+    private static char districtMaterial(Region region, int index) {
+        return switch (region) {
+            case FEN -> index == 0 ? 'U' : 'y';
+            case SUN -> index == 0 ? 'V' : 'b';
+            case NORTH -> index == 0 ? 'p' : 'y';
+            case FREEHOLDS -> index == 0 ? 'p' : 'y';
+            case HEARTH -> index == 0 ? 'p' : 'y';
+            case RIVER -> index == 0 ? 'a' : 'y';
+            default -> index == 0 ? 'C' : 'p';
+        };
     }
 
     private static void paintWater(MapArea area, Region region, TilePoint center,
@@ -165,6 +211,7 @@ final class RegionalSettlementGenerator {
                 };
                 if (!wet || Math.abs(x - center.x()) + Math.abs(y - center.y()) <= 2) continue;
                 char tile = area.tileAt(x, y);
+                if (tile == Terrain.CITY_GATE) continue;
                 if (Terrain.connectingRoad(tile) || tile == 'U' || tile == 'V') {
                     area.tiles[y][x] = Terrain.connectingRoad(tile) ? Terrain.PLANK_ROAD : 'U';
                 } else {
@@ -173,10 +220,33 @@ final class RegionalSettlementGenerator {
                 }
             }
         }
+        ensureRegionalWaterFootprint(area, region, center, protectedTiles, water, 5);
         area.props.removeIf(p -> water.contains(new TilePoint(p.x(), p.y())) && plant(p));
         if (region == Region.SUN) {
             for (int y = 2; y < area.height() - 2; y++) for (int x = 2; x < area.width() - 2; x++) {
                 if (!protectedTiles[y][x] && area.tileAt(x, y) == 's' && nearWater(area, x, y, 2)) area.tiles[y][x] = 'g';
+            }
+        }
+    }
+
+    private static void ensureRegionalWaterFootprint(MapArea area, Region region, TilePoint center,
+                                                     boolean[][] protectedTiles, Set<TilePoint> water,
+                                                     int minimum) {
+        if (region != Region.FEN && region != Region.SUN && region != Region.RIVER) return;
+        int existing = 0;
+        for (char[] row : area.tiles) for (char tile : row) if (tile == 'w') existing++;
+        for (int radius = 2; existing < minimum && radius <= 9; radius++) {
+            for (int y = center.y() - radius; y <= center.y() + radius && existing < minimum; y++) {
+                for (int x = center.x() - radius; x <= center.x() + radius && existing < minimum; x++) {
+                    if (x <= 1 || y <= 1 || x >= area.width() - 2 || y >= area.height() - 2
+                            || Math.abs(x - center.x()) + Math.abs(y - center.y()) != radius
+                            || protectedTiles[y][x]) continue;
+                    char tile = area.tileAt(x, y);
+                    if (!Terrain.passable(tile) || Terrain.connectingRoad(tile) || tile == 'U' || tile == 'V') continue;
+                    area.tiles[y][x] = 'w';
+                    water.add(new TilePoint(x, y));
+                    existing++;
+                }
             }
         }
     }
@@ -205,8 +275,13 @@ final class RegionalSettlementGenerator {
         for (int index = 0; index < 2; index++) {
             TilePoint best = null;
             int scoreBest = Integer.MIN_VALUE;
-            int preferredX = index == 0 ? area.width() * (3 + salt % 3) / 8 : area.width() / 4;
-            int preferredY = index == 0 ? area.height() - 7 : area.height() / 2;
+            TilePoint townAnchor = townDistrictAnchor(world, area, index);
+            int preferredX = townAnchor == null
+                    ? (index == 0 ? area.width() * (3 + salt % 3) / 8 : area.width() / 4)
+                    : townAnchor.x();
+            int preferredY = townAnchor == null
+                    ? (index == 0 ? area.height() - 7 : area.height() / 2)
+                    : townAnchor.y();
             for (int y = 4; y < area.height() - 4; y++) for (int x = 4; x < area.width() - 4; x++) {
                 TilePoint p = new TilePoint(x, y);
                 if (!accessible.contains(p) || protectedTiles[y][x] || Terrain.ROAD_LIKE.contains(area.tileAt(x, y))) continue;
@@ -227,6 +302,19 @@ final class RegionalSettlementGenerator {
             }
         }
         return result;
+    }
+
+    private static TilePoint townDistrictAnchor(WorldMap world, MapArea area, int index) {
+        RegionalSettlementIdentity.TownProfile profile = RegionalSettlementIdentity.townProfile(area.id);
+        if (profile == null || profile.buildings().isEmpty()) return null;
+        int specIndex = index == 0 ? 0 : profile.buildings().size() - 1;
+        String key = profile.buildings().get(specIndex).key();
+        CityBuilding anchor = world.cityBuildings(area.id).stream()
+                .filter(building -> building.key().equals(key) || building.key().startsWith(key + "_part_"))
+                .findFirst().orElse(null);
+        if (anchor == null) return null;
+        return new TilePoint(anchor.x1() + anchor.width() / 2,
+                Math.min(area.height() - 5, anchor.y2() + 3));
     }
 
     private static void adaptVegetation(MapArea area, Region region) {

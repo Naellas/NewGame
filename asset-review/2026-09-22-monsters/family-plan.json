@@ -1,0 +1,52 @@
+[
+  {
+    "name": "goblin_scout",
+    "identity": "hooded scout with short dagger, leather hood, belts and tunic",
+    "target": "Java/assets/monsters/goblin_scout.png"
+  },
+  {
+    "name": "goblin_archer",
+    "identity": "hooded archer with bow, taut fine bowstring, complete nocked arrow and quiver",
+    "target": "Java/assets/monsters/goblin_archer.png"
+  },
+  {
+    "name": "goblin_trapper",
+    "identity": "trapper with full hooked spear, chain and jaw trap; preserve transparent openings BETWEEN chain links and trap jaws",
+    "target": "Java/assets/monsters/goblin_trapper.png"
+  },
+  {
+    "name": "goblin_skirmisher",
+    "identity": "dual-knife skirmisher with red scarf, spiked shoulder armor and two complete blades",
+    "target": "Java/assets/monsters/goblin_skirmisher.png"
+  },
+  {
+    "name": "goblin_shaman",
+    "identity": "purple-robed shaman with skull staff, skull ornaments, turquoise magic in hand and around staff; preserve intended detached magical wisps",
+    "target": "Java/assets/monsters/goblin_shaman.png"
+  },
+  {
+    "name": "goblin_warlord",
+    "identity": "armored warlord with axe, helmet and red pennant; keep skull belt, spikes and pennant pole",
+    "target": "Java/assets/monsters/goblin_warlord.png"
+  },
+  {
+    "name": "goblin_king",
+    "identity": "king with gold crown, jewels, red cape, fur collar and complete spiked golden mace",
+    "target": "Java/assets/monsters/goblin_king.png"
+  },
+  {
+    "name": "bandit_cutthroat",
+    "identity": "human masked cutthroat, short sword, leather tunic, fur collar, belts and dark trousers",
+    "target": "Java/assets/monsters/bandit_cutthroat.png"
+  },
+  {
+    "name": "bandit_archer",
+    "identity": "human masked archer with green-brown hood/cloak, quiver, complete bow, taut fine bowstring and nocked arrow",
+    "target": "Java/assets/monsters/bandit_archer.png"
+  },
+  {
+    "name": "bandit_captain",
+    "identity": "human masked captain with curved saber, fur collar, metal armor, red-and-black cape and belts",
+    "target": "Java/assets/monsters/bandit_captain.png"
+  }
+]

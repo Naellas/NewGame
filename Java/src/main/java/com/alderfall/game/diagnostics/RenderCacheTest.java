@@ -1,6 +1,9 @@
 package com.alderfall.game;
 
 import com.alderfall.game.render.world.WorldLightingRenderer;
+import com.alderfall.game.render.WorldMapTerrainCache;
+import com.alderfall.game.map.MapArea;
+import com.alderfall.game.map.WorldMap;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -59,6 +62,7 @@ public final class RenderCacheTest {
 
     private static void checkVignette() throws Exception {
         GameState state = new GameState(GameConfig.load(Path.of("").toAbsolutePath().normalize()));
+        checkWorldMapTerrainRevision(state.world);
         int[] dimensions = {320, 180};
         WorldLightingRenderer.Effects effects = (WorldLightingRenderer.Effects) Proxy.newProxyInstance(
                 WorldLightingRenderer.Effects.class.getClassLoader(),
@@ -86,6 +90,17 @@ public final class RenderCacheTest {
         dimensions[1] += 41;
         drawAndCompareVignette(renderer, dimensions);
         require(cache.get(renderer) != dayCache, "Viewport resize did not invalidate vignette");
+    }
+
+    private static void checkWorldMapTerrainRevision(WorldMap world) {
+        WorldMapTerrainCache cache = new WorldMapTerrainCache();
+        BufferedImage initial = cache.image(world, 48, 32, false);
+        require(cache.image(world, 48, 32, false) == initial, "Unchanged world map cache was rebuilt");
+        MapArea overworld = world.area(WorldMap.OVERWORLD_ID);
+        char original = overworld.tileAt(0, 0);
+        overworld.setTile(0, 0, original == 'g' ? 'f' : 'g');
+        require(cache.image(world, 48, 32, false) != initial, "Terrain edit did not invalidate world map cache");
+        overworld.setTile(0, 0, original);
     }
 
     private static void drawAndCompareVignette(WorldLightingRenderer renderer, int[] dimensions) {

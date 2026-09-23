@@ -24,6 +24,11 @@ public final class MainStoryDialogueTest {
     }
 
     private static void testConversations() {
+        Quest crowhook = GameData.QUESTS.get("ms_stolen_index");
+        check(crowhook.activeStartDialog().contains("Keeper's Instructions")
+                && crowhook.activeStartDialog().contains("ransom")
+                && !crowhook.activeStartDialog().contains("are defeated"),
+                "Crowhook offer must identify its document and source before the fight");
         for (String id : GameData.MAIN_STORY_QUEST_IDS) {
             Quest q = GameData.QUESTS.get(id).copy();
             Npc owner = owner(q);
@@ -37,6 +42,7 @@ public final class MainStoryDialogueTest {
                 Npc speaker = id.equals("ms_kingdoms_answer") ? npc(q.activeTargetNpcId()) : owner;
                 var session = session(speaker, q);
                 choose(session, "Discuss " + q.title + ".");
+                readPassages(session);
                 for (MainStoryContent.Topic topic : MainStoryContent.topics(q, speaker)) {
                     check(session.optionLabels().contains(topic.question()) == topic.evidence().isBlank(),
                             "Unobserved discovery leaked into menu: " + topic.question());
@@ -62,12 +68,12 @@ public final class MainStoryDialogueTest {
     private static void assertTopic(DialogueLibrary.DialogueSession session, MainStoryContent.Topic topic) {
         var effect = choose(session, topic.question());
         check(effect.effect().isBlank() && effect.relationshipDelta() == 0, "Information branch has a gameplay effect");
-        check(session.line().equals(topic.answer()), "Selected reply did not get its authored answer");
+        check(readPassages(session).equals(topic.answer()), "Selected reply did not get its authored answer");
         // Current authored exchanges have one follow-up each.
         for (MainStoryContent.Topic child : topic.replies()) {
             var reply = choose(session, child.question());
             check(reply.effect().isBlank() && reply.relationshipDelta() == 0, "Follow-up changes progress/approval");
-            check(session.line().equals(child.answer()), "Follow-up contradicts selected subject");
+            check(readPassages(session).equals(child.answer()), "Follow-up contradicts selected subject");
         }
     }
 
@@ -146,7 +152,8 @@ public final class MainStoryDialogueTest {
         SaveSystem saves = new SaveSystem(Path.of("out-story-refinement"));
         Method read = SaveSystem.class.getDeclaredMethod("readQuests", String.class, GameState.class);
         read.setAccessible(true);
-        for (String id : REVISED) {
+        for (String id : GameData.MAIN_STORY_QUEST_IDS.stream()
+                .filter(key -> StoryLocationCatalog.forQuest(key).outdoorSite()).sorted().toList()) {
             GameState state = fresh(config);
             String notice = (String) read.invoke(saves, id + ":true:false:1:0", state);
             Quest q = state.quests.get(id);
@@ -154,7 +161,7 @@ public final class MainStoryDialogueTest {
             check(notice.contains(q.title), "Migration not explained " + id);
             read.invoke(saves, id + ":true:true:1:0", state);
             check(q.completed, "Legacy completed quest revoked " + id);
-            check(QuestNarrative.subject(q).contains("no detailed findings"), "Legacy completion invented new actions " + id);
+            check(QuestNarrative.subject(q).contains("no field notes"), "Legacy completion invented new actions " + id);
         }
     }
 
@@ -187,8 +194,10 @@ public final class MainStoryDialogueTest {
         int intro = 0;
         while (!s.activeNpcDialogOptions().contains(topic) && intro++ < 5) select(s, 0);
         select(s, s.activeNpcDialogOptions().indexOf(topic));
+        while (s.activeNpcDialogOptions().equals(List.of("Continue"))) select(s, 0);
         select(s, s.activeNpcDialogOptions().indexOf("Vaelthara let me live. Why?"));
         check(s.activeNpcDialogLine().contains("cannot tell you why"), "Live menu uses old omniscient reply");
+        while (s.activeNpcDialogOptions().equals(List.of("Continue"))) select(s, 0);
         select(s, s.activeNpcDialogOptions().indexOf("Then bringing me here puts you in danger."));
         check(s.activeNpcDialogLine().contains("did not bring us this war"), "Live menu lost connected follow-up");
         check(!s.quests.get("ms_wake_ashes").accepted, "Question silently accepted quest");
@@ -246,9 +255,21 @@ public final class MainStoryDialogueTest {
     private static Npc npc(String name) { return GameData.NPCS.stream().filter(n -> n.name().equals(name)).findFirst().orElseThrow(); }
     private static DialogueLibrary.DialogueSession session(Npc npc, Quest q) { return DialogueLibrary.startSession(npc, q, "road", 0, new Random(1)); }
     private static DialogueLibrary.DialogueChoiceResult choose(DialogueLibrary.DialogueSession s, String label) {
+        readPassages(s);
         int i = s.optionLabels().indexOf(label);
         check(i >= 0, "Missing option " + label);
         return s.choose(i);
+    }
+    private static String readPassages(DialogueLibrary.DialogueSession s) {
+        StringBuilder text = new StringBuilder(s.line());
+        int pages = 0;
+        while (s.optionLabels().equals(List.of("Continue"))) {
+            check(pages++ < 20, "Dialogue continuation loop");
+            var result = s.choose(0);
+            check(result.effect().isEmpty() && result.relationshipDelta() == 0, "Reading a passage changed the world");
+            text.append(' ').append(s.line());
+        }
+        return text.toString();
     }
     private static GameState fresh(GameConfig config) {
         GameState s = new GameState(config);

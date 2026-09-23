@@ -1,0 +1,4211 @@
+[
+  {
+    "path": "Java/assets/city/regional/regional_fen_bellhouse.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:46:44.056304",
+    "size": [
+      1154,
+      1363
+    ],
+    "bbox": [
+      57,
+      9,
+      1099,
+      1322
+    ],
+    "sha256": "77201b417ce1c70231e2bc41fa3403d7333cf0b451cced8cb4b3dec70df7c104",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:46:44.056304",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_fen_reedworks.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:47:13.031371",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      13,
+      42,
+      1520,
+      940
+    ],
+    "sha256": "8e197a8dc79755785260042344d2cf999197ba94a1483ecc3c0d02734473ae8f",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:47:13.031371",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_fen_stilt_house.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:06:01.400109",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      68,
+      63,
+      1186,
+      1180
+    ],
+    "sha256": "482257b957abbb22e5364e44e15280b8a38adda10be4be40b8cd6a2526eee317",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:06:01.400109",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_freehold_rescue_lodge.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:48:03.845724",
+    "size": [
+      1178,
+      1335
+    ],
+    "bbox": [
+      4,
+      0,
+      1178,
+      1314
+    ],
+    "sha256": "343b972f0a38372f5a481057195a561215dd535b537c407832d956e7f077255e",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T04:48:03.845724",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_hearth_granary.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:42:42.915946",
+    "size": [
+      1212,
+      1297
+    ],
+    "bbox": [
+      38,
+      76,
+      1176,
+      1168
+    ],
+    "sha256": "4a98c65377411a4058e425c1f3046ac26bef9b484f18c2987baac34d4b4fcb81",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:42:42.915946",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_north_remembrance_hall.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:43:58.107910",
+    "size": [
+      1024,
+      1536
+    ],
+    "bbox": [
+      64,
+      9,
+      960,
+      1442
+    ],
+    "sha256": "ec4b488dd2220805394465f28c88640106fd3e55935faff28c611f89b4978708",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:43:58.107910",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_north_smokehouse.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:44:22.767529",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      63,
+      115,
+      1475,
+      879
+    ],
+    "sha256": "3354cc86bace337b5ee18493a07630919fde5345f77824342781a7479cf5f873",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:44:22.767529",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_north_turf_house.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:04:52.721721",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      21,
+      254,
+      1238,
+      1028
+    ],
+    "sha256": "240e76b08eecd49e00821932800dbd7e009f4b558086bc8bb0c39b1199253b84",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:04:52.721721",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_river_ferry_lodge.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:43:30.907516",
+    "size": [
+      1374,
+      1145
+    ],
+    "bbox": [
+      52,
+      62,
+      1322,
+      1052
+    ],
+    "sha256": "61670eea89978181ebb5749fc9fc2d3c17d9ec50dc72bc6d86ad0d0c62689a3b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:43:30.907516",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_sun_caravanserai.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:45:59.308558",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      55,
+      91,
+      1200,
+      1153
+    ],
+    "sha256": "0f3528e47c4d185ede89009e623d4f757af3f98ca4173d080f4c58d8fc5322db",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:45:59.308558",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_sun_cistern_house.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:45:03.639350",
+    "size": [
+      1374,
+      1145
+    ],
+    "bbox": [
+      65,
+      152,
+      1321,
+      983
+    ],
+    "sha256": "1bb68ad1ce87e5248e2c673ef7e5fe7bc4802b0c530e84d523be805aaa22a185",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalBuildingTypes.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:45:03.639350",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/regional/regional_sun_courtyard_house.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:05:29.438420",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      88,
+      161,
+      1185,
+      1075
+    ],
+    "sha256": "c373b5cce4ad9c84d89038c83827c9fa7e27bea920a5ba951b3ae19b6b141df3",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:05:29.438420",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_boundary_shrine.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:23:45.078874",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      254,
+      80,
+      996,
+      1150
+    ],
+    "sha256": "b20df86135f5ccdbbd4f468ca197844dde9d06c35922a2993b5bdb8e938f47cc",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/FolkloreContent.java",
+      "Java/src/main/java/com/alderfall/game/content/WesternReachFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:23:45.078874",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_briarbridge_guest_abbey.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:36:00.961687",
+    "size": [
+      1232,
+      1277
+    ],
+    "bbox": [
+      10,
+      29,
+      1220,
+      1208
+    ],
+    "sha256": "c32952fa55fd47ed0e85e5e066afaccdc892a5c1edc96927ab4c2746a3fa40e1",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/WesternReachFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:36:00.961687",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_hearth_ward.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:28:19.130142",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      244,
+      34,
+      1011,
+      1216
+    ],
+    "sha256": "a0bf06a5803786d208aa02addcb375f3c5970dd5217d457510982994ed848918",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/HearthlandsFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:28:19.130142",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_oathstead_hearth.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:22:14.024498",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      180,
+      99,
+      1356,
+      920
+    ],
+    "sha256": "e9bcb35ee46278a4431331fe50e7eb15e2fcf3379bb9ee7ff5a165d2ae4c5b51",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/FolkloreContent.java"
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:22:14.024498",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_open_bough_gate.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:13:38.901782",
+    "size": [
+      1374,
+      1145
+    ],
+    "bbox": [
+      79,
+      157,
+      1304,
+      998
+    ],
+    "sha256": "dbad6bb63dbe3bcd9afd993eb5b0e7af0b6c41e68bfa813ab6d94614e6933436",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/WesternReachFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:13:38.901782",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_redcap_supply_shelter.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:44:58.667255",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      148,
+      203,
+      1118,
+      1100
+    ],
+    "sha256": "d211098a34a36529f39a3de3c495ec8ef8cbd8047bf462438a76b1c10ae3c6f7",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/WesternReachFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:44:58.667255",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_returning_seedhouse.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:23:02.713455",
+    "size": [
+      1233,
+      1275
+    ],
+    "bbox": [
+      68,
+      86,
+      1185,
+      1191
+    ],
+    "sha256": "ad1fc2815f5e811e731488f52a84b002a8c152eb4bb3089b7e14fe14d0eccc63",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/FolkloreContent.java",
+      "Java/src/main/java/com/alderfall/game/content/WesternReachFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:23:02.713455",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_sealed_mirror_door.png",
+    "group": "regional",
+    "modified": "2026-09-22T04:15:04.891687",
+    "size": [
+      1232,
+      1277
+    ],
+    "bbox": [
+      142,
+      85,
+      1090,
+      1175
+    ],
+    "sha256": "77aba20af9c4dfe7af1fcfe49fbfec713940f690131d1cf5d6ed134e6dbd5c39",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/WesternReachFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T04:15:04.891687",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_seedhouse.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:23:22.371150",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      36,
+      84,
+      1218,
+      1156
+    ],
+    "sha256": "30697a7e724fad35d46ffb665ae60d9b4290bee232ff80bbd2d4d85a9f30ce4d",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/HearthlandsFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:23:22.371150",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/folklore/folklore_shared_oven.png",
+    "group": "regional",
+    "modified": "2026-09-22T03:22:50.245059",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      102,
+      72,
+      1153,
+      1120
+    ],
+    "sha256": "bb8deb734776f2c050f23e6e8f92e4ee922c4d6e335280cc06c4dad9f691d2e2",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/HearthlandsFolklore.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T03:22:50.245059",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/landmarks/city_landmark_archive_oath_spire.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:37:13.651488",
+    "size": [
+      1736,
+      906
+    ],
+    "bbox": [
+      28,
+      30,
+      1707,
+      864
+    ],
+    "sha256": "8f55e85f9b226014ebff76a4c1fde637419af8bc85e9777e8f2d209de4f7e486",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T03:37:13.651488",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/landmarks/city_landmark_belltower_reed_chime.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:37:19.719771",
+    "size": [
+      1715,
+      917
+    ],
+    "bbox": [
+      37,
+      30,
+      1681,
+      879
+    ],
+    "sha256": "b1b084c78fef7c928aa35617763a2f8db1d47c5669731698808413a116958b44",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T03:37:19.719771",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/landmarks/city_landmark_highwall_iron_beacon.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:37:16.499182",
+    "size": [
+      1774,
+      887
+    ],
+    "bbox": [
+      8,
+      115,
+      1765,
+      820
+    ],
+    "sha256": "d1be9caac4e1c3d76fb17f2c6cad0bca87226183f78c137c9af3a7a59d8282ca",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T03:37:16.499182",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/landmarks/city_landmark_riverside_bridge_statue.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:37:10.828755",
+    "size": [
+      1728,
+      910
+    ],
+    "bbox": [
+      58,
+      40,
+      1666,
+      858
+    ],
+    "sha256": "5d312dcd4fc691c4e8fa851e680a5f02d648d93cd43013a299cb0e8896e59b5d",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T03:37:10.828755",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/landmarks/city_landmark_sanctum_sun_obelisk.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:37:22.675347",
+    "size": [
+      1774,
+      887
+    ],
+    "bbox": [
+      26,
+      48,
+      1748,
+      808
+    ],
+    "sha256": "9346fb3390a9497f1b7ad1d4c3fa1a1ced6ab92bcfc1bc03cafc6d41bf1bd061",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T03:37:22.675347",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/landmarks/source/city_landmark_archive_oath_spire_imagegen_source.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:33:04.278077",
+    "size": [
+      1736,
+      906
+    ],
+    "bbox": [
+      0,
+      0,
+      1736,
+      906
+    ],
+    "sha256": "c45e53236dae223fa7982c9e75a8402726d5fcc7963b952764b01c421e5ca406",
+    "direct_refs": [],
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-06-02T03:33:04.278077",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/landmarks/source/city_landmark_belltower_reed_chime_imagegen_source.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:35:10.707603",
+    "size": [
+      1715,
+      917
+    ],
+    "bbox": [
+      0,
+      0,
+      1715,
+      917
+    ],
+    "sha256": "1558f1635e098f74805730530fd6ddf6d8434737fdf31d45707b7eac9da028fc",
+    "direct_refs": [],
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-06-02T03:35:10.707603",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/landmarks/source/city_landmark_highwall_iron_beacon_imagegen_source.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:34:05.888947",
+    "size": [
+      1774,
+      887
+    ],
+    "bbox": [
+      0,
+      0,
+      1774,
+      887
+    ],
+    "sha256": "052c6a5321dfd9645bc379007a368b30359d08cc88e53cff997ea717e188ba1f",
+    "direct_refs": [],
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-06-02T03:34:05.888947",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/landmarks/source/city_landmark_riverside_bridge_statue_imagegen_source.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:31:53.387360",
+    "size": [
+      1728,
+      910
+    ],
+    "bbox": [
+      0,
+      0,
+      1728,
+      910
+    ],
+    "sha256": "ccefc5d5e59306e6322e7d82634d235b7134476499aa3da3664446e708cdcf53",
+    "direct_refs": [],
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-06-02T03:31:53.387360",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/landmarks/source/city_landmark_sanctum_sun_obelisk_imagegen_source.png",
+    "group": "regional",
+    "modified": "2026-06-02T03:36:12.216707",
+    "size": [
+      1774,
+      887
+    ],
+    "bbox": [
+      0,
+      0,
+      1774,
+      887
+    ],
+    "sha256": "46321e1d44b085c8fb7790ccceeef37b0d8f7818380082cf7d2a73efe5fa5d4f",
+    "direct_refs": [],
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-06-02T03:36:12.216707",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_archive_court_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T05:47:09.613258",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      57,
+      59,
+      1203,
+      1120
+    ],
+    "sha256": "dffe7ab0460adf66a7b91e81aed92dd1156ace487d8074626468aab903c38a0c",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T05:47:09.613258",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_town_briarbridge_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:47:34.564678",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      19,
+      30,
+      1236,
+      1222
+    ],
+    "sha256": "bf9d05747e0784a7fff438c57f11bec70bd2c6d8033b67519dad95a9602e416f",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:47:34.564678",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_town_embermarket_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:51:18.672678",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      48,
+      48,
+      1220,
+      1140
+    ],
+    "sha256": "a68d0d22aa4c4b0fa331ccfeae851ac42a69afcb608e4d9e032fe91baa0ab981",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:51:18.672678",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_town_greyharbor_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:53:17.602661",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      32,
+      21,
+      1232,
+      1190
+    ],
+    "sha256": "5fafe9218d02098e2faacca258f5240e4acf496d0635f5a6b9f95ad8a09c159b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:53:17.602661",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_town_ironvale_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:48:30.521060",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      36,
+      42,
+      1232,
+      1187
+    ],
+    "sha256": "c6d07082c250105cd214d7f4770e211e00d5c1feb2137d5d49067ed941eaeb79",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:48:30.521060",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_town_northwatch_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:52:19.066502",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      31,
+      28,
+      1234,
+      1163
+    ],
+    "sha256": "3b76e7625c44484404d3b833e0fb8b70f0bf3bb9c5a25f0be0c8ffb06ed860c9",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:52:19.066502",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_town_reedwatch_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:49:25.411797",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      59,
+      42,
+      1227,
+      1212
+    ],
+    "sha256": "b49475beab6274f514727ec7ecb9538c67296820af26705ec5ecf477559de402",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:49:25.411797",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_village_fen_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T07:00:01.181234",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      34,
+      103,
+      1231,
+      1112
+    ],
+    "sha256": "4f8377853b345b7c5d29663c9e117fc2b60096fce4f3778c7d459c73a4632e93",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T07:00:01.181234",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_village_freeholds_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T07:01:03.357882",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      23,
+      114,
+      1233,
+      1171
+    ],
+    "sha256": "6392b61b536c1bd11967db3c5b6d43eef797183096bfbccd0aef15b37b02f50c",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T07:01:03.357882",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_village_hearth_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:55:20.842658",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      28,
+      111,
+      1234,
+      1136
+    ],
+    "sha256": "c12c5f68329953d74fceab011659c101499b0e450b4ff37e6eaba862edf252d1",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:55:20.842658",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_village_north_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:57:04.157117",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      45,
+      125,
+      1220,
+      1141
+    ],
+    "sha256": "0cdd98122cfccc597ac8316848779b057203f89bbc613c0932c1dcedc573bdb2",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:57:04.157117",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_village_river_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:56:23.013974",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      43,
+      88,
+      1227,
+      1095
+    ],
+    "sha256": "7b1d8d60d3f528d898af58d41599df2f27ea7db3d089bb70fc5ce421161b6e3b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:56:23.013974",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_village_sun_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T06:59:02.561200",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      52,
+      141,
+      1201,
+      1141
+    ],
+    "sha256": "9e4d959790fe6868b730d95a6cbcb8e0851ee3763539fbf801ccc017a9012a18",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/content/RegionalSettlementIdentity.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T06:59:02.561200",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/locations/location_dungeon_fortress_gate_imagegen.png",
+    "group": "overworld",
+    "modified": "2026-09-22T05:52:17.918042",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      19,
+      114,
+      1238,
+      1123
+    ],
+    "sha256": "c20468d5b97c6fec235a034047aae65fd1370a7e896af5aafb12cfd0535dc6c6",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/map/OverworldLocationBlueprints.java",
+      "Java/src/main/java/com/alderfall/game/map/WorldMap.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T05:52:17.918042",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_archive_grand_college_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-06-02T15:02:49.843723",
+    "size": [
+      1254,
+      1254
+    ],
+    "bbox": [
+      57,
+      43,
+      1195,
+      1172
+    ],
+    "sha256": "4b2a1db9ab08596a885cff9137dc47d601a931fdf14d186ec8d604e17e716548",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T15:02:49.843723",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_belltower_chime_workshop_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-06-02T15:02:47.009992",
+    "size": [
+      1024,
+      1536
+    ],
+    "bbox": [
+      140,
+      55,
+      889,
+      1451
+    ],
+    "sha256": "89ec54ad5470036b0a452f62b54c23c46fca49261af2596591a58909bd21b31a",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T15:02:47.009992",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_civic_hall_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-05-31T22:09:56.025030",
+    "size": [
+      1204,
+      1116
+    ],
+    "bbox": [
+      18,
+      18,
+      1186,
+      1098
+    ],
+    "sha256": "ee916d5d4e8fec0797f9bf5505731117bf5de0da3f4d685020bd6653694ac293",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-05-31T22:09:56.025030",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_highwall_forge_keep_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-06-02T15:02:52.591748",
+    "size": [
+      1151,
+      1366
+    ],
+    "bbox": [
+      52,
+      30,
+      1096,
+      1300
+    ],
+    "sha256": "b636fef5e6afd97df80942fe5ec546c2e145f9c714e9b52bc06e419c35de0160",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T15:02:52.591748",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_house_gabled.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:21:15.819266",
+    "size": [
+      138,
+      220
+    ],
+    "bbox": [
+      0,
+      0,
+      138,
+      220
+    ],
+    "sha256": "0bfe5e6ce3171560720a690225838eeadd81696fe6b3041fd0cfb3b2ea186354",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:21:15.819266",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_house_shop.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:21:15.829273",
+    "size": [
+      137,
+      180
+    ],
+    "bbox": [
+      0,
+      0,
+      137,
+      180
+    ],
+    "sha256": "ef434da344cec2c9f9138605f893cb55b2f1d2973395d1fd64b43c3c96ac5bd3",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:21:15.829273",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_house_tower.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:21:15.824271",
+    "size": [
+      114,
+      230
+    ],
+    "bbox": [
+      0,
+      0,
+      114,
+      230
+    ],
+    "sha256": "24a61f7a75a29134072240afdafcb16e15d425ee9928d5c335ffb7a535ccafa2",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:21:15.824271",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_house_wide.png",
+    "group": "buildings",
+    "modified": "2026-09-22T16:41:19.134587",
+    "size": [
+      1586,
+      992
+    ],
+    "bbox": [
+      262,
+      95,
+      1330,
+      921
+    ],
+    "sha256": "8ce137a18af2d98a7f35c213520d9dcd3c31af0f8dc74b1a6234ecc9a70407fd",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-05-26T05:21:15.811761",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_inn_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-06-02T01:33:19.985918",
+    "size": [
+      552,
+      496
+    ],
+    "bbox": [
+      8,
+      8,
+      544,
+      488
+    ],
+    "sha256": "5a1474e55929b6aba2977fc761bc39171141c6402c589d54b8372e5afdc31564",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T01:33:19.985918",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_riverside_tradehall_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-06-02T15:02:55.322707",
+    "size": [
+      1312,
+      1199
+    ],
+    "bbox": [
+      69,
+      73,
+      1233,
+      1085
+    ],
+    "sha256": "c4ad3fa46c252e29a558959f9739d54434ca8bb33f3232d8d715a2995be3bbef",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T15:02:55.322707",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_sanctum_sun_alchemist_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-06-02T15:02:44.173487",
+    "size": [
+      1312,
+      1199
+    ],
+    "bbox": [
+      31,
+      31,
+      1302,
+      1124
+    ],
+    "sha256": "3df37e239e11f297679231aabf7a80fef7d2866f716d3a865a9dfbfd7c5ad1f1",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-02T15:02:44.173487",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_stone_hall.png",
+    "group": "buildings",
+    "modified": "2026-09-22T16:43:47.891219",
+    "size": [
+      1402,
+      1122
+    ],
+    "bbox": [
+      129,
+      93,
+      1276,
+      1015
+    ],
+    "sha256": "9cbab622703d2dc074195dc9891fe8e728ae56c59fa7aa0f01294b049879517b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-05-26T05:39:25.462855",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_stone_shop.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:39:25.476846",
+    "size": [
+      123,
+      254
+    ],
+    "bbox": [
+      0,
+      0,
+      123,
+      254
+    ],
+    "sha256": "bd56c0a87c78f69e3994f62066056aae3d17d7e3db2eb4dd504516c3df0a20fa",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:39:25.476846",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_stone_tower.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:39:25.469858",
+    "size": [
+      118,
+      213
+    ],
+    "bbox": [
+      0,
+      0,
+      118,
+      213
+    ],
+    "sha256": "a8480de4fd5b2dcabf0760dc45b852e102e5ffb21eeb4dc221951bce1f16b10f",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:39:25.469858",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_town_gabled.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:39:25.375331",
+    "size": [
+      131,
+      230
+    ],
+    "bbox": [
+      0,
+      0,
+      131,
+      230
+    ],
+    "sha256": "ec9b79d76b2c50f6408338fef1bba40eaefea3c79d416526c6292fd8a491c4e1",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java",
+      "Java/src/main/java/com/alderfall/game/ui/VillageOverlayRenderer.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:39:25.375331",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_town_manor.png",
+    "group": "buildings",
+    "modified": "2026-09-22T16:42:55.839924",
+    "size": [
+      1374,
+      1145
+    ],
+    "bbox": [
+      113,
+      67,
+      1261,
+      1088
+    ],
+    "sha256": "6fd1b8dffcc77411fe9ebdc42206c69f2cefd383c450aeeb58350a9fe3a969b5",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-05-26T05:39:25.370330",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_town_narrow.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:39:25.386338",
+    "size": [
+      109,
+      233
+    ],
+    "bbox": [
+      0,
+      0,
+      109,
+      233
+    ],
+    "sha256": "c0bd10e6db9e467a0d066da1c02b932f5cbe764c67bff01a3e997b4b5b94dc19",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:39:25.386338",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_town_shop.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:39:25.390339",
+    "size": [
+      135,
+      180
+    ],
+    "bbox": [
+      0,
+      0,
+      135,
+      180
+    ],
+    "sha256": "f3bc57d1827d5ed9a8b0514d9d49081387d2073abb9cd4a149afbb11801153b1",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:39:25.390339",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_town_small.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:39:25.393331",
+    "size": [
+      106,
+      179
+    ],
+    "bbox": [
+      0,
+      0,
+      106,
+      179
+    ],
+    "sha256": "a75c038b747114c9d674b51c364a509d8bad8d2af4d0529a111961c03724fbc1",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:39:25.393331",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_town_tall.png",
+    "group": "buildings",
+    "modified": "2026-05-26T05:39:25.382330",
+    "size": [
+      143,
+      230
+    ],
+    "bbox": [
+      0,
+      0,
+      143,
+      230
+    ],
+    "sha256": "05b84321ed55c5042df2a7b7d53c5795159c3b5ec776d0c47fcec3a59743afa7",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-05-26T05:39:25.382330",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_watchtower_imagegen.png",
+    "group": "buildings",
+    "modified": "2026-05-31T22:09:56.445300",
+    "size": [
+      608,
+      1452
+    ],
+    "bbox": [
+      18,
+      18,
+      590,
+      1434
+    ],
+    "sha256": "617a1904f782d70398d90c87655cb4495148d536195bf1136d08be9002b8c416",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-05-31T22:09:56.445300",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_cottage.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:40.171788",
+    "size": [
+      288,
+      313
+    ],
+    "bbox": [
+      26,
+      26,
+      262,
+      287
+    ],
+    "sha256": "fef0f0ead8d149505cd0b23c421227adc7695eee95b347ca8286575b0d5f39f5",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:40.171788",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_cottage_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:43.808369",
+    "size": [
+      259,
+      292
+    ],
+    "bbox": [
+      10,
+      10,
+      249,
+      282
+    ],
+    "sha256": "094b894126cd93d99053fa5371665d8080ae1a57fef6c51b0a5cfdcd2bb85d90",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:43.808369",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_cottage_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:53.060804",
+    "size": [
+      253,
+      259
+    ],
+    "bbox": [
+      10,
+      10,
+      243,
+      249
+    ],
+    "sha256": "96eac9c4f9cfa9faae5053d2d04a884470b4cff063d1a9f6397b0c1c36cf936f",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:53.060804",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_hall.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:39.171461",
+    "size": [
+      200,
+      118
+    ],
+    "bbox": [
+      26,
+      26,
+      174,
+      92
+    ],
+    "sha256": "76f0d80519184c5714f23cd886b4be3a88e803c590b45d6079c50c088ca06e35",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:39.171461",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_hall_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:47.254364",
+    "size": [
+      270,
+      306
+    ],
+    "bbox": [
+      10,
+      10,
+      260,
+      296
+    ],
+    "sha256": "90ed344e613af0722399c867e709c35b4db0ab4a9a63ae4dea6ec0683fc7282b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:47.254364",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_hall_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:57.102424",
+    "size": [
+      298,
+      307
+    ],
+    "bbox": [
+      10,
+      10,
+      288,
+      297
+    ],
+    "sha256": "1fb39177d3e77162191e29e9649c6323d1e6942cc6b0bf98cb96ce23d0e7c7ff",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:57.102424",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_row.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:39.938229",
+    "size": [
+      357,
+      318
+    ],
+    "bbox": [
+      26,
+      26,
+      331,
+      292
+    ],
+    "sha256": "17bd893424dd493148b701b213c79ebd144193c47cf08845a08e53cdad00479b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:39.938229",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_row_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:48.266988",
+    "size": [
+      250,
+      262
+    ],
+    "bbox": [
+      10,
+      10,
+      240,
+      252
+    ],
+    "sha256": "e71abf7fcd5da2bea2cc71455c5cf13b94ba177b06901ec0490ea0d697fcd134",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:48.266988",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_row_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:58.000826",
+    "size": [
+      297,
+      233
+    ],
+    "bbox": [
+      10,
+      10,
+      287,
+      223
+    ],
+    "sha256": "4588feb90c6fc57b95595af06733ba4a5a6da2c93d770cb64fb0492c7f390343",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:58.000826",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_study.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:39.188979",
+    "size": [
+      125,
+      119
+    ],
+    "bbox": [
+      26,
+      26,
+      99,
+      93
+    ],
+    "sha256": "a4737d0fe3a89303a49e2872c46ccd75f884109af4cdc42a985a58c6408050fc",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:39.188979",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_study_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:47.744991",
+    "size": [
+      244,
+      265
+    ],
+    "bbox": [
+      10,
+      10,
+      234,
+      255
+    ],
+    "sha256": "f0bea3063919ed6c39406c34de13d2bdb5ec9bca7bac97e66e323a7deee664bc",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:47.744991",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_study_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:57.546957",
+    "size": [
+      225,
+      288
+    ],
+    "bbox": [
+      10,
+      10,
+      215,
+      278
+    ],
+    "sha256": "f82895838706c95bc5ddbd355c3e3f91c8403da8f7442ff520983bba5e4b5dfb",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:57.546957",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_warehouse.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:39.243983",
+    "size": [
+      161,
+      119
+    ],
+    "bbox": [
+      26,
+      26,
+      135,
+      93
+    ],
+    "sha256": "b892efd88511d665f79af42284dfa54c92756a90b432728ba7d548b122ae1651",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:39.243983",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/imagegen_city_workshop.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:39.137439",
+    "size": [
+      136,
+      119
+    ],
+    "bbox": [
+      26,
+      26,
+      110,
+      93
+    ],
+    "sha256": "ba8e581e1221bf2afb651057f1ad67e9ef5a75ffcb3cf206ca1a450ee64177d9",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:39.137439",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_apothecary.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:29.696820",
+    "size": [
+      501,
+      586
+    ],
+    "bbox": [
+      26,
+      26,
+      475,
+      560
+    ],
+    "sha256": "fc5549c8e5b132954171f89b218453a206222151afc977ac06447ee11b5758b9",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:29.696820",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_apothecary_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:52.044588",
+    "size": [
+      243,
+      288
+    ],
+    "bbox": [
+      10,
+      10,
+      233,
+      278
+    ],
+    "sha256": "dd057d3cf67658c54f7352c176cdef9d2dd05f1e86185f99156b78e1803bdbe1",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:52.044588",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_apothecary_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:04:00.923586",
+    "size": [
+      254,
+      247
+    ],
+    "bbox": [
+      10,
+      10,
+      244,
+      237
+    ],
+    "sha256": "edcb70f1000d259b6c49f63de1d02a67d0138c83bbacec084076a89291289bf4",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:04:00.923586",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_bakery.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:28.860176",
+    "size": [
+      528,
+      580
+    ],
+    "bbox": [
+      26,
+      26,
+      502,
+      554
+    ],
+    "sha256": "b7faf74475fc2f317c0d077c7d9b94909618222907721ef57189a325dd3ea6dc",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:28.860176",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_bakery_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:51.493393",
+    "size": [
+      255,
+      294
+    ],
+    "bbox": [
+      10,
+      10,
+      245,
+      284
+    ],
+    "sha256": "4c425c4e9bf8a87e5e966b28f97feb4bd617d7f89f3927da327914dfbc7abe56",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:51.493393",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_bakery_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:04:00.493768",
+    "size": [
+      238,
+      271
+    ],
+    "bbox": [
+      10,
+      10,
+      228,
+      261
+    ],
+    "sha256": "1c9c829e88c7eb21386dc71d5cc243579e22dcc4632338b4d8d7ddf54673ff28",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:04:00.493768",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_blacksmith.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:28.015793",
+    "size": [
+      524,
+      598
+    ],
+    "bbox": [
+      26,
+      26,
+      498,
+      572
+    ],
+    "sha256": "f7e743ae16cdd81a430e38e6199888ca7572403507e2db4bd2c327b49108ea45",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:28.015793",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_blacksmith_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:50.720709",
+    "size": [
+      243,
+      289
+    ],
+    "bbox": [
+      10,
+      10,
+      233,
+      279
+    ],
+    "sha256": "9543c59ec0e80fe5282f8bb013833886d33354ffd2ea4ab56e7f6ad51156458b",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:50.720709",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_blacksmith_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:04:00.075762",
+    "size": [
+      269,
+      282
+    ],
+    "bbox": [
+      10,
+      10,
+      259,
+      272
+    ],
+    "sha256": "6469a1ce85218b18db679619685c66b0a697e810a17c90c8c57a3e9256e6ab8b",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:04:00.075762",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_farmstead.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:33.087754",
+    "size": [
+      397,
+      412
+    ],
+    "bbox": [
+      26,
+      26,
+      371,
+      386
+    ],
+    "sha256": "2295a244ea2d4e26a3d2d74383469112be0f69058e82c40c183a912e549a350b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:33.087754",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_farmstead_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:46.211552",
+    "size": [
+      260,
+      290
+    ],
+    "bbox": [
+      10,
+      10,
+      250,
+      280
+    ],
+    "sha256": "1f2f5d5e9f93ad2638417d5adf18e0d19e0fdf2609b3a0ab75c06c655f61ae6f",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:46.211552",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_farmstead_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:56.066597",
+    "size": [
+      307,
+      249
+    ],
+    "bbox": [
+      10,
+      10,
+      297,
+      239
+    ],
+    "sha256": "6661f1a5c9437a1dc0bf9363536bbc2f46d90ebd9b38f0d60effb369e9ac46c3",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:56.066597",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_fishing_hut.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:30.526118",
+    "size": [
+      503,
+      543
+    ],
+    "bbox": [
+      26,
+      26,
+      477,
+      517
+    ],
+    "sha256": "5ae3d33a1227f315f2f43f8bf9f864cf180902d33000360b13f18dcc8f54f0ef",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:30.526118",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_fishing_hut_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:52.578053",
+    "size": [
+      250,
+      268
+    ],
+    "bbox": [
+      10,
+      10,
+      240,
+      258
+    ],
+    "sha256": "ab95ab6c156979ea1d9278eea49ac8a02c93039c72e7548ce8c07a9b028d57a7",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:52.578053",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_fishing_hut_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:04:01.284777",
+    "size": [
+      278,
+      239
+    ],
+    "bbox": [
+      10,
+      10,
+      268,
+      229
+    ],
+    "sha256": "767698312b742bbb10ee8c3ed2f181c1b76929fb2b3e92be8cdad4e41a454d2a",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:04:01.284777",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_forestry_hut.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:31.975409",
+    "size": [
+      377,
+      436
+    ],
+    "bbox": [
+      26,
+      26,
+      351,
+      410
+    ],
+    "sha256": "82be150940952eeea93ea6b19e108887c03ec067355aeb6354ff6d44f0127892",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:31.975409",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_forestry_hut_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:44.744803",
+    "size": [
+      249,
+      289
+    ],
+    "bbox": [
+      10,
+      10,
+      239,
+      279
+    ],
+    "sha256": "1a65338c69c38341aa2662e6e7b12297c942023f6349804656ccffab10237da7",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:44.744803",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_forestry_hut_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:54.135035",
+    "size": [
+      256,
+      278
+    ],
+    "bbox": [
+      10,
+      10,
+      246,
+      268
+    ],
+    "sha256": "2511b86f4cdd88b1ad6f9ea4daf45af57de1ba430c30797199781abc1443cc11",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:54.135035",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_garden.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:39.709178",
+    "size": [
+      311,
+      258
+    ],
+    "bbox": [
+      26,
+      26,
+      285,
+      232
+    ],
+    "sha256": "b0ff0f34b37564d7f5271c55661a6598233d272b7b0dc907309c039cd0df7f3b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:39.709178",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_garden_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:50.151169",
+    "size": [
+      266,
+      264
+    ],
+    "bbox": [
+      10,
+      10,
+      256,
+      254
+    ],
+    "sha256": "4cbf6140290ab011ed14a83fee0ddf997e3e50c1ad2594280dc57946b878c234",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:50.151169",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_garden_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:59.633045",
+    "size": [
+      270,
+      249
+    ],
+    "bbox": [
+      10,
+      10,
+      260,
+      239
+    ],
+    "sha256": "3a97c79ecf0b261d11d988a9317a5dd1612426ac7524afcd5cf24f97de04e731",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:59.633045",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_granary.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:33.625646",
+    "size": [
+      334,
+      414
+    ],
+    "bbox": [
+      26,
+      26,
+      308,
+      388
+    ],
+    "sha256": "62e369e0c18273f4fbc12c6fc1c8bf5ff9db6657dbf89fc08fb914c05af61211",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:33.625646",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_granary_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:48.756529",
+    "size": [
+      242,
+      286
+    ],
+    "bbox": [
+      10,
+      10,
+      232,
+      276
+    ],
+    "sha256": "722f805972dd5b4de0c18e0a2f7ea302799fcd5f57310432e8098c7553dc7afa",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:48.756529",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_granary_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:58.430319",
+    "size": [
+      221,
+      267
+    ],
+    "bbox": [
+      10,
+      10,
+      211,
+      257
+    ],
+    "sha256": "61807bd8fe523c8b406ce7f2bddc10d8f3b6220421aa45b47cf3b7d77e04a080",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:58.430319",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_hunting_camp.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:32.473155",
+    "size": [
+      372,
+      406
+    ],
+    "bbox": [
+      26,
+      26,
+      346,
+      380
+    ],
+    "sha256": "eac6ecc23f8273f04508a337fc04276b8078b5004aca11b0785d3ad545e69a6c",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:32.473155",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_hunting_camp_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:45.713934",
+    "size": [
+      231,
+      266
+    ],
+    "bbox": [
+      10,
+      10,
+      221,
+      256
+    ],
+    "sha256": "07ca8a910eab8b0f4aa76a181ded5f13fd81cefc749d424673153dc8e94ee105",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:45.713934",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_hunting_camp_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:55.423560",
+    "size": [
+      206,
+      241
+    ],
+    "bbox": [
+      10,
+      10,
+      196,
+      231
+    ],
+    "sha256": "11ccacac1144f50d0191396148af516670f4742512689aed0b79a478cde703a1",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:55.423560",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_mine.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:31.456033",
+    "size": [
+      375,
+      400
+    ],
+    "bbox": [
+      26,
+      26,
+      349,
+      374
+    ],
+    "sha256": "15eea726057dd9984e940cdd547ddf13579657fa8db91e7fd463a3a68d2b0e92",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:31.456033",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_mine_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:45.233895",
+    "size": [
+      237,
+      274
+    ],
+    "bbox": [
+      10,
+      10,
+      227,
+      264
+    ],
+    "sha256": "1c472449fbb76c4fcd2ddb1d296fb407147430e6d027dc0b6785f4b28315163d",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:45.233895",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_mine_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:54.836345",
+    "size": [
+      244,
+      264
+    ],
+    "bbox": [
+      10,
+      10,
+      234,
+      254
+    ],
+    "sha256": "159c9d56e1a1d94d7685e72fc73ab8718dbfbf202b69bdd63f5cfd0f31ec8f95",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:54.836345",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_shrine.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:34.524507",
+    "size": [
+      339,
+      404
+    ],
+    "bbox": [
+      26,
+      26,
+      313,
+      378
+    ],
+    "sha256": "02af58844b120f47fdb165eecc4422e8dbf9510126979ed377a48a774d99e1b3",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:34.524507",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_shrine_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:49.608319",
+    "size": [
+      228,
+      272
+    ],
+    "bbox": [
+      10,
+      10,
+      218,
+      262
+    ],
+    "sha256": "872b862c4bd6ccbdebac836955aff487e621b099949ce884225897f343e6ef4e",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:49.608319",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_shrine_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:59.183502",
+    "size": [
+      246,
+      274
+    ],
+    "bbox": [
+      10,
+      10,
+      236,
+      264
+    ],
+    "sha256": "1e953b4cb4d9a022ca0b267f743a9a33a2196ac37824c850e437ddb0d6abc613",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:59.183502",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_warehouse.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:30.987528",
+    "size": [
+      405,
+      405
+    ],
+    "bbox": [
+      26,
+      26,
+      379,
+      379
+    ],
+    "sha256": "64e8b582b989d3d2d8c302a3986eceae53619045bd8c7c67161c560090d88150",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:30.987528",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_warehouse_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:44.286137",
+    "size": [
+      250,
+      282
+    ],
+    "bbox": [
+      10,
+      10,
+      240,
+      272
+    ],
+    "sha256": "427ba85e278ed8e08383debc2949da25e43e3d4716b3fd45955c869f1e258e7b",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:44.286137",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_warehouse_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:53.639716",
+    "size": [
+      293,
+      280
+    ],
+    "bbox": [
+      10,
+      10,
+      283,
+      270
+    ],
+    "sha256": "5a82fc9b9acda27599ab6eaaa9d9a3e0c08a5fc633c0ce086909f0d0d7219439",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:53.639716",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_watchtower.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:34.078038",
+    "size": [
+      269,
+      439
+    ],
+    "bbox": [
+      26,
+      26,
+      243,
+      413
+    ],
+    "sha256": "583f2f0cf8242c4ef0146bd3cd72e4bc71fd7342179e0eba6f3635077e209b9b",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:34.078038",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_watchtower_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:49.225824",
+    "size": [
+      189,
+      333
+    ],
+    "bbox": [
+      10,
+      10,
+      179,
+      323
+    ],
+    "sha256": "c0adb13ac238326ac64fac55cde067acd39812f0a2ef0456386a41d62cda0878",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:49.225824",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_watchtower_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:58.809381",
+    "size": [
+      189,
+      304
+    ],
+    "bbox": [
+      10,
+      10,
+      179,
+      294
+    ],
+    "sha256": "44e567b3204b982e88248ef66ea2ec88058f5da559c5672eb9118b1f86c8b3e7",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:58.809381",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_workshop.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:39.489579",
+    "size": [
+      338,
+      325
+    ],
+    "bbox": [
+      26,
+      26,
+      312,
+      299
+    ],
+    "sha256": "e9f093fce06f9990fd8290fbcd6cff9296afc17ed912e94e6d5287fa16d4e362",
+    "direct_refs": [
+      "Java/src/main/java/com/alderfall/game/app/GamePanel.java",
+      "Java/src/main/java/com/alderfall/game/systems/VillageManager.java"
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:39.489579",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_workshop_lvl2.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:46.659528",
+    "size": [
+      255,
+      261
+    ],
+    "bbox": [
+      10,
+      10,
+      245,
+      251
+    ],
+    "sha256": "b18a29bc91a0b2c4eb752934b1de3abe0e927c06109e9526f14f09fa3472502e",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:46.659528",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/buildings/village/village_building_workshop_lvl3.png",
+    "group": "buildings",
+    "modified": "2026-06-01T18:03:56.583477",
+    "size": [
+      268,
+      262
+    ],
+    "bbox": [
+      10,
+      10,
+      258,
+      252
+    ],
+    "sha256": "af1ef851263fff42d85af45b2e484f9a865c521d863f6e722345544cd189b816",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-06-01T18:03:56.583477",
+    "role": "older comparison / fallback"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_atlas.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:01:04.000365",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      30,
+      14,
+      1494,
+      1004
+    ],
+    "sha256": "b93a0925c8a892d9a17bac8ca86722b9a9d775ca1f175ebdb4932746dbd88582",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T16:01:04.000365",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_end_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.785788",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      113,
+      0,
+      405,
+      446
+    ],
+    "sha256": "a5530d21427dfbdacb475e982f8e779760260c884cb138a7683f72f9a6cdad4d",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.785788",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_gate_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.728647",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      30,
+      136,
+      512,
+      367
+    ],
+    "sha256": "1a7b7c650b004347463bbfdff4d312986c4eb36997cedbc611f98b5558fe340d",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.728647",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_gate_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.758169",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      14,
+      353,
+      492
+    ],
+    "sha256": "afd2f6c138eb41bb9f6796fbe1f068ce6d98522bd17b593ae2a9431295f891bb",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.758169",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.642041",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      37,
+      231,
+      512,
+      397
+    ],
+    "sha256": "d71e6540e2317502f4ee3ffa4059e0c0acf0e09d40725f5bb12853a48843b3aa",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.642041",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_horizontal_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.576602",
+    "size": [
+      417,
+      190
+    ],
+    "bbox": [
+      0,
+      11,
+      417,
+      177
+    ],
+    "sha256": "89765ae65127307b5cfe2c5f623f57b3a6d32fb64bafd1c67a6b81174d429463",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.576602",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.699127",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      47,
+      75,
+      470,
+      512
+    ],
+    "sha256": "99ed1158137da67502e5b7a72fd98f38df7470dd969b4288d2167a07842b3438",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.699127",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.671108",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      14,
+      333,
+      498
+    ],
+    "sha256": "62250e1d7c40beeb3f95454cbd49ace8594c4554f56331379ef14301d15af7f6",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.671108",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_fen_vertical_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.584602",
+    "size": [
+      125,
+      380
+    ],
+    "bbox": [
+      0,
+      0,
+      93,
+      380
+    ],
+    "sha256": "7a1f70f4e3daa8256ea5811f9cd7bbc9cea65e90f1e3c61a06828e0a01729ef8",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.584602",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_atlas.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:02:28.386691",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      30,
+      13,
+      1495,
+      1005
+    ],
+    "sha256": "d42533e6a754d2b8a3458ce82a8de9ade159280e0c29dba3c7328dfd0eab9c57",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T16:02:28.386691",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_end_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.548843",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      112,
+      0,
+      405,
+      448
+    ],
+    "sha256": "f01f0beed5b672ca104330069abdaab1d7bf816147c9a2075768e2cf01c98c5a",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.548843",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_gate_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.494374",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      30,
+      135,
+      512,
+      368
+    ],
+    "sha256": "c3ebc369129db64a6cad8a18550307d2248ca0d8a7916dea272267293c2fedd1",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.494374",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_gate_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.521894",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      14,
+      386,
+      493
+    ],
+    "sha256": "63b43d649095bb1fbd5078c1de4e26b37549906167ae4e6fc62662476ff293ba",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.521894",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.410867",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      37,
+      231,
+      512,
+      390
+    ],
+    "sha256": "90bd650ac579fad70162de5ddf5c63c2860385ae83d89be0fc03c370bae00173",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.410867",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_horizontal_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.594603",
+    "size": [
+      417,
+      190
+    ],
+    "bbox": [
+      0,
+      11,
+      417,
+      170
+    ],
+    "sha256": "51ebaa484eb5606d27ffdb6e016078d77a5007c2dc0d8affb24ae2b865bffe13",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.594603",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.466344",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      46,
+      75,
+      471,
+      512
+    ],
+    "sha256": "a63f7f3c2f8376300c1d2a40179c328b36c39bcd4642f91866f49265a7727c8a",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.466344",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.438808",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      13,
+      365,
+      499
+    ],
+    "sha256": "96ba41a4d94cdeabd00fd2fa29a8b358328bbec3612b4bd0181918238ef1805c",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.438808",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_freeholds_vertical_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.603614",
+    "size": [
+      125,
+      380
+    ],
+    "bbox": [
+      0,
+      0,
+      125,
+      380
+    ],
+    "sha256": "de2f320ba022e51284557d3391ffb83618392abbf44853ecceae7ceb3d5578f5",
+    "direct_refs": [],
+    "alpha_extrema": [
+      1,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.603614",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_atlas.png",
+    "group": "walls",
+    "modified": "2026-09-22T15:58:34.884612",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      30,
+      14,
+      1493,
+      1004
+    ],
+    "sha256": "dd265508b9571c1f49164f0c0c1ee7a9263c1bb2be2ea6e7511ad5b0f5fe4107",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T15:58:34.884612",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_end_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.158050",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      113,
+      0,
+      404,
+      446
+    ],
+    "sha256": "f4ea1b12c6d29ae49e2f25200e4e23664db318e867d9319d73157686c13cce22",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.158050",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_gate_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.100834",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      30,
+      136,
+      512,
+      366
+    ],
+    "sha256": "8d1d8a59de7ea77c00bcd12792d91972dd32d8ea87104f81812eb1564c096490",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.100834",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_gate_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.128848",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      14,
+      385,
+      492
+    ],
+    "sha256": "d4bc25bab5d27b7989c0bcdf808a4dbc66788a65ddb45a443bd6b6f3cca8f224",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.128848",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.017172",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      37,
+      231,
+      512,
+      390
+    ],
+    "sha256": "a2765561545755c0e3a4a355f04993e9d54fb3986640ef7ab0a0b5af33033de4",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.017172",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_horizontal_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.517603",
+    "size": [
+      417,
+      190
+    ],
+    "bbox": [
+      0,
+      11,
+      417,
+      170
+    ],
+    "sha256": "d93ebabef4115ba32ef8d3d5c321784248fce3b869d917d5cea7af5f166d6b18",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.517603",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.072716",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      47,
+      75,
+      469,
+      512
+    ],
+    "sha256": "953bf6b391067ffdfbea81b76f72c9291991f05117aa023c16abd441ce98bbf8",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.072716",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.044697",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      14,
+      364,
+      498
+    ],
+    "sha256": "12214a3ad2724e1c958fb14930a8e077dc4956fe52bba1030ff9e82bbba72c05",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.044697",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_hearth_vertical_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.526603",
+    "size": [
+      125,
+      380
+    ],
+    "bbox": [
+      0,
+      0,
+      124,
+      380
+    ],
+    "sha256": "71b48b02f3d882985b3c22b90dca20c054b5eb659bf0c51f20cfe3a9308f341d",
+    "direct_refs": [],
+    "alpha_extrema": [
+      1,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.526603",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_atlas.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:00:19.196624",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      30,
+      12,
+      1495,
+      1006
+    ],
+    "sha256": "6abfc05bd378b326c5cadd030b685d989410447d718132c53d75499d407708c0",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": false,
+    "original_modified": "2026-09-22T16:00:19.196624",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_end_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.970651",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      112,
+      0,
+      407,
+      448
+    ],
+    "sha256": "4e890a4d10fca3880a3f1204be5d3de8c0b75bc3d83c813301d1704d899958a8",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.970651",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_gate_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.914927",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      30,
+      139,
+      512,
+      368
+    ],
+    "sha256": "b8dc02eecfc7e14995e6b36028d7af4ab0317f616463ebd806d1097f43ed45a0",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.914927",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_gate_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.943125",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      12,
+      387,
+      494
+    ],
+    "sha256": "2b607a6f069d8ffd367d073e3dcf6cc57eaff767dc1cfe2e2e24b635a1f2a503",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.943125",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.830902",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      35,
+      227,
+      512,
+      391
+    ],
+    "sha256": "5ba5d9a6c6f07849f33f9373cbf4cae81df44375f1c5c9b07373fb2ea8fba431",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.830902",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_horizontal_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.536602",
+    "size": [
+      417,
+      190
+    ],
+    "bbox": [
+      0,
+      7,
+      417,
+      171
+    ],
+    "sha256": "f7e0e884b9370129e44722a55d50300033de02103bfcc366ada14b577e3d41f2",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.536602",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.886941",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      45,
+      72,
+      471,
+      512
+    ],
+    "sha256": "1dbe8c4223a6dd2c87177bb195ad524876e0d1e5514f687ff1f20d15c0bfafa5",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.886941",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:27.858920",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      12,
+      366,
+      499
+    ],
+    "sha256": "c6277117e94a80438c83339b131f1ce50753a8a5229d21ea65075c2247fcc162",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:27.858920",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_north_vertical_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.546604",
+    "size": [
+      125,
+      380
+    ],
+    "bbox": [
+      0,
+      0,
+      125,
+      380
+    ],
+    "sha256": "81dc3bbe78bcf7b874baa75fd712dbe6917fe9bfbb2c6900cd25a1b22d4be26f",
+    "direct_refs": [],
+    "alpha_extrema": [
+      4,
+      254
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.546604",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_atlas.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:06:55.769511",
+    "size": [
+      1536,
+      1024
+    ],
+    "bbox": [
+      0,
+      0,
+      1536,
+      1024
+    ],
+    "sha256": "90c7d011d19fe9cf7aae1b6164ff1412cab88d7daf34f5ad458dcd2ea1d5296a",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:06:55.769511",
+    "role": "source sheet"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_end_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.364800",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      79,
+      0,
+      458,
+      476
+    ],
+    "sha256": "6764a8b169fe1d03ac6e94a009a4c2fe5336ca4769a192131e198630115fb85c",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.364800",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_gate_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.302241",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      31,
+      512,
+      410
+    ],
+    "sha256": "e3337d92b65bc0ca4a64e5949712540d58dd0d16f479c4f8ad9d4d0888069a10",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.302241",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_gate_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.332766",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      0,
+      421,
+      512
+    ],
+    "sha256": "785fc94fd278fb3f40d78f21ce8689b466bcb5a01e58e69bdc7a974e729e5fa9",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.332766",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_horizontal.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.209623",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      9,
+      133,
+      512,
+      448
+    ],
+    "sha256": "98223dda887aacd0a9bc40f966a9c65809fabbc4632bd388bff6c10f61833a9b",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.209623",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_horizontal_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.557611",
+    "size": [
+      417,
+      190
+    ],
+    "bbox": [
+      0,
+      0,
+      417,
+      190
+    ],
+    "sha256": "938c2d43825d681652b490f5a9da44cfcaaddc349dd26e22788a0b4d859a0743",
+    "direct_refs": [],
+    "alpha_extrema": [
+      29,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.557611",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_tower.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.271217",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      44,
+      512,
+      512
+    ],
+    "sha256": "f8b3457be916d8666bafb36f71fe054be7e412f9398e91755d4053c291be01c2",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.271217",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_vertical.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:07:28.239663",
+    "size": [
+      512,
+      512
+    ],
+    "bbox": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "sha256": "5981878c8ee8dc39998c8ab609189099604a34074e733149158cd8e917c7c468",
+    "direct_refs": [],
+    "alpha_extrema": [
+      0,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:07:28.239663",
+    "role": "latest runtime candidate"
+  },
+  {
+    "path": "Java/assets/city/walls/city_wall_sun_vertical_seamless.png",
+    "group": "walls",
+    "modified": "2026-09-22T16:55:20.566602",
+    "size": [
+      125,
+      380
+    ],
+    "bbox": [
+      0,
+      0,
+      125,
+      380
+    ],
+    "sha256": "d36d1b875a1a2b280ec25a8dab355c77325edff50e9b6f5d4107f1cdb3f73152",
+    "direct_refs": [],
+    "alpha_extrema": [
+      115,
+      253
+    ],
+    "edge_contact": true,
+    "original_modified": "2026-09-22T16:55:20.566602",
+    "role": "latest runtime candidate"
+  }
+]

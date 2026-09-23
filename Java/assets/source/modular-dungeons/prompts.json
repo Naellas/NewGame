@@ -1,0 +1,72 @@
+[
+  {
+    "theme": "cave",
+    "names": [
+      "cave_root_arch",
+      "cave_rock_cluster",
+      "cave_stalagmites",
+      "cave_mineral_cluster"
+    ],
+    "subjects": "Top-left: compact arch of exposed roots and limestone around a small dark opening, just entrance trim. Top-right: low mossy limestone rock cluster. Bottom-left: three small gray stalagmites. Bottom-right: small pale blue mineral crystal cluster embedded in stone.",
+    "prompt": "Generate a modular 2x2 game sprite sheet for the EXISTING Alderfall orthogonal tile-based RPG. Use supplied image strictly as ART STYLE and CAMERA reference: small detailed pixel-painted sprites, front-facing orthographic projection with only a little top surface visible, vertical uprights and horizontal front edges. Muted gray/brown/olive colors, crisp readable clusters, subdued upper-left light. Four SEPARATE small individual objects, one centered in each equal quadrant, genuine transparent background, wide transparent gutters and generous margins. No text, no grid lines, no checkerboard painted into image. Objects intended for 40-50 pixel on-screen sizes; simple silhouettes, match the reference scale/detail style. NO whole buildings, whole rooms, dioramas, floor plates, islands, broad ground patches, perspective or isometric diamond bases. Only minimal contact pixels beneath each object. Top-left: compact arch of exposed roots and limestone around a small dark opening, just entrance trim. Top-right: low mossy limestone rock cluster. Bottom-left: three small gray stalagmites. Bottom-right: small pale blue mineral crystal cluster embedded in stone.",
+    "source": "assets/source/modular-dungeons/cave.png",
+    "mode": "built-in image_gen",
+    "reference": "assets/source/imagegen-dungeon-overworld-support-props-orthogonal-alpha.png"
+  },
+  {
+    "theme": "vampire",
+    "names": [
+      "vampire_banner",
+      "vampire_gargoyle",
+      "vampire_coffin",
+      "vampire_candelabrum"
+    ],
+    "subjects": "Top-left: a single narrow faded burgundy banner on a modest iron freestanding pole, tiny bat emblem. Top-right: one weathered gray gargoyle on low square plinth. Bottom-left: a single closed dark oak coffin with simple tarnished brass trim and burgundy lining glimpsed at rim. Bottom-right: a modest three-candle iron candelabrum.",
+    "prompt": "Generate a modular 2x2 game sprite sheet for the EXISTING Alderfall orthogonal tile-based RPG. Use supplied image strictly as ART STYLE and CAMERA reference: small detailed pixel-painted sprites, front-facing orthographic projection with only a little top surface visible, vertical uprights and horizontal front edges. Muted gray/brown/olive colors, crisp readable clusters, subdued upper-left light. Four SEPARATE small individual objects, one centered in each equal quadrant, genuine transparent background, wide transparent gutters and generous margins. No text, no grid lines, no checkerboard painted into image. Objects intended for 40-50 pixel on-screen sizes; simple silhouettes, match the reference scale/detail style. NO whole buildings, whole rooms, dioramas, floor plates, islands, broad ground patches, perspective or isometric diamond bases. Only minimal contact pixels beneath each object. Top-left: a single narrow faded burgundy banner on a modest iron freestanding pole, tiny bat emblem. Top-right: one weathered gray gargoyle on low square plinth. Bottom-left: a single closed dark oak coffin with simple tarnished brass trim and burgundy lining glimpsed at rim. Bottom-right: a modest three-candle iron candelabrum.",
+    "source": "assets/source/modular-dungeons/vampire.png",
+    "mode": "built-in image_gen",
+    "reference": "assets/source/imagegen-dungeon-overworld-support-props-orthogonal-alpha.png"
+  },
+  {
+    "theme": "crypt",
+    "names": [
+      "crypt_grave_marker",
+      "crypt_urn",
+      "crypt_ossuary",
+      "crypt_offering"
+    ],
+    "subjects": "Top-left: one weathered carved stone grave marker with moss at foot. Top-right: a squat chipped stone funerary urn. Bottom-left: small open stone ossuary box containing old bones. Bottom-right: small low offering slab with three candles and a shallow brass bowl.",
+    "prompt": "Generate a modular 2x2 game sprite sheet for the EXISTING Alderfall orthogonal tile-based RPG. Use supplied image strictly as ART STYLE and CAMERA reference: small detailed pixel-painted sprites, front-facing orthographic projection with only a little top surface visible, vertical uprights and horizontal front edges. Muted gray/brown/olive colors, crisp readable clusters, subdued upper-left light. Four SEPARATE small individual objects, one centered in each equal quadrant, genuine transparent background, wide transparent gutters and generous margins. No text, no grid lines, no checkerboard painted into image. Objects intended for 40-50 pixel on-screen sizes; simple silhouettes, match the reference scale/detail style. NO whole buildings, whole rooms, dioramas, floor plates, islands, broad ground patches, perspective or isometric diamond bases. Only minimal contact pixels beneath each object. Top-left: one weathered carved stone grave marker with moss at foot. Top-right: a squat chipped stone funerary urn. Bottom-left: small open stone ossuary box containing old bones. Bottom-right: small low offering slab with three candles and a shallow brass bowl.",
+    "source": "assets/source/modular-dungeons/crypt.png",
+    "mode": "built-in image_gen",
+    "reference": "assets/source/imagegen-dungeon-overworld-support-props-orthogonal-alpha.png"
+  },
+  {
+    "theme": "bandit",
+    "names": [
+      "bandit_barricade",
+      "bandit_supply_sacks",
+      "bandit_weapon_rack",
+      "bandit_bedroll"
+    ],
+    "subjects": "Top-left: one short horizontal rough timber barricade section, front facing and aligned left-right, no diagonal. Top-right: three tied burlap supply sacks with a small stolen wooden box. Bottom-left: compact wood weapon rack holding two spears and a worn round shield. Bottom-right: one rolled-out patched brown bedroll with small pack.",
+    "prompt": "Generate a modular 2x2 game sprite sheet for the EXISTING Alderfall orthogonal tile-based RPG. Use supplied image strictly as ART STYLE and CAMERA reference: small detailed pixel-painted sprites, front-facing orthographic projection with only a little top surface visible, vertical uprights and horizontal front edges. Muted gray/brown/olive colors, crisp readable clusters, subdued upper-left light. Four SEPARATE small individual objects, one centered in each equal quadrant, genuine transparent background, wide transparent gutters and generous margins. No text, no grid lines, no checkerboard painted into image. Objects intended for 40-50 pixel on-screen sizes; simple silhouettes, match the reference scale/detail style. NO whole buildings, whole rooms, dioramas, floor plates, islands, broad ground patches, perspective or isometric diamond bases. Only minimal contact pixels beneath each object. Top-left: one short horizontal rough timber barricade section, front facing and aligned left-right, no diagonal. Top-right: three tied burlap supply sacks with a small stolen wooden box. Bottom-left: compact wood weapon rack holding two spears and a worn round shield. Bottom-right: one rolled-out patched brown bedroll with small pack.",
+    "source": "assets/source/modular-dungeons/bandit.png",
+    "mode": "built-in image_gen",
+    "reference": "assets/source/imagegen-dungeon-overworld-support-props-orthogonal-alpha.png"
+  },
+  {
+    "theme": "goblin",
+    "names": [
+      "goblin_spike_fence",
+      "goblin_totem",
+      "goblin_cookpot",
+      "goblin_scrap_heap"
+    ],
+    "subjects": "Top-left: one short horizontal crooked stake fence section tied with rope, front facing aligned left-right no diagonal. Top-right: small crude stick totem with animal skull and mossy rags. Bottom-left: small soot-black cooking pot on three stones with faint embers. Bottom-right: low compact pile of rusty scrap tools and a broken round shield.",
+    "prompt": "Generate a modular 2x2 game sprite sheet for the EXISTING Alderfall orthogonal tile-based RPG. Use supplied image strictly as ART STYLE and CAMERA reference: small detailed pixel-painted sprites, front-facing orthographic projection with only a little top surface visible, vertical uprights and horizontal front edges. Muted gray/brown/olive colors, crisp readable clusters, subdued upper-left light. Four SEPARATE small individual objects, one centered in each equal quadrant, genuine transparent background, wide transparent gutters and generous margins. No text, no grid lines, no checkerboard painted into image. Objects intended for 40-50 pixel on-screen sizes; simple silhouettes, match the reference scale/detail style. NO whole buildings, whole rooms, dioramas, floor plates, islands, broad ground patches, perspective or isometric diamond bases. Only minimal contact pixels beneath each object. Top-left: one short horizontal crooked stake fence section tied with rope, front facing aligned left-right no diagonal. Top-right: small crude stick totem with animal skull and mossy rags. Bottom-left: small soot-black cooking pot on three stones with faint embers. Bottom-right: low compact pile of rusty scrap tools and a broken round shield.",
+    "source": "assets/source/modular-dungeons/goblin.png",
+    "mode": "built-in image_gen",
+    "reference": "assets/source/imagegen-dungeon-overworld-support-props-orthogonal-alpha.png"
+  }
+]

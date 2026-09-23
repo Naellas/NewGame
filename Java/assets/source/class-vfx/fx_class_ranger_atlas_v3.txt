@@ -1,0 +1,24 @@
+Use case: stylized-concept. Asset type: ONE production fantasy RPG VFX SPRITE ATLAS for Ranger. Exact rectangular grid: 5 equal-width COLUMNS and 5 equal-height ROWS (25 slots), evenly spaced edge-to-edge across entire canvas. Requested canvas 2560 by 2560 pixels. ALL slots are exactly equal rectangles; NO border, grid lines, numbers or text. Every effect centered inside its own slot with 18% transparent padding on EVERY side. No sprites may cross cell boundaries. Genuinely transparent RGBA background and holes. Empty unused slots must remain transparent. Match the reference creature's textured hand-painted pixel art: earthy shadows, crisp pixel clusters, selective bright edges, NO smooth vector disks, NO glossy icons, NO broad airbrushed bloom. Battle-view isolated magical/weapon IMPACT OVERLAYS, not inventory icons, no characters, no shields/weapons sitting as items, no scenery. Palette: weathered bronze, pine green, ivory fletching. Each slot is separately designed for the named ability; vary silhouette and internal structure, not merely color. Area abilities get wide fan/eruption compositions; heals and wards have open transparent centers. Ordered slots, read LEFT TO RIGHT then TOP TO BOTTOM:
+Row 1 column 1: Camouflage Break — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 1 column 2: Fang Chorus — narrow penetrating trails, feather fragments and splintered arrow impact; wide multi-target impact.
+Row 1 column 3: Field Salve — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; focused impact.
+Row 1 column 4: Greenway Remedy — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; party restoration motif.
+Row 1 column 5: Heartline Shot — narrow penetrating trails, feather fragments and splintered arrow impact; focused impact.
+Row 2 column 1: Herbal Remedy — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; focused impact.
+Row 2 column 2: Horizon Kill — narrow penetrating trails, feather fragments and splintered arrow impact; focused impact.
+Row 2 column 3: Lockjaw Ground — narrow penetrating trails, feather fragments and splintered arrow impact; wide multi-target impact.
+Row 2 column 4: Marked Shot — narrow penetrating trails, feather fragments and splintered arrow impact; focused impact.
+Row 2 column 5: Pack Cover — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 3 column 1: Piercing Shot — narrow penetrating trails, feather fragments and splintered arrow impact; focused impact.
+Row 3 column 2: Pinning Volley — narrow penetrating trails, feather fragments and splintered arrow impact; wide multi-target impact.
+Row 3 column 3: Poison Arrow — splashed venom droplets, alchemical vapor and corrosion fragments; focused impact.
+Row 3 column 4: Rain Volley — narrow penetrating trails, feather fragments and splintered arrow impact; wide multi-target impact.
+Row 3 column 5: Skyfang Barrage — forked lightning filaments and jagged crackling sparks; wide multi-target impact.
+Row 4 column 1: Smoke Screen — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 4 column 2: Snare Arrow — narrow penetrating trails, feather fragments and splintered arrow impact; focused impact.
+Row 4 column 3: Snarefield — narrow penetrating trails, feather fragments and splintered arrow impact; wide multi-target impact.
+Row 4 column 4: Storm Volley — forked lightning filaments and jagged crackling sparks; wide multi-target impact.
+Row 4 column 5: Stormcaller Skyfang Barrage — forked lightning filaments and jagged crackling sparks; wide multi-target impact.
+Row 5 column 1: Stormline Volley — forked lightning filaments and jagged crackling sparks; wide multi-target impact.
+Row 5 column 2: Twin Fang — narrow penetrating trails, feather fragments and splintered arrow impact; focused impact.
+Remaining slots 23 through 25: completely transparent. Keep the exact regular grid, no text. Reference images are style only, do not copy their subjects.

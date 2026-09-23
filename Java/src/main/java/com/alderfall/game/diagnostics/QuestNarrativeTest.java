@@ -228,7 +228,7 @@ public final class QuestNarrativeTest {
                 q.stageIndex = i;
                 var session = DialogueLibrary.startSession(npc, q, "forest", 0, new Random(1));
                 choose(session, "Discuss " + q.title);
-                choose(session, "What have we actually established?");
+                choose(session, "What do we know so far?");
                 check(session.line().contains("not recorded a finding"), "Unknown stage facts leaked: " + q.id);
                 check(session.optionPreviews().stream().allMatch(o -> o.relationshipDelta() == 0), "Evidence browsing farms approval");
                 q.progress++;
@@ -290,10 +290,12 @@ public final class QuestNarrativeTest {
     }
 
     private static void choose(DialogueLibrary.DialogueSession session, String label) {
+        while (session.optionLabels().equals(List.of("Continue"))) session.choose(0);
         int index = session.optionLabels().indexOf(label);
         if (index < 0) index = session.optionLabels().indexOf(label + ".");
         check(index >= 0, "Missing dialogue option: " + label);
         session.choose(index);
+        while (session.optionLabels().equals(List.of("Continue"))) session.choose(0);
     }
 
     private static Object call(Object target, String method, Class<?>[] types, Object... values) throws Exception {

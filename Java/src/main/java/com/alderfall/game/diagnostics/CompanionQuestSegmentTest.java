@@ -97,6 +97,7 @@ public final class CompanionQuestSegmentTest {
                 s.activeNpc = owner(q);
                 var session = (DialogueLibrary.DialogueSession) call(s, "startDialogueSessionFor", new Class<?>[]{Npc.class}, s.activeNpc);
                 session.choose(session.optionLabels().indexOf("Discuss " + q.title + "."));
+                readPassages(session);
                 var choice = session.optionPreviews().stream().filter(o -> o.effect().startsWith("quest:outcome:")).findFirst().orElseThrow();
                 transcript.append("Player: ").append(choice.label()).append("\n\n");
                 session.choose(session.optionLabels().indexOf(choice.label()));
@@ -118,6 +119,18 @@ public final class CompanionQuestSegmentTest {
                 check(topicIndex >= 0, "Decision topic absent from actual dialogue menu");
                 s.revealActiveDialogueLineInstantly();
                 s.selectDialogOption(topicIndex);
+                int passages = 0;
+                int decisionProgress = q.progress;
+                String decisionStage = q.activeStage().id();
+                String previousOutcome = s.questBranchOutcome(q);
+                while (s.activeNpcDialogOptions().equals(List.of("Continue"))) {
+                    check(passages++ < 20, "Decision introduction never reaches responses");
+                    s.revealActiveDialogueLineInstantly();
+                    s.selectDialogOption(0);
+                    check(q.progress == decisionProgress && q.activeStage().id().equals(decisionStage)
+                                    && java.util.Objects.equals(previousOutcome, s.questBranchOutcome(q)),
+                            "Reading a decision introduction committed an outcome");
+                }
                 int choiceIndex = s.activeNpcDialogOptions().indexOf(choice.label());
                 check(choiceIndex >= 0, "Decision absent from actual dialogue menu");
                 s.revealActiveDialogueLineInstantly();
@@ -219,9 +232,20 @@ public final class CompanionQuestSegmentTest {
         check(q.progress == 0 && "protect".equals(s.questBranchOutcome(q)), "Migration allowed replacing an earlier decision");
         var session = (DialogueLibrary.DialogueSession) call(s, "startDialogueSessionFor", new Class<?>[]{Npc.class}, s.activeNpc);
         session.choose(session.optionLabels().indexOf("Discuss " + q.title + "."));
+        readPassages(session);
         check(session.optionLabels().contains("Keep our recorded decision."), "No route through retained choice");
         call(s, "applyDialogueEffect", new Class<?>[]{String.class}, effect + "protect");
         check(q.ready() && "protect".equals(s.questBranchOutcome(q)), "Retained decision stranded the revised quest");
+    }
+
+    private static void readPassages(DialogueLibrary.DialogueSession session) {
+        int pages = 0;
+        while (session.optionLabels().equals(List.of("Continue"))) {
+            check(pages++ < 20, "Dialogue never reaches responses");
+            var result = session.choose(0);
+            check(result.effect().isEmpty() && result.relationshipDelta() == 0,
+                    "Reading a passage changed quest state or approval");
+        }
     }
 
     private static Npc owner(Quest q) {

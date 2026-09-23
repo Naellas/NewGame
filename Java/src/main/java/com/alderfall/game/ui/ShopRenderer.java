@@ -6,6 +6,8 @@ import com.alderfall.game.inventory.Equipment;
 import com.alderfall.game.inventory.Item;
 import com.alderfall.game.inventory.ItemRarity;
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
@@ -16,6 +18,44 @@ public final class ShopRenderer {
     private final AssetStore assets;
     private final GameState state;
     private final Effects effects;
+    public final ItemBrowser stockBrowser = new ItemBrowser();
+    public final ItemBrowser packBrowser = new ItemBrowser();
+    private final List<TradeTile> tiles = new ArrayList<>();
+    private List<String> visibleStock = List.of();
+    private Rectangle stockBounds = new Rectangle(), packBounds = new Rectangle();
+    private TradeTile drag;
+    private Point dragStart, dragPoint;
+    private boolean moved;
+    private record TradeTile(Rectangle bounds, String key, boolean buying) {}
+
+    public void useVisibleItem(int index) {
+        if (index >= 0 && index < visibleStock.size()) trade(visibleStock.get(index), true);
+    }
+    private void trade(String key, boolean buying) {
+        if (state.activeShop == null) return;
+        if (buying) state.buyShopItem(state.activeShop.availableStock(state.player.level).indexOf(key));
+        else state.sellShopItem(new ArrayList<>(state.player.inventory.keySet()).indexOf(key));
+    }
+    public void press(Point point) {
+        stockBrowser.focusAt(point); packBrowser.focusAt(point);
+        drag = null; moved = false;
+        if (point == null) return;
+        for (TradeTile tile : tiles) if (tile.bounds.contains(point)) {
+            drag = tile; dragStart = point; dragPoint = point; break;
+        }
+    }
+    public void move(Point point) {
+        if (drag != null && point != null) { dragPoint = point; moved |= dragStart.distance(point) > 4; }
+    }
+    public boolean release(Point point) {
+        if (drag == null) return false;
+        if (state.mode == GameMode.SHOP && moved && point != null
+                && (drag.buying ? packBounds : stockBounds).contains(point)) trade(drag.key, drag.buying);
+        boolean consumed = moved;
+        drag = null; dragPoint = null; moved = false;
+        return consumed;
+    }
+
 
     public ShopRenderer(AssetStore assets, GameState state, Effects effects) {
         this.assets = assets;
@@ -70,53 +110,12 @@ public final class ShopRenderer {
         g.setColor(new Color(96, 88, 72, 120));
         g.drawLine(panelX + 44, panelY + 122, panelX + panelW - 44, panelY + 122);
 
-        List<String> stock = shop.availableStock(state.player.level);
-        List<String> inventory = new ArrayList<>(state.player.inventory.keySet());
-        int columnY = panelY + 158;
-        int columnH = panelH - 230;
-        int gap = 28;
-        int columnW = (panelW - 88 - gap) / 2;
-        int shopX = panelX + 44;
-        int inventoryX = shopX + columnW + gap;
-        int rowH = 58;
-        int visibleRows = Math.max(1, columnH / rowH);
-        int shopMaxScroll = Math.max(0, stock.size() - visibleRows);
-        setShopItemScroll(Math.max(0, Math.min(shopItemScroll(), shopMaxScroll)));
-
-        drawTradeColumnHeader(g, shopX, columnY - 28, columnW, "Shop Stock");
-        int shopEnd = Math.min(stock.size(), shopItemScroll() + visibleRows);
-        for (int i = shopItemScroll(); i < shopEnd; i++) {
-            int buttonIndex = i;
-            String itemKey = stock.get(i);
-            Item item = GameData.ITEMS.get(itemKey);
-            Equipment equipment = GameData.equipment(itemKey);
-            int cost = GameData.itemCost(itemKey);
-            if (cost <= 0) {
-                continue;
-            }
-            boolean affordable = state.player.gold >= cost;
-            int y = columnY + (i - shopItemScroll()) * rowH;
-            drawTradeRow(g, shopX, y, columnW, rowH - 8, itemKey,
-                    equipment == null ? itemBenefit(item) : equipmentBenefit(equipment),
-                    "Buy " + cost + "g", () -> state.buyShopItem(buttonIndex), affordable);
-        }
-        drawScrollIndicator(g, shopX + columnW + 4, columnY, visibleRows * rowH - 8, stock.size(), shopItemScroll(), visibleRows);
-
-        drawTradeColumnHeader(g, inventoryX, columnY - 28, columnW, "Your Inventory");
-        int invEnd = Math.min(inventory.size(), shopItemScroll() + visibleRows);
-        for (int i = shopItemScroll(); i < invEnd; i++) {
-            int buttonIndex = i;
-            String itemKey = inventory.get(i);
-            Item item = GameData.ITEMS.get(itemKey);
-            Equipment equipment = GameData.equipment(itemKey);
-            int value = Math.max(1, GameData.itemCost(itemKey) / 2);
-            int count = state.player.inventory.getOrDefault(itemKey, 0);
-            int y = columnY + (i - shopItemScroll()) * rowH;
-            drawTradeRow(g, inventoryX, y, columnW, rowH - 8, itemKey,
-                    "x" + count + "  " + (equipment == null ? itemBenefit(item) : equipmentBenefit(equipment)),
-                    "Sell " + value + "g", () -> state.sellShopItem(buttonIndex), count > 0);
-        }
-        drawScrollIndicator(g, inventoryX + columnW + 4, columnY, visibleRows * rowH - 8, inventory.size(), shopItemScroll(), visibleRows);
+        tiles.clear();
+        int columnW = (panelW - 116) / 2;
+        int columnY = panelY + 140;
+        int columnH = panelH - 260;
+        drawGrid(g, panelX + 44, columnY, columnW, columnH, true);
+        drawGrid(g, panelX + 72 + columnW, columnY, columnW, columnH, false);
 
         if (state.activeNpc != null && state.activeNpc.recruitId() != null && state.activeNpc.recruitCost() > 0) {
             if (state.isRecruited(state.activeNpc.recruitId())) {
@@ -130,9 +129,61 @@ public final class ShopRenderer {
             }
         }
         g.setColor(new Color(196, 198, 205));
-        g.setFont(new Font("SansSerif", Font.BOLD, 14));
-        g.drawString("Move goods between shop stock and your inventory with Buy/Sell. Wheel scrolls both columns.", panelX + 44, panelY + panelH - 32);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g.drawString("Drag tiles across to buy / sell one. Click a tile to trade. Wheel scrolls the hovered grid.", panelX + 44, panelY + panelH - 100);
+        g.setColor(new Color(246, 224, 151));
+        drawClippedString(g, state.status, panelX + 44, panelY + panelH - 22, panelW - 260);
+        if (drag != null && moved && dragPoint != null) {
+            g.drawImage(assets.sprite(GameData.itemIcon(drag.key), 46), dragPoint.x - 23, dragPoint.y - 23, null);
+        }
         actionButton(g, panelX + panelW - 176, panelY + panelH - 54, 132, 36, "Leave Shop", state::closeOverlay, new Color(83, 61, 61), new Color(149, 96, 88), true);
+    }
+
+    private void drawGrid(Graphics2D g, int x, int y, int w, int h, boolean buying) {
+        ItemBrowser browser = buying ? stockBrowser : packBrowser;
+        List<String> source = buying ? state.activeShop.availableStock(state.player.level)
+                : new ArrayList<>(state.player.inventory.keySet());
+        List<String> items = browser.items(source);
+        drawTradeColumnHeader(g, x, y - 24, w, buying ? "Shop Stock / Buy" : "Shared Pack / Sell");
+        browser.draw(g, x, y + 12, w, h - 12, effects.buttons());
+        int gy = y + 130, cell = 84, gap = 10, cols = Math.max(1, (w + gap) / (cell + gap));
+        int rows = Math.max(1, (h - 130 + gap) / (cell + gap)), visible = cols * rows;
+        Rectangle target = new Rectangle(x, gy - 4, w, rows * (cell + gap));
+        if (buying) stockBounds = target; else packBounds = target;
+        g.setColor(new Color(19, 24, 33)); g.fillRoundRect(target.x, target.y, target.width, target.height, 8, 8);
+        if (drag != null && drag.buying != buying) {
+            g.setColor(new Color(148, 203, 126)); g.drawRoundRect(target.x, target.y, target.width, target.height, 8, 8);
+        }
+        browser.scroll = Math.max(0, Math.min(browser.scroll, Math.max(0, items.size() - visible)));
+        int end = Math.min(items.size(), browser.scroll + visible);
+        if (buying) visibleStock = items.subList(browser.scroll, end);
+        for (int i = browser.scroll; i < end; i++) {
+            String key = items.get(i); int local = i - browser.scroll;
+            Rectangle rect = new Rectangle(x + (local % cols) * (cell + gap), gy + (local / cols) * (cell + gap), cell, cell);
+            int price = buying ? GameData.itemCost(key) : Math.max(1, GameData.itemCost(key) / 2);
+            boolean enabled = !buying || price > 0 && state.player.gold >= price;
+            g.setColor(enabled ? new Color(33, 40, 53) : new Color(37, 30, 35));
+            g.fillRoundRect(rect.x, rect.y, cell, cell, 8, 8);
+            g.setColor(!browser.query.isBlank() ? new Color(255, 216, 122) : rarityColorForItem(key));
+            g.drawRoundRect(rect.x, rect.y, cell, cell, 8, 8);
+            g.drawImage(assets.sprite(GameData.itemIcon(key), 42), rect.x + 21, rect.y + 8, null);
+            g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+            g.setColor(new Color(227, 229, 237));
+            drawClippedString(g, GameData.itemName(key), rect.x + 5, rect.y + 62, cell - 10);
+            g.setColor(enabled ? new Color(246, 214, 134) : new Color(235, 126, 126));
+            g.drawString((buying ? "Buy " : "Sell ") + price + "g", rect.x + 5, rect.y + 77);
+            if (!buying) { g.setColor(Color.WHITE); g.drawString("x" + state.player.inventory.get(key), rect.x + 4, rect.y + 14); }
+            else if (local < 9) g.drawString(Integer.toString(local + 1), rect.x + 4, rect.y + 14);
+            tiles.add(new TradeTile(rect, key, buying));
+            effects.buttons().add(new UiButton(rect, "trade:" + buying + ":" + key, () -> trade(key, buying)));
+            Equipment gear = GameData.equipment(key);
+            String detail = gear == null ? itemBenefit(GameData.ITEMS.get(key)) : equipmentBenefit(gear);
+            effects.tooltipZones().add(new TooltipZone(rect, GameData.itemName(key), detail + " "
+                    + (buying ? "Buy one for " : "Sell one for ") + price + "g. Drag to the opposite grid."
+                    + (enabled ? "" : " Not enough gold."), GameData.itemIcon(key), rarityColorForItem(key)));
+        }
+        if (items.isEmpty()) { g.setFont(new Font("SansSerif", Font.PLAIN, 14)); g.setColor(Color.LIGHT_GRAY); g.drawString("No items in this category or search.", x + 12, gy + 30); }
+        drawScrollIndicator(g, x + w + 4, gy, rows * (cell + gap) - gap, items.size(), browser.scroll, visible);
     }
 
     private void drawTradeColumnHeader(Graphics2D g, int x, int y, int w, String label) {
@@ -141,36 +192,6 @@ public final class ShopRenderer {
         g.drawString(label, x + 4, y + 18);
         g.setColor(new Color(96, 88, 72, 120));
         g.drawLine(x, y + 26, x + w, y + 26);
-    }
-
-    private void drawTradeRow(Graphics2D g, int x, int y, int w, int h, String itemKey, String detail,
-                              String action, Runnable runnable, boolean enabled) {
-        drawShopRowBackground(g, x, y, w, h, enabled);
-        Color rarity = rarityColorForItem(itemKey);
-        g.setColor(new Color(238, 231, 207));
-        g.fillRoundRect(x + 10, y + 7, 36, 36, 6, 6);
-        g.setColor(rarity);
-        g.drawRoundRect(x + 10, y + 7, 36, 36, 6, 6);
-        g.drawImage(assets.sprite(GameData.itemIcon(itemKey), 30), x + 13, y + 10, null);
-        g.setFont(new Font("SansSerif", Font.BOLD, 13));
-        g.setColor(rarity);
-        drawClippedString(g, GameData.itemName(itemKey), x + 56, y + 19, w - 180);
-        g.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        g.setColor(new Color(176, 182, 196));
-        drawClippedString(g, detail, x + 56, y + 38, w - 180);
-        actionButton(g, x + w - 112, y + 11, 94, 28, action, runnable,
-                enabled ? new Color(68, 90, 53) : new Color(58, 59, 66), new Color(110, 139, 92), enabled);
-    }
-
-    private void drawShopRowBackground(Graphics2D g, int x, int y, int w, int h, boolean enabled) {
-        Color top = enabled ? new Color(31, 36, 48, 236) : new Color(30, 31, 38, 182);
-        Color bottom = enabled ? new Color(21, 25, 35, 236) : new Color(22, 23, 29, 182);
-        g.setPaint(new GradientPaint(x, y, top, x + w, y + h, bottom));
-        g.fillRoundRect(x, y, w, h, 10, 10);
-        g.setColor(enabled ? new Color(93, 103, 130, 150) : new Color(72, 70, 80, 120));
-        g.drawRoundRect(x, y, w, h, 10, 10);
-        g.setColor(new Color(255, 255, 255, enabled ? 18 : 8));
-        g.drawLine(x + 14, y + 1, x + w - 14, y + 1);
     }
 
     private String itemBenefit(Item item) {
@@ -200,6 +221,13 @@ public final class ShopRenderer {
         if (equipment != null) {
             return rarityColor(equipment.rarity());
         }
+        AssemblyCrafting.Component part = AssemblyCrafting.component(itemKey);
+        MaterialCatalog.Material material = part == null ? MaterialCatalog.get(itemKey) : part.material();
+        if (material != null) {
+            ItemRarity rarity = material.rarity();
+            if (part != null && part.quality().rarity.ordinal() > rarity.ordinal()) rarity = part.quality().rarity;
+            return rarityColor(rarity);
+        }
         Item item = GameData.ITEMS.get(itemKey);
         return item == null ? new Color(235, 236, 240) : rarityColor(item.rarity());
     }
@@ -227,6 +255,8 @@ public final class ShopRenderer {
 
 
     public interface Effects {
+        List<UiButton> buttons();
+        List<TooltipZone> tooltipZones();
         int shopItemScroll();
 
         void setShopItemScroll(int value);

@@ -55,9 +55,9 @@ public final class PropPlacementTest {
         // Terrain constraints update immediately; placement does not depend on prop-list membership.
         var area = state.world.area(state.currentMapId);
         char old = area.tiles[tree.y()][tree.x() + 1];
-        area.tiles[tree.y()][tree.x() + 1] = 'r';
+        area.setTile(tree.x() + 1, tree.y(), 'r');
         require(PropPlacement.at(state.world, state.currentMapId, tree).x() <= 0.58, "Root encroaches on road");
-        area.tiles[tree.y()][tree.x() + 1] = old;
+        area.setTile(tree.x() + 1, tree.y(), old);
         require(placement.equals(PropPlacement.at(state.world, state.currentMapId, tree)), "Placement drift after terrain restore");
         require(PropPlacement.kind("location_camp_palisade") == PropPlacement.Kind.FIXED, "Connected walls jitter");
         require(PropPlacement.kind("deco_tree_elder_harvestable") == PropPlacement.Kind.FIXED, "Landmark tree loses identity");

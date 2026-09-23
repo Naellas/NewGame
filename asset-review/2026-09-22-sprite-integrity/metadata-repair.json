@@ -1,0 +1,6 @@
+{
+  "path": "Java/assets/player/classes/mage/animations/class_mage_model_cast_anim.frames",
+  "before_sha256": "ca1c5c735384c64968c987e3e608cb48a3cbd73e870f1bc6d60f2b24f9445e3a",
+  "after_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+  "repair": "Remove UTF-8 BOM rejected by Java Integer.parseInt; preserve frame count 10."
+}

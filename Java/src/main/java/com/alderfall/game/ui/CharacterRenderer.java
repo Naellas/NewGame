@@ -93,8 +93,15 @@ public final class CharacterRenderer {
         g.setFont(new Font("SansSerif", Font.BOLD, 18));
         g.setColor(new Color(246, 224, 151));
         g.drawString("Professions", x, y);
-        int rowY = y + 26;
+        int originalX = x;
+        int index = 0;
+        int rows = (Profession.ALL.size() + 1) / 2;
+        int step = Math.min(58, Math.max(42, (h - 26) / rows));
+        w = (w - 10) / 2;
         for (Profession profession : Profession.ALL) {
+            x = originalX + (index / rows) * (w + 10);
+            int rowY = y + 26 + (index % rows) * step;
+            index++;
             boolean selected = profession.id().equals(effects.activeProfessionId());
             int level = actor.professionLevel(profession.id());
             int cap = actor.professionLevelCap(profession.id());
@@ -105,7 +112,7 @@ public final class CharacterRenderer {
             g.fillRoundRect(x, rowY, w, 46, 8, 8);
             g.setColor(selected ? new Color(132, 157, 104) : new Color(96, 106, 133));
             g.drawRoundRect(x, rowY, w, 46, 8, 8);
-            g.setFont(new Font("SansSerif", Font.BOLD, 13));
+            g.setFont(new Font("SansSerif", Font.BOLD, 11));
             g.setColor(new Color(235, 236, 240));
             g.drawString(profession.label() + "  " + level + "/" + cap, x + 12, rowY + 17);
             int barX = x + 12;
@@ -127,7 +134,7 @@ public final class CharacterRenderer {
             effects.addTooltip(rowBounds, profession.label(),
                     "Click to view the " + profession.label() + " skill tree. Current level "
                             + level + "/" + cap + ".");
-            rowY += 58;
+
         }
     }
 

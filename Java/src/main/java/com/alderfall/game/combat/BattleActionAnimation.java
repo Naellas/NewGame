@@ -5,6 +5,7 @@ import java.util.List;
 
 public final class BattleActionAnimation {
     private static final double SPEED_MULTIPLIER = 1.10;
+    private final double playbackSpeed;
 
     public enum Stage {
         CAST,
@@ -27,7 +28,9 @@ public final class BattleActionAnimation {
     public final String effectKind;
     public final int castFrames;
     public final int travelFrames;
-    public final int impactFrames;
+    public int impactFrames;
+    private String visualName = "";
+    private Ability.AbilityKind actionKind;
     private int frame;
     private final boolean[] stepTriggered;
     private boolean impactTriggered;
@@ -37,6 +40,11 @@ public final class BattleActionAnimation {
     }
 
     public BattleActionAnimation(Actor source, Actor target, List<Actor> targets, VisualMode visualMode, String effectKind, int castFrames, int travelFrames, int impactFrames) {
+        this(source, target, targets, visualMode, effectKind, castFrames, travelFrames, impactFrames, 1.0);
+    }
+
+    public BattleActionAnimation(Actor source, Actor target, List<Actor> targets, VisualMode visualMode, String effectKind, int castFrames, int travelFrames, int impactFrames, double playbackSpeed) {
+        this.playbackSpeed = GameConfig.clampCombatAnimationSpeed(playbackSpeed);
         this.source = source;
         this.target = target;
         ArrayList<Actor> normalizedTargets = new ArrayList<>();
@@ -55,7 +63,14 @@ public final class BattleActionAnimation {
         this.effectKind = effectKind == null || effectKind.isBlank() ? "strike" : effectKind;
         this.castFrames = scaledFrameCount(castFrames);
         this.travelFrames = scaledFrameCount(travelFrames);
-        this.impactFrames = scaledFrameCount(impactFrames);
+        // Allow textured growth and restorative effects to bloom, hold, and dissipate.
+        int minimumImpact = switch (this.effectKind) {
+            case "root_memory", "mend_unique", "grove_hymn", "seraphic_hymn", "thorn_lash_unique",
+                    "briar_tempest_unique", "glacier_prison_unique", "ley_detonation", "inferno_script_unique" -> 52;
+            case "firebolt_unique" -> 38;
+            default -> 1;
+        };
+        this.impactFrames = scaledFrameCount(Math.max(impactFrames, minimumImpact));
         this.stepTriggered = new boolean[this.targets.size()];
     }
 
@@ -64,6 +79,19 @@ public final class BattleActionAnimation {
             frame++;
         }
     }
+
+    /** Configure before the first tick; visual identity never changes gameplay effect semantics. */
+    public void configureVisual(String name, Ability.AbilityKind kind) {
+        if (frame != 0) throw new IllegalStateException("Cannot change a released action's visual identity");
+        visualName = name == null ? "" : name;
+        actionKind = kind;
+        ClassAbilityVfx.Profile profile = visualProfile();
+        if (profile != null) impactFrames = Math.max(impactFrames, scaledFrameCount(profile.impactFrames()));
+    }
+
+    public String visualName() { return visualName; }
+    public ClassAbilityVfx.Profile visualProfile() { return ClassAbilityVfx.forName(visualName); }
+    public Ability.AbilityKind actionKind() { return actionKind; }
 
     public int frame() {
         return frame;
@@ -164,12 +192,22 @@ public final class BattleActionAnimation {
     }
 
     private boolean stepReady(int index) {
+        return frame >= collisionFrame(index);
+    }
+
+    public int collisionFrame(int index) {
         int count = Math.max(1, targets.size());
         return switch (visualMode) {
-            case CHAIN -> frame >= castFrames + Math.max(1, (int) Math.round(travelFrames * ((index + 1) / (double) count)));
-            case MULTI -> frame >= castFrames + travelFrames + Math.max(0, (int) Math.round(impactFrames * (index / (double) count)));
-            case AOE, SINGLE -> stage() == Stage.IMPACT || stage() == Stage.DONE;
+            case CHAIN -> castFrames + Math.max(1, (int) Math.round(travelFrames * ((index + 1) / (double) count)));
+            case MULTI -> castFrames + travelFrames + Math.max(0, (int) Math.round(impactFrames * (index / (double) count)));
+            case AOE, SINGLE -> castFrames + travelFrames;
         };
+    }
+
+    /** Negative until this target is actually hit; independent of the global impact phase. */
+    public double collisionProgress(int index) {
+        int collision = collisionFrame(index);
+        return frame < collision ? -1.0 : clamp((frame - collision) / (double) Math.max(1, Math.min(impactFrames, totalFrames() - collision)));
     }
 
     private double eventProgress() {
@@ -182,6 +220,6 @@ public final class BattleActionAnimation {
     }
 
     private int scaledFrameCount(int frames) {
-        return Math.max(1, (int) Math.round(Math.max(1, frames) * SPEED_MULTIPLIER));
+        return Math.max(1, (int) Math.round(Math.max(1, frames) * SPEED_MULTIPLIER / playbackSpeed));
     }
 }

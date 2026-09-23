@@ -1,0 +1,338 @@
+[
+  {
+    "path": "Java/assets/battle/battle_treeline_band.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/battle/battle_treeline_band.png",
+    "sha256": "ed4354ab2c78350d8fc7f91b3bf28e66090d73a5d133d93eb160491e6afc64e2",
+    "reason": "Oldest cohort: no gameplay, configuration, saved-game or exported-map reference; not selected by dynamic terrain variants, battle backdrop selector or map-editor discovery.",
+    "original_modified": "2026-05-24T23:46:46.706218",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/battle/battle_dungeon_crypt_backdrop.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/battle/battle_dungeon_crypt_backdrop.png",
+    "sha256": "b37f695fdda9dea06e68b9ccee3caf6efca880d73a284ed6561ccf34187762b9",
+    "reason": "Oldest cohort: no gameplay, configuration, saved-game or exported-map reference; not selected by dynamic terrain variants, battle backdrop selector or map-editor discovery.",
+    "original_modified": "2026-05-26T00:06:45.904469",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/terrain/mountain_peak.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/terrain/mountain_peak.png",
+    "sha256": "61d24ad2b04ed36693f2a978f68024a6709148db995fc4b10c6a7821f125216e",
+    "reason": "Oldest cohort: no gameplay, configuration, saved-game or exported-map reference; not selected by dynamic terrain variants, battle backdrop selector or map-editor discovery.",
+    "original_modified": "2026-05-26T15:22:10.612286",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/terrain/city_snow_cobble.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/terrain/city_snow_cobble.png",
+    "sha256": "0fbb72b816d8f79298b7b78bd070fc152dbbe5d7c6bed86982c6084fb4265494",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T01:19:50.639663",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/terrain/city_road_snow.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/terrain/city_road_snow.png",
+    "sha256": "b0da40df9a168a8eb57dbf7960dd5afbd5eaa910cad429d331161b160996be88",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T01:19:50.660354",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/terrain/city_plaza_round.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/terrain/city_plaza_round.png",
+    "sha256": "57c0ed08abf5e8c06aaab66f12ddb22b477d452d264beafdbddf6923dfc0a9bc",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T01:19:50.681418",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_roof_detail.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/buildings/city/city_roof_detail.png",
+    "sha256": "374fb79cf645a4e8ee8f1c4b3f1a80a61cb3742d33c2ca55412550c970b4ae0c",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T01:19:50.747603",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/structures/city_bridge.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/structures/city_bridge.png",
+    "sha256": "cbb6bdac1e1b38a9fe517e728b916428899547ac9358df8e8f262b911c77264c",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T01:19:50.811934",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_house_front.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/buildings/city/city_house_front.png",
+    "sha256": "8ce137a18af2d98a7f35c213520d9dcd3c31af0f8dc74b1a6234ecc9a70407fd",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T04:39:02.833385",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/structures/city_wall_gate.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/structures/city_wall_gate.png",
+    "sha256": "8ed3b87aae9ec851a80d45bb4ce16ea3af1502e41b7f96ed8d3c94361339e3f6",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T04:49:07.486256",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/structures/city_wall_block.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/structures/city_wall_block.png",
+    "sha256": "fa0a50ddf8df69fc883251822b29cbee7dfa71b027caf0b7d22f8c02f263ed49",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T04:50:32.110617",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_cluster.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/overworld/city_overworld_cluster.png",
+    "sha256": "3405156afe5567d32e941a31216729e51259eb27d8e85511fc1aae1a5cdbf0a2",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T06:01:39.632309",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/badlands/deco_badlands_dust_bowl.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/badlands/deco_badlands_dust_bowl.png",
+    "sha256": "f6a7758a762f7035efac774e5f3572b5a8817d9a10cfbd925e68f17c89991f6d",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:50.508586",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/overworld/city_overworld_cluster_3x.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/overworld/city_overworld_cluster_3x.png",
+    "sha256": "3a5656e00ef10b7c55ac8aaeb99a344b11e5d4e524f423e84cdfd86cb59bfd4e",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:50.632357",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_badlands_spires.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_badlands_spires.png",
+    "sha256": "417c6b8956d3ca79978ca45dbd627faf72751af01344ce6758ec3716a8e0d435",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.025031",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_cactus_cluster.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_cactus_cluster.png",
+    "sha256": "7ece228f4befe2161baff79c673db0a8631b1a01d7a618efbeeefd0b0632a646",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.027031",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_clay_jars.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_clay_jars.png",
+    "sha256": "2b85190a26baa2fc0539288e16c9936eb06f8f3838b4f5b7dbf7816d8fff377e",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.031544",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_desert_oasis.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_desert_oasis.png",
+    "sha256": "6e37dbc713100e96afcdf54efca7661af8af81344b800c62d72134aa9065e38c",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.044786",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_driftwood.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_driftwood.png",
+    "sha256": "9f4075c2443ba3225ac2084d6d594da73f82cb8d70b56506ad536520a9c8e694",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.049290",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_fallen_roots.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_fallen_roots.png",
+    "sha256": "e989b3b1acd1a722bed2ddc8968f197945bcb9ab0078ff8f6ec5363129e6e3c9",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.053298",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_lily_patch.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_lily_patch.png",
+    "sha256": "977d7703ebe92348f1e38c252208c1d0597d42a3b22b96272e57d100e573ddba",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.071625",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_mountain_spring.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_mountain_spring.png",
+    "sha256": "f69ea9b2abcad64d70d3d8863766c0975efdb6d2ef6f8c07ce6966f3b81b1311",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.091160",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_mushroom_circle.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_mushroom_circle.png",
+    "sha256": "719131da321f76e852fef5d4a1c818007fb6009e5a727a06c3d3f4d738a0bb12",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.095164",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_reed_clump.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_reed_clump.png",
+    "sha256": "b687f6ca0f4b9c1fc08cb0c3ac7cc51e3fd7c8afa046af771e0bcb366d075699",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.103669",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_reed_islet.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_reed_islet.png",
+    "sha256": "429da0da57ee8f5b90e61ce77ed662ad5d3b4f68f7a8e6beeea60f3cfd6a3484",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.107669",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_sandy_pool.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_sandy_pool.png",
+    "sha256": "f52a3d655e6701a5684e23ee0fbd0bcc1f98950db1e917deeb12bb77a2230a14",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.115178",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_skull_marker.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_skull_marker.png",
+    "sha256": "f943e72a375fe16dbcf9f2000e0b894cf7582dc445f58b99e607b2b4abb06b18",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.123682",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_small_jars.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_small_jars.png",
+    "sha256": "112e09ac2f7b7fbf579adb5e6ea5355246aac57af9f8a3599285606fe94fda2a",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.126685",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_tundra_thaw_pool.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_tundra_thaw_pool.png",
+    "sha256": "b01f3b644e1877c219067826f6eacdbba55ceb91bad1db27d1dd9c58f07e4394",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.132862",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/forest/deco_forest_cluster.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/forest/deco_forest_cluster.png",
+    "sha256": "117c207bf20e397d311f67efbc5b1368ff5921bdd36b89a2ec513772e1ea852a",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.196861",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/water/deco_water_foam_reeds.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/water/deco_water_foam_reeds.png",
+    "sha256": "5a329d741bbe70304769ecc98f0ae0e37ca36c2367902d2ba716f697b43a4be7",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.625778",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/water/deco_water_lilies.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/water/deco_water_lilies.png",
+    "sha256": "c384b8a2c8f500c1e590df2f4210efc1d1d7c238bcdcedbe01f7a9559c18c443",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.630286",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/water/deco_water_reed_islet.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/water/deco_water_reed_islet.png",
+    "sha256": "b2d0eb7fc0941d6e8337d51daa1217318790d016f1c24e06ea141e0eb933cadc",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:29:51.634288",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/deco/deco_imagen_wildflower_tuft.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/deco/deco_imagen_wildflower_tuft.png",
+    "sha256": "27bb5ac1e4fc8eec63b0975377ab185ae46ed05e2bc9ee662464dc2426d8c1b7",
+    "reason": "Oldest cohort: editor auto-discovery only; no gameplay, config, save or exported-map reference, and no matching dynamic family prefix.",
+    "original_modified": "2026-05-26T19:30:40.237346",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_building_house_chimney.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/buildings/city/city_building_house_chimney.png",
+    "sha256": "24047895b24f730d7ce68b579d6073ce41898ac38b0817a730213bf0682b6033",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T05:21:15.833458",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/props/city/city_prop_banner_red.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_banner_red.png",
+    "sha256": "d32c849679b57b4a14158986c3773859eab5c81c66ee6217ec63ab33285e1798",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T05:39:25.478847",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/props/city/city_prop_banner_blue.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_banner_blue.png",
+    "sha256": "ef501b4a1984dfb057d0e02c0aff3c9d5d0b1cf03efea60a62502390fd02ee34",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T05:39:25.482854",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/props/city/city_prop_source_barrel_open.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_source_barrel_open.png",
+    "sha256": "b194a71dc0dc9770c83806c3a02076da1d9faf87a7a1bd574da255e4823d010b",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T15:45:27.577382",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/props/city/city_prop_source_crate_low.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_source_crate_low.png",
+    "sha256": "8ef0e6d66693f0e8991bc700ecb0844f39a112d1e35cd6d685cad63b41fd88b6",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T15:45:27.579383",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/props/city/city_prop_source_barrel_tall.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_source_barrel_tall.png",
+    "sha256": "806fa02d154145b26e18516faa34ed9f88d1eb015633719096b6797500719dcc",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T15:45:27.580381",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/props/city/city_prop_source_crate_tall.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_source_crate_tall.png",
+    "sha256": "5d30d59afd5ad82f0dd942f08abaf24a7d19c6a60760a1740155347ec137a268",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T15:45:27.582380",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  },
+  {
+    "path": "Java/assets/city/props/city/city_prop_source_stone_pile.png",
+    "review_path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_source_stone_pile.png",
+    "sha256": "22d065422032e9089750a81022261d9f0adb3be7d78c5bcbda6cf52acaad0505",
+    "reason": "Editor-only: city_prop_/city_building_ prefix occurrences are classification/label formatting, not asset-name construction; no direct or persisted references.",
+    "original_modified": "2026-05-26T15:45:27.584382",
+    "age_policy": "Archive unused/editor-only assets only from May 24-26, 2026; newer assets retained."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "target": "Java\\assets\\city\\walls\\city_wall_sun_gate_horizontal_clean.png",
+    "before_sha256": "ea2a761048c096f5ddc9f9eff286f642f0495172043209110e56e8a545c1ef13",
+    "after_sha256": "6fbcf34c23d7918e693bc11f7347d43a453b184c5bf047f644bbeb5a879c6c74",
+    "source": "Java\\assets\\city\\walls\\city_wall_sun_gate_horizontal.png"
+  },
+  {
+    "target": "Java\\assets\\city\\walls\\city_wall_sun_gate_vertical_clean.png",
+    "before_sha256": "e833cec676b85bbf19959b00565b6739c6cce77e272579423aaea786d2f46d35",
+    "after_sha256": "97b0ad1240dc41506d995a31cae86742400c606ac2a2062b709ed58152e2737a",
+    "source": "Java\\assets\\city\\walls\\city_wall_sun_gate_vertical.png"
+  }
+]

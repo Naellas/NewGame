@@ -1,0 +1,1 @@
+Catalog entries: 80; unique sprite stems: 58; all resolve and render; compared repairs: 27.

@@ -9,6 +9,10 @@ public final class RegionalSettlementIdentity {
     public record District(String name, TilePoint center, TilePoint work, TilePoint gathering,
                            String keeperName, List<String> dialogue) { }
 
+    public record TownBuildingSpec(String key, String style, String label) { }
+
+    public record TownProfile(String identity, List<String> districts, List<TownBuildingSpec> buildings) { }
+
     private RegionalSettlementIdentity() { }
 
     public static Region region(String mapId) {
@@ -20,6 +24,122 @@ public final class RegionalSettlementIdentity {
             case "city_belltower", "town_reedwatch", "village_mireford", "village_glimmerfen", "village_stormfen" -> Region.FEN;
             case "town_northwatch", "village_cairnvale", "town_greyharbor" -> Region.FREEHOLDS;
             default -> Region.NONE;
+        };
+    }
+
+    /** Named civic programs keep towns within one region from becoming copies of the regional capital. */
+    public static TownProfile townProfile(String mapId) {
+        return switch (mapId) {
+            case "town_briarbridge" -> new TownProfile(
+                    "Open-bough hospitality, bridge charters, orchards and river work",
+                    List.of("Charter Quay", "Abbey Orchards"),
+                    List.of(
+                            new TownBuildingSpec("briarbridge_bridge_court", "river_hall", "Briarbridge Bridge Court"),
+                            new TownBuildingSpec("bridge_inn", "inn", "Briarbridge Guest Abbey"),
+                            new TownBuildingSpec("river_warehouse", "warehouse", "Charter Granary"),
+                            new TownBuildingSpec("inner_west_row", "row", "Briarbridge Ferry Lodge"),
+                            new TownBuildingSpec("south_mid_shop", "fishing_hut", "Millwheel Workshop")
+                    ));
+            case "town_ironvale" -> new TownProfile(
+                    "Ironworking, winter stores, remembered names and disciplined pass defense",
+                    List.of("Forge Ward", "Names Court"),
+                    List.of(
+                            new TownBuildingSpec("ironvale_forge_keep", "arena", "Ironvale Forge Keep"),
+                            new TownBuildingSpec("north_armory", "blacksmith", "North Armory"),
+                            new TownBuildingSpec("inner_west_row", "row", "Ironvale Hall of Names"),
+                            new TownBuildingSpec("inner_east_row", "row", "Ironvale Winter Smokehouse"),
+                            new TownBuildingSpec("east_barracks", "barracks", "Pass Barracks")
+                    ));
+            case "town_moonspire" -> new TownProfile(
+                    "Public surveys, practical scholarship, shared seed stores and household records",
+                    List.of("Survey Close", "Seed Ledger Ward"),
+                    List.of(
+                            new TownBuildingSpec("moonspire_mage_tower", "mage_tower", "Moonspire Survey Tower"),
+                            new TownBuildingSpec("west_stacks", "guild", "Moonspire Map Stacks"),
+                            new TownBuildingSpec("inner_west_row", "row", "Moonspire Common Granary"),
+                            new TownBuildingSpec("west_scriptorium", "guild", "Public Scriptorium"),
+                            new TownBuildingSpec("south_mid_shop", "alchemist", "Illuminators' Workshop")
+                    ));
+            case "town_reedwatch" -> new TownProfile(
+                    "Flood warnings, reed craft, listening customs and maintained plank walks",
+                    List.of("Bell Landing", "Reedwright Walk"),
+                    List.of(
+                            new TownBuildingSpec("reedwatch_bell_tower", "bell_tower", "Reedwatch Listening Tower"),
+                            new TownBuildingSpec("bellwright_shop", "workshop", "Bellwrights' Workshop"),
+                            new TownBuildingSpec("inner_west_row", "row", "Reedwatch Flood Bellhouse"),
+                            new TownBuildingSpec("inner_east_row", "row", "Reedworkers' House"),
+                            new TownBuildingSpec("south_mid_shop", "fishing_hut", "Eelers' Landing")
+                    ));
+            case "town_embermarket" -> new TownProfile(
+                    "First-cup hospitality, caravan shelter, irrigation and public water accounting",
+                    List.of("First-Cup Court", "Cistern Ward"),
+                    List.of(
+                            new TownBuildingSpec("embermarket_sun_court", "sun_shrine", "Embermarket Sun Court"),
+                            new TownBuildingSpec("west_reliquary", "guild", "Water Ledger House"),
+                            new TownBuildingSpec("inner_west_row", "row", "Embermarket Cistern House"),
+                            new TownBuildingSpec("inner_east_row", "row", "Roadside Caravanserai"),
+                            new TownBuildingSpec("south_apothecary", "apothecary", "Irrigators' Apothecary")
+                    ));
+            case "town_northwatch" -> new TownProfile(
+                    "Independent rescue crews, signal keeping, rope work and shelter for stranded travelers",
+                    List.of("Signal Yard", "Rescue Close"),
+                    List.of(
+                            new TownBuildingSpec("northwatch_signal_tower", "watchtower", "Northwatch Signal Tower"),
+                            new TownBuildingSpec("north_armory", "carpenter", "Ropewrights' Shed"),
+                            new TownBuildingSpec("inner_west_row", "row", "Northwatch Rescue Lodge"),
+                            new TownBuildingSpec("east_barracks", "warehouse", "Winter Rescue Stores"),
+                            new TownBuildingSpec("west_guardhouse", "inn", "Stranded Travelers' Hall")
+                    ));
+            case "town_greyharbor" -> new TownProfile(
+                    "Storm rescue, crew remembrance, net work and stores raised above the harbor",
+                    List.of("Beacon Quay", "Returned Crews Walk"),
+                    List.of(
+                            new TownBuildingSpec("greyharbor_storm_beacon", "watchtower", "Greyharbor Storm Beacon"),
+                            new TownBuildingSpec("bellwright_shop", "fishing_hut", "Netmakers' Loft"),
+                            new TownBuildingSpec("inner_west_row", "row", "Greyharbor Rescue Lodge"),
+                            new TownBuildingSpec("north_chapel_row", "warehouse", "Raised Storm Stores"),
+                            new TownBuildingSpec("bellkeepers_lodge", "inn", "Returned Crews House")
+                    ));
+            default -> null;
+        };
+    }
+
+    public static TownBuildingSpec townBuilding(String mapId, CityBuilding building) {
+        TownProfile profile = townProfile(mapId);
+        if (profile == null || building == null || building.key() == null) return null;
+        for (TownBuildingSpec spec : profile.buildings()) {
+            if (building.key().equals(spec.key()) || building.key().startsWith(spec.key() + "_part_")) return spec;
+        }
+        return null;
+    }
+
+    public static String townDistrictName(String mapId, int index) {
+        TownProfile profile = townProfile(mapId);
+        if (profile == null || profile.districts().isEmpty()) return null;
+        return profile.districts().get(Math.floorMod(index, profile.districts().size()));
+    }
+
+    /** Authored overworld silhouettes; an empty value lets the renderer use its generic fallback. */
+    public static String overworldAsset(String mapId) {
+        String town = switch (mapId) {
+            case "city_archive", "town_moonspire" -> "city_overworld_archive_court_imagegen";
+            case "town_briarbridge" -> "city_overworld_town_briarbridge_imagegen";
+            case "town_ironvale" -> "city_overworld_town_ironvale_imagegen";
+            case "town_reedwatch" -> "city_overworld_town_reedwatch_imagegen";
+            case "town_embermarket" -> "city_overworld_town_embermarket_imagegen";
+            case "town_northwatch" -> "city_overworld_town_northwatch_imagegen";
+            case "town_greyharbor" -> "city_overworld_town_greyharbor_imagegen";
+            default -> "";
+        };
+        if (!town.isEmpty() || !mapId.startsWith("village_")) return town;
+        return switch (region(mapId)) {
+            case HEARTH -> "city_overworld_village_hearth_imagegen";
+            case RIVER -> "city_overworld_village_river_imagegen";
+            case NORTH -> "city_overworld_village_north_imagegen";
+            case SUN -> "city_overworld_village_sun_imagegen";
+            case FEN -> "city_overworld_village_fen_imagegen";
+            case FREEHOLDS -> "city_overworld_village_freeholds_imagegen";
+            case NONE -> "";
         };
     }
 

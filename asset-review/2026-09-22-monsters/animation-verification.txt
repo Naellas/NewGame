@@ -1,0 +1,1 @@
+Animation checks passed: both six-frame strips across three display sizes; valid shared viewport; four malformed/out-of-range metadata fallbacks.

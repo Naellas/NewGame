@@ -1,0 +1,3625 @@
+[
+  {
+    "candidate": "household/round_table",
+    "box": [
+      22,
+      40,
+      165,
+      222
+    ],
+    "size": [
+      138,
+      160
+    ],
+    "decision": "keep existing",
+    "reason": "At game scale the existing round table has a clearer rim and a broader usable tabletop; retain its silhouette.",
+    "asset": "interior_round_table"
+  },
+  {
+    "candidate": "household/square_table",
+    "box": [
+      165,
+      40,
+      324,
+      222
+    ],
+    "size": [
+      153,
+      160
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/long_table",
+    "box": [
+      324,
+      40,
+      628,
+      222
+    ],
+    "size": [
+      294,
+      148
+    ],
+    "decision": "keep existing",
+    "reason": "Existing connected table segments support expandable dining groups.",
+    "asset": "interior_table_h_middle"
+  },
+  {
+    "candidate": "household/chair_wood",
+    "box": [
+      628,
+      40,
+      731,
+      222
+    ],
+    "size": [
+      93,
+      145
+    ],
+    "decision": "keep existing",
+    "reason": "Keep the coherent existing four-direction seating set; the supplied front views do not include a true rear view.",
+    "asset": "interior_chair_south"
+  },
+  {
+    "candidate": "household/stool",
+    "box": [
+      731,
+      40,
+      820,
+      222
+    ],
+    "size": [
+      93,
+      89
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_stool",
+    "label": "Stool",
+    "category": "Seating",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.7
+  },
+  {
+    "candidate": "household/chair_red",
+    "box": [
+      820,
+      40,
+      923,
+      222
+    ],
+    "size": [
+      101,
+      151
+    ],
+    "decision": "keep existing",
+    "reason": "Keep the existing padded directional set instead of a near-duplicate single chair.",
+    "asset": "interior_chair_south_alt"
+  },
+  {
+    "candidate": "household/chair_green",
+    "box": [
+      923,
+      40,
+      1027,
+      222
+    ],
+    "size": [
+      93,
+      167
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_armchair_green",
+    "label": "Armchair Green",
+    "category": "Seating",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.2
+  },
+  {
+    "candidate": "household/sofa",
+    "box": [
+      1027,
+      40,
+      1252,
+      222
+    ],
+    "size": [
+      229,
+      146
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_sofa_red",
+    "label": "Sofa Red",
+    "category": "Seating",
+    "placement": "FLOOR",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 1.2
+  },
+  {
+    "candidate": "household/bench",
+    "box": [
+      1252,
+      40,
+      1420,
+      222
+    ],
+    "size": [
+      158,
+      104
+    ],
+    "decision": "keep existing",
+    "reason": "Existing bench remains consistent with the modular dining groups and paired vertical bench.",
+    "asset": "interior_bench_h"
+  },
+  {
+    "candidate": "household/bedside_cabinet",
+    "box": [
+      22,
+      224,
+      150,
+      437
+    ],
+    "size": [
+      100,
+      144
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/chest_drawers",
+    "box": [
+      150,
+      224,
+      323,
+      437
+    ],
+    "size": [
+      168,
+      166
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_chest_of_drawers",
+    "label": "Chest Of Drawers",
+    "category": "Storage",
+    "placement": "SURFACE",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.1
+  },
+  {
+    "candidate": "household/wardrobe",
+    "box": [
+      323,
+      224,
+      484,
+      437
+    ],
+    "size": [
+      155,
+      217
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wardrobe",
+    "label": "Wardrobe",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.65
+  },
+  {
+    "candidate": "household/crockery_cupboard",
+    "box": [
+      484,
+      224,
+      660,
+      437
+    ],
+    "size": [
+      167,
+      199
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_crockery_cupboard",
+    "label": "Crockery Cupboard",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.5
+  },
+  {
+    "candidate": "household/bookshelf",
+    "box": [
+      660,
+      224,
+      834,
+      437
+    ],
+    "size": [
+      158,
+      199
+    ],
+    "decision": "replace",
+    "reason": "Clearer front elevation and finer material detail; reuse the existing editor/save identity.",
+    "asset": "interior_bookshelf",
+    "path": "assets\\interiors\\interior_bookshelf.png"
+  },
+  {
+    "candidate": "household/wall_books",
+    "box": [
+      834,
+      224,
+      1023,
+      437
+    ],
+    "size": [
+      184,
+      141
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_books",
+    "label": "Wall Books",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/low_cupboard",
+    "box": [
+      1023,
+      224,
+      1211,
+      437
+    ],
+    "size": [
+      184,
+      151
+    ],
+    "decision": "replace",
+    "reason": "Clearer front elevation and finer material detail; reuse the existing editor/save identity.",
+    "asset": "interior_low_cupboard",
+    "path": "assets\\interiors\\props\\specialized\\interior_low_cupboard.png"
+  },
+  {
+    "candidate": "household/drinks_counter",
+    "box": [
+      1211,
+      224,
+      1425,
+      437
+    ],
+    "size": [
+      202,
+      152
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/rug_red",
+    "box": [
+      22,
+      442,
+      298,
+      620
+    ],
+    "size": [
+      275,
+      160
+    ],
+    "decision": "keep existing",
+    "reason": "Keep the existing continuous tiled rug system, whose borders join beneath furniture.",
+    "asset": "interior_rug_red"
+  },
+  {
+    "candidate": "household/rug_green",
+    "box": [
+      298,
+      442,
+      507,
+      620
+    ],
+    "size": [
+      213,
+      171
+    ],
+    "decision": "keep existing",
+    "reason": "Keep region-aware continuous rugs rather than introduce competing floor stamps.",
+    "asset": "interior_rug_teal"
+  },
+  {
+    "candidate": "household/rug_blue",
+    "box": [
+      507,
+      442,
+      659,
+      620
+    ],
+    "size": [
+      145,
+      127
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/rug_runner",
+    "box": [
+      659,
+      442,
+      766,
+      620
+    ],
+    "size": [
+      94,
+      151
+    ],
+    "decision": "keep existing",
+    "reason": "Existing runner remains consistent with the tiled carpets.",
+    "asset": "interior_rug_runner"
+  },
+  {
+    "candidate": "household/leafy_plant",
+    "box": [
+      766,
+      442,
+      892,
+      620
+    ],
+    "size": [
+      119,
+      153
+    ],
+    "decision": "keep existing",
+    "reason": "The existing brighter leaf clusters stay more readable in dim rooms at one-tile scale.",
+    "asset": "interior_floor_leafy_plant"
+  },
+  {
+    "candidate": "household/flower_planter",
+    "box": [
+      892,
+      442,
+      1017,
+      620
+    ],
+    "size": [
+      106,
+      129
+    ],
+    "decision": "keep existing",
+    "reason": "Existing saturated flowers and patterned pot remain more distinct at game scale.",
+    "asset": "interior_floor_flower_planter"
+  },
+  {
+    "candidate": "household/wall_herbs",
+    "box": [
+      1017,
+      442,
+      1216,
+      620
+    ],
+    "size": [
+      196,
+      148
+    ],
+    "decision": "keep existing",
+    "reason": "Existing separated herb bunches read more clearly at the shared wall-decor scale.",
+    "asset": "interior_wall_herb_rack"
+  },
+  {
+    "candidate": "household/hanging_lantern",
+    "box": [
+      1216,
+      442,
+      1324,
+      620
+    ],
+    "size": [
+      77,
+      138
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/standing_lantern",
+    "box": [
+      1324,
+      442,
+      1423,
+      620
+    ],
+    "size": [
+      79,
+      182
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/fireplace",
+    "box": [
+      20,
+      614,
+      180,
+      784
+    ],
+    "size": [
+      156,
+      172
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_fireplace",
+    "label": "Fireplace",
+    "category": "Workstations",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.3
+  },
+  {
+    "candidate": "household/firewood_basket",
+    "box": [
+      180,
+      614,
+      309,
+      784
+    ],
+    "size": [
+      121,
+      116
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_firewood_basket",
+    "label": "Firewood Basket",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "household/logs",
+    "box": [
+      309,
+      614,
+      460,
+      784
+    ],
+    "size": [
+      146,
+      112
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/provision_baskets",
+    "box": [
+      460,
+      614,
+      678,
+      784
+    ],
+    "size": [
+      203,
+      166
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/washstand",
+    "box": [
+      678,
+      614,
+      834,
+      784
+    ],
+    "size": [
+      140,
+      153
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_washstand",
+    "label": "Washstand",
+    "category": "Workstations",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.2
+  },
+  {
+    "candidate": "household/plate_rack",
+    "box": [
+      834,
+      614,
+      1028,
+      784
+    ],
+    "size": [
+      172,
+      158
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_plate_rack",
+    "label": "Plate Rack",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/prep_table",
+    "box": [
+      1028,
+      614,
+      1245,
+      784
+    ],
+    "size": [
+      209,
+      161
+    ],
+    "decision": "keep existing",
+    "reason": "Existing preparation equipment remains clearer as a working kitchen station at game scale.",
+    "asset": "interior_cooking_station"
+  },
+  {
+    "candidate": "household/iron_chest",
+    "box": [
+      1245,
+      639,
+      1422,
+      784
+    ],
+    "size": [
+      172,
+      128
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/room_screen",
+    "box": [
+      22,
+      787,
+      283,
+      956
+    ],
+    "size": [
+      228,
+      173
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_room_screen",
+    "label": "Room Screen",
+    "category": "Misc",
+    "placement": "FLOOR",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 1.3
+  },
+  {
+    "candidate": "household/coat_stand",
+    "box": [
+      283,
+      787,
+      405,
+      956
+    ],
+    "size": [
+      107,
+      173
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_coat_stand",
+    "label": "Coat Stand",
+    "category": "Misc",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.35
+  },
+  {
+    "candidate": "household/wall_banner",
+    "box": [
+      405,
+      787,
+      538,
+      956
+    ],
+    "size": [
+      127,
+      170
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_banner_lion",
+    "label": "Wall Banner Lion",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/wall_landscape",
+    "box": [
+      538,
+      787,
+      725,
+      956
+    ],
+    "size": [
+      178,
+      135
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_landscape",
+    "label": "Wall Landscape",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/wall_flowers",
+    "box": [
+      725,
+      787,
+      852,
+      956
+    ],
+    "size": [
+      111,
+      109
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_flower_painting",
+    "label": "Wall Flower Painting",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/wall_mirror",
+    "box": [
+      852,
+      787,
+      979,
+      956
+    ],
+    "size": [
+      104,
+      151
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_mirror",
+    "label": "Wall Mirror",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/wall_clock",
+    "box": [
+      979,
+      787,
+      1082,
+      956
+    ],
+    "size": [
+      86,
+      167
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_clock",
+    "label": "Wall Clock",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/wall_antlers",
+    "box": [
+      1082,
+      787,
+      1245,
+      942
+    ],
+    "size": [
+      150,
+      134
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_antlers",
+    "label": "Wall Antlers",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "household/wall_candle_shelf",
+    "box": [
+      1245,
+      787,
+      1423,
+      956
+    ],
+    "size": [
+      161,
+      147
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/tabletop_books",
+    "box": [
+      22,
+      949,
+      160,
+      1070
+    ],
+    "size": [
+      120,
+      78
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tabletop_books",
+    "label": "Tabletop Books",
+    "category": "Decorations",
+    "placement": "TABLETOP",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.45
+  },
+  {
+    "candidate": "household/tabletop_scrolls",
+    "box": [
+      160,
+      949,
+      275,
+      1070
+    ],
+    "size": [
+      105,
+      91
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tabletop_scrolls",
+    "label": "Tabletop Scrolls",
+    "category": "Decorations",
+    "placement": "TABLETOP",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.4
+  },
+  {
+    "candidate": "household/tabletop_ink",
+    "box": [
+      275,
+      949,
+      384,
+      1070
+    ],
+    "size": [
+      102,
+      94
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tabletop_inkwell",
+    "label": "Tabletop Inkwell",
+    "category": "Decorations",
+    "placement": "TABLETOP",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.45
+  },
+  {
+    "candidate": "household/tabletop_candle",
+    "box": [
+      384,
+      949,
+      458,
+      1070
+    ],
+    "size": [
+      66,
+      97
+    ],
+    "decision": "keep existing",
+    "reason": "Existing candle centerpiece is legible at small scale and already matches the light and dining composition.",
+    "asset": "interior_tabletop_candle"
+  },
+  {
+    "candidate": "household/tabletop_tankard",
+    "box": [
+      458,
+      949,
+      536,
+      1070
+    ],
+    "size": [
+      77,
+      76
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tabletop_tankard",
+    "label": "Tabletop Tankard",
+    "category": "Decorations",
+    "placement": "TABLETOP",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.35
+  },
+  {
+    "candidate": "household/tabletop_jug",
+    "box": [
+      536,
+      949,
+      617,
+      1070
+    ],
+    "size": [
+      75,
+      82
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tabletop_jug",
+    "label": "Tabletop Jug",
+    "category": "Decorations",
+    "placement": "TABLETOP",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.45
+  },
+  {
+    "candidate": "household/tabletop_wine",
+    "box": [
+      617,
+      949,
+      716,
+      1070
+    ],
+    "size": [
+      94,
+      109
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tabletop_wine",
+    "label": "Tabletop Wine",
+    "category": "Decorations",
+    "placement": "TABLETOP",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.5
+  },
+  {
+    "candidate": "household/tabletop_apples",
+    "box": [
+      716,
+      949,
+      821,
+      1070
+    ],
+    "size": [
+      96,
+      89
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/tabletop_fruit",
+    "box": [
+      821,
+      949,
+      924,
+      1070
+    ],
+    "size": [
+      107,
+      88
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tabletop_fruit",
+    "label": "Tabletop Fruit",
+    "category": "Decorations",
+    "placement": "TABLETOP",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.4
+  },
+  {
+    "candidate": "household/sack_grain",
+    "box": [
+      924,
+      949,
+      999,
+      1070
+    ],
+    "size": [
+      78,
+      94
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/sack_tied",
+    "box": [
+      999,
+      949,
+      1081,
+      1070
+    ],
+    "size": [
+      77,
+      89
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/crates",
+    "box": [
+      1082,
+      940,
+      1208,
+      1070
+    ],
+    "size": [
+      121,
+      120
+    ],
+    "decision": "replace",
+    "reason": "Clearer front elevation and finer material detail; reuse the existing editor/save identity.",
+    "asset": "interior_crates",
+    "path": "assets\\interiors\\interior_crates.png"
+  },
+  {
+    "candidate": "household/barrel",
+    "box": [
+      1208,
+      949,
+      1305,
+      1070
+    ],
+    "size": [
+      101,
+      117
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "household/crate",
+    "box": [
+      1305,
+      949,
+      1424,
+      1070
+    ],
+    "size": [
+      100,
+      93
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/crate",
+    "box": [
+      20,
+      10,
+      121,
+      178
+    ],
+    "size": [
+      78,
+      92
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/crates_stack",
+    "box": [
+      121,
+      10,
+      295,
+      178
+    ],
+    "size": [
+      135,
+      148
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/crates_wide",
+    "box": [
+      295,
+      10,
+      491,
+      178
+    ],
+    "size": [
+      159,
+      142
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/shipping_crate",
+    "box": [
+      491,
+      10,
+      678,
+      178
+    ],
+    "size": [
+      131,
+      119
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/apples_crate",
+    "box": [
+      678,
+      10,
+      801,
+      178
+    ],
+    "size": [
+      85,
+      97
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_produce_apples",
+    "label": "Produce Apples",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "warehouse/cabbages_crate",
+    "box": [
+      801,
+      10,
+      917,
+      178
+    ],
+    "size": [
+      84,
+      98
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_produce_cabbages",
+    "label": "Produce Cabbages",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "warehouse/corn_crate",
+    "box": [
+      917,
+      10,
+      1037,
+      178
+    ],
+    "size": [
+      83,
+      99
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_produce_corn",
+    "label": "Produce Corn",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "warehouse/potatoes_crate",
+    "box": [
+      1037,
+      10,
+      1155,
+      178
+    ],
+    "size": [
+      79,
+      100
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/crate_tall",
+    "box": [
+      1155,
+      10,
+      1263,
+      178
+    ],
+    "size": [
+      80,
+      100
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/pallet",
+    "box": [
+      1263,
+      10,
+      1430,
+      178
+    ],
+    "size": [
+      140,
+      84
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_pallet",
+    "label": "Pallet",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 0.65
+  },
+  {
+    "candidate": "warehouse/barrel",
+    "box": [
+      16,
+      179,
+      96,
+      310
+    ],
+    "size": [
+      66,
+      89
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/barrels",
+    "box": [
+      96,
+      179,
+      224,
+      310
+    ],
+    "size": [
+      105,
+      110
+    ],
+    "decision": "replace",
+    "reason": "Clearer front elevation and finer material detail; reuse the existing editor/save identity.",
+    "asset": "interior_barrels",
+    "path": "assets\\interiors\\interior_barrels.png"
+  },
+  {
+    "candidate": "warehouse/barrel_stand",
+    "box": [
+      224,
+      179,
+      330,
+      310
+    ],
+    "size": [
+      89,
+      117
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/cask_stack",
+    "box": [
+      330,
+      179,
+      478,
+      310
+    ],
+    "size": [
+      119,
+      126
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/cask_cradle",
+    "box": [
+      478,
+      179,
+      583,
+      310
+    ],
+    "size": [
+      89,
+      118
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/sacks_stack",
+    "box": [
+      583,
+      179,
+      739,
+      310
+    ],
+    "size": [
+      135,
+      115
+    ],
+    "decision": "keep existing",
+    "reason": "Retain the established grain-storage silhouette and layout footprint.",
+    "asset": "interior_grain_sacks_v"
+  },
+  {
+    "candidate": "warehouse/sack",
+    "box": [
+      739,
+      179,
+      817,
+      310
+    ],
+    "size": [
+      67,
+      81
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/sacks_pair",
+    "box": [
+      817,
+      179,
+      927,
+      310
+    ],
+    "size": [
+      96,
+      113
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/bales_stack",
+    "box": [
+      927,
+      179,
+      1059,
+      310
+    ],
+    "size": [
+      114,
+      97
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tied_bales",
+    "label": "Tied Bales",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.85
+  },
+  {
+    "candidate": "warehouse/bale",
+    "box": [
+      1059,
+      179,
+      1186,
+      310
+    ],
+    "size": [
+      103,
+      88
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/bales_small",
+    "box": [
+      1186,
+      179,
+      1302,
+      310
+    ],
+    "size": [
+      98,
+      70
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/logs",
+    "box": [
+      1302,
+      179,
+      1435,
+      310
+    ],
+    "size": [
+      119,
+      113
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/cask_shelf",
+    "box": [
+      17,
+      314,
+      203,
+      543
+    ],
+    "size": [
+      169,
+      228
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/supplies_shelf",
+    "box": [
+      203,
+      314,
+      408,
+      543
+    ],
+    "size": [
+      185,
+      222
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_supplies_shelf",
+    "label": "Supplies Shelf",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.5
+  },
+  {
+    "candidate": "warehouse/tools_shelf",
+    "box": [
+      408,
+      314,
+      603,
+      543
+    ],
+    "size": [
+      172,
+      222
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_tools_shelf",
+    "label": "Tools Shelf",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.5
+  },
+  {
+    "candidate": "warehouse/pantry_shelf",
+    "box": [
+      603,
+      314,
+      777,
+      543
+    ],
+    "size": [
+      153,
+      205
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_pantry_shelf",
+    "label": "Pantry Shelf",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.5
+  },
+  {
+    "candidate": "warehouse/wall_pantry",
+    "box": [
+      778,
+      314,
+      955,
+      485
+    ],
+    "size": [
+      157,
+      159
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/wall_tools",
+    "box": [
+      955,
+      314,
+      1137,
+      485
+    ],
+    "size": [
+      155,
+      124
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_tools",
+    "label": "Wall Tools",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "warehouse/wall_parcels",
+    "box": [
+      1137,
+      314,
+      1288,
+      415
+    ],
+    "size": [
+      120,
+      88
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_wall_parcels",
+    "label": "Wall Parcels",
+    "category": "Wall-mounted",
+    "placement": "WALL",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "warehouse/wall_shelf",
+    "box": [
+      1288,
+      314,
+      1424,
+      485
+    ],
+    "size": [
+      94,
+      148
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/packing_desk",
+    "box": [
+      17,
+      551,
+      297,
+      701
+    ],
+    "size": [
+      260,
+      135
+    ],
+    "decision": "keep existing",
+    "reason": "Existing desk already supplies the writing function with readable paper and ink.",
+    "asset": "interior_study_desk_h"
+  },
+  {
+    "candidate": "warehouse/workbench",
+    "box": [
+      297,
+      551,
+      584,
+      701
+    ],
+    "size": [
+      262,
+      127
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/merchant_counter",
+    "box": [
+      584,
+      522,
+      835,
+      701
+    ],
+    "size": [
+      228,
+      176
+    ],
+    "decision": "keep existing",
+    "reason": "Existing merchant counter already fills this role; avoid another equivalent editor entry.",
+    "asset": "interior_shop_counter"
+  },
+  {
+    "candidate": "warehouse/welcome_counter",
+    "box": [
+      845,
+      589,
+      1057,
+      701
+    ],
+    "size": [
+      195,
+      109
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/wall_rope_lantern",
+    "box": [
+      17,
+      704,
+      286,
+      843
+    ],
+    "size": [
+      243,
+      132
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/wall_dried_food",
+    "box": [
+      286,
+      704,
+      478,
+      843
+    ],
+    "size": [
+      159,
+      137
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/wall_lantern",
+    "box": [
+      478,
+      704,
+      560,
+      843
+    ],
+    "size": [
+      60,
+      133
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/standing_lantern",
+    "box": [
+      560,
+      704,
+      632,
+      843
+    ],
+    "size": [
+      47,
+      120
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/basket_square",
+    "box": [
+      632,
+      704,
+      725,
+      843
+    ],
+    "size": [
+      92,
+      85
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_basket_empty",
+    "label": "Basket Empty",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.65
+  },
+  {
+    "candidate": "warehouse/basket_tall",
+    "box": [
+      725,
+      704,
+      817,
+      843
+    ],
+    "size": [
+      85,
+      98
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/basket_apples",
+    "box": [
+      817,
+      704,
+      894,
+      843
+    ],
+    "size": [
+      72,
+      78
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/basket_demijohn",
+    "box": [
+      894,
+      704,
+      971,
+      843
+    ],
+    "size": [
+      68,
+      105
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_basket_demijohn",
+    "label": "Basket Demijohn",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "warehouse/basket_jug",
+    "box": [
+      971,
+      704,
+      1064,
+      843
+    ],
+    "size": [
+      82,
+      101
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/chest_open",
+    "box": [
+      1064,
+      704,
+      1188,
+      843
+    ],
+    "size": [
+      106,
+      113
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/iron_chest",
+    "box": [
+      1188,
+      704,
+      1289,
+      843
+    ],
+    "size": [
+      93,
+      99
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/wood_screen",
+    "box": [
+      22,
+      843,
+      247,
+      1012
+    ],
+    "size": [
+      210,
+      165
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/pottery",
+    "box": [
+      247,
+      843,
+      394,
+      1012
+    ],
+    "size": [
+      133,
+      121
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_pottery_cluster",
+    "label": "Pottery Cluster",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "warehouse/sack_small",
+    "box": [
+      394,
+      843,
+      469,
+      1012
+    ],
+    "size": [
+      61,
+      80
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/produce_crate",
+    "box": [
+      469,
+      843,
+      563,
+      1012
+    ],
+    "size": [
+      83,
+      107
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/fish_crate",
+    "box": [
+      563,
+      843,
+      653,
+      1012
+    ],
+    "size": [
+      83,
+      110
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_produce_fish",
+    "label": "Produce Fish",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "warehouse/potato_crate",
+    "box": [
+      653,
+      843,
+      746,
+      1012
+    ],
+    "size": [
+      80,
+      101
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_produce_potatoes",
+    "label": "Produce Potatoes",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "warehouse/stone_crate",
+    "box": [
+      746,
+      843,
+      836,
+      1012
+    ],
+    "size": [
+      79,
+      102
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/bottle_crate",
+    "box": [
+      836,
+      843,
+      927,
+      1012
+    ],
+    "size": [
+      84,
+      94
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_bottle_crate",
+    "label": "Bottle Crate",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "warehouse/coal_crate",
+    "box": [
+      927,
+      875,
+      997,
+      973
+    ],
+    "size": [
+      63,
+      77
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_coal_crate",
+    "label": "Coal Crate",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.7
+  },
+  {
+    "candidate": "warehouse/grain_spill",
+    "box": [
+      1002,
+      843,
+      1099,
+      1012
+    ],
+    "size": [
+      95,
+      92
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/bench",
+    "box": [
+      1099,
+      843,
+      1240,
+      1012
+    ],
+    "size": [
+      129,
+      72
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/stool",
+    "box": [
+      1240,
+      843,
+      1303,
+      1012
+    ],
+    "size": [
+      49,
+      72
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/broom",
+    "box": [
+      1303,
+      839,
+      1347,
+      1012
+    ],
+    "size": [
+      45,
+      146
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_broom",
+    "label": "Broom",
+    "category": "Misc",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.3
+  },
+  {
+    "candidate": "warehouse/bucket",
+    "box": [
+      1347,
+      843,
+      1427,
+      1012
+    ],
+    "size": [
+      64,
+      78
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_bucket",
+    "label": "Bucket",
+    "category": "Misc",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.7
+  },
+  {
+    "candidate": "warehouse/handcart_flat",
+    "box": [
+      855,
+      434,
+      1024,
+      580
+    ],
+    "size": [
+      155,
+      134
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/handcart",
+    "box": [
+      1025,
+      474,
+      1157,
+      588
+    ],
+    "size": [
+      127,
+      107
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/ladder",
+    "box": [
+      1168,
+      423,
+      1254,
+      595
+    ],
+    "size": [
+      78,
+      161
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/stepladder",
+    "box": [
+      1270,
+      480,
+      1383,
+      605
+    ],
+    "size": [
+      95,
+      113
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_stepladder",
+    "label": "Stepladder",
+    "category": "Workstations",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.2
+  },
+  {
+    "candidate": "warehouse/stool_square",
+    "box": [
+      1064,
+      609,
+      1126,
+      700
+    ],
+    "size": [
+      53,
+      81
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/drawers",
+    "box": [
+      1141,
+      602,
+      1283,
+      708
+    ],
+    "size": [
+      126,
+      99
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "warehouse/bottles_cabinet",
+    "box": [
+      1288,
+      601,
+      1421,
+      837
+    ],
+    "size": [
+      117,
+      222
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_wood_front_a",
+    "box": [
+      22,
+      12,
+      98,
+      144
+    ],
+    "size": [
+      59,
+      107
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_wood_front_b",
+    "box": [
+      98,
+      12,
+      180,
+      144
+    ],
+    "size": [
+      58,
+      108
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_wood_right",
+    "box": [
+      180,
+      12,
+      262,
+      144
+    ],
+    "size": [
+      60,
+      107
+    ],
+    "decision": "keep existing",
+    "reason": "Keep the complete existing seating set and its consistent table-facing orientation.",
+    "asset": "interior_chair_west"
+  },
+  {
+    "candidate": "directional/chair_wood_left",
+    "box": [
+      262,
+      12,
+      348,
+      144
+    ],
+    "size": [
+      64,
+      106
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_red_front_a",
+    "box": [
+      348,
+      12,
+      435,
+      144
+    ],
+    "size": [
+      62,
+      110
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_red_front_b",
+    "box": [
+      435,
+      12,
+      512,
+      144
+    ],
+    "size": [
+      62,
+      109
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_red_right",
+    "box": [
+      512,
+      12,
+      591,
+      144
+    ],
+    "size": [
+      59,
+      111
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_red_left",
+    "box": [
+      591,
+      12,
+      674,
+      144
+    ],
+    "size": [
+      62,
+      111
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_green_front_a",
+    "box": [
+      674,
+      12,
+      785,
+      144
+    ],
+    "size": [
+      64,
+      122
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_green_front_b",
+    "box": [
+      785,
+      12,
+      866,
+      144
+    ],
+    "size": [
+      65,
+      132
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_green_right",
+    "box": [
+      866,
+      12,
+      946,
+      144
+    ],
+    "size": [
+      61,
+      111
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_green_left",
+    "box": [
+      946,
+      12,
+      1027,
+      144
+    ],
+    "size": [
+      61,
+      111
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/stool_a",
+    "box": [
+      1027,
+      12,
+      1118,
+      144
+    ],
+    "size": [
+      55,
+      73
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/stool_b",
+    "box": [
+      1118,
+      12,
+      1193,
+      144
+    ],
+    "size": [
+      55,
+      80
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/stool_c",
+    "box": [
+      1193,
+      12,
+      1264,
+      144
+    ],
+    "size": [
+      55,
+      79
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_low_right",
+    "box": [
+      1264,
+      12,
+      1340,
+      144
+    ],
+    "size": [
+      53,
+      81
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chair_low_left",
+    "box": [
+      1340,
+      12,
+      1427,
+      144
+    ],
+    "size": [
+      53,
+      80
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_h",
+    "box": [
+      22,
+      149,
+      220,
+      264
+    ],
+    "size": [
+      170,
+      83
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_v",
+    "box": [
+      220,
+      149,
+      305,
+      264
+    ],
+    "size": [
+      47,
+      104
+    ],
+    "decision": "keep existing",
+    "reason": "Keep the paired modular bench orientations.",
+    "asset": "interior_bench_v"
+  },
+  {
+    "candidate": "directional/bench_back",
+    "box": [
+      305,
+      149,
+      541,
+      264
+    ],
+    "size": [
+      203,
+      95
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_back_v",
+    "box": [
+      541,
+      149,
+      622,
+      264
+    ],
+    "size": [
+      49,
+      106
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/table_small",
+    "box": [
+      622,
+      149,
+      751,
+      264
+    ],
+    "size": [
+      93,
+      88
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/table_square",
+    "box": [
+      751,
+      149,
+      842,
+      264
+    ],
+    "size": [
+      73,
+      97
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/table_v",
+    "box": [
+      842,
+      149,
+      929,
+      264
+    ],
+    "size": [
+      62,
+      98
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/table_round",
+    "box": [
+      929,
+      149,
+      1034,
+      264
+    ],
+    "size": [
+      82,
+      96
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/table_h",
+    "box": [
+      1034,
+      149,
+      1206,
+      264
+    ],
+    "size": [
+      145,
+      94
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/table_slatted",
+    "box": [
+      1206,
+      149,
+      1354,
+      264
+    ],
+    "size": [
+      128,
+      93
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/table_slatted_v",
+    "box": [
+      1354,
+      149,
+      1430,
+      264
+    ],
+    "size": [
+      56,
+      111
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/drawers_front",
+    "box": [
+      22,
+      265,
+      168,
+      440
+    ],
+    "size": [
+      122,
+      149
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/drawers_side",
+    "box": [
+      168,
+      265,
+      268,
+      440
+    ],
+    "size": [
+      78,
+      148
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/wardrobe_front",
+    "box": [
+      268,
+      265,
+      419,
+      440
+    ],
+    "size": [
+      125,
+      173
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/wardrobe_side",
+    "box": [
+      419,
+      265,
+      514,
+      440
+    ],
+    "size": [
+      72,
+      172
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bookshelf_front",
+    "box": [
+      514,
+      265,
+      669,
+      440
+    ],
+    "size": [
+      125,
+      162
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bookshelf_side",
+    "box": [
+      669,
+      265,
+      769,
+      440
+    ],
+    "size": [
+      72,
+      166
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/cupboard_side",
+    "box": [
+      769,
+      265,
+      870,
+      440
+    ],
+    "size": [
+      80,
+      154
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crockery_bookshelf",
+    "box": [
+      870,
+      265,
+      1033,
+      440
+    ],
+    "size": [
+      139,
+      153
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crockery_side",
+    "box": [
+      1033,
+      265,
+      1135,
+      440
+    ],
+    "size": [
+      67,
+      163
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/provisions_shelf",
+    "box": [
+      1135,
+      265,
+      1329,
+      440
+    ],
+    "size": [
+      169,
+      164
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/provisions_side",
+    "box": [
+      1329,
+      265,
+      1430,
+      440
+    ],
+    "size": [
+      67,
+      165
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bar_front",
+    "box": [
+      22,
+      445,
+      243,
+      560
+    ],
+    "size": [
+      195,
+      110
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bar_side",
+    "box": [
+      243,
+      445,
+      312,
+      560
+    ],
+    "size": [
+      53,
+      99
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/workbench_front",
+    "box": [
+      312,
+      445,
+      509,
+      560
+    ],
+    "size": [
+      166,
+      82
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/workbench_side",
+    "box": [
+      509,
+      445,
+      606,
+      560
+    ],
+    "size": [
+      63,
+      96
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/reading_counter",
+    "box": [
+      606,
+      445,
+      818,
+      560
+    ],
+    "size": [
+      171,
+      106
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/reading_counter_side",
+    "box": [
+      818,
+      445,
+      914,
+      560
+    ],
+    "size": [
+      68,
+      105
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_low",
+    "box": [
+      914,
+      445,
+      1114,
+      560
+    ],
+    "size": [
+      167,
+      59
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_low_side",
+    "box": [
+      1114,
+      445,
+      1205,
+      560
+    ],
+    "size": [
+      66,
+      82
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/linen_shelf",
+    "box": [
+      1205,
+      445,
+      1331,
+      560
+    ],
+    "size": [
+      104,
+      102
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/linen_shelf_side",
+    "box": [
+      1331,
+      445,
+      1430,
+      560
+    ],
+    "size": [
+      50,
+      102
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/barrel_a",
+    "box": [
+      22,
+      563,
+      103,
+      690
+    ],
+    "size": [
+      71,
+      95
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/barrel_b",
+    "box": [
+      103,
+      563,
+      187,
+      690
+    ],
+    "size": [
+      75,
+      98
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/cask_front",
+    "box": [
+      187,
+      563,
+      275,
+      690
+    ],
+    "size": [
+      68,
+      94
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/cask_side",
+    "box": [
+      275,
+      563,
+      386,
+      690
+    ],
+    "size": [
+      96,
+      75
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_cask_on_side",
+    "label": "Cask On Side",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.75
+  },
+  {
+    "candidate": "directional/barrel_pair",
+    "box": [
+      386,
+      563,
+      488,
+      690
+    ],
+    "size": [
+      86,
+      101
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/barrel_c",
+    "box": [
+      488,
+      563,
+      576,
+      690
+    ],
+    "size": [
+      72,
+      98
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crate_a",
+    "box": [
+      576,
+      563,
+      663,
+      690
+    ],
+    "size": [
+      70,
+      92
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crate_b",
+    "box": [
+      663,
+      563,
+      758,
+      690
+    ],
+    "size": [
+      74,
+      103
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crate_c",
+    "box": [
+      758,
+      563,
+      866,
+      690
+    ],
+    "size": [
+      82,
+      103
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crates_a",
+    "box": [
+      866,
+      563,
+      1004,
+      690
+    ],
+    "size": [
+      116,
+      131
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crates_b",
+    "box": [
+      1004,
+      563,
+      1190,
+      690
+    ],
+    "size": [
+      159,
+      128
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crates_c",
+    "box": [
+      1190,
+      563,
+      1331,
+      690
+    ],
+    "size": [
+      117,
+      119
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/crate_side",
+    "box": [
+      1331,
+      563,
+      1430,
+      690
+    ],
+    "size": [
+      84,
+      83
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/sack_a",
+    "box": [
+      22,
+      695,
+      115,
+      817
+    ],
+    "size": [
+      84,
+      100
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/sack_b",
+    "box": [
+      115,
+      695,
+      208,
+      817
+    ],
+    "size": [
+      77,
+      96
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/sack_pair",
+    "box": [
+      208,
+      695,
+      320,
+      817
+    ],
+    "size": [
+      103,
+      113
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/sack_round",
+    "box": [
+      326,
+      695,
+      415,
+      817
+    ],
+    "size": [
+      82,
+      93
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bales_a",
+    "box": [
+      415,
+      695,
+      521,
+      817
+    ],
+    "size": [
+      97,
+      92
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bales_b",
+    "box": [
+      521,
+      695,
+      655,
+      817
+    ],
+    "size": [
+      113,
+      94
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bales_pair",
+    "box": [
+      655,
+      695,
+      845,
+      817
+    ],
+    "size": [
+      163,
+      96
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/iron_chest_front",
+    "box": [
+      845,
+      695,
+      967,
+      817
+    ],
+    "size": [
+      98,
+      95
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_ironbound_chest",
+    "label": "Ironbound Chest",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.9
+  },
+  {
+    "candidate": "directional/iron_chest_side",
+    "box": [
+      967,
+      695,
+      1050,
+      817
+    ],
+    "size": [
+      63,
+      89
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chest_front",
+    "box": [
+      1050,
+      695,
+      1190,
+      817
+    ],
+    "size": [
+      111,
+      99
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chest_open",
+    "box": [
+      1190,
+      695,
+      1331,
+      817
+    ],
+    "size": [
+      114,
+      111
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/chest_side",
+    "box": [
+      1331,
+      695,
+      1430,
+      817
+    ],
+    "size": [
+      67,
+      108
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bin_front_a",
+    "box": [
+      22,
+      823,
+      133,
+      926
+    ],
+    "size": [
+      86,
+      87
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bin_front_b",
+    "box": [
+      133,
+      823,
+      247,
+      926
+    ],
+    "size": [
+      82,
+      87
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bin_side",
+    "box": [
+      247,
+      823,
+      349,
+      926
+    ],
+    "size": [
+      72,
+      106
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bin_corner",
+    "box": [
+      349,
+      823,
+      466,
+      926
+    ],
+    "size": [
+      90,
+      102
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bin_wide",
+    "box": [
+      466,
+      823,
+      604,
+      926
+    ],
+    "size": [
+      110,
+      96
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_open_storage_bin",
+    "label": "Open Storage Bin",
+    "category": "Storage",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 0.8
+  },
+  {
+    "candidate": "directional/bin_front_c",
+    "box": [
+      604,
+      823,
+      686,
+      926
+    ],
+    "size": [
+      76,
+      83
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/handcart_side",
+    "box": [
+      24,
+      925,
+      270,
+      1058
+    ],
+    "size": [
+      204,
+      116
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_handcart",
+    "label": "Handcart",
+    "category": "Workstations",
+    "placement": "FLOOR",
+    "width": 2,
+    "depth": 1,
+    "draw_height": 1
+  },
+  {
+    "candidate": "directional/handcart_flat",
+    "box": [
+      270,
+      925,
+      470,
+      1058
+    ],
+    "size": [
+      174,
+      101
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/handcart_front",
+    "box": [
+      470,
+      925,
+      668,
+      1058
+    ],
+    "size": [
+      153,
+      115
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/ladder_left",
+    "box": [
+      686,
+      816,
+      812,
+      1051
+    ],
+    "size": [
+      110,
+      220
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/ladder_right",
+    "box": [
+      813,
+      816,
+      927,
+      1051
+    ],
+    "size": [
+      87,
+      216
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/ladder_front",
+    "box": [
+      935,
+      824,
+      1033,
+      1051
+    ],
+    "size": [
+      90,
+      217
+    ],
+    "decision": "add",
+    "reason": "Distinct furnishing, supply type, or activity not represented by the retained core furniture.",
+    "asset": "interior_leaning_ladder",
+    "label": "Leaning Ladder",
+    "category": "Workstations",
+    "placement": "FLOOR",
+    "width": 1,
+    "depth": 1,
+    "draw_height": 1.6
+  },
+  {
+    "candidate": "directional/bench_short",
+    "box": [
+      1034,
+      840,
+      1152,
+      924
+    ],
+    "size": [
+      109,
+      62
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_side",
+    "box": [
+      1158,
+      835,
+      1206,
+      1051
+    ],
+    "size": [
+      26,
+      187
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_long",
+    "box": [
+      1209,
+      839,
+      1352,
+      924
+    ],
+    "size": [
+      131,
+      67
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/bench_end",
+    "box": [
+      1360,
+      827,
+      1424,
+      926
+    ],
+    "size": [
+      43,
+      92
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/side_table",
+    "box": [
+      1045,
+      930,
+      1157,
+      1031
+    ],
+    "size": [
+      81,
+      91
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/console_table",
+    "box": [
+      1204,
+      925,
+      1353,
+      1024
+    ],
+    "size": [
+      139,
+      75
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  },
+  {
+    "candidate": "directional/console_side",
+    "box": [
+      1360,
+      928,
+      1424,
+      1035
+    ],
+    "size": [
+      41,
+      97
+    ],
+    "decision": "archive",
+    "reason": "Overlapping style/orientation or less useful than the curated selection; not added to the editor."
+  }
+]

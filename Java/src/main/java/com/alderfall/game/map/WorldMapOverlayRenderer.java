@@ -108,6 +108,43 @@ public final class WorldMapOverlayRenderer {
         drawMapLabel(g, label, px + labelDx, py + labelDy, new Color(245, 214, 117));
     }
 
+    /** Keep every site icon visible; omit crowded text until zoom/hover makes room. */
+    public static Rectangle drawCampaignMarker(Graphics2D g, WorldMapViewport viewport,
+                                                WorldMap.CampaignMarker site, List<Rectangle> occupied) {
+        int px = screenX(viewport, site.x() + 0.5);
+        int py = screenY(viewport, site.y() + 0.5);
+        g.setColor(new Color(10, 15, 20));
+        g.fillOval(px - 6, py - 6, 13, 13);
+        g.setColor(new Color(245, 214, 117));
+        if (site.kind().contains("camp")) {
+            g.drawPolygon(new int[]{px - 4, px, px + 4}, new int[]{py + 3, py - 4, py + 3}, 3);
+        } else {
+            g.drawRect(px - 3, py - 3, 6, 6);
+        }
+        Rectangle bounds = new Rectangle(px - 7, py - 7, 15, 15);
+        g.setFont(new Font("SansSerif", Font.BOLD, 11));
+        int width = g.getFontMetrics().stringWidth(site.label()) + 8;
+        Rectangle map = new Rectangle(viewport.screenX(), viewport.screenY(), viewport.screenW(), viewport.screenH());
+        for (int dy : new int[]{10, -25, 27, -42, 44, -59}) {
+            boolean placed = false;
+            for (int dx : new int[]{10, -width - 10}) {
+                Rectangle label = new Rectangle(px + dx, py + dy, width, 16);
+                if (!map.contains(label) || occupied.stream().anyMatch(r -> r.intersects(label))) continue;
+                g.setColor(new Color(9, 13, 20, 220));
+                g.fillRoundRect(label.x, label.y, label.width, label.height, 5, 5);
+                g.setColor(new Color(245, 214, 117));
+                g.drawLine(px, py, dx > 0 ? label.x : label.x + label.width, label.y + 8);
+                g.drawString(site.label(), label.x + 4, label.y + 12);
+                occupied.add(label);
+                bounds = bounds.union(label);
+                placed = true;
+                break;
+            }
+            if (placed) break;
+        }
+        return bounds;
+    }
+
     public static void drawQuestMarker(Graphics2D g, WorldMapViewport viewport, Quest.ObjectiveKind kind,
                                        String title, TilePoint marker, Color color,
                                        boolean mainStory, boolean dungeonHazard) {
@@ -184,6 +221,8 @@ public final class WorldMapOverlayRenderer {
         drawLegendSwatch(g, x, rowY, width, Terrain.color('w'), "Water");
         rowY += 34;
         drawLegendSettlement(g, x, rowY, "Settlement");
+        rowY += 26;
+        drawLegendSettlement(g, x, rowY, "Named site (hover)");
         rowY += 26;
         drawLegendQuest(g, x, rowY, new Color(112, 220, 128), "Provision");
         rowY += 26;

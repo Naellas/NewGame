@@ -27,6 +27,8 @@ public final class InteriorLightTest {
         require(!WorldPropRenderer.isFireProp("interior_cooking_station"), "Cold counter emits fire");
         require(!WorldPropRenderer.isFireProp("deco_marsh_firefly_reeds"), "Fireflies emit flame");
         require(WorldPropRenderer.isFireProp("interior_hearth_pot"), "Hearth missing embers");
+        require(WorldPropRenderer.isFireProp("interior_fireplace"), "Fireplace missing fire classification");
+        require(!WorldPropRenderer.isFireProp("interior_firewood_basket"), "Stored wood must not emit flame");
         System.out.println("Interior lighting checks passed at 4 tile scales.");
     }
 

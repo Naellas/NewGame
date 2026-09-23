@@ -1,0 +1,23 @@
+Use case: stylized-concept. Asset type: ONE production fantasy RPG VFX SPRITE ATLAS for Knight. Exact rectangular grid: 5 equal-width COLUMNS and 5 equal-height ROWS (25 slots), evenly spaced edge-to-edge across entire canvas. Requested canvas 2560 by 2560 pixels. ALL slots are exactly equal rectangles; NO border, grid lines, numbers or text. Every effect centered inside its own slot with 18% transparent padding on EVERY side. No sprites may cross cell boundaries. Genuinely transparent RGBA background and holes. Empty unused slots must remain transparent. Match the reference creature's textured hand-painted pixel art: earthy shadows, crisp pixel clusters, selective bright edges, NO smooth vector disks, NO glossy icons, NO broad airbrushed bloom. Battle-view isolated magical/weapon IMPACT OVERLAYS, not inventory icons, no characters, no shields/weapons sitting as items, no scenery. Palette: worn steel, muted gold, ivory sparks. Each slot is separately designed for the named ability; vary silhouette and internal structure, not merely color. Area abilities get wide fan/eruption compositions; heals and wards have open transparent centers. Ordered slots, read LEFT TO RIGHT then TOP TO BOTTOM:
+Row 1 column 1: Aegis Mend — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; focused impact.
+Row 1 column 2: Banner Guard — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 1 column 3: Banner Sweep — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; wide multi-target impact.
+Row 1 column 4: Bulwark — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 1 column 5: Crown Splitter — angular concussive impact, shattered stone or armor debris; wide multi-target impact.
+Row 2 column 1: Crownward Cleave — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; wide multi-target impact.
+Row 2 column 2: Final Challenge — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 2 column 3: First Aid — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; focused impact.
+Row 2 column 4: Iron Refuge — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 2 column 5: Line Anchor — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 3 column 1: Lionheart Charge — fractured arcane glyph fragments and curling magical energy; wide multi-target impact.
+Row 3 column 2: Oathbound Bulwark — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 3 column 3: Power Strike — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 3 column 4: Riposte Promise — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 3 column 5: Royal Cleave — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; wide multi-target impact.
+Row 4 column 1: Royal Order — fractured arcane glyph fragments and curling magical energy; wide multi-target impact.
+Row 4 column 2: Second Wind — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; focused impact.
+Row 4 column 3: Shield Bash — angular concussive impact, shattered stone or armor debris; focused impact.
+Row 4 column 4: Shieldbreaker — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 4 column 5: Unbroken Standard — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 5 column 1: War Cry — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Remaining slots 22 through 25: completely transparent. Keep the exact regular grid, no text. Reference images are style only, do not copy their subjects.

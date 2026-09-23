@@ -287,7 +287,8 @@ def dungeon_prop_relic_crate() -> Image.Image:
 def main() -> None:
     save(town_herringbone_cobble(), "terrain", "town_herringbone_cobble")
     save(town_brick_crosswalk(), "terrain", "town_brick_crosswalk")
-    save(village_packed_earth(), "terrain", "village_packed_earth")
+    # Packed earth's repeated black track marks were retired to asset-review.
+    # Village paths now use the continuous terrain material compositor.
     save(village_plank_walk(), "terrain", "village_plank_walk")
     save(dungeon_mosaic_floor(), "terrain", "dungeon_mosaic_floor")
     save(dungeon_cracked_flagstone(), "terrain", "dungeon_cracked_flagstone")

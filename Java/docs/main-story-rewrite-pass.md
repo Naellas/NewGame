@@ -2,6 +2,8 @@
 
 Implementation checkpoint: 22 September 2026. This pass applies the [story premise](../../Story%20premise/world-framework.md#14-revised-central-premise) and [narrative rewrite brief](../../Story%20premise/narrative-rewrite-brief.md) to all 26 current main quests. It also changes four quests' objective sequences. The [runtime dialogue transcript](main-story-dialogue.md) contains the actual offers, actions, findings, reports, and optional exchanges.
 
+The subsequent comprehension review adds a [35-place runtime location library](../../Story%20premise/location-library.md). All 19 outdoor main quests now bind to 18 named sites rather than generic camp, field, or graveyard indices. Their labels persist without an active quest. See [the clarity review](../../Story%20premise/dialogue-clarity-and-place-review.md) for the specific problems corrected and the first-use explanations required in future writing.
+
 ## Dramatic throughline
 
 The shrine attack gives the player a practical reason to investigate: Oathstead sheltered them, and its protection may share the shrine's weakness. Maelis does not know Vaelthara's private reasons for leaving a survivor. Selene connects the surviving carving to the camp's ward design, then directs the search for missing instructions and Memory.
@@ -17,11 +19,11 @@ Morvane's raid threatens the place that took the player in. The mainland gatheri
 | Quest | Playable sequence | What completion establishes |
 | --- | --- | --- |
 | Watchtower Without Bells | Inspect the obstructed clapper → read the cairn watch names → compare the copied signal → report to Odrick. | Banner cloth obstructed the bell; its household name matches an oath ending at spring thaw; the watch signal was copied beside a raider mark. The culprit's orders remain unproven. |
-| Frosthollow Standard | Defeat Kharvok → examine his fallen standard → report to Odrick for Iron. | Added stitching covers the oath's ending and makes release depend on Kharvok. Killing him alone does not read the standard or finish the cairn keepers' work. |
+| The Stolen Watch Oath (`ms_frosthollow_standard`) | Defeat Kharvok at Banner Cairn → examine his fallen standard → report to Odrick for Iron. | Added stitching covers the Fenrik household's oath ending and makes release depend on Kharvok. Killing him alone does not read the standard or finish the burial keepers' work. |
 | Shrine Without Shadow | Inspect the guest cup → read the altered welcome → examine the plugged outlet → report to Solari. | The old welcome allowed departure at moonset. A later command and iron plug converted hospitality into confinement. The survey does not identify who ordered it. |
 | The Ember Socket Rite | Inspect the transfer cradle → lift Ember clear → open the guest's outlet → report to Solari for Ember. | The draw stops before the outlet opens. A flame remains captive between those actions; only the final interaction releases this guest. The vessel is then empty and cool. Other shrines remain unfinished work. |
 
-These are sequential, reachable world interactions at the existing regional quest sites. Each has a stable stage ID and a separate recorded result. Only the currently active stage's object can execute. The sites still use the existing encounter placement and marker art; this pass does not add bespoke northern cairn or southern temple maps. Kharvok can still be defeated through his supported marked encounter or campaign dungeon, with the standard inspection at the marked regional quest site afterward.
+These are sequential world interactions at named campaign sites. Each has a stable stage ID and a separate recorded result. Only the currently active stage's object can execute. The sites have persistent landmarks and existing prop art; bespoke northern cairn and southern temple interiors remain future work. Kharvok's main encounter and standard inspection now belong to Banner Cairn north of Highwall, rather than the southern Frosthollow cave. Sunken Shrine Forge is the workshop behind the investigated shrine, connected to the same guest vessel.
 
 Solari explicitly authorizes the release and accepts responsibility for finding willing replacement sources. Opening the vessel changes the recorded quest state and removes the completed interaction. It does not install repaired wards, summon a persistent spirit actor, change settlement resource production, or simulate a new source of heat. Those systems must precede any stronger aftermath claims.
 
@@ -45,11 +47,11 @@ The shared findings and journal views retain earlier observations. Generic main-
 
 ## Saves and rewards
 
-The four changed objective sequences use content revision 3. Unfinished older versions restart their evidence sequence while retaining acceptance; loading identifies the quests that need revisiting. The revised Kharvok battle has a new stable stage ID so an older handled encounter cannot consume its new objective.
+All 19 relocated outdoor main quests use content revision 4, including the four restructured objective sequences. Unfinished older versions restart their evidence sequence while retaining acceptance; loading identifies the quests that need revisiting. The revised Kharvok battle has a new stable stage ID so an older handled encounter cannot consume its new objective.
 
 Completed older quests remain completed, and their stones remain earned. They do not gain fabricated observations of the new standard or released guest. Their review dialogue states that the earlier completion is recorded but detailed findings are unavailable. Compatible saves of the new sequences preserve every observation, including the important interval between disconnecting Ember and opening the outlet.
 
-The other 22 quests retain their objective revisions and progress. Every existing stone reward remains at its current source, including Tides in the Fenlands. Final reports still own rewards; optional questions and repeated interactions cannot award them. No persuasion success, companion recruitment, or romance is required.
+The seven main quests outside those outdoor bindings retain their prior objective revisions and progress. Every existing stone reward remains with its quest, including Tides in the Fenlands. Final reports still own rewards; optional questions and repeated interactions cannot award them. No persuasion success, companion recruitment, or romance is required.
 
 ## Verification
 
@@ -59,10 +61,11 @@ Compile with the installed Java 21 toolchain. Run:
 java -cp out-story-refinement com.alderfall.game.MainStoryDialogueTest
 java -cp out-story-refinement com.alderfall.game.QuestNarrativeTest
 java -cp out-story-refinement com.alderfall.game.CompanionQuestSegmentTest
+java -cp out-story-refinement com.alderfall.game.StoryLocationTest
 ```
 
 The main-story suite checks authored branches across every main quest stage, evidence-gated questions, zero-effect information branches, correct coalition speakers, the actual Maelis dialogue menu, four revised sequences through world interactions, stale interactions, save/load between actions, old completion handling, and reward replay. Combat results are driven through the existing encounter/progress hooks; this is not an automated tactical battle playthrough. Passing `docs/main-story-dialogue.md` as its argument regenerates the checked-in transcript from runtime content.
 
 ## Remaining targets
 
-The eastern voyage, Tides migration, dedicated folklore boss replacements, full temple/dungeon layouts, post-raid war-brazier conversation, and selectable network endings remain target work. Vaelthara's history as a bound power remains author-facing truth, not something Damar can prove by assertion. Western and Fenland quest actions outside the earlier pilot still need deeper objective revision, though their dialogue now follows the new premise and accurately describes the supported work.
+The eastern voyage, Tides migration, dedicated folklore boss replacements, full temple/dungeon layouts, post-raid war-brazier conversation, and selectable network endings remain target work. Vaelthara's history as a bound power remains author-facing truth; the player no longer asks Damar about it before discovering it. Western and Fenland main objectives now have named destinations but still need deeper action revisions beyond their current survey, gather, and combat contracts. Later companion and side-quest site bindings require their own location review.

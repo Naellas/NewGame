@@ -1,0 +1,54 @@
+[
+  {
+    "target": "Java/assets/city/buildings/city/city_roof_detail.png",
+    "source": "asset-review/2026-09-22-sprite-integrity/generated-unused/city_roof_detail.png",
+    "archived_to": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/buildings/city/city_roof_detail.png",
+    "move_source_from": "Java/assets/source/sprite-integrity-2026-09-22/city_roof_detail.png"
+  },
+  {
+    "target": "Java/assets/city/buildings/city/city_house_front.png",
+    "source": "asset-review/2026-09-22-sprite-integrity/generated-unused/city_house_front.png",
+    "archived_to": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/buildings/city/city_house_front.png",
+    "move_source_from": "Java/assets/source/sprite-integrity-2026-09-22/city_house_front.png"
+  },
+  {
+    "target": "Java/assets/city/buildings/city/city_building_house_wide.png",
+    "source": "Java/assets/source/sprite-integrity-2026-09-22/city_building_house_wide.png"
+  },
+  {
+    "target": "Java/assets/city/structures/city_wall_gate.png",
+    "source": "asset-review/2026-09-22-sprite-integrity/generated-unused/city_wall_gate.png",
+    "archived_to": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/structures/city_wall_gate.png",
+    "move_source_from": "Java/assets/source/sprite-integrity-2026-09-22/city_wall_gate.png"
+  },
+  {
+    "target": "Java/assets/city/buildings/city/city_building_town_manor.png",
+    "source": "Java/assets/source/sprite-integrity-2026-09-22/city_building_town_manor.png"
+  },
+  {
+    "target": "Java/assets/city/buildings/city/city_building_stone_hall.png",
+    "source": "Java/assets/source/sprite-integrity-2026-09-22/city_building_stone_hall.png"
+  },
+  {
+    "target": "Java/assets/city/props/city/city_prop_source_crate_tall.png",
+    "source": "asset-review/2026-09-22-sprite-integrity/generated-unused/city_prop_source_crate_tall.png",
+    "archived_to": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_source_crate_tall.png",
+    "move_source_from": "Java/assets/source/sprite-integrity-2026-09-22/city_prop_source_crate_tall.png"
+  },
+  {
+    "target": "Java/assets/city/props/village/village_prop_well.png",
+    "source": "Java/assets/source/sprite-integrity-2026-09-22/village_prop_well.png"
+  },
+  {
+    "target": "Java/assets/city/terrain/city_cobble.png",
+    "source": "Java/assets/source/sprite-integrity-2026-09-22/city_cobble.png"
+  },
+  {
+    "target": "Java/assets/city/props/city/city_prop_barrel_stack.png",
+    "source": "Java/assets/source/sprite-integrity-2026-09-22/city_prop_barrel_stack.png"
+  },
+  {
+    "target": "Java/assets/city/props/city/city_prop_crate.png",
+    "source": "Java/assets/source/sprite-integrity-2026-09-22/city_prop_crate.png"
+  }
+]

@@ -554,7 +554,7 @@ def main():
         "mountain_peak": mountain_peak_tile(),
         "water": water_tile(),
         "road": road_tile(),
-        "desert": desert_tile(),
+        # Desert ground now uses the authored desert_sand_wind texture.
         "tundra": tundra_tile(),
         "marsh": marsh_tile(),
         "badlands": badlands_tile(),

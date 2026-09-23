@@ -10,17 +10,19 @@ public final class Terrain {
     public static final char COBBLESTONE_ROAD = 'K';
     public static final char PLANK_ROAD = '7';
     public static final char PACKED_ROAD = '8';
+    /** Passable opening through an authored settlement wall. */
+    public static final char CITY_GATE = 'c';
 
     public static final Set<Character> PASSABLE = Set.of(
-            'g', 'f', 's', 'n', 'v', 'b', 'P', 'q', 'A', 'B', 'r', 'T', 'K', 'c', 'u', 'd', 'p', 'j', 'l', 'a', 'y', 't', 'i', 'e', 'z',
+            'g', 'f', 's', 'n', 'v', 'b', 'P', 'q', 'A', 'B', 'r', 'T', 'K', CITY_GATE, 'u', 'd', 'p', 'j', 'l', 'a', 'y', 't', 'i', 'e', 'z',
             'C', 'G', 'V', 'U', 'D', 'F', 'M', 'R', 'S', 'L', 'N', 'E', 'I', 'J', 'H', 'Q',
             '1', '2', '3', '4', '5', '6', PLANK_ROAD, PACKED_ROAD
     );
     public static final Set<Character> ROAD_LIKE = Set.of(
-            'r', 'T', 'K', 'q', 'B', 'c', 'p', 'j', 'l', 'a', 'C', 'G', 'V', 'U', PLANK_ROAD, PACKED_ROAD
+            'r', 'T', 'K', 'q', 'B', CITY_GATE, 'p', 'j', 'l', 'a', 'C', 'G', 'V', 'U', PLANK_ROAD, PACKED_ROAD
     );
     public static final Set<Character> CONNECTING_ROAD = Set.of(
-            'r', 'T', 'K', 'q', 'B', 'c', 'u', 'd', PLANK_ROAD, PACKED_ROAD
+            'r', 'T', 'K', 'q', 'B', CITY_GATE, 'u', 'd', PLANK_ROAD, PACKED_ROAD
     );
 
     private static final Map<Character, String> NAMES = Map.ofEntries(
@@ -90,12 +92,12 @@ public final class Terrain {
     private static final Map<Character, String> ASSETS = Map.ofEntries(
             Map.entry('g', "grass"),
             Map.entry('f', "forest"),
-            Map.entry('s', "desert"),
+            Map.entry('s', "desert_sand_wind"),
             Map.entry('n', "tundra"),
             Map.entry('v', "marsh"),
             Map.entry('b', "badlands"),
             Map.entry('P', "beach"),
-            Map.entry('~', "submerged_sand"),
+            Map.entry('~', "water"),
             Map.entry('m', "mountain_massif_tile"),
             Map.entry('q', "mountain_pass"),
             Map.entry('A', "location_farmland_tilled"),
@@ -114,10 +116,10 @@ public final class Terrain {
             Map.entry('y', "grass"),
             Map.entry('C', "town_herringbone_cobble"),
             Map.entry('G', "town_brick_crosswalk"),
-            Map.entry('V', "village_packed_earth"),
+            Map.entry('V', "road"),
             Map.entry('U', "village_plank_walk"),
             Map.entry(PLANK_ROAD, "village_plank_walk"),
-            Map.entry(PACKED_ROAD, "village_packed_earth"),
+            Map.entry(PACKED_ROAD, "road"),
             Map.entry('D', "dungeon_mosaic_floor"),
             Map.entry('F', "dungeon_cracked_flagstone"),
             Map.entry('M', "dungeon_moss_floor"),

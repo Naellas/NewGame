@@ -1,0 +1,5 @@
+Required assets retained: 1971
+Generated maps checked: 64
+Placed props checked: 40278
+Archived assets absent from runtime catalog: 42
+Unresolved world prop stems: []

@@ -1,0 +1,22 @@
+[
+    {
+        "original":  "Java/assets/terrain/desert.png",
+        "sha256":  "ABD8B44AD59DF5F8967669BFA755435EF1D4F14BD5262BDFD846A2BD5BAD0BA7",
+        "reason":  "Retired repeating pebble ground; replaced by desert_sand_wind"
+    },
+    {
+        "original":  "Java/assets/terrain/desert_variant_1.png",
+        "sha256":  "34BF5C384BB972011A0AC7C5F095D72A0138736959C883769DFB66F599541012",
+        "reason":  "Retired repeating pebble ground; replaced by desert_sand_wind"
+    },
+    {
+        "original":  "Java/assets/terrain/desert_variant_2.png",
+        "sha256":  "1D3A8F1B6994CC7F86C075D56D73966CD3B9765638E9164E705D4856D0D2FAA0",
+        "reason":  "Retired repeating pebble ground; replaced by desert_sand_wind"
+    },
+    {
+        "original":  "Java/assets/terrain/desert_variant_3.png",
+        "sha256":  "4DA93D7017ACC9CCE99309A2F9B6D051B942DC25FDCFAA5A1C5CA9E39E7FBF69",
+        "reason":  "Retired repeating pebble ground; replaced by desert_sand_wind"
+    }
+]

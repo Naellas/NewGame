@@ -68,7 +68,8 @@ public final class TerrainFeatureRenderer {
     }
 
     public void drawTerrainEdges(Graphics2D g, char tile, int wx, int wy, int px, int py) {
-        if (!"overworld".equals(state.world.kind(state.currentMapId))) {
+        String mapKind = state.world.kind(state.currentMapId);
+        if (!"overworld".equals(mapKind) && !"dungeon".equals(mapKind)) {
             return;
         }
         int[][] dirs = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
@@ -89,7 +90,7 @@ public final class TerrainFeatureRenderer {
 
     public void drawSettlementSurfaceSeams(Graphics2D g, int camX, int camY) {
         String kind = state.world.kind(state.currentMapId);
-        if (!"city".equals(kind) && !"village".equals(kind)) {
+        if (!"city".equals(kind)) {
             return;
         }
         int ts = tileSize();
@@ -153,7 +154,14 @@ public final class TerrainFeatureRenderer {
     }
 
     private boolean shouldBlend(char tile, char other) {
+        if ("dungeon".equals(state.world.kind(state.currentMapId))) {
+            return isDungeonFloorMaterial(tile) && isDungeonFloorMaterial(other) && tile != other;
+        }
         return isNatural(tile) && isNatural(other) && tile != other;
+    }
+
+    private boolean isDungeonFloorMaterial(char tile) {
+        return "dDFMRLNEIJHQ1234".indexOf(tile) >= 0;
     }
 
     public boolean isNatural(char tile) {
@@ -174,7 +182,9 @@ public final class TerrainFeatureRenderer {
         int ts = tileSize();
         int seed = terrainTransitionSeed(wx, wy, direction, other);
         Polygon transition = terrainTransitionPolygon(px, py, ts, direction, seed);
-        BufferedImage texture = assets.image(effects.terrainImageName(other, nx, ny), ts, ts);
+        BufferedImage texture = "dungeon".equals(state.world.kind(state.currentMapId))
+                ? assets.imageWithoutBorder(effects.terrainImageName(other, nx, ny), ts, ts)
+                : assets.image(effects.terrainImageName(other, nx, ny), ts, ts);
 
         Graphics2D blend = (Graphics2D) g.create();
         blend.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -243,7 +253,10 @@ public final class TerrainFeatureRenderer {
             blend.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             blend.setClip(corner);
             blend.setComposite(AlphaComposite.SrcOver.derive(terrainTextureAlpha(tile, other) * 0.72f));
-            blend.drawImage(assets.image(effects.terrainImageName(other, nx, ny), ts, ts), px, py, null);
+            BufferedImage texture = "dungeon".equals(state.world.kind(state.currentMapId))
+                    ? assets.imageWithoutBorder(effects.terrainImageName(other, nx, ny), ts, ts)
+                    : assets.image(effects.terrainImageName(other, nx, ny), ts, ts);
+            blend.drawImage(texture, px, py, null);
             blend.setComposite(AlphaComposite.SrcOver.derive(terrainTintAlpha(tile, other) * 0.65f));
             blend.setColor(edgeColor(tile, other));
             blend.fill(corner);
@@ -343,7 +356,8 @@ public final class TerrainFeatureRenderer {
             drawWaterRainRings(g, wx, wy, px, py, tileSize, seed, true, stormIntensity);
         }
         // Overworld shorelines now follow a continuous coverage mask, not tile-edge lines.
-        if (!"overworld".equals(state.world.kind(state.currentMapId))) {
+        if (!"overworld".equals(state.world.kind(state.currentMapId))
+                && !"village".equals(state.world.kind(state.currentMapId))) {
             drawWaterShoreFoam(g, wx, wy, px, py, tileSize, wave);
         }
         g.setComposite(oldComposite);
@@ -437,7 +451,8 @@ public final class TerrainFeatureRenderer {
     public void drawRoadConnectors(Graphics2D g, int camX, int camY) {
         int ts = tileSize();
         String mapKind = state.world.kind(state.currentMapId);
-        boolean texturedRoads = isTexturedRoadMap(mapKind);
+        boolean layeredRoads = "village".equals(mapKind) || "overworld".equals(mapKind);
+        boolean texturedRoads = isTexturedRoadMap(mapKind) && !layeredRoads;
         for (int sy = 0; sy < context.visibleRows(); sy++) {
             for (int sx = 0; sx < context.visibleCols(); sx++) {
                 int wx = camX + sx;
@@ -456,6 +471,8 @@ public final class TerrainFeatureRenderer {
                     drawBridgeTile(g, wx, wy, px, py);
                     continue;
                 }
+                // Overworld and village roads share continuous materials in the ground compositor.
+                if (layeredRoads) continue;
                 if (drawsRoadOverlay(tile, mapKind)) {
                     drawTexturedRoadTile(g, wx, wy, px, py, tile, "village".equals(mapKind) || "city".equals(mapKind));
                     continue;

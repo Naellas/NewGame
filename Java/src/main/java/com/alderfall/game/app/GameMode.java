@@ -11,6 +11,7 @@ public enum GameMode {
     QUEST_LOG,
     SKILLS,
     INVENTORY,
+    CHEST,
     CRAFTING,
     PARTY,
     VILLAGE,

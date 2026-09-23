@@ -8,20 +8,26 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class WorldRenderer {
     private static final Color WORLD_VOID_COLOR = new Color(5, 6, 9);
-    private static final int TERRAIN_CHUNK_TILES = 12;
-    private static final int TERRAIN_CHUNK_CACHE_LIMIT = 192;
+    // Smaller chunks keep a one-step zoom-out from generating a large block of
+    // terrain that is still mostly off-screen. Even with a larger entry limit,
+    // their worst-case pixel footprint is below the previous 12x12 layout.
+    private static final int TERRAIN_CHUNK_TILES = 4;
+    private static final int TERRAIN_CHUNK_CACHE_LIMIT = 384;
 
     private final AssetStore assets;
     private final TerrainPainter terrainPainter;
     private final WorldPropRenderer propRenderer;
     private final LightingPainter lightingPainter;
     private final LayeredTerrainRenderer layeredTerrain;
+    private final CavernTerrainRenderer cavernTerrain;
+    private final List<WorldPropRenderer.PropRenderData> visiblePropRenders = new ArrayList<>();
     private final Map<TerrainChunkKey, TerrainChunk> terrainChunkCache = new LinkedHashMap<>(64, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<TerrainChunkKey, TerrainChunk> eldest) {
@@ -35,10 +41,12 @@ public final class WorldRenderer {
         this.propRenderer = propRenderer;
         this.lightingPainter = lightingPainter;
         this.layeredTerrain = new LayeredTerrainRenderer(assets);
+        this.cavernTerrain = new CavernTerrainRenderer(assets);
     }
 
     void drawTerrainBase(Graphics2D g, TerrainContext context) {
         drawTerrainBase(g, context, true);
+        drawSettlementWalls(g, context);
     }
 
     void drawCachedTerrainBase(Graphics2D g, TerrainContext context) {
@@ -56,6 +64,7 @@ public final class WorldRenderer {
                 g.drawImage(image, px, py, null);
             }
         }
+        drawSettlementWalls(g, context);
     }
 
     void drawTerrainAnimations(Graphics2D g, TerrainContext context) {
@@ -67,7 +76,7 @@ public final class WorldRenderer {
                 if (wx < 0 || wy < 0 || wx >= context.mapWidth() || wy >= context.mapHeight()) {
                     continue;
                 }
-                if ("overworld".equals(context.mapKind())) {
+                if (LayeredTerrainRenderer.supports(context.mapKind())) {
                     if (nearWater(context, wx, wy)) {
                         drawLayeredWater(g, context, wx, wy, sx * context.tileSize(), sy * context.tileSize());
                     }
@@ -75,6 +84,10 @@ public final class WorldRenderer {
                 }
                 char tile = context.state().world.tileAt(mapId, wx, wy);
                 char terrainTile = terrainPainter.visibleTerrainTile(tile, wx, wy);
+                if ("city".equals(context.mapKind())) {
+                    if (tile == 'x') terrainTile = settlementWallGround(mapId);
+                    else if (tile == Terrain.CITY_GATE) terrainTile = Terrain.COBBLESTONE_ROAD;
+                }
                 if (terrainTile == 'w' || terrainTile == '~') {
                     terrainPainter.drawWaterAnimation(g, wx, wy, sx * context.tileSize(), sy * context.tileSize(), context.tileSize());
                 }
@@ -84,6 +97,7 @@ public final class WorldRenderer {
 
     private void drawTerrainBase(Graphics2D g, TerrainContext context, boolean drawAnimations) {
         String mapId = context.state().currentMapId;
+        var cavern = "dungeon".equals(context.mapKind()) ? context.state().world.dungeonContext(mapId) : null;
         for (int sy = 0; sy < context.visibleRows(); sy++) {
             for (int sx = 0; sx < context.visibleCols(); sx++) {
                 int wx = context.camX() + sx;
@@ -97,7 +111,11 @@ public final class WorldRenderer {
                 }
                 char tile = context.state().world.tileAt(mapId, wx, wy);
                 char terrainTile = terrainPainter.visibleTerrainTile(tile, wx, wy);
-                if ("overworld".equals(context.mapKind())) {
+                if (CavernTerrainRenderer.supports(cavern)) {
+                    cavernTerrain.draw(g, context.state(), cavern, wx, wy, px, py, context.tileSize());
+                    continue;
+                }
+                if (LayeredTerrainRenderer.supports(context.mapKind())) {
                     g.drawImage(layeredTerrain.tile(context.state(), terrainPainter, wx, wy, context.tileSize()).image(), px, py, null);
                     if (drawAnimations && nearWater(context, wx, wy)) drawLayeredWater(g, context, wx, wy, px, py);
                     drawTileOverlay(g, context, tile, wx, wy, px, py);
@@ -155,13 +173,20 @@ public final class WorldRenderer {
                 chunkX,
                 chunkY
         );
-        long fingerprint = terrainChunkFingerprint(context, originX, originY);
+        long visualRevision = context.state().world.visualRevision(context.state().currentMapId);
         TerrainChunk cached = terrainChunkCache.get(key);
-        if (cached != null && cached.fingerprint == fingerprint) {
+        if (cached != null && cached.visualRevision == visualRevision) {
             return cached.image;
         }
 
         int size = TERRAIN_CHUNK_TILES * context.tileSize();
+        TerrainChunk reusable = closestTerrainChunk(key, visualRevision);
+        if (reusable != null) {
+            BufferedImage image = scaleTerrainChunk(reusable.image, size);
+            terrainChunkCache.put(key, new TerrainChunk(image, visualRevision, true));
+            return image;
+        }
+
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         Graphics2D chunkGraphics = image.createGraphics();
         drawTerrainBase(chunkGraphics, new TerrainContext(
@@ -178,8 +203,53 @@ public final class WorldRenderer {
         ), false);
         chunkGraphics.dispose();
         image = opaqueTerrainImage(image);
-        terrainChunkCache.put(key, new TerrainChunk(image, fingerprint));
+        terrainChunkCache.put(key, new TerrainChunk(image, visualRevision, false));
         return image;
+    }
+
+    private TerrainChunk closestTerrainChunk(TerrainChunkKey target, long visualRevision) {
+        TerrainChunk closestNative = null;
+        TerrainChunk closestAny = null;
+        int nativeDistance = Integer.MAX_VALUE;
+        int anyDistance = Integer.MAX_VALUE;
+        for (Map.Entry<TerrainChunkKey, TerrainChunk> entry : terrainChunkCache.entrySet()) {
+            TerrainChunkKey candidateKey = entry.getKey();
+            TerrainChunk candidate = entry.getValue();
+            if (candidate.visualRevision != visualRevision
+                    || candidateKey.tileSize == target.tileSize
+                    || candidateKey.chunkX != target.chunkX
+                    || candidateKey.chunkY != target.chunkY
+                    || candidateKey.mapWidth != target.mapWidth
+                    || candidateKey.mapHeight != target.mapHeight
+                    || !candidateKey.mapId.equals(target.mapId)
+                    || !candidateKey.mapKind.equals(target.mapKind)) {
+                continue;
+            }
+            int distance = Math.abs(candidateKey.tileSize - target.tileSize);
+            if (distance < anyDistance) {
+                closestAny = candidate;
+                anyDistance = distance;
+            }
+            if (!candidate.derived && distance < nativeDistance) {
+                closestNative = candidate;
+                nativeDistance = distance;
+            }
+        }
+        return closestNative != null ? closestNative : closestAny;
+    }
+
+    private BufferedImage scaleTerrainChunk(BufferedImage source, int size) {
+        int type = source.getType() == BufferedImage.TYPE_INT_RGB
+                ? BufferedImage.TYPE_INT_RGB
+                : BufferedImage.TYPE_INT_ARGB;
+        BufferedImage scaled = new BufferedImage(size, size, type);
+        Graphics2D graphics = scaled.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        graphics.drawImage(source, 0, 0, size, size, null);
+        graphics.dispose();
+        return scaled;
     }
 
     // Opaque chunks can use Java2D's copy path instead of blending every pixel each frame.
@@ -203,49 +273,6 @@ public final class WorldRenderer {
         return opaque;
     }
 
-    private long terrainChunkFingerprint(TerrainContext context, int originX, int originY) {
-        String mapId = context.state().currentMapId;
-        long hash = 1469598103934665603L;
-        hash = mix(hash, mapId.hashCode());
-        hash = mix(hash, System.identityHashCode(context.state().world));
-        hash = mix(hash, context.mapKind().hashCode());
-        hash = mix(hash, context.mapWidth());
-        hash = mix(hash, context.mapHeight());
-
-        int margin = terrainFingerprintMargin(context.mapKind(), mapId);
-        int minX = originX - margin;
-        int minY = originY - margin;
-        int maxX = originX + TERRAIN_CHUNK_TILES + margin;
-        int maxY = originY + TERRAIN_CHUNK_TILES + margin;
-        for (int wy = minY; wy < maxY; wy++) {
-            for (int wx = minX; wx < maxX; wx++) {
-                hash = mix(hash, wx);
-                hash = mix(hash, wy);
-                hash = mix(hash, context.state().world.tileAt(mapId, wx, wy));
-                if ("interior".equals(context.mapKind())) {
-                    hash = mix(hash, context.state().world.interiorRugAt(mapId, wx, wy) ? 1 : 0);
-                }
-                String landmark = context.state().world.landmarkAt(mapId, wx, wy);
-                if (landmark != null) {
-                    hash = mix(hash, landmark.hashCode());
-                }
-            }
-        }
-        return hash;
-    }
-
-    private int terrainFingerprintMargin(String mapKind, String mapId) {
-        if ("overworld".equals(mapKind) || com.alderfall.game.map.WorldMap.OVERWORLD_ID.equals(mapId)) {
-            return 6;
-        }
-        return 1;
-    }
-
-    private long mix(long hash, int value) {
-        hash ^= value;
-        return hash * 1099511628211L;
-    }
-
     void rebuildNearbyProps(PropContext context, List<WorldProp> nearbyProps) {
         nearbyProps.clear();
         for (WorldProp prop : context.state().world.propsInTileOrder(
@@ -265,7 +292,11 @@ public final class WorldRenderer {
             if (!isGroundProp(prop.asset())) {
                 continue;
             }
-            if (usesLayeredCampGround(context, prop)) continue;
+            if (usesLayeredLocationGround(context, prop)) continue;
+            // Location dressing must not stamp square paving over a continuous travel surface.
+            if (LayeredTerrainRenderer.supports(context.state().world.kind(context.state().currentMapId))
+                    && !prop.asset().equals("location_farmland_tilled")
+                    && RoadSurface.isRoad(context.state().world.tileAt(context.state().currentMapId, prop.x(), prop.y()))) continue;
             if (!isWorldPropVisible(prop, context)) {
                 continue;
             }
@@ -273,10 +304,10 @@ public final class WorldRenderer {
         }
     }
 
-    private boolean usesLayeredCampGround(PropContext context, WorldProp prop) {
+    private boolean usesLayeredLocationGround(PropContext context, WorldProp prop) {
         if (!com.alderfall.game.map.WorldMap.OVERWORLD_ID.equals(context.state().currentMapId)
                 || prop.asset().equals("location_farmland_tilled")) return false;
-        return context.state().world.campGroundCoverage(prop.x() + 0.5, prop.y() + 0.5) > 0.01;
+        return context.state().world.usesLayeredLocationGroundAt(prop.x(), prop.y());
     }
 
     private void drawGroundPropOverlay(Graphics2D g, WorldProp prop, PropContext context, int inset) {
@@ -301,33 +332,26 @@ public final class WorldRenderer {
 
     void drawVisibleProps(Graphics2D g, PropContext context, List<WorldProp> nearbyProps, List<WorldProp> visibleProps) {
         visibleProps.clear();
+        visiblePropRenders.clear();
         for (WorldProp prop : nearbyProps) {
-            if (prop.asset().equals("location_overgrown_landing") && usesLayeredCampGround(context, prop)) continue;
+            if (prop.asset().equals("location_overgrown_landing") && usesLayeredLocationGround(context, prop)) continue;
             if (!isGroundProp(prop.asset()) && isWorldPropVisible(prop, context)) {
-                visibleProps.add(prop);
+                visiblePropRenders.add(propRenderer.prepare(prop, context));
             }
         }
         if ("interior".equals(context.state().world.kind(context.state().currentMapId))) {
-            visibleProps.sort(java.util.Comparator.comparingDouble(prop -> {
-                int[] footprint = context.state().world.interiorVisualFootprint(prop.asset());
-                double bottom = prop.y() + footprint[1];
-                return bottom + (prop.asset().startsWith("interior_tabletop_")
-                        || prop.asset().equals("interior_seed_bowl") || prop.asset().equals("interior_flower_vase")
-                        || prop.asset().equals("interior_mortar_pestle") ? 0.1 : 0);
-            }));
-        } else if (com.alderfall.game.map.WorldMap.OVERWORLD_ID.equals(context.state().currentMapId)) {
-            Map<WorldProp, PropPlacement.Placement> placements = new java.util.HashMap<>();
-            for (WorldProp prop : visibleProps) placements.put(prop,
-                    PropPlacement.at(context.state().world, context.state().currentMapId, prop));
-            visibleProps.sort(java.util.Comparator.<WorldProp>comparingInt(prop ->
-                            placements.get(prop).kind() == PropPlacement.Kind.COVER
-                                    || prop.asset().equals("location_overgrown_landing") ? 0 : 1)
-                    .thenComparingDouble(prop -> placements.get(prop).footY(prop))
-                    .thenComparingDouble(prop -> prop.x() + placements.get(prop).x())
-                    .thenComparing(WorldProp::asset).thenComparingInt(WorldProp::size));
+            visiblePropRenders.sort(java.util.Comparator.comparingDouble(WorldPropRenderer.PropRenderData::depthY));
+        } else if (PropPlacement.usesOffsets(context.state().world, context.state().currentMapId)) {
+            visiblePropRenders.sort(java.util.Comparator
+                    .comparingInt(WorldPropRenderer.PropRenderData::depthLayer)
+                    .thenComparingDouble(WorldPropRenderer.PropRenderData::depthY)
+                    .thenComparingDouble(WorldPropRenderer.PropRenderData::depthX)
+                    .thenComparing(WorldPropRenderer.PropRenderData::asset)
+                    .thenComparingInt(render -> render.prop().size()));
         }
-        for (WorldProp prop : visibleProps) {
-            propRenderer.drawWorldProp(g, prop, context);
+        for (WorldPropRenderer.PropRenderData render : visiblePropRenders) {
+            visibleProps.add(render.prop());
+            propRenderer.drawWorldProp(g, render, context);
         }
     }
 
@@ -390,7 +414,7 @@ public final class WorldRenderer {
                     context.tileSize() - scaled(12, context.zoom()),
                     context.tileSize() - scaled(10, context.zoom())
             );
-        } else if (tile == 'x' || tile == 'o') {
+        } else if ((tile == 'x' || tile == 'o') && !"city".equals(context.mapKind())) {
             g.setColor(new Color(40, 38, 45, 120));
             g.fillRect(px, py, context.tileSize(), context.tileSize());
         }
@@ -423,6 +447,165 @@ public final class WorldRenderer {
                 || asset.equals("location_dungeon_approach_path");
     }
 
+    /**
+     * Draws wall art after terrain chunks, so it can extend beyond collision tiles like a tree canopy.
+     * Straight runs use multi-tile modules; towers and gates are drawn last to cover every join.
+     */
+    private void drawSettlementWalls(Graphics2D g, TerrainContext context) {
+        if (!"city".equals(context.mapKind()) || assets == null) {
+            return;
+        }
+        String mapId = context.state().currentMapId;
+        int tileSize = context.tileSize();
+        String prefix = settlementWallAssetPrefix(mapId);
+        // Settlement maps are small; scanning the complete ring prevents a long run whose start is
+        // off-camera from disappearing when the camera is looking at its middle.
+        int minX = 0;
+        int minY = 0;
+        int maxX = context.mapWidth();
+        int maxY = context.mapHeight();
+
+        // Horizontal artwork represents three collision tiles and slightly overlaps the next module.
+        for (int wy = minY; wy < maxY; wy++) {
+            for (int wx = minX; wx < maxX; wx++) {
+                if (!horizontalCityWallTile(context, wx, wy)
+                        || horizontalCityWallTile(context, wx - 1, wy)) continue;
+                int run = 0;
+                while (horizontalCityWallTile(context, wx + run, wy)) run++;
+                for (int offset = 0; offset < run; offset += 3) {
+                    int span = Math.min(3, run - offset);
+                    int drawWidth = Math.round((span + 0.36f) * tileSize);
+                    int drawHeight = Math.round(tileSize * 1.45f);
+                    double center = wx + offset + span / 2.0;
+                    int drawX = (int) Math.round((center - context.camX()) * tileSize - drawWidth / 2.0);
+                    int drawY = (wy - context.camY() + 1) * tileSize - drawHeight;
+                    g.drawImage(assets.spriteFit(prefix + "_horizontal_seamless", drawWidth, drawHeight), drawX, drawY, null);
+                }
+            }
+        }
+
+        // Vertical artwork is deliberately wider than its collision column and spans two tiles at a time.
+        for (int wx = minX; wx < maxX; wx++) {
+            for (int wy = minY; wy < maxY; wy++) {
+                if (!verticalCityWallTile(context, wx, wy)
+                        || verticalCityWallTile(context, wx, wy - 1)) continue;
+                int run = 0;
+                while (verticalCityWallTile(context, wx, wy + run)) run++;
+                for (int offset = 0; offset < run; offset += 3) {
+                    int span = Math.min(3, run - offset);
+                    int drawWidth = Math.round(tileSize * 1.45f);
+                    int drawHeight = Math.round(Math.max(3.0f, span + 0.38f) * tileSize);
+                    double center = wy + offset + span / 2.0;
+                    int drawX = (int) Math.round((wx - context.camX() + 0.5) * tileSize - drawWidth / 2.0);
+                    int drawY = (int) Math.round((center - context.camY()) * tileSize - drawHeight / 2.0);
+                    g.drawImage(assets.spriteFit(prefix + "_vertical_seamless", drawWidth, drawHeight), drawX, drawY, null);
+                }
+            }
+        }
+
+        // Gatehouses cover their run once; adjacent straight modules terminate underneath their sockets.
+        for (int wy = minY; wy < maxY; wy++) {
+            for (int wx = minX; wx < maxX; wx++) {
+                if (context.state().world.tileAt(mapId, wx, wy) != Terrain.CITY_GATE) continue;
+                boolean horizontal = cityWallNode(context, wx - 1, wy) || cityWallNode(context, wx + 1, wy);
+                boolean vertical = cityWallNode(context, wx, wy - 1) || cityWallNode(context, wx, wy + 1);
+                drawSettlementGate(g, context, prefix, wx, wy,
+                        (wx - context.camX()) * tileSize, (wy - context.camY()) * tileSize,
+                        horizontal && !vertical);
+            }
+        }
+
+        // Corner and endpoint towers are the top visual layer and hide all segment seams.
+        for (int wy = minY; wy < maxY; wy++) {
+            for (int wx = minX; wx < maxX; wx++) {
+                if (context.state().world.tileAt(mapId, wx, wy) != 'x') continue;
+                boolean horizontal = cityWallNode(context, wx - 1, wy) || cityWallNode(context, wx + 1, wy);
+                boolean vertical = cityWallNode(context, wx, wy - 1) || cityWallNode(context, wx, wy + 1);
+                if (horizontal == vertical && horizontal) {
+                    drawWallTower(g, context, prefix + "_tower", wx, wy, 2.45f, 2.55f);
+                } else if (!horizontal && !vertical) {
+                    drawWallTower(g, context, prefix + "_end_tower", wx, wy, 2.05f, 2.55f);
+                }
+            }
+        }
+    }
+
+    private boolean horizontalCityWallTile(TerrainContext context, int x, int y) {
+        if (x < 0 || y < 0 || x >= context.mapWidth() || y >= context.mapHeight()
+                || context.state().world.tileAt(context.state().currentMapId, x, y) != 'x') return false;
+        boolean horizontal = cityWallNode(context, x - 1, y) || cityWallNode(context, x + 1, y);
+        boolean vertical = cityWallNode(context, x, y - 1) || cityWallNode(context, x, y + 1);
+        return horizontal && !vertical;
+    }
+
+    private boolean verticalCityWallTile(TerrainContext context, int x, int y) {
+        if (x < 0 || y < 0 || x >= context.mapWidth() || y >= context.mapHeight()
+                || context.state().world.tileAt(context.state().currentMapId, x, y) != 'x') return false;
+        boolean horizontal = cityWallNode(context, x - 1, y) || cityWallNode(context, x + 1, y);
+        boolean vertical = cityWallNode(context, x, y - 1) || cityWallNode(context, x, y + 1);
+        return vertical && !horizontal;
+    }
+
+    private void drawWallTower(Graphics2D g, TerrainContext context, String asset, int wx, int wy,
+                               float widthInTiles, float heightInTiles) {
+        int tileSize = context.tileSize();
+        int drawWidth = Math.round(tileSize * widthInTiles);
+        int drawHeight = Math.round(tileSize * heightInTiles);
+        int centerX = Math.round((wx - context.camX() + 0.5f) * tileSize);
+        int bottomY = (wy - context.camY() + 1) * tileSize;
+        g.drawImage(assets.spriteFit(asset, drawWidth, drawHeight),
+                centerX - drawWidth / 2, bottomY - drawHeight, null);
+    }
+
+    private void drawSettlementGate(Graphics2D g, TerrainContext context, String prefix,
+                                    int wx, int wy, int px, int py, boolean horizontal) {
+        String mapId = context.state().currentMapId;
+        int tileSize = context.tileSize();
+        int run = 1;
+        if (horizontal) {
+            if (context.state().world.tileAt(mapId, wx - 1, wy) == Terrain.CITY_GATE) return;
+            while (context.state().world.tileAt(mapId, wx + run, wy) == Terrain.CITY_GATE) run++;
+        } else {
+            if (context.state().world.tileAt(mapId, wx, wy - 1) == Terrain.CITY_GATE) return;
+            while (context.state().world.tileAt(mapId, wx, wy + run) == Terrain.CITY_GATE) run++;
+        }
+        int drawWidth = horizontal ? Math.max(Math.round(tileSize * 4.6f), (run + 2) * tileSize)
+                : Math.round(tileSize * 2.45f);
+        int drawHeight = horizontal ? Math.round(tileSize * 2.35f) : Math.round(tileSize * 3.15f);
+        int centerX = px + (horizontal ? run * tileSize / 2 : tileSize / 2);
+        String module = horizontal ? "gate_horizontal_clean" : "gate_vertical_clean";
+        int drawY = horizontal
+                ? py + tileSize - drawHeight
+                : py + run * tileSize / 2 - drawHeight / 2;
+        g.drawImage(assets.spriteFit(prefix + "_" + module, drawWidth, drawHeight),
+                centerX - drawWidth / 2, drawY, null);
+    }
+
+    private boolean cityWallNode(TerrainContext context, int x, int y) {
+        if (x < 0 || y < 0 || x >= context.mapWidth() || y >= context.mapHeight()) return false;
+        char tile = context.state().world.tileAt(context.state().currentMapId, x, y);
+        return tile == 'x' || tile == Terrain.CITY_GATE;
+    }
+
+    private static String settlementWallAssetPrefix(String mapId) {
+        return switch (RegionalSettlementIdentity.region(mapId)) {
+            case NORTH -> "city_wall_north";
+            case SUN -> "city_wall_sun";
+            case FEN -> "city_wall_fen";
+            case FREEHOLDS -> "city_wall_freeholds";
+            default -> "city_wall_hearth";
+        };
+    }
+
+    private static char settlementWallGround(String mapId) {
+        return switch (RegionalSettlementIdentity.region(mapId)) {
+            case NORTH, FREEHOLDS -> 'n';
+            case SUN -> 's';
+            case FEN -> 'v';
+            default -> 'g';
+        };
+    }
+
     private static float groundPropOpacity(String asset) {
         return switch (asset) {
             case "location_graveyard_dirt" -> 0.88f;
@@ -444,7 +627,7 @@ public final class WorldRenderer {
     ) {
     }
 
-    private record TerrainChunk(BufferedImage image, long fingerprint) {
+    private record TerrainChunk(BufferedImage image, long visualRevision, boolean derived) {
     }
 
     public record TerrainContext(
@@ -469,8 +652,15 @@ public final class WorldRenderer {
             int visibleRows,
             int tileSize,
             int zoom,
-            int frame
+            int frame,
+            double windStrength,
+            double windRadians
     ) {
+        public PropContext(GameState state, int camX, int camY, int visibleCols, int visibleRows,
+                           int tileSize, int zoom, int frame) {
+            this(state, camX, camY, visibleCols, visibleRows, tileSize, zoom, frame,
+                    state.windStrength(), state.windRadians());
+        }
     }
 
     record LightingContext(

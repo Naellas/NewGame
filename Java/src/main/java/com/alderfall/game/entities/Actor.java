@@ -387,7 +387,7 @@ public final class Actor {
     }
 
     public int professionLevelCap(String professionId) {
-        int cap = Profession.BASE_MAX_LEVEL
+        int cap = Profession.BASE_MAX_LEVEL + skillRank(professionId + "_mastery")
                 + skillRank("trade_foundations")
                 + skillRank("master_of_trades");
         cap += switch (professionId) {
@@ -405,7 +405,8 @@ public final class Actor {
     }
 
     public int professionPracticeBonus(String professionId) {
-        int bonus = skillRank("trade_foundations") + skillRank("master_of_trades");
+        int bonus = skillRank("trade_foundations") + skillRank("master_of_trades")
+                + skillRank(professionId + "_training") + skillRank(professionId + "_mastery");
         bonus += switch (professionId) {
             case "woodcutting" -> skillRank("forester_path") + skillRank("resin_tapping") + skillRank("heartwood_harvest");
             case "fishing" -> skillRank("angler_path") + skillRank("netcraft") + skillRank("deepwater_bounty");

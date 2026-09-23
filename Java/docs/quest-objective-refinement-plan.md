@@ -4,6 +4,8 @@ Status: Design plan with an initial runtime implementation. See [Quest Narrative
 
 Main-story checkpoint, 22 September 2026: all 26 current campaign quests now have authored premise-led conversations. Watchtower Without Bells, Frosthollow Standard, Shrine Without Shadow, and The Ember Socket Rite also have revised action sequences: distinct findings, post-battle inspection, and an ordered disconnect/release ritual. See [the implementation contracts](main-story-rewrite-pass.md) and [actual runtime dialogue](main-story-dialogue.md). This extends workstream E without declaring the later eastern campaign or new boss designs implemented.
 
+The comprehension/location follow-up renames Frosthollow Standard to *The Stolen Watch Oath* and places it at Banner Cairn north of Highwall. The [runtime location library](../../Story%20premise/location-library.md) now supplies named destinations for every main quest and replaces indexed outdoor sites in 19 of them. The [clarity review](../../Story%20premise/dialogue-clarity-and-place-review.md) requires introductions for unfamiliar nouns, concrete object labels, and directions that match actual game places.
+
 ## 1. Intended result
 
 Make every objective describe an action the player can actually perform, at a believable place, for a reason connected to their story. Completion must prove the promised action happened. Dialogue, journal text, world evidence, rewards, and aftermath must agree about that result.

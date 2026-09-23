@@ -1,0 +1,1 @@
+PASS: 39 unique NPC catalog references, 126 static NPC assets, 87 animation strips; 2070 frame renders across three display sizes.

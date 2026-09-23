@@ -7,6 +7,7 @@ public final class StatusEffects {
     public static final Map<String, StatusEffect> ALL = Map.ofEntries(
             entry("poison", "Poison", 3, 6, "Takes damage each turn", "debuff"),
             entry("weak", "Weak", 2, 0, "Damage reduced by 30%", "debuff"),
+            entry("frozen", "Frozen", 2, 0, "Encased in frost; damage reduced by 30%", "debuff"),
             entry("vulnerable", "Vulnerable", 2, 0, "Takes 25% more damage", "debuff"),
             entry("fortified", "Fortified", 2, 0, "Damage reduced by 25%", "buff"),
             entry("haste", "Haste", 3, 0, "Damage increased", "buff"),
@@ -66,6 +67,7 @@ public final class StatusEffects {
         return switch (key) {
             case "poison" -> "PS";
             case "weak" -> "WK";
+            case "frozen" -> "FR";
             case "vulnerable" -> "VN";
             case "fortified" -> "FT";
             case "haste" -> "HS";

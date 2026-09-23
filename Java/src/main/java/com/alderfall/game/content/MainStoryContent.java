@@ -48,15 +48,19 @@ public final class MainStoryContent {
             boolean fixedSite = place != null && place.outdoorSite();
             List<Quest.QuestStage> stages = new ArrayList<>();
             for (Quest.QuestStage s : q.stages) {
-                String opening = opening(q, s, scene) + (place == null ? "" : " " + place.route());
+                String opening = opening(q, s, scene);
+                if (place != null && !opening.contains(place.name())) opening += " " + arrivalDirections(place);
                 String finding = finding(s);
                 String report = stages.size() == q.stages.size() - 1 ? scene.report() : finding;
                 String target = s.id().equals("ms_stolen_index_page") ? "Stolen Vault Instructions" : s.target();
-                stages.add(new Quest.QuestStage(s.id(), s.title(), target, s.needed(), s.objectiveKind(),
+                String stageTitle = s.id().equals("ms_stolen_index_page") ? "Recover the keeper's instructions"
+                        : s.id().equals("ms_stolen_index_guards") ? "Defeat Crowhook's cache guards" : s.title();
+                stages.add(new Quest.QuestStage(s.id(), stageTitle, target, s.needed(), s.objectiveKind(),
                         s.objectiveMapId(), fixedSite ? "place:" + place.id() : s.objectiveLocationKind(),
                         fixedSite ? 0 : s.objectiveLocationIndex(), s.objectiveAsset(),
                         s.monsterKey(), s.targetNpcId(), s.branchOutcomeKey(), opening,
-                        fixedSite ? s.progressDialog() + " " + place.route() : s.progressDialog(), finding, report));
+                        fixedSite ? "At " + place.name() + ": " + s.progressDialog() + " " + arrivalDirections(place)
+                                : s.progressDialog(), finding, report));
             }
             Quest.QuestStage first = stages.get(0);
             String title = q.id.equals("ms_frosthollow_standard") ? "The Stolen Watch Oath"
@@ -70,6 +74,11 @@ public final class MainStoryContent {
             rewritten.contentRevision = fixedSite ? 4 : q.contentRevision;
             quests.put(q.id, rewritten);
         }
+    }
+
+    private static String arrivalDirections(StoryLocationCatalog.Place place) {
+        int end = place.route().indexOf('.');
+        return end < 0 ? place.route() : place.route().substring(0, end + 1);
     }
 
     private static void refineInvestigations(Map<String, Quest> quests) {
@@ -167,19 +176,29 @@ public final class MainStoryContent {
 
     public static String completedReport(Quest q) {
         if (q.contentRevision >= 3 && !q.observedStages.contains(q.stages.get(q.stages.size() - 1).id())) {
-            return "Your earlier completion of " + q.title + " remains recorded. We have no detailed findings from the revised investigation to review.";
+            return "Your earlier help with " + q.title + " is recorded, but we have no field notes from that journey to review.";
         }
         return QuestNarrative.clean(q.activeCompleteDialog());
     }
 
     /** Coalition testimony must be spoken by its contact, not by Maelis or the next representative. */
     public static String subject(Quest q, Npc npc) {
-        if (!"ms_kingdoms_answer".equals(q.id)) return subject(q);
+        if (!"ms_kingdoms_answer".equals(q.id)) return forSpeaker(subject(q), npc);
         if ("Maelis".equals(npc.name())) return q.ready() || q.completed
                 ? "You have five answers. Tell me what each person actually agreed to; I need to plan for the help we can expect."
                 : scene(q.id).opening();
         if (q.activeTargetNpcId().equals(npc.name()) && !q.ready()) return q.activeStartDialog();
         return "You have my answer for Oathstead. Take it to Maelis with the other commitments.";
+    }
+
+    private static String forSpeaker(String line, Npc npc) {
+        if (npc == null) return line;
+        String name = npc.name();
+        return line.replace("Find " + name + " in ", "You can find me in ")
+                .replace("return to " + name, "return to me")
+                .replace("Return to " + name, "Return to me")
+                .replace("report to " + name, "report to me")
+                .replace("to " + name + " in ", "to me in ");
     }
 
     public static List<Topic> topics(Quest q, Npc npc) {
@@ -316,7 +335,7 @@ public final class MainStoryContent {
         });
         StoryLocationCatalog.Place place = StoryLocationCatalog.forQuest(q.id);
         if (place != null) result.add(t("Where is " + place.name() + ", and what am I looking for?",
-                place.route() + " Look for: " + place.landmark()));
+                forSpeaker(place.route() + " Look for: " + place.landmark(), npc)));
         result.add(t("What is a ward?", "A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment."));
         return List.copyOf(result);
     }
@@ -365,6 +384,7 @@ public final class MainStoryContent {
 
     private static String finding(Quest.QuestStage s) {
         return switch (s.id()) {
+            case "ms_stolen_index_guards" -> "Crowhook's three cache guards are defeated. Search the Stolen Vault Instructions cache for the leaf headed 'Old Oath Vault: Keeper's Instructions'.";
             case "archive_index" -> "The builders' index lists northern and southern ward instructions. The leaf titled 'Old Oath Vault: Keeper's Instructions' is missing. A ransom demand tucked into the index says to pay for the stolen Archive papers at Crowhook Bandit Camp.";
             case "ms_stolen_index_page" -> "You recovered the leaf headed 'Old Oath Vault: Keeper's Instructions'. It describes the entry seal and Memory pedestal beneath Archive City, including how to release the Stone of Memory safely.";
             case "vault_memory" -> "The Memory pedestal responds to the recovered instructions. Its inscription describes preserving the names and terms of ward service. Report to Selene to complete recovery of the stone.";
@@ -395,7 +415,7 @@ public final class MainStoryContent {
                     "A shared design would establish a shared risk worth investigating. It would not tell us how Vaelthara opened the shrine, or whether she can open every ward.",
                     "The shrine and Oathstead use the same ward pattern. We need to compare the instructions kept with the Stone of Memory beneath Archive City. The keeper's instructions were stolen, and the ransom demand in the index names Crowhook Bandit Camp. Recover that document so we can examine the stone safely.");
             case "ms_stolen_index" -> new Scene(
-                    "The bandits took a leaf headed 'Old Oath Vault: Keeper's Instructions'. It describes the protective seal around the Stone of Memory beneath Archive City. Their ransom demand names Crowhook Bandit Camp. Defeat the three cutthroats guarding the papers, then search the cache for that heading.",
+                    "The bandits took a leaf headed 'Old Oath Vault: Keeper's Instructions'. It describes the protective seal around the Stone of Memory beneath Archive City. Their ransom demand names Crowhook Bandit Camp on Belltower's southern approach. Defeat the three cutthroats guarding the papers, then search the cache for that heading.",
                     "Recover the missing vault instructions so Selene can investigate the network protecting Oathstead.",
                     "The ransom demand identifies Crowhook Bandit Camp. It does not prove the bandits serve Vaelthara. We need the keeper's instructions recovered before investigating the people behind the theft.",
                     "This is the missing keeper's document. It describes the seal and Memory pedestal inside the Old Oath Vault beneath Archive City. Enter the vault, compare the carved seal with these instructions, then examine the pedestal before removing the stone.");
@@ -408,7 +428,7 @@ public final class MainStoryContent {
                     "Highwall Cairn Watch is the bell post beside our old roadwatch graves, southwest of the city. Its bell should warn supply carts of danger. It has fallen silent. Inspect the Split Signal Bell, the Cairn Watch Names beside it, and the Copied Watch Signal by the road before I send another cart through.",
                     "Trace the failure of Highwall's warning chain on the road carrying food and refugees between the northern holds and the rest of Alderfall.",
                     "The families tending the roadwatch graves think their dead relatives are being called back to duty. First I need to know why the living patrol's warning bell stopped working. The bell, burial inscription, and roadside signal give us something to examine.",
-                    "The bell was obstructed, a household's watch name used, and our safe-passage signal copied. This was interference, not just winter damage. Three brutes still hold the marked route. Break their force before I send repair crews through.");
+                    "The bell was obstructed, the Fenrik household's watch name used, and our safe-passage signal copied. Three orc brutes still hold Highwall Supply Pass, southeast of the city. Break their force before I send repair crews through.");
             case "ms_raiders_pass" -> new Scene(
                     "Three orc brutes hold the marked route. While they stay there, neither carts nor repair crews can use it. Break that force; afterward we face the standard Kharvok has raised over the pass.",
                     "Remove the force preventing Highwall from restoring its road and responding to Kharvok's command over the northern boundary.",
@@ -423,14 +443,14 @@ public final class MainStoryContent {
                     "At Sunken Guest Shrine, southwest of Sanctum, a fire spirit lives inside a shrine vessel. The keepers invited it to warm travelers and power the road's protective magic. The vessel has begun burning its keepers. Examine the spirit's cup, the welcome carved beneath it, and the outlet it should be able to leave through.",
                     "Investigate southern fire wards whose failures threaten caravan hospitality and the routes that keep the Sunrealm supplied.",
                     "I do not yet know whether the fire presences are injured, confined, or replaced. Calling all of them demons would settle nothing.",
-                    "The welcome allowed departure at moonset. Someone changed that command and plugged the outlet with iron. This vessel held a captive. We must reach the forge and disconnect its draw before opening it. First, clear the imps on the caravan route.");
+                    "The welcome allowed the fire spirit to leave at moonset. Someone changed those words and plugged its exit with iron. We must disconnect the draw at Sunken Shrine Forge before opening the vessel. First, clear the six imps at Glass Caravan Halt so our recovery crews can use that road.");
             case "ms_caravan_glass" -> new Scene(
                     "Six ember imps threaten the shrine road. The caravan carries vessels made for guest flames, and supplies we need to recover. Clear the imps; afterward I can arrange the work of bringing those stores back.",
                     "Reach the southern forge by removing the creatures that prevent recovery along the caravan route.",
                     "We have not established that the imps are the shrine's guests or that killing them repairs a vessel. The caravan recovery remains work to arrange.",
-                    "The imps are dealt with. I will arrange recovery of the caravan stores. Go to the marked forge shrine: examine the cradle, disconnect Ember, then open the vessel. I authorize the guest's release. We will have to replace the warmth it was forced to give.");
+                    "The imps are dealt with. I will arrange recovery of the caravan stores. Return to Sunken Shrine Forge, behind the altar we investigated: examine Ember's cradle, disconnect the stone, then open the spirit's vessel. I authorize that release. We will have to replace the warmth it was forced to give.");
             case "ms_ember_socket_rite" -> new Scene(
-                    "Return to the fire vessel at Sunken Guest Shrine. Its forge controls the iron channel drawing heat from that captive spirit. Inspect Ember's cradle in the workshop, lift the stone clear, then open the vessel's outlet. I authorize the release and will answer for replacing the heat the road wards will lose.",
+                    "Return to Sunken Shrine Forge, the workshop behind Sunken Guest Shrine southwest of Sanctum. Its iron channel draws heat from the same captive fire spirit you investigated. Inspect Ember's cradle, lift the stone clear, then open the vessel's outlet. I authorize the release and will answer for replacing the heat the road wards will lose.",
                     "Recover Ember with an understanding of the difference between sharing protective power and extracting it from a captive source.",
                     "We know this shrine tradition was altered to confine a guest. We do not yet know who ordered the alteration, or how many other vessels were changed.",
                     "You disconnected the draw and opened the outlet. The guest left. Take Ember: it transfers power, but is not itself the fire we imprisoned. That vessel is cold now. I will answer for finding willing sources and repairing the shrines; releasing one guest has not done that work for us.");
@@ -438,7 +458,7 @@ public final class MainStoryContent {
                     "A landing bell is sounding where no keeper should be pulling the rope. A boat can follow that sound straight into deep water. Inspect the three marked rope sites; I need to know what our warning chain can still be trusted to do.",
                     "Investigate Fenland signals that may guide displaced families toward danger instead of toward shelter.",
                     "We can inspect the bell sites. We cannot identify every voice beneath the marsh from the sound alone.",
-                    "Your survey gives the bellkeepers somewhere to begin. Mireford's sick cannot wait for the whole marsh to make sense. Gather fever reed before we face the danger below Miredepth.");
+                    "The keepers have your survey of Reedbank Bell Landing. Mireford's sick need help while they investigate the bell. Gather six samples at Mireford Fever-Reed Beds, south of the village, before we face Velmora below Miredepth Cave.");
             case "ms_medicine_mireford" -> new Scene(
                     "Mireford needs fever reed. Gather six samples from the marked sources. We can investigate the drowned bells and still make time for people who need help tonight.",
                     "Keep the Fenland investigation connected to living patients who cannot wait for the campaign's mysteries to be solved.",
@@ -465,17 +485,17 @@ public final class MainStoryContent {
                     "The river accounts describe absorbing excess ward power. They do not prove what the stolen stone has consumed on this road.",
                     "Take the Stone of Hunger. The river accounts say it once drew in surplus force when wards were struck. Find out where that force goes before you feed it more. Riverside still has grain to recover and mouths to fill.");
             case "ms_orchard_ward" -> new Scene(
-                    "We used to leave the first fallen apple for the stag. Now Rootmaw attacks the people tending the trees. Stop it before another household loses someone to the orchard that feeds us.",
+                    "Rootmaw is the great stag that used to guard Oakhaven Ward Orchard. Our families left the first fallen apple for it each year. Now it attacks the people tending our fruit trees. Stop Rootmaw at the orchard southeast of Oakhaven before another worker is killed.",
                     "Face a wounded guardian of a living ward and recover Roots without confusing the creature's defeat with the orchard's healing.",
                     "I know our orchard customs and I know Rootmaw is attacking. I do not know which injury or broken protection drove it to this.",
                     "Rootmaw is down. I will tend the orchard, but that will take more than a fight. Take Roots. Protection once passed through these trees to the households around them; remember those households when you work on the greater network.");
             case "ms_names_cold_stone" -> new Scene(
-                    "The names on Stonegate's graves are damaged, and the Nameless Warden attacks those who approach. Our burial words release a person from duties held in life. I fear that release is failing. Stop the Warden so the graves can be reached again.",
+                    "At Stonegate Crypt, the names have been scratched from burial stones and an undead guardian called the Nameless Warden attacks visitors. The Stone of Graves once marked the end of a dead person's service to the wards. Stop the Warden so we can recover that stone and begin restoring the names.",
                     "Recover Graves while confronting the possibility that the old defense continues to demand service from people who should be at rest.",
                     "The damaged names and the Warden's behavior support my fear. They do not tell us who damaged the graves or prove that every burial binding is broken.",
                     "The Warden has fallen. The names still need restoring. Take Graves: its place in the network is to recognize that a life, and its service, can end. Do not build a new safety that refuses people that release.");
             case "ms_cold_road" -> new Scene(
-                    "The Hailback Broodmother blocks Snowrest's winter road. We have families waiting on supplies that must come through that pass. Stop her; the road crews will still have work after the fighting.",
+                    "A giant mountain spider called the Hailback Broodmother has blocked Snowrest Winter Pass, east of our village. Our food and medicine carts need that road. Kill the Broodmother at the marked encounter so the road crews can get through.",
                     "Recover Frost from the northern road and recognize the difference between buying time against disaster and trapping a place in endless suspension.",
                     "Hailbacks belong to these mountains. Their presence is not evidence of Vaelthara's orders. Removing this one will not end winter or deliver our stores.",
                     "The Broodmother is defeated. We still need supply runs and patrols. Take Frost. The old keepers used it to slow a failing protection until help came. A delay is only mercy if help eventually arrives.");
@@ -485,17 +505,17 @@ public final class MainStoryContent {
                     "The foundation survey will guide repairs. Until rope and fittings are replaced, I cannot promise a warning will pass along the whole line.",
                     "That gives me a repair survey. Take Bells. It coordinates warnings across distance, but it still needs keepers, rope, and metal that holds. A promise to warn someone is work, every day.");
             case "ms_blackvault_mark" -> new Scene(
-                    "Blackvault held the residue of old ward workings. Its maintenance books describe stores that should have been discharged. Sareth now blocks access to the Ash stone. Defeat him so that recovery can begin.",
+                    "Blackvault Ruins, west of Redcairn, stored dangerous magical force left over from the old protective wards. Its books describe chambers that should have been emptied using the Stone of Ash. An armed guardian called Sareth now blocks our access. Defeat him so we can recover the stone.",
                     "Recover Ash and confront the accumulated cost of a defense whose spent power was stored where later generations could ignore it.",
                     "The maintenance books describe Blackvault's purpose. They do not establish who ordered its neglect, or prove a personal history for Vaelthara.",
                     "Sareth is defeated. Take Ash. It gives spent power a way out of the network; sealing waste away forever only leaves the danger to somebody else. Blackvault still needs work beyond this one chamber.");
             case "ms_camp_defending" -> new Scene(
-                    "Morvane's raid is coming for Oathstead. This is the camp that took you in after the shrine; now it is home to people with nowhere else to stand. Use the defense point when you are ready. We have to hold.",
+                    "Morvane, one of Vaelthara's commanders, is bringing raiders against Oathstead. This is the camp that sheltered you after the shrine attack. Use Oathstead's defense point when you are ready to lead the defense; the people living here need us to hold.",
                     "Defend the home built after the shrine attack and make voluntary cooperation, rather than Vaelthara's obedience, the basis of its survival.",
                     "Holding against Morvane will stop this raid. It will not end Vaelthara's campaign or guarantee that another army cannot reach us.",
                     "We held. You are still here, and so are the people who stood with you. Take Oaths for the Gate expedition. It recognizes a commitment freely made; after a day like this, I understand why that needed a stone of its own.");
             case "ms_kingdoms_answer" -> new Scene(
-                    "Oathstead held, but we cannot sustain the next fight alone. Ask Mirella, Odrick, Selene, Ysra, and Solari what help they will commit while we reach the Gate. Bring back their conditions as carefully as their promises.",
+                    "Oathstead held, but we need help while you reach Vaelthara. Ask Mirella in Riverside for grain, Captain Odrick in Highwall for a watch detail, archivist Selene in Archive City for ward instructions, bellkeeper Ysra in Belltower for warnings, and priest Solari in Sanctum for support. Return to me with each person's answer.",
                     "Gather five explicit mainland commitments for Oathstead and the Gate expedition, while allowing each participant to state the limits of their help.",
                     "An agreement is not an arrived grain barge, a repaired bell, or a full account of the old binding. We must plan around those limits.",
                     "Five commitments, each with its limits. Take Dawn, the twelfth stone. We can attempt to open the Gate. The promised help still needs to reach us, and these five voices do not speak for every coast or every power the network touches.");

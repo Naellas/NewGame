@@ -306,7 +306,7 @@ public final class VillageManager {
             new PlaceableAsset("location_camp_tent", "Tent", 46, VillageCost.of(0, Map.of("skin", 1)), "Camp")
     );
 
-    private static final List<PlaceableAsset> INTERIOR_ASSETS = List.of(
+    private static final List<PlaceableAsset> INTERIOR_ASSETS = withHouseholdFurnishings(List.of(
             new PlaceableAsset("interior_bed_vertical", "Bed", 48, VillageCost.of(8, Map.of("wood", 2, "skin", 1)), "Beds"),
             new PlaceableAsset("interior_resident_bed", "Resident Bed", 48, VillageCost.of(10, Map.of("wood", 2, "skin", 1)), "Beds"),
             new PlaceableAsset("interior_round_table", "Round Table", 48, VillageCost.of(6, Map.of("wood", 2)), "Tables"),
@@ -390,7 +390,13 @@ public final class VillageManager {
             new PlaceableAsset("interior_counter_corner_h", "Counter Corner", 48, VillageCost.of(5, Map.of("wood", 1)), "Misc"),
             new PlaceableAsset("interior_tavern_bar", "Tavern Bar", 48, VillageCost.of(10, Map.of("wood", 4)), "Misc"),
             new PlaceableAsset("interior_hearth_pot", "Hearth Pot", 48, VillageCost.of(5, Map.of("stone", 1, "iron_ore", 1)), "Misc")
-    );
+    ));
+
+    private static List<PlaceableAsset> withHouseholdFurnishings(List<PlaceableAsset> existing) {
+        var result = new java.util.ArrayList<>(existing);
+        for (InteriorFurnishings.Furnishing item : InteriorFurnishings.all()) result.add(item.placeable());
+        return List.copyOf(result);
+    }
 
     private static final List<TilePlan> TILES = List.of(
             new TilePlan('i', "Interior Floor", VillageCost.free(), "Plain interior floor for custom rooms."),

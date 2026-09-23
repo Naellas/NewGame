@@ -1,0 +1,21 @@
+Use case: stylized-concept. Asset type: ONE production fantasy RPG VFX SPRITE ATLAS for Nightblade. Exact rectangular grid: 5 equal-width COLUMNS and 5 equal-height ROWS (25 slots), evenly spaced edge-to-edge across entire canvas. Requested canvas 2560 by 2560 pixels. ALL slots are exactly equal rectangles; NO border, grid lines, numbers or text. Every effect centered inside its own slot with 18% transparent padding on EVERY side. No sprites may cross cell boundaries. Genuinely transparent RGBA background and holes. Empty unused slots must remain transparent. Match the reference creature's textured hand-painted pixel art: earthy shadows, crisp pixel clusters, selective bright edges, NO smooth vector disks, NO glossy icons, NO broad airbrushed bloom. Battle-view isolated magical/weapon IMPACT OVERLAYS, not inventory icons, no characters, no shields/weapons sitting as items, no scenery. Palette: charcoal, deep violet, moonlit silver. Each slot is separately designed for the named ability; vary silhouette and internal structure, not merely color. Area abilities get wide fan/eruption compositions; heals and wards have open transparent centers. Ordered slots, read LEFT TO RIGHT then TOP TO BOTTOM:
+Row 1 column 1: Dusk Black Powder Cut — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; wide multi-target impact.
+Row 1 column 2: Dusk Killing Angle — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 1 column 3: Dusk Last Breath Contract — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 1 column 4: Dusk Moonless Verdict — torn shadow ribbons, dark blade trails and moonlit motes; wide multi-target impact.
+Row 1 column 5: Dusk Needle Riposte — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 2 column 1: Dusk Perfect Exit — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 2 column 2: Dusk Ruin the Room — splashed venom droplets, alchemical vapor and corrosion fragments; wide multi-target impact.
+Row 2 column 3: Dusk Shadow Double — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 2 column 4: Eclipse Flurry — torn shadow ribbons, dark blade trails and moonlit motes; wide multi-target impact.
+Row 2 column 5: Eclipse Rain — torn shadow ribbons, dark blade trails and moonlit motes; wide multi-target impact.
+Row 3 column 1: Execution Mark — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 3 column 2: Fade — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 3 column 3: Garrote Cut — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 3 column 4: Midnight Knife — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 3 column 5: Moonless Verdict — torn shadow ribbons, dark blade trails and moonlit motes; wide multi-target impact.
+Row 4 column 1: Night Mantle — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 4 column 2: Night Slash — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 4 column 3: Nocturne Veil — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 4 column 4: Poison Kiss — splashed venom droplets, alchemical vapor and corrosion fragments; focused impact.
+Remaining slots 20 through 25: completely transparent. Keep the exact regular grid, no text. Reference images are style only, do not copy their subjects.

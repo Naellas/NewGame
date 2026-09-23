@@ -8,6 +8,8 @@ This draft supersedes the first draft's assumption that existing story content m
 
 ### How to use this document
 
+The [location library](location-library.md) identifies the main campaign's fixed game places, their inhabitants, landmarks, and routes. The [dialogue clarity review](dialogue-clarity-and-place-review.md) defines what NPCs must explain to a player who has not read this bible. Cultural titles and supernatural terms should enrich an already understandable situation.
+
 Playable main-story checkpoint, 22 September 2026: [the campaign rewrite pass](../Java/docs/main-story-rewrite-pass.md) connects all 26 current quests to the premise in sections 14–17. Northern oath inspections and the southern guest-fire release now provide local, observable examples of protection turned into compulsion. This establishes those cases, not universal player knowledge of the author-facing history below. The eastern voyage, new folklore bosses, and final network settlement remain targets.
 
 - Sections 1–4 establish the shared world and the distinction between current content and target fiction.
@@ -416,6 +418,8 @@ This preserves twelve stones and the Dawn-last structure while changing the camp
 These are story targets, not existing selectable endings. Avoid labeling one choice perfect. Explain its concrete local consequences and show which promises the player can actually keep.
 
 ## 16. People who carry the setting
+
+Runtime character grounding: [the current cast conversations](../Java/docs/npc-background-conversations.md) introduce all nine companions and eleven main-story givers through their work, public background and reasons to ask a stranger for help. First quest offers unfold over multiple passages; more personal companion disclosures open through trust or shared work. [The integration report](../Java/docs/location-and-character-pass.md) distinguishes this playable pass from later arc and geography work still required.
 
 ### Main cast
 

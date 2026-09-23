@@ -1,0 +1,1 @@
+Sand and three variants retired from runtime. Originals preserved here. Replacement assets and exact imagegen prompts: Java/docs/desert-surfaces.md. Old road textures remain in use by other map types.

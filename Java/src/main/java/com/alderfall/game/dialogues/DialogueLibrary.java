@@ -24,6 +24,11 @@ public final class DialogueLibrary {
             Random random,
             DialogueContext context
     ) {
+        return startSession(npc, quest, biomeContext, relationship, random, context, "");
+    }
+
+    public static DialogueSession startSession(Npc npc, Quest quest, String biomeContext, int relationship,
+                                                Random random, DialogueContext context, String precedingReport) {
         DialogueContext dialogueContext = context == null ? DialogueContext.empty() : context;
         Map<String, DialogueNode> nodes = new LinkedHashMap<>();
         String greeting = greetingQuote(npc, random);
@@ -38,7 +43,7 @@ public final class DialogueLibrary {
             List<DialogueChoice> homeChoices = new ArrayList<>();
             addCompanionMilestoneTree(nodes, rootChoices, companionVoice, relationship, dialogueContext);
             if (quest != null && quest.companionQuest()) {
-                addCompanionQuestTree(nodes, rootChoices, companionVoice, quest, relationship, dialogueContext);
+                addCompanionQuestTree(nodes, rootChoices, npc, companionVoice, quest, relationship, dialogueContext, precedingReport);
             }
             addCompanionRecruitmentTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
             addCompanionRelationshipTree(nodes, personalChoices, companionVoice, relationship, dialogueContext);
@@ -60,7 +65,7 @@ public final class DialogueLibrary {
         if (campaignSpeaker) {
             addCampaignTopics(nodes, rootChoices, "campaign_personal", MainStoryContent.personal(npc), quest,
                     List.of(new DialogueChoice("Back to topics", "root")));
-            if (quest != null) addQuestOfferNodes(nodes, npc, quest, "quest");
+            if (quest != null) addQuestOfferNodes(nodes, npc, quest, "quest", precedingReport);
         } else if (companionVoice == null) {
             String personal = pick(npcSpecificDialog(npc), random);
             if (!personal.isBlank()) {
@@ -94,7 +99,7 @@ public final class DialogueLibrary {
                         new DialogueChoice(craftDoubtLabel(npc), "work_doubt", -1),
                         new DialogueChoice("Back to topics", "root")
                 ));
-                addQuestOfferNodes(nodes, npc, quest, "quest");
+                addQuestOfferNodes(nodes, npc, quest, "quest", precedingReport);
             } else {
                 addNode(nodes, "work", professionDialog(npc, random), List.of(
                         new DialogueChoice(craftRespectLabel(npc), "work_more", 1),
@@ -124,10 +129,17 @@ public final class DialogueLibrary {
         addNode(nodes, "local_dismiss", "Local: " + npc.name() + " lets the warning drop. The land will make its own argument.", backChoices());
 
         if (quest != null) {
-            greeting = MainStoryContent.supports(quest) ? MainStoryContent.subject(quest, npc) : QuestNarrative.subject(quest);
             if (companionVoice == null) {
                 rootChoices.add(0, new DialogueChoice("Discuss " + quest.title + ".", "quest"));
             }
+        }
+        NpcBackstories.Profile history = NpcBackstories.profile(npc);
+        if (history != null) {
+            boolean unfamiliar = !dialogueContext.recruited() && relationship < 20
+                    && (quest == null || !quest.completed && quest.id.equals(npc.questId()));
+            if (companionVoice == null || unfamiliar) greeting = history.greeting();
+            addCampaignTopics(nodes, rootChoices, "background", NpcBackstories.topics(npc, quest, relationship), quest,
+                    List.of(new DialogueChoice("Back to topics", "root")));
         }
         addNode(nodes, "root", "\"" + greeting + "\"", rootChoices);
         return new DialogueSession(nodes, quest);
@@ -4886,28 +4898,37 @@ public final class DialogueLibrary {
         return quest == null ? "" : "quest:outcome:" + quest.id + ":" + quest.activeStage().id() + ":" + outcome;
     }
 
-    private static void addCompanionQuestTree(Map<String, DialogueNode> nodes, List<DialogueChoice> root,
-                                               CompanionVoice voice, Quest quest, int relationship, DialogueContext context) {
+    private static void addCompanionQuestTree(Map<String, DialogueNode> nodes, List<DialogueChoice> root, Npc speaker,
+                                               CompanionVoice voice, Quest quest, int relationship, DialogueContext context, String precedingReport) {
         root.add(new DialogueChoice("Discuss " + quest.title + ".", "companion_quest"));
-        addGroundedQuestTree(nodes, quest, "companion_quest", voice, context, null);
+        addGroundedQuestTree(nodes, quest, "companion_quest", voice, context, speaker, precedingReport);
     }
 
-    private static void addQuestOfferNodes(Map<String, DialogueNode> nodes, Npc npc, Quest quest, String prefix) {
-        if (quest != null) addGroundedQuestTree(nodes, quest, prefix, companionVoice(npc), DialogueContext.empty(), npc);
+    private static void addQuestOfferNodes(Map<String, DialogueNode> nodes, Npc npc, Quest quest, String prefix, String precedingReport) {
+        if (quest != null) addGroundedQuestTree(nodes, quest, prefix, companionVoice(npc), DialogueContext.empty(), npc, precedingReport);
     }
 
     private static void addGroundedQuestTree(Map<String, DialogueNode> nodes, Quest quest, String prefix,
-                                             CompanionVoice voice, DialogueContext context, Npc speaker) {
+                                             CompanionVoice voice, DialogueContext context, Npc speaker, String precedingReport) {
         List<DialogueChoice> choices = new ArrayList<>();
-        List<DialogueChoice> back = List.of(new DialogueChoice("Return to " + quest.title + ".", prefix),
+        List<DialogueChoice> back = List.of(new DialogueChoice("About helping you...", prefix + "_responses"),
                 new DialogueChoice("Back to topics", "root"));
+        NpcQuestStories.Story localStory = NpcQuestStories.story(quest);
         if (MainStoryContent.supports(quest)) {
             addCampaignTopics(nodes, choices, prefix + "_story", MainStoryContent.topics(quest, speaker), quest, back);
+        } else if (localStory != null) {
+            addCampaignTopics(nodes, choices, prefix + "_story", NpcQuestStories.topics(quest, speaker), quest, back);
+        } else {
+            choices.add(new DialogueChoice("How did this start?", prefix + "_purpose"));
         }
-        choices.add(new DialogueChoice("Why does this matter now?", prefix + "_purpose"));
-        choices.add(new DialogueChoice("What have we actually established?", prefix + "_facts"));
-        choices.add(new DialogueChoice("What still needs to be done?", prefix + "_next"));
-        choices.add(new DialogueChoice("What are we still uncertain about?", prefix + "_unknown"));
+        if (!precedingReport.isBlank()) {
+            choices.add(new DialogueChoice("How did our earlier work lead to this?", prefix + "_earlier"));
+            addPagedNode(nodes, prefix + "_earlier", dialoguePassages(precedingReport + " "
+                    + QuestNarrative.clean(quest.stages.getFirst().startDialog())), back);
+        }
+        if (quest.accepted || quest.completed)
+            choices.add(new DialogueChoice("What do we know so far?", prefix + "_facts"));
+        choices.add(new DialogueChoice(quest.completed ? "What happens here now?" : "Where should I begin?", prefix + "_next"));
         addNode(nodes, prefix + "_purpose", voice == null && quest.companionQuest()
                 ? "You are helping with " + quest.title + ". " + quest.description : QuestNarrative.purpose(quest), back);
         List<DialogueChoice> evidenceChoices = new ArrayList<>();
@@ -4924,13 +4945,14 @@ public final class DialogueLibrary {
         addNode(nodes, prefix + "_next", QuestNarrative.instruction(quest), back);
         addNode(nodes, prefix + "_unknown", QuestNarrative.uncertainty(quest), back);
         if (!quest.accepted && !quest.completed) {
-            choices.add(new DialogueChoice("I'll help with " + quest.activeStage().title() + ".", prefix + "_accept", 0, questAcceptEffect(quest)));
+            choices.add(new DialogueChoice(localStory == null ? "I'll help with " + quest.activeStage().title() + "." : localStory.accept(),
+                    prefix + "_accept", 0, questAcceptEffect(quest)));
             addNode(nodes, prefix + "_accept", "Agreed. " + QuestNarrative.instruction(quest), back);
         } else if (quest.ready() && !quest.completed) {
             if (!quest.companionQuest() || voice != null) {
                 choices.add(new DialogueChoice("Report the completed work.", prefix + "_report", 0, questTurnInEffect(quest)));
             }
-            addNode(nodes, prefix + "_report", QuestNarrative.clean(quest.activeReadyDialog()), back);
+            addNode(nodes, prefix + "_report", QuestNarrative.clean(quest.activeCompleteDialog()), back);
         } else if (quest.accepted && !quest.completed && quest.activeObjectiveKind() == Quest.ObjectiveKind.CHOICE
                 && !context.questOutcome(quest.outcomeKey()).isBlank()) {
             choices.add(new DialogueChoice("Keep our recorded decision.", prefix + "_retained", 0,
@@ -4946,6 +4968,12 @@ public final class DialogueLibrary {
             }
             if (options.isEmpty()) {
                 for (String outcome : List.of("truth", "protect", "mercy", "accountability")) {
+                    if (localStory != null && quest.title.equals("Hard Truth")) {
+                        String node = prefix + "_decision_" + outcome;
+                        choices.add(new DialogueChoice(NpcQuestStories.grainDecision(outcome, false), node, 0, questOutcomeEffect(quest, outcome)));
+                        addNode(nodes, node, NpcQuestStories.grainDecision(outcome, true), back);
+                        continue;
+                    }
                     String label = switch (outcome) {
                         case "truth" -> "Give the people involved the findings we have verified.";
                         case "protect" -> "Keep the witness's identity private while we investigate.";
@@ -4977,11 +5005,31 @@ public final class DialogueLibrary {
             addNode(nodes, prefix + "_chosen", String.join(" ", decisions) + " " + QuestNarrative.instruction(quest), back);
         }
         choices.add(new DialogueChoice("I need to check something first.", "root"));
-        String topic = quest.completed ? "We finished " + quest.title + ". We can review what happened."
-                : quest.ready() ? "You have completed this stage of " + quest.title + ". Tell me how it went."
-                : "For " + quest.title + ", our current task is: " + quest.activeStage().title() + ".";
+        String topic = NpcQuestStories.subject(quest);
         if (MainStoryContent.supports(quest)) topic = MainStoryContent.subject(quest, speaker);
-        addNode(nodes, prefix, topic, choices);
+        List<String> passages = new ArrayList<>();
+        if (!precedingReport.isBlank() && !quest.accepted && !quest.completed)
+            passages.addAll(dialoguePassages(precedingReport));
+        if (localStory != null && !quest.accepted && !quest.completed) {
+            if (speaker != null) passages.add(NpcQuestStories.occupation(speaker));
+            passages.addAll(dialoguePassages(quest.activeStartDialog()));
+            passages.add(localStory.concern());
+        } else {
+            NpcBackstories.Profile history = NpcBackstories.profile(speaker);
+            if (history != null && !quest.accepted && !quest.completed && quest.stageIndex == 0
+                    && quest.id.equals(speaker.questId())) {
+                passages.addAll(dialoguePassages(history.background()));
+                passages.addAll(dialoguePassages(history.reasonToAsk()));
+            }
+            // Repeat the observation that caused the next step, but only if the player recorded it.
+            if (quest.stageIndex > 0 && !quest.completed && !quest.ready()) {
+                Quest.QuestStage previous = quest.stages.get(quest.stageIndex - 1);
+                if (quest.observedStages.contains(previous.id()))
+                    passages.addAll(dialoguePassages(QuestNarrative.clean(previous.readyDialog())));
+            }
+            passages.addAll(dialoguePassages(topic));
+        }
+        addPagedNode(nodes, prefix, passages, choices);
     }
 
     private static void addCampaignTopics(Map<String, DialogueNode> nodes, List<DialogueChoice> choices,
@@ -4995,8 +5043,35 @@ public final class DialogueLibrary {
             List<DialogueChoice> replies = new ArrayList<>();
             addCampaignTopics(nodes, replies, id, topic.replies(), quest, back);
             replies.addAll(back);
-            addNode(nodes, id, topic.answer(), replies);
+            addPagedNode(nodes, id, dialoguePassages(topic.answer()), replies);
         }
+    }
+
+    private static List<String> dialoguePassages(String text) {
+        List<String> passages = new ArrayList<>();
+        StringBuilder passage = new StringBuilder();
+        for (String sentence : text.split("(?<=[.!?])\\s+|\\n\\n")) {
+            if (!passage.isEmpty() && passage.length() + sentence.length() > 290) {
+                passages.add(passage.toString());
+                passage.setLength(0);
+            }
+            if (!passage.isEmpty()) passage.append(' ');
+            passage.append(sentence);
+        }
+        if (!passage.isEmpty()) passages.add(passage.toString());
+        return passages.isEmpty() ? List.of(text) : passages;
+    }
+
+    /** Advancing narration never accepts a quest, awards approval, or changes an objective. */
+    private static void addPagedNode(Map<String, DialogueNode> nodes, String id, List<String> passages,
+                                     List<DialogueChoice> responses) {
+        for (int i = 0; i < passages.size(); i++) {
+            String current = i == 0 ? id : id + "_page_" + i;
+            boolean last = i == passages.size() - 1;
+            addNode(nodes, current, passages.get(i), last ? responses
+                    : List.of(new DialogueChoice("Continue", id + "_page_" + (i + 1))));
+        }
+        addNode(nodes, id + "_responses", passages.getLast(), responses);
     }
 
     static boolean allowedQuestOutcome(Npc npc, Quest quest, String outcome) {

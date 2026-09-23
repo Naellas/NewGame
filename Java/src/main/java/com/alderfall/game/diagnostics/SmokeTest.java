@@ -58,9 +58,9 @@ public final class SmokeTest {
         statusBattle.enemy.hp = 999;
         statusBattle.useAbility(1);
         drainBattle(statusBattle);
-        boolean weakApplied = statusBattle.statusesFor(statusBattle.enemy).stream()
-                .anyMatch(stack -> stack.effect.key().equals("weak"));
-        if (!weakApplied) {
+        boolean frozenApplied = statusBattle.statusesFor(statusBattle.enemy).stream()
+                .anyMatch(stack -> stack.effect.key().equals("frozen"));
+        if (!frozenApplied) {
             throw new IllegalStateException("Ability status effect did not apply.");
         }
         Actor targetTester = GameData.createPlayer("Knight");
@@ -428,8 +428,9 @@ public final class SmokeTest {
             throw new IllegalStateException("Expected cities and towns to use varied larger footprints.");
         }
         assertCityRaidDefenseQuest(state);
-        if (state.world.tileAt("town_moonspire", state.world.width("town_moonspire") - 3, 1) != 'x') {
-            throw new IllegalStateException("Expected Moonspire to have an irregular city footprint.");
+        if (!state.world.isPassable("town_moonspire", state.world.width("town_moonspire") - 3, 1)
+                || state.world.tileAt("town_moonspire", state.world.width("town_moonspire") - 3, 1) == 'x') {
+            throw new IllegalStateException("Expected Moonspire's old wall block to be usable outskirts.");
         }
         assertGrownPlayerVillageExits(config);
         state.currentMapId = "city_riverside";
@@ -1025,15 +1026,22 @@ public final class SmokeTest {
                 continue;
             }
             int connectedBuildings = 0;
+            List<String> disconnectedBuildings = new java.util.ArrayList<>();
             for (CityBuilding building : world.cityBuildings(settlement.id())) {
                 if (buildingHasConnectedRoadFrontage(world, settlement.id(), building)) {
                     connectedBuildings++;
+                } else {
+                    disconnectedBuildings.add(building.key() + world.cityBuildingDoorTiles(building).stream()
+                            .map(door -> "@" + door.x() + "," + (door.y() + 1) + "="
+                                    + Terrain.name(world.tileAt(settlement.id(), door.x(), door.y() + 1)))
+                            .toList());
                 }
             }
             int buildingCount = world.cityBuildings(settlement.id()).size();
             if (connectedBuildings != buildingCount) {
                 throw new IllegalStateException(settlement.label() + " has disconnected village building roads. "
-                        + "Connected=" + connectedBuildings + " buildings=" + buildingCount + ".");
+                        + "Connected=" + connectedBuildings + " buildings=" + buildingCount
+                        + " disconnected=" + disconnectedBuildings + ".");
             }
         }
         int gridRun = longestStraightVillageRoadRun(world, "village_oakhaven");
@@ -1304,7 +1312,17 @@ public final class SmokeTest {
                         + prop.x() + "," + prop.y() + " tile=" + tile);
             }
             int mountainDistance = distanceToOverworldTile(world, prop.x(), prop.y(), 3, 'm');
-            if (tile != 'q' && mountainDistance > 2) {
+            boolean regional = switch (prop.asset()) {
+                case "deco_ore_bog_iron_vein" -> tile == 'v';
+                case "deco_ore_froststeel_vein" -> tile == 'n';
+                case "deco_ore_sunmetal_vein" -> tile == 's';
+                case "deco_ore_emberite_vein" -> tile == 'b';
+                case "deco_ore_verdant_vein", "deco_ore_amber_vein" -> tile == 'f';
+                case "deco_ore_obsidian_vein" -> tile == 'b';
+                case "deco_ore_rock_salt_vein" -> tile == 's' || tile == 'P';
+                default -> false;
+            };
+            if (!regional && tile != 'q' && mountainDistance > 2) {
                 throw new IllegalStateException("Ore node generated too far from mountains at "
                         + prop.x() + "," + prop.y());
             }

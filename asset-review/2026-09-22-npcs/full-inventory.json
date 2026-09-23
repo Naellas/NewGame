@@ -1,0 +1,1502 @@
+[
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_down_knead_anim.frames",
+    "sha256": "06e9d52c1720fca412803e3b07c4b228ff113e303f4c7ab94665319d832bbfb7",
+    "bytes": 2
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_down_knead_anim.png",
+    "sha256": "908701585e248972f2ac085d6b8d21f6a5cabc44e028934f54e87fc754b39afd",
+    "bytes": 112832
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_down_walk_anim.png",
+    "sha256": "93268ba6d48388659c0f7811357647a818ef75e5609c4ffd8c7b79c0bc9d1173",
+    "bytes": 121508
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_left_walk_anim.png",
+    "sha256": "6b93fcefa37aaca293ed49ea439ee9f44e96ef8dc9d0770ac352123e190dac1a",
+    "bytes": 115467
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_right_walk_anim.png",
+    "sha256": "893883f1ee9c6b1978e714258901177414b13028aff56849b5a0622db2da4c14",
+    "bytes": 113865
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_up_walk_anim.png",
+    "sha256": "74c1cef2f404cf57db243a7f8b4f88a9c09bc21f9f8e1765435785460b43b239",
+    "bytes": 124469
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_down_walk_anim.png",
+    "sha256": "90c0ad96349d5a4157a2ad82f1f2079c91be6a810bae69516df30e96c3e13d64",
+    "bytes": 126278
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_left_walk_anim.png",
+    "sha256": "c3b3664275f8589fa2028cf19ded6a75d4345e36167297cb2cf20e732bb7d790",
+    "bytes": 82755
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_right_walk_anim.png",
+    "sha256": "10874cdc813ac131920bf3e4525bc7b645e939e0c36bbf52ccd232920b5f80e1",
+    "bytes": 117161
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_up_walk_anim.png",
+    "sha256": "d696e1b01ceb8ce8afb3eb9f00db182e7585182bf0c41478fdf4b0f83c160b67",
+    "bytes": 132745
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.frames",
+    "sha256": "06e9d52c1720fca412803e3b07c4b228ff113e303f4c7ab94665319d832bbfb7",
+    "bytes": 2
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.png",
+    "sha256": "e003b768f0af22119825ad07d4819aa17e167132c2010443344ce82e0d11efd4",
+    "bytes": 106110
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_walk_anim.png",
+    "sha256": "42a8a30e0bbbe93a8adc2506997f23fc054241e0c0fffdf5d4b603da32141425",
+    "bytes": 131439
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_left_walk_anim.png",
+    "sha256": "0dea6f06dffd6d3d79f9ccacce910c9766ef876ec1add71eddaf5ca616f6a5e0",
+    "bytes": 102273
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_right_walk_anim.png",
+    "sha256": "1cab4081934d9d84800c6a57a7439e60531e569884b438db54245f8ecab868aa",
+    "bytes": 104838
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_up_walk_anim.png",
+    "sha256": "1e3d07dcf553b19f569e69212d64b42d53823592c1cf3c0c49eec99cc7a59bad",
+    "bytes": 140888
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_down_walk_anim.png",
+    "sha256": "be371f1de489c5f4f459abcad2e83c12a41381b83c625cf168b482356218b891",
+    "bytes": 98256
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_left_walk_anim.png",
+    "sha256": "d051f28950ddc70b08b3f179c8b33964c490201d99db04f7f6027acad2dad581",
+    "bytes": 85740
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_right_walk_anim.png",
+    "sha256": "342eb94026368b4439f7f182b597def9b2b0c775b02ded59fb531a07d04d7336",
+    "bytes": 87569
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_up_walk_anim.png",
+    "sha256": "62ec0577186fd94a5860ece39af082466112f9ff4511db868673f2f6a30e3da5",
+    "bytes": 91410
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_down_walk_anim.png",
+    "sha256": "3042ee4db1654edbc3033bba22074040bbd20524dd9de10f2d98a57ac6516021",
+    "bytes": 110601
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_left_walk_anim.png",
+    "sha256": "3a26e1a7addfa727318307e7c97d92c6374b17749e1b5ffafe844e2afb49b087",
+    "bytes": 104188
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_right_walk_anim.png",
+    "sha256": "d334fdf1deb287151c0db188cecd2ed222e83e5fc3354448b5b46b2bd66c72e9",
+    "bytes": 103529
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_up_walk_anim.png",
+    "sha256": "41a61b3f3bf349b10b76df34223eec8cbaaa75872332def8de21233e10f28e5f",
+    "bytes": 104685
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_down_walk_anim.png",
+    "sha256": "739baee29203b3bd6e2730251432d0ff86f77e5ebaac0960402587838fd963e6",
+    "bytes": 144560
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_left_walk_anim.png",
+    "sha256": "78dd51e83749d7ac4b7e852ee78cfe4dc9bf46bd716f7e0fd49e844741088bd8",
+    "bytes": 138003
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_right_walk_anim.png",
+    "sha256": "87d75750ec0eca7766d1116df319ef968fa1f2c56b200cfec460771f20139ee5",
+    "bytes": 142448
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_up_walk_anim.png",
+    "sha256": "f4b237fa0571bc86a9806b6c6559d4a497ae71be456770d31f4b031f7ec243b8",
+    "bytes": 147835
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_down_walk_anim.png",
+    "sha256": "a5d0509ace65ff888f5c218db70eeb2143151291473d6159c7f6c6f2b3c6fd91",
+    "bytes": 155178
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_left_walk_anim.png",
+    "sha256": "cd8e0af2cc98e4f1b31a99d8b9dc9a069cd66fc66234d7987c27d698e13f473c",
+    "bytes": 133426
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_right_walk_anim.png",
+    "sha256": "bc1a7be54260eba6f794fc897ece8001c9d6b1b8bf90c55398276b1f35b3a69d",
+    "bytes": 132574
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_up_walk_anim.png",
+    "sha256": "6f1f61fd8c51152b1aee5f7927236f8470a16a54ee7c5005444c1f9689ba2a29",
+    "bytes": 141871
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_down_walk_anim.png",
+    "sha256": "d908700ca3705f74a5a9bf6363d9c2aa1d9a061e31173c8a2feb9a2bc8d856b2",
+    "bytes": 123242
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_left_walk_anim.png",
+    "sha256": "8456b3ce58e6fd6992fce5f1a0235d76bf6246556b850ca9a04e97bbe5bc6bbe",
+    "bytes": 102115
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_right_walk_anim.png",
+    "sha256": "1ecb768edd03692c69a2f5307db7864189181679cbe0ba796c681d6d39ad8941",
+    "bytes": 104469
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_up_walk_anim.png",
+    "sha256": "e360cd17772c71b194e7ad522358d9d3510b91fddc6961e214dd401d9f47a078",
+    "bytes": 110909
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_down_walk_anim.png",
+    "sha256": "bb2f561e6b6876a6b5737c017a16ae688ab6b22627e025fc97f299d3ecc51350",
+    "bytes": 105973
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_left_walk_anim.png",
+    "sha256": "4d513c278f4a931fb668923fdc4f2489091dce5d110eeefcdab4de530862b45b",
+    "bytes": 104000
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_right_walk_anim.png",
+    "sha256": "7a94832a3cf2a4a55278ae301ee5acacbe064d2a22d3a8892705007668b92959",
+    "bytes": 107529
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_up_walk_anim.png",
+    "sha256": "c2353eabfe8abeff417bdf49050dc55cc46c5780b56c1bdffce6d1b676ddaf14",
+    "bytes": 110475
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_down_walk_anim.png",
+    "sha256": "32ca68c789500e70813f5aeb87f44135760581571a096f9211f84eec0df48a5f",
+    "bytes": 129095
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_left_walk_anim.png",
+    "sha256": "4c9262ec8b60bbada06b1e5343b0d685449ca925e22a552e638cab2cd89d328d",
+    "bytes": 110615
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_right_walk_anim.png",
+    "sha256": "8fd1622682d304f30ccc478331a15b18d9d395c710489a2fa02f4015d73848c6",
+    "bytes": 107366
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_up_walk_anim.png",
+    "sha256": "cf07722785052d000854630da299e3cbbf980a056a921a3b7f558cd7bac720a0",
+    "bytes": 119989
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_down_walk_anim.png",
+    "sha256": "d4c8bce8aa7e0aa926841e239850477ff637f5f1d7e618a1d2c5e580f7f98694",
+    "bytes": 122816
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_left_walk_anim.png",
+    "sha256": "84420f07681db4c308a4de46b511ce79bacc1423c5a32fe3a8b538c041061ec7",
+    "bytes": 114256
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_right_walk_anim.png",
+    "sha256": "feaef11b97fb1c5a299fda0cf69d7d1334c34c8620c77e952582d78bb26c2517",
+    "bytes": 117143
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_up_walk_anim.png",
+    "sha256": "a5736bfb8137fffed9bdbf52c6655b9fc87ae3596fc7dccedf64e1b0ee8a42f3",
+    "bytes": 122110
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.frames",
+    "sha256": "06e9d52c1720fca412803e3b07c4b228ff113e303f4c7ab94665319d832bbfb7",
+    "bytes": 2
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.png",
+    "sha256": "021a36ed049a9b9cac778084d2ebb930c61fa2976ec31ab7fb6f8985aea4ce8f",
+    "bytes": 119010
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_down_walk_anim.png",
+    "sha256": "e0acc9f4dfa554ef6cec1424b53b2b6b8d16a9c5901822b5d5a817fd7d61f9cd",
+    "bytes": 131620
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_left_walk_anim.png",
+    "sha256": "28756f62a8348278d4d5654cef0a1ce08edee70c174d1c84cdf1b803a0bdd194",
+    "bytes": 129139
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_right_walk_anim.png",
+    "sha256": "4a7031a6c9be7042dc690147c3a71f98fb6d8b864257807050ca8101593adc20",
+    "bytes": 129783
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_up_walk_anim.png",
+    "sha256": "5f56e56122bdede2515681a28e37f19cea7838a46d00339fa92d1b843af8de27",
+    "bytes": 119153
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_down_walk_anim.png",
+    "sha256": "15d90a64a19ee9273557f84cc1f4b06ef87d2b8a3b58fbb11036f39aaf811992",
+    "bytes": 128898
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_left_walk_anim.png",
+    "sha256": "e847eb193231c0f5f3cefd4afa29ec86b109b5dc1f942ac1c91a8ed8b67135e0",
+    "bytes": 121562
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_right_walk_anim.png",
+    "sha256": "8f979faa518fc920c90124b9444c3809d81ca4772efadd52754b87b2d810ac03",
+    "bytes": 123664
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_up_walk_anim.png",
+    "sha256": "d9c23d96ebafc38337508065638392ec161c21471400e74d89a24b566c959848",
+    "bytes": 126966
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_down_walk_anim.png",
+    "sha256": "3272c0c92f682044c625ba1f9508d2fbfb7ca8c2e9d86abb7301a860bd078f4f",
+    "bytes": 110526
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_left_walk_anim.png",
+    "sha256": "93131813861f04abc177cb4a2f5fdc585bdc2fe047c47ccaf2da4cdbc5727fbd",
+    "bytes": 100738
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_right_walk_anim.png",
+    "sha256": "2bf1076df705fd2cf3982639aa4c84eabde76675f60ce36e1a0a3f9672691b62",
+    "bytes": 102351
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_up_walk_anim.png",
+    "sha256": "096f22e01ec193b0abf8229f6072288ca8a7af8f6dffb4f97dfe4d980bbd7a52",
+    "bytes": 106259
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_down_walk_anim.png",
+    "sha256": "8bdeb087e54a2942217e717ee54c76fbd43c4949bb8de67dc5cc374138d676c3",
+    "bytes": 152355
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_left_walk_anim.png",
+    "sha256": "62c0b602d5789eb5c76566c95e2a532f9cf2da6af068d84ffaa52fb3e025fb9f",
+    "bytes": 115571
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_right_walk_anim.png",
+    "sha256": "3c4bd70bfe6c3f239f93398b79f245de2e5ffef84032fe25431e91b3c3173f20",
+    "bytes": 127101
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_up_walk_anim.png",
+    "sha256": "9b40fe78d3c0b366a5ff86d60400ebc64e56e6aa6f1abe5cf589d38a9507ec14",
+    "bytes": 145565
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_down_walk_anim.png",
+    "sha256": "f9781a8eed8a68e250554ec64c817c72d3603cef5b80eea481b1f820db538792",
+    "bytes": 93334
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_left_walk_anim.png",
+    "sha256": "4178322589e30fb80afde16e19f97d023661729dcf7ab82a67046351ff8bfce1",
+    "bytes": 76202
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_right_walk_anim.png",
+    "sha256": "0cfbfca32355603df92742f1c554f13339983bddc78c29732508d87d7c358b42",
+    "bytes": 74330
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_up_walk_anim.png",
+    "sha256": "351df5d49ab06acb29b38842de28101404b05b3068fef4cf73531c9718727fa8",
+    "bytes": 83438
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_down_walk_anim.png",
+    "sha256": "77828c39e3b8b9e7fadf8623ad50fab29d1ac53bdf3cb9657b280544fd1b85ce",
+    "bytes": 125334
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_left_walk_anim.png",
+    "sha256": "0bf6a823d5a75aeee2ff5073e1394b34802fc66482ab2b0a9a2a637412e1ab99",
+    "bytes": 105597
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_right_walk_anim.png",
+    "sha256": "41da6c4a316a22bbb330f5964eaca8fdd543ba31384beab9b705a93bae42143f",
+    "bytes": 108555
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_up_walk_anim.png",
+    "sha256": "e3af5b2ddfa152c9aebc3825d92d9b2e29d628df4cc506bcf570feaa5ab62cb7",
+    "bytes": 109014
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_down_walk_anim.png",
+    "sha256": "76acc13f3c8a9da9cd0583e60527cecfbd57d23ac4ff6f82ca00c42907b187c4",
+    "bytes": 136617
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_left_walk_anim.png",
+    "sha256": "3a15463edfe22d0cff199676a60948a4e87732a800f682d913accf9a49c99944",
+    "bytes": 120824
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_right_walk_anim.png",
+    "sha256": "d73e662a5addeebfde019ea80b36879100c1d1bb6b1f383679c5809369a8b9f0",
+    "bytes": 121355
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_up_walk_anim.png",
+    "sha256": "4e6e2cab85a73df337862991311c4f5e02f6cf69cdae1a1c82fd97d6d66b402f",
+    "bytes": 133615
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_down_walk_anim.png",
+    "sha256": "22cb6eab8f4b79c35689996f63a7ea3a2c3dd35ee4c5a698e771efd4e7d77628",
+    "bytes": 110968
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_left_walk_anim.png",
+    "sha256": "1ed5dcb85d7088a89d6f99ae404b94e60b3ee2b6f2121fa9e861f427b9e2ff37",
+    "bytes": 99885
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_right_walk_anim.png",
+    "sha256": "b30fc558cd6ee3995a01bb46cf458762384dddb77707113adc58459e0fc818b1",
+    "bytes": 103040
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_up_walk_anim.png",
+    "sha256": "cc8118d9426d4b5e0b73512009d63550c113e262a3a67718603537d1a6c60859",
+    "bytes": 101709
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_down_walk_anim.png",
+    "sha256": "ff6595765f00b8ecf5284e17956272ba745c51864454c3a19590a9503825395d",
+    "bytes": 129677
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_left_walk_anim.png",
+    "sha256": "c34196f1dca08cee837d8a81100492a53e9ad8906677db60652025176874d6ae",
+    "bytes": 103300
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_right_walk_anim.png",
+    "sha256": "0ff9ded52471f85090e761fcbb6846317996f9149679b434e310a59fb5b73553",
+    "bytes": 104267
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_up_walk_anim.png",
+    "sha256": "ce6257eaf210c39068d0a89ba7115fe47ac74762164652ed39781bc1cb5a5c04",
+    "bytes": 126234
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_down_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_down_walk_anim.png",
+    "sha256": "5fa22813a3ff2d2a514f0567b4706c47d47de3b901ec72ee141291eb76e125af",
+    "bytes": 135477
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_left_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_left_walk_anim.png",
+    "sha256": "062917ee6dffbc3fbb6a202c1a21de487cd4cf3e2c367b01959367d920713c3f",
+    "bytes": 110937
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_right_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_right_walk_anim.png",
+    "sha256": "baeeae40ecab27ffa3286d6f84d912b63c22c680b5a1a10839a910f2697f43c3",
+    "bytes": 117757
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_up_walk_anim.frames",
+    "sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
+    "bytes": 3
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_up_walk_anim.png",
+    "sha256": "7eaf25d05c30be9f568a5cf3a57d777474946692471b5be4237fb3fee246f04c",
+    "bytes": 122494
+  },
+  {
+    "path": "Java/assets/npcs/npc_baker.png",
+    "sha256": "249be8e8fff5923fc52b9954e7ac9712975f5fda48caa4104f9d79f7a8176359",
+    "bytes": 9003
+  },
+  {
+    "path": "Java/assets/npcs/npc_baker_model.png",
+    "sha256": "a61de38707318934ce4ec82682a81b809a4cd53ce12b62e46460f4e5e4d04d9d",
+    "bytes": 15818
+  },
+  {
+    "path": "Java/assets/npcs/npc_baker_model_down.png",
+    "sha256": "a61de38707318934ce4ec82682a81b809a4cd53ce12b62e46460f4e5e4d04d9d",
+    "bytes": 15818
+  },
+  {
+    "path": "Java/assets/npcs/npc_baker_model_left.png",
+    "sha256": "f01feb33aa49dcb21aeeef977a196aae1168936e72531b40a920c350897248bb",
+    "bytes": 14852
+  },
+  {
+    "path": "Java/assets/npcs/npc_baker_model_right.png",
+    "sha256": "2caa742485bcfda01b0f19c04b509c4185cfcb0840e79948a5baeeac59d6dcf0",
+    "bytes": 14839
+  },
+  {
+    "path": "Java/assets/npcs/npc_baker_model_up.png",
+    "sha256": "437929995e347f844196069e4b8453f997e4e45237617227dbbfd6b30c246130",
+    "bytes": 15815
+  },
+  {
+    "path": "Java/assets/npcs/npc_bartender.png",
+    "sha256": "fcccda968694031da5212cbcd94e16c46ef2f1e1bd5775563110395de63dd0e7",
+    "bytes": 9210
+  },
+  {
+    "path": "Java/assets/npcs/npc_bartender_model.png",
+    "sha256": "c02b1bde445f6f7e893e7e2847243dec711691d99ee2aa7f49f1ad933b9def2e",
+    "bytes": 16263
+  },
+  {
+    "path": "Java/assets/npcs/npc_bartender_model_down.png",
+    "sha256": "c02b1bde445f6f7e893e7e2847243dec711691d99ee2aa7f49f1ad933b9def2e",
+    "bytes": 16263
+  },
+  {
+    "path": "Java/assets/npcs/npc_bartender_model_left.png",
+    "sha256": "443fd00a5f654ace062b3289a337a3839f4e3ff54c2009be16b87b5b8904660e",
+    "bytes": 10634
+  },
+  {
+    "path": "Java/assets/npcs/npc_bartender_model_right.png",
+    "sha256": "3de6ef7c8614d1c92fa02029b1836b5768697c28071aa7a3383f43c58ef4a68c",
+    "bytes": 14902
+  },
+  {
+    "path": "Java/assets/npcs/npc_bartender_model_up.png",
+    "sha256": "5b105eabd7dd666a424caf9c8e72013aac0c8cfbe17437ecd89ee3a11ac576e0",
+    "bytes": 16895
+  },
+  {
+    "path": "Java/assets/npcs/npc_blacksmith.png",
+    "sha256": "45844cf6f58c926d782c81fe42d69e8af5166e3306f288f4b8e6669c5cacf7b1",
+    "bytes": 9763
+  },
+  {
+    "path": "Java/assets/npcs/npc_blacksmith_model.png",
+    "sha256": "853f77d7b5429bd4f876814df20d8342aa3a99e159e5985319512d35c20a3de7",
+    "bytes": 17241
+  },
+  {
+    "path": "Java/assets/npcs/npc_blacksmith_model_down.png",
+    "sha256": "853f77d7b5429bd4f876814df20d8342aa3a99e159e5985319512d35c20a3de7",
+    "bytes": 17241
+  },
+  {
+    "path": "Java/assets/npcs/npc_blacksmith_model_left.png",
+    "sha256": "abea00b91c279aac91eb2a0f75561eff69ac16b3e1b1115f4c27a31fcb6c2109",
+    "bytes": 13700
+  },
+  {
+    "path": "Java/assets/npcs/npc_blacksmith_model_right.png",
+    "sha256": "a658bc8f823c60b0dadfea5c2f370ca47b93943dbf68305821799d8ea977823b",
+    "bytes": 14075
+  },
+  {
+    "path": "Java/assets/npcs/npc_blacksmith_model_up.png",
+    "sha256": "564e9183bb481a8b8bebc61ca143b248302135635548abaee026dcf8d5c29f50",
+    "bytes": 18361
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_man.png",
+    "sha256": "88b4ce40678d653c44fd583618fa1f4ab7a213148b16ffb7bb986b337a697eb2",
+    "bytes": 7333
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_man_model.png",
+    "sha256": "c76665cf8c853db59273c56ea62c816208f5eb392f1286aeb850476735ebf5fd",
+    "bytes": 12891
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_man_model_down.png",
+    "sha256": "c76665cf8c853db59273c56ea62c816208f5eb392f1286aeb850476735ebf5fd",
+    "bytes": 12891
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_man_model_left.png",
+    "sha256": "e02555c76ae73a5f3c8feb8cba569fff431d59075fc1c1df8727d8330e875020",
+    "bytes": 10483
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_man_model_right.png",
+    "sha256": "bcb2c9ef3f0415a80f33109542050c0219843ac1b9a702fd510fea982845c529",
+    "bytes": 10654
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_man_model_up.png",
+    "sha256": "13608833b148b7e8625ac9dbb18471a5f72126c40e1022f5f97cdf758646b48d",
+    "bytes": 12047
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_woman.png",
+    "sha256": "abc6ed35d105d7a132e1d9afca162eef4034814554fb4af652d5b9bb29e09816",
+    "bytes": 8385
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_woman_model.png",
+    "sha256": "368b916a25a39788be152621be3ad8dcb3774986cb17d18a496be2a03c1a8e44",
+    "bytes": 14628
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_woman_model_down.png",
+    "sha256": "368b916a25a39788be152621be3ad8dcb3774986cb17d18a496be2a03c1a8e44",
+    "bytes": 14628
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_woman_model_left.png",
+    "sha256": "05b8999117f86a84bdbe510a3440e3cb4e81650b4392a02d7d3188016ddab691",
+    "bytes": 13305
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_woman_model_right.png",
+    "sha256": "e04740d07fa20feb857e0fe7bf382a534b5e72b2cc21fe5a4e9874a60b2fd708",
+    "bytes": 13121
+  },
+  {
+    "path": "Java/assets/npcs/npc_citizen_woman_model_up.png",
+    "sha256": "f726a3a2ef5f8c96bdee012b12b0e174b5d0c0f3382599288180dcd58ebb3053",
+    "bytes": 13764
+  },
+  {
+    "path": "Java/assets/npcs/npc_elowen.png",
+    "sha256": "66f197b10152be724066955ede1bb055212ede6d96c19429aec44ddfdc7f3df4",
+    "bytes": 11273
+  },
+  {
+    "path": "Java/assets/npcs/npc_elowen_model.png",
+    "sha256": "1c093e1d34602fe62b9511326f073213ea15fff8e30eef721ae67625631a1b24",
+    "bytes": 20115
+  },
+  {
+    "path": "Java/assets/npcs/npc_elowen_model_down.png",
+    "sha256": "1c093e1d34602fe62b9511326f073213ea15fff8e30eef721ae67625631a1b24",
+    "bytes": 20115
+  },
+  {
+    "path": "Java/assets/npcs/npc_elowen_model_left.png",
+    "sha256": "0ea245fcb8df87b4586853aa07cac22f75520af89c329bd96f958cf21379c6c3",
+    "bytes": 17269
+  },
+  {
+    "path": "Java/assets/npcs/npc_elowen_model_right.png",
+    "sha256": "d247c9ee3e701f8421681a47bc3184ed1f42a85b1e2985a24d8be1dd7baf8244",
+    "bytes": 17642
+  },
+  {
+    "path": "Java/assets/npcs/npc_elowen_model_up.png",
+    "sha256": "e0cccd550f929e3d477cf9c225fb2a53e4ed5fc930c97da60d8c3375a95d8294",
+    "bytes": 18069
+  },
+  {
+    "path": "Java/assets/npcs/npc_garruk.png",
+    "sha256": "6b5818a7bd7b9601eda8fbdd3d6b5fc641773405bfafe909faade4506e314cc1",
+    "bytes": 12116
+  },
+  {
+    "path": "Java/assets/npcs/npc_garruk_model.png",
+    "sha256": "23d05242da2358b565d561b321c4b8bb397545183c7fbdc01af25fc02405e12f",
+    "bytes": 18537
+  },
+  {
+    "path": "Java/assets/npcs/npc_garruk_model_down.png",
+    "sha256": "23d05242da2358b565d561b321c4b8bb397545183c7fbdc01af25fc02405e12f",
+    "bytes": 18537
+  },
+  {
+    "path": "Java/assets/npcs/npc_garruk_model_left.png",
+    "sha256": "5d69546bedf62e1faf3e05cc5ff515d87aabc9295193e78ab94dba5977a70f7d",
+    "bytes": 16269
+  },
+  {
+    "path": "Java/assets/npcs/npc_garruk_model_right.png",
+    "sha256": "debae93b6a52fdd1154e1a6b97bf97d94382b090416462a9916d5cfb5280a7af",
+    "bytes": 14886
+  },
+  {
+    "path": "Java/assets/npcs/npc_garruk_model_up.png",
+    "sha256": "50e931baf199bacd2319e3b216b736daac5f8ccdbc3d776142203a80336c8e92",
+    "bytes": 18833
+  },
+  {
+    "path": "Java/assets/npcs/npc_innkeeper.png",
+    "sha256": "248234b870690a7720147917c72636e16b5ea2e730e4f64ff78e9719d0565016",
+    "bytes": 8851
+  },
+  {
+    "path": "Java/assets/npcs/npc_innkeeper_model.png",
+    "sha256": "28976d1ce58d04c5fb16ed86195b258b9b6ff5caa8df77241cb837a0fc3543f7",
+    "bytes": 15529
+  },
+  {
+    "path": "Java/assets/npcs/npc_innkeeper_model_down.png",
+    "sha256": "28976d1ce58d04c5fb16ed86195b258b9b6ff5caa8df77241cb837a0fc3543f7",
+    "bytes": 15529
+  },
+  {
+    "path": "Java/assets/npcs/npc_innkeeper_model_left.png",
+    "sha256": "24afdfe1b605a5ed0c949d60df809c98d1b9a8d5a6a3edad9aa6a98d687b8f91",
+    "bytes": 13103
+  },
+  {
+    "path": "Java/assets/npcs/npc_innkeeper_model_right.png",
+    "sha256": "c653716077291bfd52fa968d513243d079fdc52735c72545ddbe76a5134a6aa1",
+    "bytes": 13231
+  },
+  {
+    "path": "Java/assets/npcs/npc_innkeeper_model_up.png",
+    "sha256": "f1516e81c034581f33e29bfd76a72f99dec01ce28628c0084fda5279e052f19a",
+    "bytes": 13781
+  },
+  {
+    "path": "Java/assets/npcs/npc_kael.png",
+    "sha256": "3837d869c9fe99ae2a547a8b127473173416b68501fd6f4eaaec128e6c709eab",
+    "bytes": 9123
+  },
+  {
+    "path": "Java/assets/npcs/npc_kael_model.png",
+    "sha256": "3edb47684bdb2850cfc51517588a7ef6582ab97837cf20e50ae25011d4db059a",
+    "bytes": 11196
+  },
+  {
+    "path": "Java/assets/npcs/npc_kael_model_down.png",
+    "sha256": "3edb47684bdb2850cfc51517588a7ef6582ab97837cf20e50ae25011d4db059a",
+    "bytes": 11196
+  },
+  {
+    "path": "Java/assets/npcs/npc_kael_model_left.png",
+    "sha256": "43caa656fbea667929b3522cd452d6c07e8b72221adde1f6c8b5a603b1fd4c9b",
+    "bytes": 13718
+  },
+  {
+    "path": "Java/assets/npcs/npc_kael_model_right.png",
+    "sha256": "a6f4478572650476e8035015875a9393b3e016a6e892ba80df43030d9368e397",
+    "bytes": 13859
+  },
+  {
+    "path": "Java/assets/npcs/npc_kael_model_up.png",
+    "sha256": "2df497a886587f41e22655c04e364bb38a1500c17ee4d4837768efc3e39c690f",
+    "bytes": 14437
+  },
+  {
+    "path": "Java/assets/npcs/npc_liora.png",
+    "sha256": "2227140819e3b44379c81bb40abfc323d16414c1312c4f23e51db8c5bd02f114",
+    "bytes": 9041
+  },
+  {
+    "path": "Java/assets/npcs/npc_liora_model.png",
+    "sha256": "e8d0dfefed597ede5a0bb8f5258bf02035c5969496b2ff3a7a656465c9a43e56",
+    "bytes": 16048
+  },
+  {
+    "path": "Java/assets/npcs/npc_liora_model_down.png",
+    "sha256": "e8d0dfefed597ede5a0bb8f5258bf02035c5969496b2ff3a7a656465c9a43e56",
+    "bytes": 16048
+  },
+  {
+    "path": "Java/assets/npcs/npc_liora_model_left.png",
+    "sha256": "79d62e198558c8aaa409d06903d3a91e60ea7a32b38205f0567b3226a4cc4d22",
+    "bytes": 13679
+  },
+  {
+    "path": "Java/assets/npcs/npc_liora_model_right.png",
+    "sha256": "4274d23f135eadbadeda0b6ed7e89a79158bf96bfdf598f7449e9b53eed35a77",
+    "bytes": 13297
+  },
+  {
+    "path": "Java/assets/npcs/npc_liora_model_up.png",
+    "sha256": "efbae3fcfa99c3441c812782653fe84ba003d70b586e200f1b4f258c0d93bcf3",
+    "bytes": 14874
+  },
+  {
+    "path": "Java/assets/npcs/npc_marla.png",
+    "sha256": "110ebe753e533ef9d5b4b65301eb7d6508416e3607e6e2dd77b0ed9d66c7d04c",
+    "bytes": 9291
+  },
+  {
+    "path": "Java/assets/npcs/npc_marla_model.png",
+    "sha256": "d9e9adb34ebf939780247768fa42e18cd6b218b3d5effb88765e27d36aeb2a9c",
+    "bytes": 16510
+  },
+  {
+    "path": "Java/assets/npcs/npc_marla_model_down.png",
+    "sha256": "d9e9adb34ebf939780247768fa42e18cd6b218b3d5effb88765e27d36aeb2a9c",
+    "bytes": 16510
+  },
+  {
+    "path": "Java/assets/npcs/npc_marla_model_left.png",
+    "sha256": "991bfff4d3e9ef1c1ca33018840ecfffa3921d07eec876167ba0a0fc60c328f1",
+    "bytes": 14262
+  },
+  {
+    "path": "Java/assets/npcs/npc_marla_model_right.png",
+    "sha256": "5a34a23bee569eac468fb8e89781167ae54ef72e58c8da1d75f6fd14b994cf7e",
+    "bytes": 15140
+  },
+  {
+    "path": "Java/assets/npcs/npc_marla_model_up.png",
+    "sha256": "04fd307469026329b1e9c100e83f43a62eb919b72a38bc6ac063c2f6871b15ae",
+    "bytes": 16501
+  },
+  {
+    "path": "Java/assets/npcs/npc_merchant.png",
+    "sha256": "d5a72a9804e1d1b582a1bb792a3b84630df72545dd5cadcefcc9a0bd16422be0",
+    "bytes": 9754
+  },
+  {
+    "path": "Java/assets/npcs/npc_merchant_model.png",
+    "sha256": "06edd0801b4c4a986e41fb28577b67e994e1c7c8db78d547dfb27376445fc6eb",
+    "bytes": 16952
+  },
+  {
+    "path": "Java/assets/npcs/npc_merchant_model_down.png",
+    "sha256": "06edd0801b4c4a986e41fb28577b67e994e1c7c8db78d547dfb27376445fc6eb",
+    "bytes": 16952
+  },
+  {
+    "path": "Java/assets/npcs/npc_merchant_model_left.png",
+    "sha256": "b2f1944448e95c69d7922c6fe8eab73e1a01c9d1901b9bdd5b6ddf9103e53c2b",
+    "bytes": 16748
+  },
+  {
+    "path": "Java/assets/npcs/npc_merchant_model_right.png",
+    "sha256": "658b339bd8167b2fa806cb8956608b75fc1e1cda2b2fb11f134308751080d665",
+    "bytes": 16733
+  },
+  {
+    "path": "Java/assets/npcs/npc_merchant_model_up.png",
+    "sha256": "eea96382b5c5b9795effcc9510e22d3c2793b66ec65d4ff9d84644be31ac1f8c",
+    "bytes": 15495
+  },
+  {
+    "path": "Java/assets/npcs/npc_mira_sunwarden.png",
+    "sha256": "79c8a5c107c23c9e73e3c38a936206ccd20b76a3832adc3b8931d488f6b6e43c",
+    "bytes": 9597
+  },
+  {
+    "path": "Java/assets/npcs/npc_mira_sunwarden_model.png",
+    "sha256": "f987b4bbd0c0cfedc5c0cc92c0b5c20ca208e3a71187caa88fcc5c3ad55ef4c0",
+    "bytes": 17091
+  },
+  {
+    "path": "Java/assets/npcs/npc_mira_sunwarden_model_down.png",
+    "sha256": "f987b4bbd0c0cfedc5c0cc92c0b5c20ca208e3a71187caa88fcc5c3ad55ef4c0",
+    "bytes": 17091
+  },
+  {
+    "path": "Java/assets/npcs/npc_mira_sunwarden_model_left.png",
+    "sha256": "ae7704137f051793dfd4ef7eb1fd6c21af951ed903c5d8bfe82634c95f033aaf",
+    "bytes": 15615
+  },
+  {
+    "path": "Java/assets/npcs/npc_mira_sunwarden_model_right.png",
+    "sha256": "912c7fb5c46d875eaa29ee318f85902c3c0856a569725af2be8b2d9e7a586544",
+    "bytes": 15473
+  },
+  {
+    "path": "Java/assets/npcs/npc_mira_sunwarden_model_up.png",
+    "sha256": "5bf7194b9105e92333ad115c60fe68cb605157aed58dc054f144dbbcab08d220",
+    "bytes": 16881
+  },
+  {
+    "path": "Java/assets/npcs/npc_nyx.png",
+    "sha256": "b4185d7f30aefb27947f491d1688fc82cebed6409e7ccdbdb76e1a02b2291141",
+    "bytes": 7910
+  },
+  {
+    "path": "Java/assets/npcs/npc_nyx_model.png",
+    "sha256": "0efb518b98eb813f0bce21fe3b12430e28d6b6d70e190dc72918b5783cf73a39",
+    "bytes": 13986
+  },
+  {
+    "path": "Java/assets/npcs/npc_nyx_model_down.png",
+    "sha256": "0efb518b98eb813f0bce21fe3b12430e28d6b6d70e190dc72918b5783cf73a39",
+    "bytes": 13986
+  },
+  {
+    "path": "Java/assets/npcs/npc_nyx_model_left.png",
+    "sha256": "c36c23e902036dedce623e0caf7b04b12cd1ea7811e94fb3ea11f59219090a13",
+    "bytes": 13001
+  },
+  {
+    "path": "Java/assets/npcs/npc_nyx_model_right.png",
+    "sha256": "ba82a46d00b27c708ee828ea082aa84d2d83668740ad6fc9f1602c8f82c14c61",
+    "bytes": 12792
+  },
+  {
+    "path": "Java/assets/npcs/npc_nyx_model_up.png",
+    "sha256": "f04e0b4923431938b96d2d23c89b9b6e422a4daa6b9d9f2ffebfeba0c5eae458",
+    "bytes": 13818
+  },
+  {
+    "path": "Java/assets/npcs/npc_orin.png",
+    "sha256": "17bb945a61efbdb1b4e705723b7424267e6d212dcee7fbb2c3166a76512483ed",
+    "bytes": 11096
+  },
+  {
+    "path": "Java/assets/npcs/npc_orin_model.png",
+    "sha256": "7bb9de459b29d70914159c69404689fc7cb2170b22054591c9eb6cc59164cf27",
+    "bytes": 19063
+  },
+  {
+    "path": "Java/assets/npcs/npc_orin_model_down.png",
+    "sha256": "7bb9de459b29d70914159c69404689fc7cb2170b22054591c9eb6cc59164cf27",
+    "bytes": 19063
+  },
+  {
+    "path": "Java/assets/npcs/npc_orin_model_left.png",
+    "sha256": "fd33c4321ec3a050e8ab82f4072ac14af66429c52bcd186fe647423570c7b8ea",
+    "bytes": 11690
+  },
+  {
+    "path": "Java/assets/npcs/npc_orin_model_right.png",
+    "sha256": "e8b58f116be5fba9f041e75d0b1a583566c2f3acb0c3ce7f783cb66ad0d32deb",
+    "bytes": 17531
+  },
+  {
+    "path": "Java/assets/npcs/npc_orin_model_up.png",
+    "sha256": "233c4f12b7120024a141cd7d8feb37997543a52178e06a1ea125ff67a7177fec",
+    "bytes": 19343
+  },
+  {
+    "path": "Java/assets/npcs/npc_quartermaster.png",
+    "sha256": "da5c45af48aec2a02cc77a62438993a51976109eb4cd40a18fcc62cc10c4219c",
+    "bytes": 7019
+  },
+  {
+    "path": "Java/assets/npcs/npc_quartermaster_model.png",
+    "sha256": "674690ce0646a042af9742ae3e801006332823ae86868e54ad89f7b8f0f39612",
+    "bytes": 12114
+  },
+  {
+    "path": "Java/assets/npcs/npc_quartermaster_model_down.png",
+    "sha256": "674690ce0646a042af9742ae3e801006332823ae86868e54ad89f7b8f0f39612",
+    "bytes": 12114
+  },
+  {
+    "path": "Java/assets/npcs/npc_quartermaster_model_left.png",
+    "sha256": "9f5b734f000e233b441200930a347dada85df598139ce0a46a0fbb10d2aa1204",
+    "bytes": 9777
+  },
+  {
+    "path": "Java/assets/npcs/npc_quartermaster_model_right.png",
+    "sha256": "41732deceb0175b73cd6e19d5434ebad6d9d3aec808032170ca75be8f3a1671d",
+    "bytes": 9768
+  },
+  {
+    "path": "Java/assets/npcs/npc_quartermaster_model_up.png",
+    "sha256": "c292cf129ef38c3d0ca2d38c2d5e66695eab8c1ccff8cae7fdf19c32617d1580",
+    "bytes": 10604
+  },
+  {
+    "path": "Java/assets/npcs/npc_ren.png",
+    "sha256": "ac32c2c8cf423183a6fe151cf907c573e59db91212937b9e5c036afafe274f90",
+    "bytes": 8981
+  },
+  {
+    "path": "Java/assets/npcs/npc_ren_model.png",
+    "sha256": "3f999cb4cb1e5ba514d1f806b4be209922d3315009475465fced78405b1cbf17",
+    "bytes": 16004
+  },
+  {
+    "path": "Java/assets/npcs/npc_ren_model_down.png",
+    "sha256": "3f999cb4cb1e5ba514d1f806b4be209922d3315009475465fced78405b1cbf17",
+    "bytes": 16004
+  },
+  {
+    "path": "Java/assets/npcs/npc_ren_model_left.png",
+    "sha256": "8668b1139d33fa6948035030527faa20c80d030631a9d1432abd879e1fbea3b8",
+    "bytes": 13880
+  },
+  {
+    "path": "Java/assets/npcs/npc_ren_model_right.png",
+    "sha256": "8dcd3d33dd276edad80f48b744f6f9b0c33c3918f41cfbfc3ea19280b5221e92",
+    "bytes": 14398
+  },
+  {
+    "path": "Java/assets/npcs/npc_ren_model_up.png",
+    "sha256": "27049f82e9abc9d43cb2fbf47992de92e69e84e2c62f7d4a970cf9648b644a43",
+    "bytes": 14254
+  },
+  {
+    "path": "Java/assets/npcs/npc_rowan.png",
+    "sha256": "d69f7ba43e43ba84cfd8b6bc47e8a1fbc9e7a92b56bfe3ded6347c864d05016c",
+    "bytes": 9755
+  },
+  {
+    "path": "Java/assets/npcs/npc_rowan_model.png",
+    "sha256": "d45112e8a516053d079d506b6a655437dea687f64d7e04c6a296007638a3b530",
+    "bytes": 17277
+  },
+  {
+    "path": "Java/assets/npcs/npc_rowan_model_down.png",
+    "sha256": "d45112e8a516053d079d506b6a655437dea687f64d7e04c6a296007638a3b530",
+    "bytes": 17277
+  },
+  {
+    "path": "Java/assets/npcs/npc_rowan_model_left.png",
+    "sha256": "5ad67b0c047523ba5c5e210b3f2828db240ebf351ab3366949cd4549297a54d8",
+    "bytes": 15186
+  },
+  {
+    "path": "Java/assets/npcs/npc_rowan_model_right.png",
+    "sha256": "a790bb04d3c6131c3677ee888f4909c1c10bf77af347eb053ef5029aacd6f82b",
+    "bytes": 15207
+  },
+  {
+    "path": "Java/assets/npcs/npc_rowan_model_up.png",
+    "sha256": "9e212d367c6ebe1f6fb34f644a3274ef7e83b9a0c932bbd5c63a33074529c40d",
+    "bytes": 16773
+  },
+  {
+    "path": "Java/assets/npcs/npc_sable.png",
+    "sha256": "e4b971f4f038625dfa4858fe249ec7ef2b429bdadb875ce232ef11203946c4d2",
+    "bytes": 8182
+  },
+  {
+    "path": "Java/assets/npcs/npc_sable_model.png",
+    "sha256": "223e70632c3e4409939adf34c2a859f943dd2e789cc7c7ce85dee8a0ff29fe14",
+    "bytes": 14470
+  },
+  {
+    "path": "Java/assets/npcs/npc_sable_model_down.png",
+    "sha256": "223e70632c3e4409939adf34c2a859f943dd2e789cc7c7ce85dee8a0ff29fe14",
+    "bytes": 14470
+  },
+  {
+    "path": "Java/assets/npcs/npc_sable_model_left.png",
+    "sha256": "69dbfc38063fe90a2b9e04c94085eb0c25cda3c3969b7994736f34bd9bb2ad0c",
+    "bytes": 12897
+  },
+  {
+    "path": "Java/assets/npcs/npc_sable_model_right.png",
+    "sha256": "a9680bf67fac7c649ede0ca5af8f51f83da91aa426605eeb79b9dcc8b958955d",
+    "bytes": 13481
+  },
+  {
+    "path": "Java/assets/npcs/npc_sable_model_up.png",
+    "sha256": "c0ebb213bc1e9618ba5185fc106e1f940ac0b075dd4873ee88e05866d2b8bf1b",
+    "bytes": 12871
+  },
+  {
+    "path": "Java/assets/npcs/npc_torin.png",
+    "sha256": "4da1015efabe7b27d64dae8ec433022d7a7a58bf93fc318f6bdf4182bb5a7854",
+    "bytes": 9395
+  },
+  {
+    "path": "Java/assets/npcs/npc_torin_model.png",
+    "sha256": "b9317ac06eb11ee8ecb17f0fb203c8d0ae1cd30862e3f33b87fd27f05eb23368",
+    "bytes": 16651
+  },
+  {
+    "path": "Java/assets/npcs/npc_torin_model_down.png",
+    "sha256": "b9317ac06eb11ee8ecb17f0fb203c8d0ae1cd30862e3f33b87fd27f05eb23368",
+    "bytes": 16651
+  },
+  {
+    "path": "Java/assets/npcs/npc_torin_model_left.png",
+    "sha256": "b13797a5674201f5c04e844e226fe497cf33968b432fc8cfb99987f2dcf1c1e7",
+    "bytes": 13577
+  },
+  {
+    "path": "Java/assets/npcs/npc_torin_model_right.png",
+    "sha256": "c1b4bf3f9659843b2c98d849dfdc365ddcc9020cad438f21d6c037bc4bc9bace",
+    "bytes": 13725
+  },
+  {
+    "path": "Java/assets/npcs/npc_torin_model_up.png",
+    "sha256": "19094ac4d4f7a1c1d7ae0ff16c8a28e1bf51941719fc120945d32c649694fb25",
+    "bytes": 16713
+  },
+  {
+    "path": "Java/assets/npcs/npc_vexa.png",
+    "sha256": "5aa32284056b9e4001e34d3eb1a48582f081353f04c95db8d5b838c4da0a0915",
+    "bytes": 9697
+  },
+  {
+    "path": "Java/assets/npcs/npc_vexa_model.png",
+    "sha256": "5bd114a5e5f3ed1e3d997a4947e0bfa10a44d69673907324b90b7aea25a04c60",
+    "bytes": 17159
+  },
+  {
+    "path": "Java/assets/npcs/npc_vexa_model_down.png",
+    "sha256": "5bd114a5e5f3ed1e3d997a4947e0bfa10a44d69673907324b90b7aea25a04c60",
+    "bytes": 17159
+  },
+  {
+    "path": "Java/assets/npcs/npc_vexa_model_left.png",
+    "sha256": "0cf9eb2aa26da12e1d4848bfff0386c6b3a2955066b2d590ef74cc4a5488e099",
+    "bytes": 13960
+  },
+  {
+    "path": "Java/assets/npcs/npc_vexa_model_right.png",
+    "sha256": "cf6d9c2bd0177bc9d6fed84c6d4b0318b92df756f3a04117700c99357c300feb",
+    "bytes": 15137
+  },
+  {
+    "path": "Java/assets/npcs/npc_vexa_model_up.png",
+    "sha256": "ab0da8671e2a3125ef6b01e468b1a4c15148e5a29912990bb7cca714c4e71af7",
+    "bytes": 15702
+  }
+]

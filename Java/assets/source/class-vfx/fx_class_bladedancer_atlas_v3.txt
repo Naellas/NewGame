@@ -1,0 +1,21 @@
+Use case: stylized-concept. Asset type: ONE production fantasy RPG VFX SPRITE ATLAS for Bladedancer. Exact rectangular grid: 5 equal-width COLUMNS and 5 equal-height ROWS (25 slots), evenly spaced edge-to-edge across entire canvas. Requested canvas 2560 by 2560 pixels. ALL slots are exactly equal rectangles; NO border, grid lines, numbers or text. Every effect centered inside its own slot with 18% transparent padding on EVERY side. No sprites may cross cell boundaries. Genuinely transparent RGBA background and holes. Empty unused slots must remain transparent. Match the reference creature's textured hand-painted pixel art: earthy shadows, crisp pixel clusters, selective bright edges, NO smooth vector disks, NO glossy icons, NO broad airbrushed bloom. Battle-view isolated magical/weapon IMPACT OVERLAYS, not inventory icons, no characters, no shields/weapons sitting as items, no scenery. Palette: silver, burgundy silk, pale rose. Each slot is separately designed for the named ability; vary silhouette and internal structure, not merely color. Area abilities get wide fan/eruption compositions; heals and wards have open transparent centers. Ordered slots, read LEFT TO RIGHT then TOP TO BOTTOM:
+Row 1 column 1: Crescent Cut — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 1 column 2: Dual Cut — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 1 column 3: Finale Cut — fractured arcane glyph fragments and curling magical energy; focused impact.
+Row 1 column 4: Finale of Knives — torn shadow ribbons, dark blade trails and moonlit motes; wide multi-target impact.
+Row 1 column 5: Grace Step — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 2 column 1: Mirror Step — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 2 column 2: Rhythm Break — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 2 column 3: Ribbon Storm — torn shadow ribbons, dark blade trails and moonlit motes; wide multi-target impact.
+Row 2 column 4: Silken Guard — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 2 column 5: Silver Arc — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; wide multi-target impact.
+Row 3 column 1: Silver Black Powder Cut — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; wide multi-target impact.
+Row 3 column 2: Silver Killing Angle — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 3 column 3: Silver Last Breath Contract — torn shadow ribbons, dark blade trails and moonlit motes; focused impact.
+Row 3 column 4: Silver Moonless Verdict — torn shadow ribbons, dark blade trails and moonlit motes; wide multi-target impact.
+Row 3 column 5: Silver Needle Riposte — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; focused impact.
+Row 4 column 1: Silver Perfect Exit — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 4 column 2: Silver Ruin the Room — splashed venom droplets, alchemical vapor and corrosion fragments; wide multi-target impact.
+Row 4 column 3: Silver Shadow Double — a fading smoke silhouette and curling evasive wisps, no person; protective/evasive, non-damaging.
+Row 4 column 4: Spinning Arc — sweeping sharp weapon slash traces, steel glints and sparse impact sparks; wide multi-target impact.
+Remaining slots 20 through 25: completely transparent. Keep the exact regular grid, no text. Reference images are style only, do not copy their subjects.

@@ -16,10 +16,12 @@ public final class BattleVfxRenderer {
 
     private final AssetStore assets;
     private final Effects effects;
+    private final AbilityImpactArt impactArt;
 
     public BattleVfxRenderer(AssetStore assets, Effects effects) {
         this.assets = assets;
         this.effects = effects;
+        this.impactArt = new AbilityImpactArt(assets);
     }
 
     public void drawBattleEffect(Graphics2D g, Battle battle, int panelX, int panelY, int panelW, int panelH) {
@@ -41,9 +43,17 @@ public final class BattleVfxRenderer {
                 ? BattleActionAnimation.VisualMode.SINGLE
                 : animation.visualMode;
         Graphics2D fx = (Graphics2D) g.create();
+        fx.clipRect(panelX, panelY, panelW, panelH - 170);
         fx.setStroke(new BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (animation != null && animation.stage() == BattleActionAnimation.Stage.CAST) {
-            drawCastBattleEffect(fx, source, animation.castProgress(), battle.enemies().contains(effectSource));
+            if (impactArt.has(animation.visualProfile()))
+                impactArt.drawCharge(fx, animation.visualProfile(), source, animation.castProgress());
+            else drawCastBattleEffect(fx, source, animation.castProgress(), kind);
+            fx.dispose();
+            return;
+        }
+        if (animation != null) {
+            drawTimedAction(fx, animation, kind, source, visualTargets);
             fx.dispose();
             return;
         }
@@ -134,6 +144,152 @@ public final class BattleVfxRenderer {
             centers.add(fallbackTarget);
         }
         return centers;
+    }
+
+    private void drawTimedAction(Graphics2D g, BattleActionAnimation animation, String kind, int[] source, List<int[]> targets) {
+        String sprite = effectSpriteName(kind);
+        ClassAbilityVfx.Profile profile = animation.visualProfile();
+        boolean namedImpact = impactArt.has(profile);
+        boolean restorative = "heal".equals(kind) || "regeneration".equals(kind) || "shield".equals(kind)
+                || "ward".equals(kind) || "item".equals(kind) || "grove_hymn".equals(kind)
+                || "root_memory".equals(kind) || "seraphic_hymn".equals(kind)
+                || isGeneratedHealEffect(kind) || isGeneratedWardEffect(kind);
+        boolean melee = isGeneratedMeleeEffect(kind) || switch (kind) {
+            case "strike", "impact", "bash", "slash", "cleave", "claw", "fang" -> true;
+            default -> false;
+        };
+        if (animation.actionKind() != null) restorative = animation.actionKind() != Ability.AbilityKind.DAMAGE;
+        if (profile != null) melee = profile.melee();
+        boolean authoredImpact = namedImpact || impactArt.has(kind);
+        boolean areaImpact = animation.visualMode == BattleActionAnimation.VisualMode.AOE && !restorative;
+        if (authoredImpact && areaImpact) {
+            int[] bounds = AbilityImpactArt.groupBounds(targets);
+            if (namedImpact) impactArt.draw(g, profile, bounds[0], bounds[1], bounds[2], bounds[3], animation.collisionProgress(0));
+            else impactArt.draw(g, kind, bounds[0], bounds[1], bounds[2], bounds[3], animation.collisionProgress(0));
+        }
+        if (!authoredImpact && animation.visualMode == BattleActionAnimation.VisualMode.AOE && targets.size() > 1
+                && animation.collisionProgress(0) >= 0) {
+            double p = animation.collisionProgress(0);
+            int[] center = targetGroupCenter(targets);
+            int spreadX = 60, spreadY = 30;
+            for (int[] target : targets) {
+                spreadX = Math.max(spreadX, Math.abs(target[0] - center[0]) + 65);
+                spreadY = Math.max(spreadY, Math.abs(target[1] - center[1]) + 35);
+            }
+            Graphics2D wave = (Graphics2D) g.create();
+            wave.setComposite(AlphaComposite.SrcOver.derive((float) (0.55 * (1 - p))));
+            wave.setColor(battleParticleColor(kind));
+            wave.setStroke(new BasicStroke((float) (2 + 6 * (1 - p))));
+            int rx = (int) (spreadX * (0.7 + p * 0.5));
+            int ry = (int) (spreadY * (0.7 + p * 0.5));
+            wave.drawOval(center[0] - rx, center[1] - ry, rx * 2, ry * 2);
+            wave.dispose();
+        }
+        for (int i = 0; i < targets.size(); i++) {
+            int[] target = targets.get(i);
+            int[] from = animation.visualMode == BattleActionAnimation.VisualMode.CHAIN && i > 0 ? targets.get(i - 1) : source;
+            double impact = animation.collisionProgress(i);
+            if (impact >= 0.0) {
+                if (impact >= 1.0) continue;
+                if (authoredImpact) {
+                    if (!areaImpact) {
+                        double size = targets.size() > 1 ? 1.18 : 1.0;
+                        if (namedImpact) impactArt.draw(g, profile, target[0], target[1] + 12, 230 * size, 240 * size, impact);
+                        else impactArt.draw(g, kind, target[0], target[1] + 12, 230 * size, 240 * size, impact);
+                    }
+                    // Local sparks show exactly which recipients were affected by the larger wave.
+                    drawBattleEffectParticles(g, kind, from, target, (float) (0.55 * (1 - impact)), 1.0);
+                    continue;
+                } else if (restorative && sprite != null) {
+                    drawEffectSprite(g, sprite, target[0], target[1], 144, 152, 0, (float) (0.85 * (1 - impact)));
+                } else if (melee && sprite != null) {
+                    drawEffectSprite(g, sprite, target[0], target[1], 150 + impact * 30, 124,
+                            crescentImpactAngle(from, target, 0.16), (float) (0.9 * (1 - impact)));
+                }
+                Graphics2D collision = (Graphics2D) g.create();
+                if (targets.size() > 1 && !restorative) {
+                    collision.translate(target[0], target[1]);
+                    collision.scale(areaImpact ? 1.5 : 1.25, areaImpact ? 1.5 : 1.25);
+                    collision.translate(-target[0], -target[1]);
+                }
+                drawCollision(collision, kind, from, target, impact, restorative);
+                collision.dispose();
+                continue;
+            }
+            int start = animation.visualMode == BattleActionAnimation.VisualMode.CHAIN && i > 0
+                    ? animation.collisionFrame(i - 1) : animation.castFrames;
+            if (animation.frame() < start) continue;
+            double p = (animation.frame() - start) / (double) Math.max(1, animation.collisionFrame(i) - start);
+            if (restorative || melee) continue;
+            if (namedImpact) {
+                impactArt.drawProjectile(g, profile, from, target, p);
+                continue;
+            }
+            double angle = effectTravelAngle(from, target);
+            if (sprite != null) {
+                drawTravelingSprite(g, sprite, from, target, angle, p,
+                        generatedProjectileWidth(kind), generatedProjectileHeight(kind), 0.90f);
+            } else {
+                int cx = (int) Math.round(from[0] + (target[0] - from[0]) * p);
+                int cy = (int) Math.round(from[1] + (target[1] - from[1]) * p);
+                g.setColor(battleParticleColor(kind));
+                g.fillOval(cx - 7, cy - 7, 14, 14);
+            }
+            drawBattleEffectParticles(g, kind, from, target, 0.65f, p);
+        }
+    }
+
+    private void drawCollision(Graphics2D g, String kind, int[] source, int[] target, double p, boolean restorative) {
+        if (fireEffect(kind) || iceEffect(kind)) {
+            drawElementalCollision(g, target[0], target[1], p, fireEffect(kind));
+        }
+        Graphics2D burst = (Graphics2D) g.create();
+        Color tint = battleParticleColor(kind);
+        float fade = (float) ((1 - p) * (1 - p));
+        burst.setComposite(AlphaComposite.SrcOver.derive(fade));
+        int radius = (int) (12 + Math.sqrt(p) * (restorative ? 42 : 68));
+        burst.setColor(tint);
+        burst.setStroke(new BasicStroke((float) (1 + 5 * (1 - p))));
+        burst.drawOval(target[0] - radius, target[1] - radius * 2 / 3, radius * 2, radius * 4 / 3);
+        boolean flame = kind.contains("fire") || kind.contains("burn") || kind.contains("ember") || kind.contains("inferno");
+        boolean ice = kind.contains("frost") || kind.contains("glacier") || kind.contains("ice");
+        boolean venom = kind.contains("poison") || kind.contains("acid") || kind.contains("thorn") || kind.contains("briar");
+        if (!restorative && (flame || ice || venom)) {
+            for (int i = 0; i < 9; i++) {
+                double angle = i * Math.PI * 2 / 9;
+                int reach = (int) (12 + Math.sqrt(p) * (32 + i % 3 * 12));
+                int cx = target[0] + (int) (Math.cos(angle) * reach);
+                int cy = target[1] + (int) (Math.sin(angle) * reach * 0.7 - (flame ? p * 30 : 0));
+                int size = (int) (5 + (1 - p) * (flame ? 16 : 8));
+                if (ice) {
+                    burst.fillPolygon(new int[]{cx, cx + size / 2, cx, cx - size / 2},
+                            new int[]{cy - size, cy, cy + size, cy}, 4);
+                } else {
+                    burst.fillOval(cx - size / 2, cy - size, size, flame ? size * 2 : size);
+                }
+            }
+        }
+        if (p < 0.28) {
+            int core = (int) (28 * (1 - p / 0.28)) + 2;
+            burst.setColor(new Color(255, 250, 224));
+            burst.fillOval(target[0] - core / 2, target[1] - core / 2, core, core);
+        }
+        double direction = effectTravelAngle(source, target);
+        for (int i = 0; i < 16; i++) {
+            double angle = direction + i * 2.399963;
+            double distance = 9 + Math.sqrt(p) * (38 + i % 5 * 11);
+            int cx = target[0] + (int) (Math.cos(angle) * distance);
+            int cy = target[1] + (int) (Math.sin(angle) * distance * 0.72 + (restorative ? -p * 34 : p * p * 22));
+            burst.setColor(i % 3 == 0 ? Color.WHITE : tint);
+            if (restorative) {
+                burst.drawLine(cx - 3, cy, cx + 3, cy);
+                burst.drawLine(cx, cy - 3, cx, cy + 3);
+            } else {
+                burst.drawLine(cx, cy, cx + (int) (Math.cos(angle) * (5 + 10 * (1 - p))),
+                        cy + (int) (Math.sin(angle) * (5 + 10 * (1 - p))));
+            }
+        }
+        burst.dispose();
     }
 
     private void drawBattleEffectParticles(Graphics2D g, String kind, int[] source, int[] target, float alpha, double phase) {
@@ -282,12 +438,12 @@ public final class BattleVfxRenderer {
         };
     }
 
-    private void drawCastBattleEffect(Graphics2D g, int[] source, double progress, boolean hostile) {
+    private void drawCastBattleEffect(Graphics2D g, int[] source, double progress, String kind) {
         float alpha = (float) (0.25 + Math.sin(progress * Math.PI) * 0.5);
         int radius = 30 + (int) Math.round(progress * 18);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0.05f, Math.min(0.8f, alpha))));
-        Color ring = hostile ? new Color(195, 124, 255) : new Color(126, 205, 255);
-        Color spark = hostile ? new Color(255, 130, 205) : new Color(255, 236, 160);
+        Color ring = battleParticleColor(kind);
+        Color spark = ring.brighter();
         g.setColor(ring);
         g.drawOval(source[0] - radius, source[1] - radius, radius * 2, radius * 2);
         g.drawOval(source[0] - radius / 2, source[1] - radius / 2, radius, radius);
@@ -303,6 +459,105 @@ public final class BattleVfxRenderer {
             g.drawLine(x, y - ray, x, y + ray);
         }
         g.setComposite(AlphaComposite.SrcOver);
+    }
+
+    private boolean fireEffect(String kind) {
+        return kind.contains("fire") || kind.contains("inferno") || kind.contains("noonflare")
+                || kind.equals("burn") || kind.equals("ember");
+    }
+
+    private boolean iceEffect(String kind) {
+        return kind.contains("frost") || kind.contains("glacier");
+    }
+
+    private void drawElementalCollision(Graphics2D g, int x, int y, double p, boolean fire) {
+        Graphics2D fx = (Graphics2D) g.create();
+        fx.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        double expansion = Math.sqrt(p);
+        float fade = (float) (1 - p);
+        if (fire) {
+            int halo = (int) (45 + 100 * expansion);
+            fx.setPaint(new java.awt.RadialGradientPaint(x, y, halo,
+                    new float[]{0, 0.45f, 1}, new Color[]{new Color(255, 240, 150, (int) (180 * fade)),
+                    new Color(255, 95, 18, (int) (100 * fade)), new Color(150, 30, 5, 0)}));
+            fx.fillOval(x - halo, y - halo, halo * 2, halo * 2);
+            for (int i = 0; i < 12; i++) {
+                double angle = i * 2.39996;
+                int radius = (int) (12 + expansion * (34 + i % 3 * 17));
+                int size = (int) ((22 + i % 4 * 7) * (1 - p * 0.65));
+                int cx = x + (int) (Math.cos(angle) * radius);
+                int cy = y + (int) (Math.sin(angle) * radius * 0.72 - p * 35);
+                fx.setColor(new Color(220, 54 + i % 3 * 22, 12, (int) (190 * fade)));
+                fx.fillOval(cx - size, cy - size, size * 2, size * 2);
+                fx.setColor(new Color(255, 190, 55, (int) (220 * fade)));
+                fx.fillOval(cx - size / 2, cy - size / 2, size, size);
+            }
+            int core = (int) (42 * Math.max(0, 1 - p * 3));
+            fx.setColor(new Color(255, 252, 214, (int) (255 * fade)));
+            fx.fillOval(x - core, y - core, core * 2, core * 2);
+        } else {
+            for (int i = 0; i < 18; i++) {
+                double angle = i * 2.39996;
+                double radius = 16 + expansion * (45 + i % 4 * 13);
+                int cx = x + (int) (Math.cos(angle) * radius);
+                int cy = y + (int) (Math.sin(angle) * radius * 0.8 + p * p * 25);
+                Graphics2D shard = (Graphics2D) fx.create();
+                shard.translate(cx, cy);
+                shard.rotate(angle);
+                shard.setColor(new Color(130, 217, 255, (int) (210 * fade)));
+                shard.fillPolygon(new int[]{-5, 0, 7, 0}, new int[]{0, -19, 0, 10}, 4);
+                shard.setColor(new Color(233, 253, 255, (int) (250 * fade)));
+                shard.drawLine(0, -16, 0, 7);
+                shard.dispose();
+            }
+        }
+        fx.dispose();
+    }
+
+    /** Persistent effects follow status lifetimes, independently of the active action. */
+    public void drawActorStatuses(Graphics2D g, Battle battle, Actor actor, int x, int y, int w, int h) {
+        if (!actor.alive()) return;
+        Graphics2D fx = (Graphics2D) g.create();
+        fx.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        for (EffectStack stack : battle.statusesFor(actor)) {
+            if (stack.turnsRemaining <= 0) continue;
+            String key = stack.effect.key();
+            if (key.equals("frozen")) {
+                double formation = 1;
+                BattleActionAnimation action = battle.activeAnimation();
+                if (action != null && iceEffect(action.effectKind) && action.targets.contains(actor)) {
+                    double collision = action.collisionProgress(action.targets.indexOf(actor));
+                    if (collision >= 0) formation = Math.min(1, collision * 2.4);
+                }
+                impactArt.drawFrozenShell(fx, x, y, w, h, formation);
+            }
+            if (key.equals("burn") || key.equals("poison") || key.equals("regeneration")) {
+                for (int i = 0; i < 12; i++) {
+                    double life = Math.floorMod(effects.frame() + i * 17, 70) / 70.0;
+                    int cx = x + w / 5 + (i * 37 % Math.max(1, w * 3 / 5)) + (int) (Math.sin(life * 8 + i) * 5);
+                    int cy = y + h * 7 / 8 - (int) (life * h * 0.65);
+                    int size = Math.max(2, (int) ((1 - life) * (key.equals("burn") ? 15 : 7)));
+                    int alpha = (int) (210 * Math.sin(life * Math.PI));
+                    fx.setColor(key.equals("burn") ? new Color(255, 89, 20, alpha) : new Color(115, 235, 125, alpha));
+                    if (key.equals("burn")) {
+                        fx.fillPolygon(new int[]{cx - size / 2, cx - size / 3, cx, cx + size / 5,
+                                        cx + size / 2, cx + size / 3, cx},
+                                new int[]{cy + size / 2, cy - size / 3, cy - size, cy,
+                                        cy - size / 3, cy + size / 2, cy + size}, 7);
+                        fx.setColor(new Color(255, 220, 95, alpha));
+                        fx.fillRect(cx - size / 5, cy, Math.max(1, size / 3), Math.max(1, size / 2));
+                    } else {
+                        fx.fillOval(cx - size / 2, cy - size, size, size * 2);
+                    }
+                }
+            }
+            if (key.equals("shield") || key.equals("fortified")) {
+                fx.setColor(new Color(148, 203, 255, 100 + (int) (30 * Math.sin(effects.frame() * 0.06))));
+                fx.setStroke(new BasicStroke(2f));
+                fx.drawOval(x + w / 9, y + h / 7, w * 7 / 9, h * 3 / 4);
+            }
+        }
+        fx.dispose();
     }
 
     private boolean drawImageBattleEffect(Graphics2D g, String kind, int[] source, int[] target, List<int[]> visualTargets,
@@ -560,7 +815,7 @@ public final class BattleVfxRenderer {
     }
 
     private void drawTravelingSprite(Graphics2D g, String sprite, int[] source, int[] target, double angle, double phase, int width, int height, float alpha) {
-        double travel = 0.14 + phase * 0.74;
+        double travel = Math.max(0.0, Math.min(1.0, phase));
         int x = (int) Math.round(source[0] + (target[0] - source[0]) * travel);
         int y = (int) Math.round(source[1] + (target[1] - source[1]) * travel);
         double drawAngle = correctedEffectAngle(sprite, angle);

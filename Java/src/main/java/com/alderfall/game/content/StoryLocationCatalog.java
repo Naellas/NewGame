@@ -10,9 +10,77 @@ public final class StoryLocationCatalog {
                         int x, int y, String route, String purpose, String people, String landmark,
                         String asset, List<String> quests) {
         public boolean outdoorSite() { return mapId.equals("overworld") && x > 0; }
+        /** Surface layouts reuse the world generator's structured placement rules. */
+        public String template() {
+            return switch (id) {
+                case "crowhook", "highwall_pass" -> "bandit_camp";
+                case "redcap_supply_camp" -> "goblin_camp";
+                case "banner_cairn" -> "graveyard";
+                case "highwall_watch", "glimmerfen_bellworks" -> "ruined_watchpost";
+                case "oathstead_timber_road", "snowrest_pass" -> "old_road_marker";
+                case "sunken_guest_shrine", "sanctum_forge" -> "guest_shrine";
+                case "glass_caravan" -> "caravan_halt";
+                case "reedbank_landing" -> "bell_landing";
+                case "mireford_reedbed" -> "reed_beds";
+                case "briarbridge_tollhouse" -> "tollhouse";
+                case "oakhaven_orchard" -> "orchard";
+                case "miredepth" -> "cave";
+                case "stonegate" -> "crypt";
+                case "blackvault" -> "abandoned_castle";
+                default -> "existing_map";
+            };
+        }
     }
 
     public static final List<Place> PLACES = List.of(
+            local("riverside", "Riverside City", "Western river roads", "city_riverside",
+                    "Use Riverside Gate on the world map to enter Riverside City.",
+                    "The western river city organizing bridge tolls and grain transport.", "Mirella manages supply commitments; Seraphine knows its court households.",
+                    "Mirella's NPC marker and the city's river streets."),
+            local("archive_city", "Archive City", "Central Crownlands", "city_archive",
+                    "Enter through Archive Gate on the world map.",
+                    "The central city holding the ward records and the entrance to the Old Oath Vault.", "Selene is the archivist; Maera studies routes; Hollis maintains burial records.",
+                    "Selene, Ward Reading Station, and Old Oath Vault entrance."),
+            local("highwall", "Highwall City", "Northern March", "city_highwall",
+                    "Enter through Highwall Gate on the world map.",
+                    "The northern garrison supplying the roadwatch along the mountain approaches.", "Odrick commands the roadwatch; Cassia's history concerns its gate orders.",
+                    "Odrick's NPC marker and Highwall Gate."),
+            local("sanctum", "Sanctum City", "Southern Sunrealm", "city_sanctum",
+                    "Enter through Sanctum Gate on the world map.",
+                    "The southern temple city serving travelers on the caravan roads.", "Solari oversees shrine rites; Samir knows the fire-vessel tradition.",
+                    "Solari's NPC marker; the guest shrine and forge lie southwest outside the city."),
+            local("belltower", "Belltower City", "Fenlands", "city_belltower",
+                    "Enter through Belltower Gate on the world map.",
+                    "The Fenland harbor whose warning bells and ferries connect the marsh villages.", "Ysra coordinates boat warnings; Lyra treats people along the flooded routes.",
+                    "Ysra's NPC marker and the approaches to Reedbank Bell Landing."),
+            local("briarbridge", "Briarbridge", "Central-western crossing", "town_briarbridge",
+                    "Enter the Briarbridge settlement from its world-map marker.",
+                    "The bridge town between Riverside's roads and the central settlements; its Guest Abbey has an accessible orchard and undercroft.",
+                    "Bridge workers, abbey gardeners, and travelers use the crossing.", "Briarbridge gate, Guest Abbey entrance, and the tollhouse south of town."),
+            local("oakhaven", "Oakhaven", "Central Hearthlands", "village_oakhaven",
+                    "Enter Oakhaven near Oathstead on the world map.",
+                    "The farming village beside the ward orchard and woodland paths used in Aria's investigation.", "Elder Rowan tends the orchard; Aria investigates her sister's disappearance along the western paths.",
+                    "Elder Rowan and the orchard approach southeast of the village."),
+            local("snowrest", "Snowrest", "Northern roads", "village_snowrest",
+                    "Find Snowrest in the northwest of the world map.",
+                    "The winter village whose road supplies and grove protections sustain its households.", "Captain Elric organizes supplies; Goatkeeper Una can give Vesper direct testimony.",
+                    "Elric, Una, and the eastward winter-pass road."),
+            local("dunewick", "Dunewick", "Southern well roads", "village_dunewick",
+                    "Find Dunewick west of Sanctum on the southern roads.",
+                    "A southern village where water and healing supplies matter to Rafiq's return.", "Elder Safa receives the quest supplies during Rafiq's revised second chapter.",
+                    "The village paths and Safa's active quest marker."),
+            local("mireford", "Mireford", "Fenlands", "village_mireford",
+                    "Find Mireford north of Belltower on the marsh road.",
+                    "The village whose sick residents need medicine and dependable deliveries.", "Eda and clinic attendant Sen appear in Lyra's revised care and delivery chapters.",
+                    "Clinic witness markers when their quests are active; fever-reed beds lie south of the village."),
+            local("glimmerfen", "Glimmerfen", "Fenlands", "village_glimmerfen",
+                    "Find Glimmerfen northeast of Belltower on the road from Mireford.",
+                    "The bellwright's village serving the eastern Fenland warning line.", "Bellwright Nessa plans the bell-foundation repairs.",
+                    "Nessa and the bell foundations southeast of the village."),
+            local("redcairn", "Redcairn", "Southern badlands", "village_redcairn",
+                    "Follow Sanctum's eastern road to Redcairn.",
+                    "The settlement from which Blackvault's stored magic is investigated.", "Ash-Scribe Damar studies Blackvault's maintenance records.",
+                    "Damar's NPC marker; Blackvault Ruins lie west of the village."),
             local("road_shrine", "Burned Road Shrine", "Oathstead", "story_road_shrine",
                     "Enter the Burned Road Shrine from the shrine-path entrance inside Oathstead.",
                     "A travelers' sanctuary where Vaelthara broke a protective enchantment cut into the altar.",
@@ -76,7 +144,7 @@ public final class StoryLocationCatalog {
                     "Leave Mireford by its southern road. Collect six marked fever-reed samples at Mireford Fever-Reed Beds, then return to Ysra in Belltower.",
                     "The reed beds supplying material for Mireford's fever remedies.",
                     "Ysra arranges the gathering; preparation and patient care follow afterward.",
-                    "Six labeled Fever Reed gathering points.", "location_farmland_wheat", "ms_medicine_mireford"),
+                    "Six labeled Fever Reed gathering points.", "deco_soft_water_reeds_gold", "ms_medicine_mireford"),
             outdoor("miredepth", "Miredepth Cave", "Belltower Fenlands", "dungeon_miredepth_1", 255, 177,
                     "Find Miredepth Cave east of Belltower. The red quest encounter and the cave lead to Velmora's threat; report her defeat to Ysra.",
                     "A flooded cave associated with bells that call the drowned dead against living travelers.",

@@ -412,7 +412,7 @@ def main() -> None:
     terrain_names = [
         "grass",
         "forest",
-        "desert",
+        # Authored desert_sand_wind replaces the repeating pebble variants.
         "tundra",
         "marsh",
         "badlands",

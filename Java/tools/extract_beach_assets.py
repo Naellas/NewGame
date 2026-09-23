@@ -48,6 +48,9 @@ def split_terrain() -> None:
     TERRAIN_OUT.mkdir(parents=True, exist_ok=True)
     cell_w = sheet.width // len(TERRAIN_NAMES)
     for index, name in enumerate(TERRAIN_NAMES):
+        # Retired: shallow water now uses continuous water coverage, without sand stamps.
+        if name.startswith("submerged_sand"):
+            continue
         left = index * cell_w
         right = sheet.width if index == len(TERRAIN_NAMES) - 1 else (index + 1) * cell_w
         cell = sheet.crop((left, 0, right, sheet.height))
@@ -98,7 +101,8 @@ def main() -> None:
     split_terrain()
     props = split_props()
     write_item_icons(props)
-    print(f"Extracted {len(TERRAIN_NAMES)} beach terrain tiles and {len(PROP_NAMES)} beach props.")
+    terrain_count = sum(not name.startswith("submerged_sand") for name in TERRAIN_NAMES)
+    print(f"Extracted {terrain_count} beach terrain tiles and {len(PROP_NAMES)} beach props.")
 
 
 if __name__ == "__main__":

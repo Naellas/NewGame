@@ -1,0 +1,6 @@
+{
+  "file": "items/material_ancient_wood.png",
+  "prompt": "Use case: stylized-concept. Create ONE standalone transparent PNG sprite for a 2D top-down fantasy RPG. Hand-painted pixel-art-inspired style, crisp chunky forms and strong silhouette readable at 48 pixels, three-quarter overhead view, upper-left light, no outline frame. Entire object centered in square canvas, 15 percent transparent margins, genuine alpha transparency. No text, letters, labels, UI, border, sheet, checkerboard, scenery or floor rectangle. Match the provided verdant node STYLE: naturally shaped faceted forms, restrained painted shading, moderate detail and illustrated fantasy materials. Do not turn it into coarse block pixel art or a realistic photograph. Inventory icon of two cut ancient timber logs, dark brown bark, simple golden growth-ring spiral on cut faces, one restrained teal magical mark. Depict harvested logs, not trees.",
+  "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c90e-ad37-74d3-9998-533d6664cfe6\\exec-7d076c9b-1bb4-4558-82a1-9a60c462a3d6.png",
+  "mode": "built-in image_gen"
+}

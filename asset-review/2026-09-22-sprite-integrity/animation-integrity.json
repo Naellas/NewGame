@@ -1,0 +1,6778 @@
+[
+  {
+    "path": "Java/assets/story/npcs/ysra/animations/npc_story_ysra_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/ysra/animations/npc_story_ysra_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/ysra/animations/npc_story_ysra_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/ysra/animations/npc_story_ysra_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/vaelthara/animations/npc_story_vaelthara_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/vaelthara/animations/npc_story_vaelthara_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/vaelthara/animations/npc_story_vaelthara_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/vaelthara/animations/npc_story_vaelthara_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/solari/animations/npc_story_solari_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/solari/animations/npc_story_solari_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/solari/animations/npc_story_solari_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/solari/animations/npc_story_solari_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/selene/animations/npc_story_selene_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/selene/animations/npc_story_selene_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/selene/animations/npc_story_selene_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/selene/animations/npc_story_selene_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/odrick/animations/npc_story_odrick_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/odrick/animations/npc_story_odrick_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/odrick/animations/npc_story_odrick_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/odrick/animations/npc_story_odrick_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/mirella/animations/npc_story_mirella_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/mirella/animations/npc_story_mirella_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/mirella/animations/npc_story_mirella_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/mirella/animations/npc_story_mirella_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/maelis/animations/npc_story_maelis_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/maelis/animations/npc_story_maelis_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/maelis/animations/npc_story_maelis_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/maelis/animations/npc_story_maelis_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/gravekeeper_hollis/animations/npc_story_gravekeeper_hollis_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/gravekeeper_hollis/animations/npc_story_gravekeeper_hollis_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/gravekeeper_hollis/animations/npc_story_gravekeeper_hollis_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/gravekeeper_hollis/animations/npc_story_gravekeeper_hollis_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/elder_rowan/animations/npc_story_elder_rowan_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/elder_rowan/animations/npc_story_elder_rowan_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/elder_rowan/animations/npc_story_elder_rowan_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/elder_rowan/animations/npc_story_elder_rowan_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/captain_elric_snowrest/animations/npc_story_captain_elric_snowrest_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/captain_elric_snowrest/animations/npc_story_captain_elric_snowrest_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/captain_elric_snowrest/animations/npc_story_captain_elric_snowrest_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/captain_elric_snowrest/animations/npc_story_captain_elric_snowrest_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/bellwright_nessa/animations/npc_story_bellwright_nessa_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/bellwright_nessa/animations/npc_story_bellwright_nessa_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/bellwright_nessa/animations/npc_story_bellwright_nessa_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/bellwright_nessa/animations/npc_story_bellwright_nessa_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/ash_scribe_damar/animations/npc_story_ash_scribe_damar_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/ash_scribe_damar/animations/npc_story_ash_scribe_damar_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/ash_scribe_damar/animations/npc_story_ash_scribe_damar_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/story/npcs/ash_scribe_damar/animations/npc_story_ash_scribe_damar_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1152,
+      96
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1256,
+      294
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1032,
+      201
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      774,
+      201
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      774,
+      201
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1674,
+      281
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      896,
+      202
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      672,
+      202
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      672,
+      202
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1836,
+      280
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      942,
+      294
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      942,
+      294
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2538,
+      278
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      872,
+      297
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      654,
+      297
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      654,
+      297
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1674,
+      281
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      944,
+      296
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      708,
+      296
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      708,
+      296
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1836,
+      280
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1256,
+      294
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      944,
+      199
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      708,
+      199
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      708,
+      199
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2538,
+      278
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      968,
+      197
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      726,
+      197
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      726,
+      197
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2538,
+      278
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      942,
+      294
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      942,
+      294
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/rogue/animations/class_rogue_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2538,
+      278
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1392,
+      311
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1240,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      930,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      930,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2304,
+      292
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1240,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      930,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      930,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2322,
+      292
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1044,
+      311
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1044,
+      311
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2844,
+      295
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1152,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      864,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      864,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2304,
+      292
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1160,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      870,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      870,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2322,
+      292
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1352,
+      307
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1152,
+      219
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      864,
+      219
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      864,
+      219
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2754,
+      291
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1064,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      798,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      798,
+      221
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2754,
+      291
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1014,
+      307
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1014,
+      307
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/ranger/animations/class_ranger_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2754,
+      291
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_cast_anim.frames",
+    "bom": true,
+    "frames": 10,
+    "size": [
+      3870,
+      757
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      2912,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1000,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      750,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      750,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      4086,
+      740
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      960,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      720,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      720,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      4068,
+      739
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      2184,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      2184,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 12,
+    "size": [
+      4368,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      2008,
+      764
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1506,
+      764
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1506,
+      764
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 12,
+    "size": [
+      3012,
+      764
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      2000,
+      763
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1500,
+      763
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1500,
+      763
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 12,
+    "size": [
+      3000,
+      763
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      2912,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      816,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      612,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      612,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      5940,
+      726
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      888,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      666,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      666,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      5940,
+      726
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      2184,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      2184,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/mage/animations/class_mage_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 12,
+    "size": [
+      4368,
+      733
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1376,
+      348
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      968,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      726,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      726,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2106,
+      332
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      920,
+      217
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      690,
+      217
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      690,
+      217
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2232,
+      334
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1032,
+      348
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1032,
+      348
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2808,
+      332
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1064,
+      348
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      798,
+      348
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      798,
+      348
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2106,
+      332
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1120,
+      350
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      840,
+      350
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      840,
+      350
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2232,
+      334
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1296,
+      345
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      896,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      672,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      672,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2628,
+      329
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1008,
+      216
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      756,
+      216
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      756,
+      216
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2628,
+      329
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      972,
+      345
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      972,
+      345
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/knight/animations/class_knight_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2628,
+      329
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1488,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1184,
+      222
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      888,
+      222
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      888,
+      222
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2628,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1112,
+      223
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      834,
+      223
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      834,
+      223
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1962,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1116,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1116,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      3060,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1296,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      972,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      972,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2628,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1000,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      750,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      750,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1962,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1440,
+      322
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1088,
+      220
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      816,
+      220
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      816,
+      220
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2952,
+      306
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1080,
+      219
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      810,
+      219
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      810,
+      219
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2952,
+      306
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1080,
+      322
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1080,
+      322
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/classes/cleric/animations/class_cleric_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2952,
+      306
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1440,
+      326
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1048,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1890,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      976,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      732,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      732,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1926,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1080,
+      326
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1080,
+      326
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2952,
+      310
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      968,
+      324
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      726,
+      324
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      726,
+      324
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1890,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      984,
+      324
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      738,
+      324
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      738,
+      324
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      1926,
+      308
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1384,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      920,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      690,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      690,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2826,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      936,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      702,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      702,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2826,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1038,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      1038,
+      325
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/player/base/animations/player_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 18,
+    "size": [
+      2826,
+      309
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_down_knead_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_baker_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_bartender_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_blacksmith_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_man_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_citizen_woman_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_elowen_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_garruk_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_innkeeper_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_kael_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_liora_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_marla_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_merchant_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_mira_sunwarden_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_nyx_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_orin_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_quartermaster_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_ren_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_rowan_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_sable_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_torin_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/npcs/animations/npc_vexa_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1048,
+      246
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      246
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      246
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      976,
+      244
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      732,
+      244
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      732,
+      244
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      936,
+      245
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      702,
+      245
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      702,
+      245
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1048,
+      245
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      245
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      245
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/vesper/animations/npc_vesper_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      984,
+      235
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      738,
+      235
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      738,
+      235
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      848,
+      232
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      636,
+      232
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      636,
+      232
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      880,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      660,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      660,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      832,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      624,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      624,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/seraphine/animations/npc_seraphine_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      952,
+      228
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      714,
+      228
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      714,
+      228
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      912,
+      228
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      684,
+      228
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      684,
+      228
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      888,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      666,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      666,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      896,
+      224
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      672,
+      224
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      672,
+      224
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/samir/animations/npc_samir_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1048,
+      243
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      243
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      786,
+      243
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      856,
+      242
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      642,
+      242
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      642,
+      242
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      992,
+      255
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      744,
+      255
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      744,
+      255
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1032,
+      238
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      774,
+      238
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      774,
+      238
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/rafiq/animations/npc_rafiq_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      960,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      720,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      720,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      872,
+      229
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      654,
+      229
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      654,
+      229
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      928,
+      229
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      696,
+      229
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      696,
+      229
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      944,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      708,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      708,
+      227
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/maera/animations/npc_maera_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      656,
+      225
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      492,
+      225
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      492,
+      225
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      648,
+      224
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      486,
+      224
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      486,
+      224
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      776,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      582,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      582,
+      226
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/lyra/animations/npc_lyra_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      760,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      570,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      570,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      688,
+      217
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      516,
+      217
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      516,
+      217
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      680,
+      212
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      510,
+      212
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      510,
+      212
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      800,
+      211
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      600,
+      211
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      600,
+      211
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/cassia/animations/npc_cassia_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      904,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      678,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      678,
+      215
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      904,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      678,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      678,
+      213
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      736,
+      210
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      552,
+      210
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      552,
+      210
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      1008,
+      211
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      756,
+      211
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      756,
+      211
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/calder/animations/npc_calder_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      856,
+      222
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      642,
+      222
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      642,
+      222
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      840,
+      223
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      630,
+      223
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      630,
+      223
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_down_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_left_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      856,
+      214
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_left_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      642,
+      214
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_left_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      642,
+      214
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_left_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_right_idle_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      936,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_right_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      702,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_right_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      702,
+      218
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_right_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_start_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_stop_walk_anim.frames",
+    "bom": false,
+    "frames": 6,
+    "size": [
+      576,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  },
+  {
+    "path": "Java/assets/companions/aria/animations/npc_aria_model_up_walk_anim.frames",
+    "bom": false,
+    "frames": 8,
+    "size": [
+      768,
+      128
+    ],
+    "valid": true,
+    "empty_frames": []
+  }
+]

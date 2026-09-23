@@ -18,6 +18,7 @@ public final class AssetStore {
     private final Map<String, BufferedImage> sourceCache = new HashMap<>();
     private final Map<String, BufferedImage> croppedSourceCache = new HashMap<>();
     private final Map<String, Integer> animationMetadataCache = new HashMap<>();
+    private final Map<String, java.awt.Rectangle> animationViewportCache = new HashMap<>();
 
     public AssetStore(Path assetsRoot) {
         this.assetsRoot = assetsRoot;
@@ -45,11 +46,16 @@ public final class AssetStore {
     }
 
     public boolean hasSprite(String name) {
+        if (TextileMaterialSprites.NAMES.contains(name))
+            return catalog.findAsset(TextileMaterialSprites.ATLAS) != null;
+        if (name.startsWith(ItemAppearance.PREFIX)) return catalog.findAsset(ItemAppearance.atlasName(name)) != null;
         return catalog.findAsset(name) != null;
     }
 
     public Set<String> assetNames() {
-        return catalog.allAssetNames();
+        Set<String> names = new java.util.HashSet<>(catalog.allAssetNames());
+        if (catalog.findAsset(TextileMaterialSprites.ATLAS) != null) names.addAll(TextileMaterialSprites.NAMES);
+        return Set.copyOf(names);
     }
 
     public BufferedImage effectSprite(String name, int width, int height, int frame) {
@@ -94,6 +100,10 @@ public final class AssetStore {
         int x = selectedFrame * frameWidth;
         int sourceWidth = Math.min(frameWidth, sheet.getWidth() - x);
         BufferedImage source = sheet.getSubimage(x, 0, sourceWidth, sheet.getHeight());
+        java.awt.Rectangle viewport = animationViewport(sheetName, frameWidth, sheet.getHeight());
+        if (viewport.width <= sourceWidth && viewport.x + viewport.width <= sourceWidth) {
+            source = source.getSubimage(viewport.x, viewport.y, viewport.width, viewport.height);
+        }
         if (usesMovementFit(action)) {
             source = cropTransparent(source);
         }
@@ -110,6 +120,20 @@ public final class AssetStore {
         BufferedImage sheet = loadSource(sheetName);
         int frameWidth = Math.max(1, sheet.getHeight());
         return Math.max(1, sheet.getWidth() / frameWidth);
+    }
+
+    /** Fixed-grid imagegen atlas cells, extracted without trimming the atlas itself. */
+    public BufferedImage effectAtlasCell(String name, int cell, int columns, int rows) {
+        String key = "vfx-atlas:" + name + ":" + cell;
+        BufferedImage existing = cache.get(key);
+        if (existing != null) return existing;
+        BufferedImage atlas = loadSource(name);
+        int col = Math.floorMod(cell, columns), row = cell / columns;
+        int x = col * atlas.getWidth() / columns, y = row * atlas.getHeight() / rows;
+        int right = (col + 1) * atlas.getWidth() / columns, bottom = (row + 1) * atlas.getHeight() / rows;
+        BufferedImage image = fit(atlas.getSubimage(x, y, right - x, bottom - y), 512, 512, true);
+        cache.put(key, image);
+        return image;
     }
 
     public int animatedSpriteFrameCount(String name, String action, int width, int height) {
@@ -186,6 +210,16 @@ public final class AssetStore {
         BufferedImage cached = sourceCache.get(name);
         if (cached != null) {
             return cached;
+        }
+        if (TextileMaterialSprites.NAMES.contains(name)) {
+            BufferedImage image = TextileMaterialSprites.extract(name, loadSource(TextileMaterialSprites.ATLAS));
+            sourceCache.put(name, image);
+            return image;
+        }
+        if (name.startsWith(ItemAppearance.PREFIX)) {
+            BufferedImage image = ItemAppearance.render(name, loadSource(ItemAppearance.atlasName(name)));
+            sourceCache.put(name, image);
+            return image;
         }
         Path path = catalog.findAsset(name);
         if (path != null) {
@@ -338,6 +372,27 @@ public final class AssetStore {
             }
         }
         return Math.max(1, best);
+    }
+
+    // Optional shared viewport keeps padded animation poses at one stable scale and baseline.
+    // Unlike trimming each frame separately, this preserves intentional attack movement.
+    private java.awt.Rectangle animationViewport(String sheetName, int width, int height) {
+        return animationViewportCache.computeIfAbsent(sheetName + ":" + width + "x" + height, key -> {
+            java.awt.Rectangle full = new java.awt.Rectangle(0, 0, width, height);
+            Path asset = catalog.findAsset(sheetName);
+            if (asset == null) return full;
+            Path metadata = asset.resolveSibling(sheetName + ".framebounds");
+            if (!Files.exists(metadata)) return full;
+            try {
+                String[] parts = Files.readString(metadata).strip().split("\\s+");
+                if (parts.length != 4) return full;
+                java.awt.Rectangle bounds = new java.awt.Rectangle(Integer.parseInt(parts[0]),
+                        Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+                return bounds.width > 0 && bounds.height > 0 && full.contains(bounds) ? bounds : full;
+            } catch (IOException | NumberFormatException ignored) {
+                return full;
+            }
+        });
     }
 
     private int animationFrameCount(String sheetName, BufferedImage sheet, int width, int height) {

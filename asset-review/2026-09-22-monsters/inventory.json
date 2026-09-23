@@ -1,0 +1,988 @@
+[
+  {
+    "path": "Java/assets/monsters/goblin.png",
+    "stem": "goblin",
+    "used": true,
+    "modified": "2026-05-26T15:52:01.311119",
+    "sha256": "9d8dc765925fa8ff3883a3bea5436b2a41a480da74c285eae07428df02c36866",
+    "size": [
+      155,
+      145
+    ],
+    "bbox": [
+      2,
+      2,
+      153,
+      143
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/bat.png",
+    "stem": "bat",
+    "used": true,
+    "modified": "2026-05-26T15:52:01.389185",
+    "sha256": "8ff56dc29020147f818d6ab8fe31f50bd80cc5da26ad326fdbfbf83d1a975fa0",
+    "size": [
+      250,
+      106
+    ],
+    "bbox": [
+      2,
+      2,
+      248,
+      104
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/orc.png",
+    "stem": "orc",
+    "used": true,
+    "modified": "2026-05-26T15:52:04.208075",
+    "sha256": "16159a5fa1d44ce1cee292327eaeb051722fbc4a8e1f59724a7681ee9f86b100",
+    "size": [
+      550,
+      501
+    ],
+    "bbox": [
+      0,
+      2,
+      548,
+      499
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/frost_wolf.png",
+    "stem": "frost_wolf",
+    "used": true,
+    "modified": "2026-05-31T04:39:27.867446",
+    "sha256": "3a97bb1ad1f01eacb1170af8d036f86c1b6e4dbe87a9d9dd8743aca47a7567fb",
+    "size": [
+      403,
+      424
+    ],
+    "bbox": [
+      18,
+      18,
+      391,
+      375
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/reed_serpent.png",
+    "stem": "reed_serpent",
+    "used": true,
+    "modified": "2026-05-31T04:39:27.996887",
+    "sha256": "6136228f14b5b5c57a9c43a2b58002a99f40aa8232b1be94817f346d084a01c6",
+    "size": [
+      396,
+      395
+    ],
+    "bbox": [
+      18,
+      19,
+      377,
+      377
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/glass_scorpion.png",
+    "stem": "glass_scorpion",
+    "used": true,
+    "modified": "2026-05-31T04:39:28.101629",
+    "sha256": "6a5b48c2485013ba2bdd4ba465f0578a277628eecec5a37a5257a86af13a7254",
+    "size": [
+      405,
+      406
+    ],
+    "bbox": [
+      13,
+      18,
+      387,
+      388
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/stoneback_goat.png",
+    "stem": "stoneback_goat",
+    "used": true,
+    "modified": "2026-05-31T04:39:28.246614",
+    "sha256": "a3d4e6ae9c4d46602006120577e8096ec4327cf39d3cf8fbc92dab659911a84c",
+    "size": [
+      392,
+      390
+    ],
+    "bbox": [
+      18,
+      19,
+      374,
+      372
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/moss_stag.png",
+    "stem": "moss_stag",
+    "used": true,
+    "modified": "2026-05-31T04:39:28.356923",
+    "sha256": "bddde6f3837a17e345316443106a2b3aaf785b3ec957257ade6618de34b8cd93",
+    "size": [
+      401,
+      423
+    ],
+    "bbox": [
+      18,
+      0,
+      382,
+      404
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/river_eel.png",
+    "stem": "river_eel",
+    "used": true,
+    "modified": "2026-05-31T04:39:28.474802",
+    "sha256": "c2a4a70a1faae4f1a2255a616cd39428c51aa7008fcd5c10f6d44a74e485937e",
+    "size": [
+      397,
+      395
+    ],
+    "bbox": [
+      18,
+      18,
+      379,
+      377
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/ash_scorpion.png",
+    "stem": "ash_scorpion",
+    "used": true,
+    "modified": "2026-05-31T04:39:28.588589",
+    "sha256": "72699b3b0d825d5532e2f29d1526d43336472970dff63185d43b70f59457acce",
+    "size": [
+      418,
+      423
+    ],
+    "bbox": [
+      3,
+      12,
+      418,
+      404
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/crypt_bat.png",
+    "stem": "crypt_bat",
+    "used": true,
+    "modified": "2026-05-31T04:39:28.681553",
+    "sha256": "cabf572cc0436227d5c0e892d1d6e49efb9c8803c4ebdba1dfdb0b04975a6a7e",
+    "size": [
+      418,
+      362
+    ],
+    "bbox": [
+      0,
+      18,
+      408,
+      344
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/sheep.png",
+    "stem": "sheep",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.278373",
+    "sha256": "32d4a84cc0fd735ebbf2159ec221dae7b6da399d7c1b2fd9229c83e8f09ebd5a",
+    "size": [
+      383,
+      435
+    ],
+    "bbox": [
+      18,
+      18,
+      365,
+      417
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/doe.png",
+    "stem": "doe",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.299916",
+    "sha256": "14126919494998e8bb83193705d9f9ecda4f8ed8f35afc728cb93ad93cdca1e0",
+    "size": [
+      351,
+      456
+    ],
+    "bbox": [
+      18,
+      18,
+      333,
+      438
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/mountain_goat.png",
+    "stem": "mountain_goat",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.331438",
+    "sha256": "ac0b651efdecabd63904952b08cee4c5329d631cef80e8aa9a76cb5fd17aa54b",
+    "size": [
+      395,
+      497
+    ],
+    "bbox": [
+      18,
+      18,
+      377,
+      479
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/stag.png",
+    "stem": "stag",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.356448",
+    "sha256": "b8815ce63dd58fb2dddb5ab0895337c8f4d3ec61bb0eaf0872fe5eb251b83825",
+    "size": [
+      394,
+      540
+    ],
+    "bbox": [
+      18,
+      18,
+      376,
+      522
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/crystal_hare.png",
+    "stem": "crystal_hare",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.377971",
+    "sha256": "cbe95eea4a7de7187c5559ae19b633b00b04d47fe6591d22afe9fd49063d5650",
+    "size": [
+      310,
+      387
+    ],
+    "bbox": [
+      18,
+      18,
+      292,
+      369
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/bramble_boar.png",
+    "stem": "bramble_boar",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.406583",
+    "sha256": "961623786bc471230ae7705479da1c3c44aa3ebcf1c74c2a13c50a6430db5fcf",
+    "size": [
+      461,
+      360
+    ],
+    "bbox": [
+      18,
+      18,
+      443,
+      342
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/snow_lynx.png",
+    "stem": "snow_lynx",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.436540",
+    "sha256": "cac3490b546cece57fd6796e368f03575ae3834f49608fb76b37a6aab8f17f50",
+    "size": [
+      443,
+      354
+    ],
+    "bbox": [
+      18,
+      18,
+      425,
+      336
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/ember_tortoise.png",
+    "stem": "ember_tortoise",
+    "used": true,
+    "modified": "2026-06-01T02:19:19.467575",
+    "sha256": "043066bd21ec629f37412771c9f4ba369aefeddd35984aef808deab4ea2e9593",
+    "size": [
+      478,
+      349
+    ],
+    "bbox": [
+      18,
+      18,
+      460,
+      331
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/slime.png",
+    "stem": "slime",
+    "used": true,
+    "modified": "2026-06-01T18:02:49.106266",
+    "sha256": "4d720bfd4a797a4ed313309366ee684c256ade7ebd4c35f2581a48e3baf20623",
+    "size": [
+      353,
+      245
+    ],
+    "bbox": [
+      8,
+      8,
+      345,
+      237
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/wolf.png",
+    "stem": "wolf",
+    "used": true,
+    "modified": "2026-06-01T18:02:49.884880",
+    "sha256": "a7a00c6e8a719576bc4f94115b488f3bf2e9a1bad225baaf149525ff5a0d34c8",
+    "size": [
+      383,
+      313
+    ],
+    "bbox": [
+      8,
+      8,
+      375,
+      305
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/skeleton.png",
+    "stem": "skeleton",
+    "used": true,
+    "modified": "2026-06-01T18:02:50.769690",
+    "sha256": "f3fa97833c7a02a7a5b43f0c84ae5d725c3ac56e9c50affb7d33b27d196f40e7",
+    "size": [
+      340,
+      356
+    ],
+    "bbox": [
+      8,
+      8,
+      332,
+      348
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/thornling.png",
+    "stem": "thornling",
+    "used": true,
+    "modified": "2026-06-01T18:02:51.784445",
+    "sha256": "91a613bba1e9a094a8b9796d6370b2b46e458f70f3babceeb536119cdeece490",
+    "size": [
+      359,
+      379
+    ],
+    "bbox": [
+      8,
+      8,
+      351,
+      371
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/sand_stalker.png",
+    "stem": "sand_stalker",
+    "used": true,
+    "modified": "2026-06-01T18:02:52.724109",
+    "sha256": "7b78108884848bdfe50e448ccfefc9b4a9981e1ad163407cabbd2135f0b12119",
+    "size": [
+      402,
+      371
+    ],
+    "bbox": [
+      8,
+      8,
+      394,
+      363
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/ice_golem.png",
+    "stem": "ice_golem",
+    "used": true,
+    "modified": "2026-06-01T18:02:53.289483",
+    "sha256": "64c33c74ef2279a4d98603178804f5ad7a4c75e2022474bc59c281303d3e8864",
+    "size": [
+      328,
+      374
+    ],
+    "bbox": [
+      8,
+      8,
+      320,
+      366
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/bog_beast.png",
+    "stem": "bog_beast",
+    "used": true,
+    "modified": "2026-06-01T18:02:54.163491",
+    "sha256": "c4287c9dbb123a1c7e062bbc0a79744fc33edd905844d69f1a66c9788f8c194d",
+    "size": [
+      374,
+      366
+    ],
+    "bbox": [
+      8,
+      8,
+      366,
+      358
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/ember_imp.png",
+    "stem": "ember_imp",
+    "used": true,
+    "modified": "2026-06-01T18:02:55.103561",
+    "sha256": "b995b241875ced3c0cee6d7d97e211639f60e00be5c6d4ea39dd83a3192ef3ef",
+    "size": [
+      342,
+      359
+    ],
+    "bbox": [
+      8,
+      8,
+      334,
+      351
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/spider.png",
+    "stem": "spider",
+    "used": true,
+    "modified": "2026-06-01T18:02:56.104124",
+    "sha256": "597ad2adc62731d9bd32fff41f0f934da12e204e68498a30d683ae03e0f9b573",
+    "size": [
+      415,
+      309
+    ],
+    "bbox": [
+      8,
+      8,
+      407,
+      301
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/wraith.png",
+    "stem": "wraith",
+    "used": true,
+    "modified": "2026-06-01T18:02:56.994945",
+    "sha256": "5726df71d03c6be186127ef2261217b3ded8b7e4c121e9bd29269bd3b4fa26ab",
+    "size": [
+      395,
+      365
+    ],
+    "bbox": [
+      8,
+      8,
+      387,
+      357
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/goblin_scout.png",
+    "stem": "goblin_scout",
+    "used": true,
+    "modified": "2026-06-01T18:04:08.446309",
+    "sha256": "434800b3b531bb132df66e6a82a6b5d5b4aa43828d1b2730501a32686be819d7",
+    "size": [
+      275,
+      307
+    ],
+    "bbox": [
+      12,
+      12,
+      263,
+      295
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/goblin_archer.png",
+    "stem": "goblin_archer",
+    "used": true,
+    "modified": "2026-06-01T18:04:09.321101",
+    "sha256": "962713638e9191fd665a827d19bf627a6a79ead66d83246f65d7db23aaa1d0d1",
+    "size": [
+      297,
+      335
+    ],
+    "bbox": [
+      12,
+      12,
+      285,
+      323
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/goblin_trapper.png",
+    "stem": "goblin_trapper",
+    "used": true,
+    "modified": "2026-06-01T18:04:10.266343",
+    "sha256": "67806d00f50dc3471c90c1e909c4884b4b5fdee0eb71a402c8ed6f961b6503e1",
+    "size": [
+      308,
+      435
+    ],
+    "bbox": [
+      12,
+      12,
+      296,
+      423
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/goblin_skirmisher.png",
+    "stem": "goblin_skirmisher",
+    "used": true,
+    "modified": "2026-06-01T18:04:11.101017",
+    "sha256": "b1b180d5f2a1eba92699ff5e291b41c29a676d78b3e4e402016dd00d9d91577d",
+    "size": [
+      334,
+      344
+    ],
+    "bbox": [
+      12,
+      12,
+      322,
+      332
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/goblin_shaman.png",
+    "stem": "goblin_shaman",
+    "used": true,
+    "modified": "2026-06-01T18:04:11.974204",
+    "sha256": "531359827cad29cc9242de10c7fe97bc66db86e16fbd95f6df2acadec8ef5059",
+    "size": [
+      328,
+      420
+    ],
+    "bbox": [
+      12,
+      12,
+      316,
+      408
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/hobgoblin_guard.png",
+    "stem": "hobgoblin_guard",
+    "used": true,
+    "modified": "2026-06-01T18:04:12.969019",
+    "sha256": "9d7b601c025aaaab3dca6c321bc98ac2d1355337a386ccbc8bd4214f6216aa6f",
+    "size": [
+      400,
+      465
+    ],
+    "bbox": [
+      12,
+      12,
+      388,
+      453
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/goblin_warlord.png",
+    "stem": "goblin_warlord",
+    "used": true,
+    "modified": "2026-06-01T18:04:13.966578",
+    "sha256": "0886c15267c4c042e305002ac577382123e71d59c7281d01939d485ecad88c37",
+    "size": [
+      367,
+      423
+    ],
+    "bbox": [
+      12,
+      12,
+      355,
+      411
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/goblin_king.png",
+    "stem": "goblin_king",
+    "used": true,
+    "modified": "2026-06-01T18:04:15.363655",
+    "sha256": "9282c6dcf3625228f859190e7dbcdd352c5b982b93605d7674dd197daafcf2d6",
+    "size": [
+      421,
+      445
+    ],
+    "bbox": [
+      12,
+      12,
+      409,
+      433
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/red_dragon.png",
+    "stem": "red_dragon",
+    "used": true,
+    "modified": "2026-06-01T18:04:16.240805",
+    "sha256": "b275406d363f8d4f680a44acc17d33399ec73ec143cdb1bf6f042fd65d78a60b",
+    "size": [
+      271,
+      258
+    ],
+    "bbox": [
+      12,
+      12,
+      259,
+      246
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/mountain_drake.png",
+    "stem": "mountain_drake",
+    "used": true,
+    "modified": "2026-06-01T18:04:17.336713",
+    "sha256": "3a8244b74c1e69dd911d1a467302d2a97e9f69005e329505d3029ec5961427a0",
+    "size": [
+      282,
+      265
+    ],
+    "bbox": [
+      12,
+      12,
+      270,
+      253
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/marsh_drake.png",
+    "stem": "marsh_drake",
+    "used": true,
+    "modified": "2026-06-01T18:04:18.364255",
+    "sha256": "10f25b368e269705f164829267ca37cb4b018bacbabd441e587f8d260a942d7e",
+    "size": [
+      276,
+      269
+    ],
+    "bbox": [
+      12,
+      12,
+      264,
+      257
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/bandit_cutthroat.png",
+    "stem": "bandit_cutthroat",
+    "used": true,
+    "modified": "2026-06-01T18:04:19.160029",
+    "sha256": "5bf5da21936061694ded3f414df8c3c87c680aef97eb539325be650c51473473",
+    "size": [
+      216,
+      266
+    ],
+    "bbox": [
+      12,
+      12,
+      204,
+      254
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/bandit_archer.png",
+    "stem": "bandit_archer",
+    "used": true,
+    "modified": "2026-06-01T18:04:19.757217",
+    "sha256": "34eec27d7279eefc5c15823c05a66a1ccf77505e1c78bf1e0167cfe592bce3da",
+    "size": [
+      236,
+      268
+    ],
+    "bbox": [
+      12,
+      12,
+      224,
+      256
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/bandit_captain.png",
+    "stem": "bandit_captain",
+    "used": true,
+    "modified": "2026-06-01T18:04:20.428998",
+    "sha256": "cee13e103219dd38b1b4f9b0436ff139a75ad87e46d11e17bde03b1cb12d5576",
+    "size": [
+      284,
+      274
+    ],
+    "bbox": [
+      12,
+      12,
+      272,
+      262
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/orc_raider.png",
+    "stem": "orc_raider",
+    "used": true,
+    "modified": "2026-06-01T18:04:21.094055",
+    "sha256": "cf68d1978abfb4b76df18fa850cde1681d7b065ede647b91fad04098f836862b",
+    "size": [
+      267,
+      265
+    ],
+    "bbox": [
+      12,
+      12,
+      255,
+      253
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/orc_berserker.png",
+    "stem": "orc_berserker",
+    "used": true,
+    "modified": "2026-06-01T18:04:21.671861",
+    "sha256": "3186fa157243c4a0b18bc2a627e1af0d021f50f24dbf81663e42cf0a6e698f77",
+    "size": [
+      305,
+      273
+    ],
+    "bbox": [
+      12,
+      12,
+      293,
+      261
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/orc_shaman.png",
+    "stem": "orc_shaman",
+    "used": true,
+    "modified": "2026-06-01T18:04:22.272013",
+    "sha256": "9800d321915c373f756dafa94eaac3ed4012eba303f1ec8fd52ec41dfb8a1269",
+    "size": [
+      262,
+      268
+    ],
+    "bbox": [
+      12,
+      12,
+      250,
+      256
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/orc_shieldbearer.png",
+    "stem": "orc_shieldbearer",
+    "used": true,
+    "modified": "2026-06-01T18:04:22.980089",
+    "sha256": "83fb276302d9cab1937c75cf330bf556697b8dd96f9b9232fd6eb119d506c46c",
+    "size": [
+      362,
+      253
+    ],
+    "bbox": [
+      12,
+      12,
+      350,
+      241
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/swamp_troll.png",
+    "stem": "swamp_troll",
+    "used": true,
+    "modified": "2026-06-01T18:04:23.728387",
+    "sha256": "b58d440725b2ad399611e518ae2e288962c6c4550d80843c4502ab39cfd684fe",
+    "size": [
+      281,
+      276
+    ],
+    "bbox": [
+      12,
+      12,
+      269,
+      264
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/frost_troll.png",
+    "stem": "frost_troll",
+    "used": true,
+    "modified": "2026-06-01T18:04:24.411285",
+    "sha256": "89e7975d15386864c15fcfbf95709ccf802343d73eaf41e6e3e9bbfbd20559a1",
+    "size": [
+      273,
+      271
+    ],
+    "bbox": [
+      12,
+      12,
+      261,
+      259
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/hill_giant.png",
+    "stem": "hill_giant",
+    "used": true,
+    "modified": "2026-06-01T18:04:24.937241",
+    "sha256": "179d1cb4565125e88f1164fe856f6147e1d99adcfb4730684d6a0d4427e02617",
+    "size": [
+      268,
+      313
+    ],
+    "bbox": [
+      12,
+      12,
+      256,
+      301
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/stone_giant.png",
+    "stem": "stone_giant",
+    "used": true,
+    "modified": "2026-06-01T18:04:25.529617",
+    "sha256": "3924d3d3a5d05bd58378594687431b0a0547215e818d38e73d7ab267618a2b6b",
+    "size": [
+      365,
+      313
+    ],
+    "bbox": [
+      12,
+      12,
+      353,
+      301
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/fire_giant.png",
+    "stem": "fire_giant",
+    "used": true,
+    "modified": "2026-06-01T18:04:26.136853",
+    "sha256": "1ae3ee4d2e380819eed58200740036789581528e0f00fba5fb895ced365f7f0b",
+    "size": [
+      328,
+      315
+    ],
+    "bbox": [
+      12,
+      12,
+      316,
+      303
+    ]
+  },
+  {
+    "path": "Java/assets/monsters/elder_dragon.png",
+    "stem": "elder_dragon",
+    "used": true,
+    "modified": "2026-06-01T18:04:26.700028",
+    "sha256": "e3c731bf391c22bc7770d0f88739263143e43db568c8dcfd871253d220d4b9ac",
+    "size": [
+      416,
+      337
+    ],
+    "bbox": [
+      12,
+      12,
+      404,
+      325
+    ]
+  },
+  {
+    "path": "Java/assets/story/demon_queen.png",
+    "stem": "demon_queen",
+    "used": true,
+    "modified": "2026-06-03T02:37:09.610803",
+    "sha256": "0053283cf1ccafbf28d2f0508e8cab91b1bf914c5dbdef1d33f7919047a4b782",
+    "size": [
+      969,
+      1399
+    ],
+    "bbox": [
+      0,
+      0,
+      969,
+      1399
+    ]
+  },
+  {
+    "path": "Java/assets/story/flame_herald.png",
+    "stem": "flame_herald",
+    "used": true,
+    "modified": "2026-06-03T02:37:09.734512",
+    "sha256": "5133e8734fe69791b9ccb57a0324ae8bc427dd99bbb1d15c87f3fd13afa9a26d",
+    "size": [
+      492,
+      567
+    ],
+    "bbox": [
+      0,
+      0,
+      492,
+      567
+    ]
+  },
+  {
+    "path": "Java/assets/story/frost_witch.png",
+    "stem": "frost_witch",
+    "used": true,
+    "modified": "2026-06-03T02:37:09.867983",
+    "sha256": "cc3aec1859844f111320080ce6d3ed618b5ceabd4da981f61859d284f1cef106",
+    "size": [
+      523,
+      579
+    ],
+    "bbox": [
+      0,
+      0,
+      523,
+      579
+    ]
+  },
+  {
+    "path": "Java/assets/story/shadow_beast.png",
+    "stem": "shadow_beast",
+    "used": true,
+    "modified": "2026-06-03T02:37:10.003367",
+    "sha256": "9bea9de6eebddead481b5a255e2bb2114ccfee1444b919ea6fd292f2b6bfd558",
+    "size": [
+      567,
+      559
+    ],
+    "bbox": [
+      0,
+      0,
+      567,
+      559
+    ]
+  },
+  {
+    "path": "Java/assets/story/void_knight.png",
+    "stem": "void_knight",
+    "used": true,
+    "modified": "2026-06-03T02:37:10.554970",
+    "sha256": "8a95976b5080d4a13ff4b5fa46c53ed9d8eb678ec50fad3a230f0134c0d4c659",
+    "size": [
+      562,
+      609
+    ],
+    "bbox": [
+      0,
+      0,
+      562,
+      609
+    ]
+  }
+]

@@ -131,6 +131,7 @@ public final class SaveSystem {
         props.setProperty("xp", Integer.toString(state.player.xp));
         props.setProperty("gold", Integer.toString(state.player.gold));
         props.setProperty("inventory", writeInventory(state.player));
+        state.chests.write(props);
         props.setProperty("equipment", writeEquipment(state.player));
         props.setProperty("skillPoints", Integer.toString(state.player.skillPoints));
         props.setProperty("statPoints", Integer.toString(state.player.statPoints));
@@ -214,6 +215,8 @@ public final class SaveSystem {
         try (var in = Files.newInputStream(path)) {
             props.load(in);
         }
+        state.chests.read(props);
+        state.activeChest = null;
         Actor player = readPlayer(props);
         state.player = player;
         state.syncSkillAbilities();
@@ -328,6 +331,8 @@ public final class SaveSystem {
         state.mode = GameMode.STORY_INTRO;
         state.world.clearPlayerVillageCustomizations();
         state.world.setPlayerVillageStage(1);
+        state.chests.clear();
+        state.activeChest = null;
         state.villageStorage.clear();
         state.villageAllies.clear();
         state.romancedCompanionIds.clear();

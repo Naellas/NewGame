@@ -1,6 +1,5 @@
 package com.alderfall.game;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,23 +52,12 @@ final class GameAudioController {
             GameMode.SHOP,
             GameMode.WORLD_MAP
     );
-    private static final Set<String> BOSS_MUSIC_KEYS = new HashSet<>(Set.of(
-            "acid_broodmother",
-            "bandit_captain",
-            "bone_knight",
-            "crypt_revenant",
-            "elder_wraith",
-            "elder_dragon",
-            "fire_giant",
-            "frost_troll",
-            "goblin_king",
-            "goblin_warlord",
-            "hill_giant",
-            "ice_golem",
-            "orc_champion",
-            "stone_giant",
-            "swamp_troll"
-    ));
+    private static final List<String> REGULAR_BATTLE_TRACKS = List.of(
+            "battle_standard", "battle_pursuit", "battle_skirmish", "battle_depths");
+    private static final List<String> ELITE_BATTLE_TRACKS = List.of(
+            "battle_elite_hunt", "battle_elite_iron", "battle_elite_arcane");
+    private static final List<String> BOSS_BATTLE_TRACKS = List.of(
+            "battle_boss", "battle_boss_requiem", "battle_boss_tempest", "battle_boss_eclipse");
     private static final int BIOME_MUSIC_FULL_BLEND_TICKS = Math.max(1, 18_000 / GameConfig.FPS_MS);
     private static final int BIOME_TUNE_CROSSFADE_TICKS = Math.max(1, 12_000 / GameConfig.FPS_MS);
     private static final int BIOME_TUNE_ROTATION_TICKS = Math.max(1, 50_000 / GameConfig.FPS_MS);
@@ -88,6 +76,15 @@ final class GameAudioController {
     private int worldMusicTrackTicks;
     private int worldMusicPaletteIndex;
     private boolean worldMusicBiomeChanging;
+    private String pendingWorldMusicKey = "";
+    private int pendingWorldMusicTicks;
+    private String entranceMapId = "";
+    private TilePoint musicEntrance;
+    private Battle scoredBattle;
+    private String scoredBattleTrack;
+    private int regularBattleIndex;
+    private int eliteBattleIndex;
+    private int bossBattleIndex;
 
     GameAudioController(GameState state, MusicManager music, SoundManager sounds) {
         this.state = state;
@@ -115,7 +112,8 @@ final class GameAudioController {
         if (cue == null || cue.track() == null) {
             music.stop();
         } else {
-            music.blend(cue.track(), cue.bedTrack(), cue.presence());
+            music.blend(cue.track(), cue.bedTrack(), cue.presence(),
+                    cue.track().startsWith("battle_") ? 0.65f : 3.0f);
         }
         music.update();
     }
@@ -202,6 +200,19 @@ final class GameAudioController {
 
     private MusicCue worldMusicCue() {
         String key = worldMusicKeyForCurrentPosition();
+        // Brief border crossings should not restart two long regional scores.
+        if (key.startsWith("region_") && worldMusicKey.startsWith("region_") && !key.equals(worldMusicKey)) {
+            if (!key.equals(pendingWorldMusicKey)) {
+                pendingWorldMusicKey = key;
+                pendingWorldMusicTicks = 0;
+            }
+            if (++pendingWorldMusicTicks < Math.max(1, 2_000 / GameConfig.FPS_MS)) {
+                key = worldMusicKey;
+            }
+        } else {
+            pendingWorldMusicKey = "";
+            pendingWorldMusicTicks = 0;
+        }
         List<String> palette = MUSIC_PALETTES.getOrDefault(key, List.of(key));
         if (!key.equals(worldMusicKey)) {
             previousWorldMusicTrack = worldMusicTrack;
@@ -226,6 +237,9 @@ final class GameAudioController {
         float presence = 1.0f;
         if (previousWorldMusicTrack != null && !previousWorldMusicTrack.isBlank()) {
             int fadeTicks = worldMusicBiomeChanging ? BIOME_MUSIC_FULL_BLEND_TICKS : BIOME_TUNE_CROSSFADE_TICKS;
+            if (worldMusicBiomeChanging && worldMusicKey.startsWith("dungeon_")) {
+                fadeTicks = Math.max(1, 4_000 / GameConfig.FPS_MS);
+            }
             int elapsedTicks = worldMusicBiomeChanging ? worldMusicDwellTicks : worldMusicTrackTicks;
             presence = Math.max(0.0f, Math.min(1.0f, elapsedTicks / (float) fadeTicks));
             if (presence >= 1.0f) {
@@ -236,28 +250,59 @@ final class GameAudioController {
         return new MusicCue(worldMusicTrack, previousWorldMusicTrack, presence);
     }
 
-    private String worldMusicKeyForCurrentPosition() {
+    String worldMusicKeyForCurrentPosition() {
         String kind = state.world.kind(state.currentMapId);
-        if ("city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
-            return "town_village";
-        }
         if ("dungeon".equals(kind)) {
-            return "dungeon_crypt";
+            var context = state.world.dungeonContext(state.currentMapId);
+            if (context == null) return "dungeon_crypt";
+            String family = switch (context.theme()) {
+                case "cave" -> "cave";
+                case "abandoned_castle" -> "castle";
+                case "prison" -> "prison";
+                case "bandit_camp" -> "bandit";
+                default -> "crypt";
+            };
+            // The last two floors build tension, including ascending strongholds.
+            boolean deep = context.floor() >= Math.max(2, context.floors() - 1);
+            return "dungeon_" + family + (deep ? "_depths" : "");
+        }
+        if (!state.currentMapId.equals(entranceMapId)) {
+            entranceMapId = state.currentMapId;
+            musicEntrance = state.world.overworldEntranceFor(state.currentMapId);
+        }
+        TilePoint entrance = musicEntrance;
+        String region = null;
+        if ("overworld".equals(state.currentMapId)) {
+            region = state.world.kingdomAt(state.playerX, state.playerY).id();
+        } else if (entrance != null) {
+            region = state.world.kingdomAt(entrance.x(), entrance.y()).id();
+        }
+        if ("city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
+            return region == null ? "town_village" : "town_" + region;
+        }
+        if (region != null) {
+            return "region_" + region;
         }
         char tile = state.world.tileAt(state.currentMapId, state.playerX, state.playerY);
         return MUSIC_BY_TERRAIN.getOrDefault(tile, "zone_grasslands");
     }
 
-    private String battleMusicTrack() {
-        if (state.battle.monsterSpecs.size() >= 3) {
-            return "battle_boss";
-        }
-        for (GameData.MonsterSpec spec : state.battle.monsterSpecs) {
-            if (BOSS_MUSIC_KEYS.contains(spec.key())) {
-                return "battle_boss";
+    String battleMusicTrack() {
+        Battle battle = state.battle;
+        if (battle == null) return "battle_standard";
+        if (battle != scoredBattle) {
+            scoredBattle = battle;
+            // Use actual combat flags, including story bosses and randomly rolled elites.
+            // Lock the cue for the encounter so deaths, menus and phase changes cannot restart it.
+            if (battle.enemies.stream().anyMatch(battle::isBossEnemy)) {
+                scoredBattleTrack = BOSS_BATTLE_TRACKS.get(Math.floorMod(bossBattleIndex++, BOSS_BATTLE_TRACKS.size()));
+            } else if (battle.enemies.stream().anyMatch(battle::isEliteEnemy)) {
+                scoredBattleTrack = ELITE_BATTLE_TRACKS.get(Math.floorMod(eliteBattleIndex++, ELITE_BATTLE_TRACKS.size()));
+            } else {
+                scoredBattleTrack = REGULAR_BATTLE_TRACKS.get(Math.floorMod(regularBattleIndex++, REGULAR_BATTLE_TRACKS.size()));
             }
         }
-        return "battle_standard";
+        return scoredBattleTrack;
     }
 
     private String effectSoundName(String kind) {
@@ -333,7 +378,7 @@ final class GameAudioController {
     }
 
     private boolean isOreResourceAsset(String asset) {
-        return asset.contains("iron_vein")
+        return asset.startsWith("deco_ore_") || asset.contains("iron_vein")
                 || asset.contains("copper_vein")
                 || asset.contains("coal_deposit")
                 || asset.contains("tin_vein")

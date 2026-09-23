@@ -1,6 +1,7 @@
 package com.alderfall.game.map;
 
 import com.alderfall.game.InteriorStyle;
+import com.alderfall.game.InteriorFurnishings;
 import com.alderfall.game.StoryLocationCatalog;
 
 import com.alderfall.game.CityBuilding;
@@ -9,6 +10,7 @@ import com.alderfall.game.FolkloreContent;
 import com.alderfall.game.HearthlandsFolklore;
 import com.alderfall.game.WesternReachFolklore;
 import com.alderfall.game.RegionalBuildingTypes;
+import com.alderfall.game.RegionalSettlementIdentity;
 import com.alderfall.game.Npc;
 import com.alderfall.game.NpcJob;
 import com.alderfall.game.Terrain;
@@ -58,6 +60,8 @@ public final class WorldMap {
     private final char[][] tiles = new char[ROWS][COLS];
     private final Map<TilePoint, String> landmarks = new HashMap<>();
     private final Map<String, TilePoint> campaignPlaces = new LinkedHashMap<>();
+    private final Map<String, LocationPatch> campaignPatches = new LinkedHashMap<>();
+    private final Map<String, List<TilePoint>> campaignWalkable = new LinkedHashMap<>();
     private final Map<String, MapArea> maps = new LinkedHashMap<>();
     private final Map<String, WorldTransition> transitions = new HashMap<>();
     private final Map<String, List<CityBuilding>> cityBuildings = new HashMap<>();
@@ -69,7 +73,9 @@ public final class WorldMap {
     private final Map<String, Integer> playerVillageBuildingLevels = new HashMap<>();
     private final Map<TilePoint, Character> playerVillageTiles = new LinkedHashMap<>();
     private final List<LocationPatch> locationPatches = new ArrayList<>();
+    private int legacyLocationPatchCount;
     private final List<AdventureSite> adventureSites = new ArrayList<>();
+    private final Map<String, DungeonGenerator.FloorPlan> dungeonFloorPlans = new LinkedHashMap<>();
     private final List<SettlementSite> settlementSites = new ArrayList<>();
     private int playerVillageStage = 1;
     private final int groveSeed;
@@ -125,21 +131,105 @@ public final class WorldMap {
                 "Enter the Old Oath Vault beneath the Archive.", "Return to Archive City.");
     }
 
+    /** Append after legacy patches so their numbered quest destinations keep their ordering. */
+    private void buildCampaignPlaces() {
+        for (StoryLocationCatalog.Place place : StoryLocationCatalog.PLACES) {
+            if (!place.outdoorSite()) continue;
+            if (place.id().equals("sanctum_forge")) {
+                LocationPatch shrine = campaignPatches.get("sunken_guest_shrine");
+                campaignPatches.put(place.id(), shrine);
+                campaignPlaces.put(place.id(), new TilePoint(shrine.cx + 2, shrine.cy + 3));
+                continue;
+            }
+            AdventureSite existing = adventureSites.stream()
+                    .filter(s -> s.id.equals(place.adventureId())).findFirst().orElse(null);
+            LocationPatch patch;
+            if (existing != null) {
+                patch = locationPatches.stream().filter(p -> p.cx == existing.x && p.cy == existing.y
+                        && p.kind.equals(existing.kind)).findFirst().orElseThrow();
+            } else {
+                if (!place.adventureId().isBlank())
+                    throw new IllegalStateException("Missing catalog entrance: " + place.adventureId());
+                int radius = place.template().equals("guest_shrine") ? 6 : place.template().equals("old_road_marker") ? 3 : 4;
+                TilePoint center = findCampaignSite(place, radius);
+                addLocationPatch(place.template(), center.x(), center.y(), radius, radius,
+                        Math.floorMod(place.id().hashCode(), 10000));
+                patch = locationPatches.get(locationPatches.size() - 1);
+                if (place.id().equals("snowrest_pass")) {
+                    for (int y = patch.cy - patch.ry; y <= patch.cy + patch.ry; y++)
+                        for (int x = patch.cx - patch.rx; x <= patch.cx + patch.rx; x++)
+                            if (patch.contains(x, y) && tiles[y][x] == 'm') tiles[y][x] = 'n';
+                }
+                // Join the existing road network. Leave the main structure's center free of road.
+                TilePoint gate = new TilePoint(patch.cx, patch.cy + patch.ry);
+                TilePoint road = null;
+                int distance = Integer.MAX_VALUE;
+                for (int y = Math.max(1, gate.y() - 28); y < Math.min(ROWS - 1, gate.y() + 29); y++) {
+                    for (int x = Math.max(1, gate.x() - 28); x < Math.min(COLS - 1, gate.x() + 29); x++) {
+                        int d = Math.abs(x - gate.x()) + Math.abs(y - gate.y());
+                        if (Terrain.connectingRoad(tiles[y][x]) && !patch.contains(x, y) && d < distance) {
+                            distance = d;
+                            road = new TilePoint(x, y);
+                        }
+                    }
+                }
+                if (road == null) throw new IllegalStateException("No road near " + place.name());
+                roadPath(List.of(road, gate));
+                for (int y = patch.cy + 1; y <= gate.y(); y++) markRoad(patch.cx, y);
+            }
+            campaignPatches.put(place.id(), patch);
+            campaignPlaces.put(place.id(), new TilePoint(patch.cx, patch.cy));
+            landmarks.put(new TilePoint(patch.cx, patch.cy), place.name());
+        }
+    }
+
+    private TilePoint findCampaignSite(StoryLocationCatalog.Place place, int size) {
+        for (int radius = 0; radius <= 32; radius++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dx = -radius; dx <= radius; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) != radius) continue;
+                    int cx = place.x() + dx, cy = place.y() + dy;
+                    // Keep authored directions true even when terrain moves the site.
+                    if (place.id().equals("mireford_reedbed") && cy <= 153) continue;
+                    if (place.id().equals("sunken_guest_shrine") && (cx >= 150 || cy <= 230)) continue;
+                    if (cx < size + 2 || cy < size + 2 || cx >= COLS - size - 2 || cy >= ROWS - size - 2) continue;
+                    boolean clear = true;
+                    for (LocationPatch other : locationPatches) {
+                        if (Math.abs(cx - other.cx) <= size + other.rx + 1
+                                && Math.abs(cy - other.cy) <= size + other.ry + 1) { clear = false; break; }
+                    }
+                    if (!clear) continue;
+                    for (int y = cy - size - 1; y <= cy + size + 1 && clear; y++) {
+                        for (int x = cx - size - 1; x <= cx + size + 1; x++) {
+                            char tile = tiles[y][x];
+                            if ((!Terrain.passable(tile) && !(tile == 'm' && place.id().equals("snowrest_pass"))) || tile == 'w' || tile == '~'
+                                    || tile == 'c' || tile == 'u' || tile == 'd' || tile == 'A') { clear = false; break; }
+                        }
+                    }
+                    if (clear) return new TilePoint(cx, cy);
+                }
+            }
+        }
+        throw new IllegalStateException("No room for campaign site " + place.name());
+    }
+
     private void addCampaignPlaces() {
         for (StoryLocationCatalog.Place place : StoryLocationCatalog.PLACES) {
             if (!place.outdoorSite()) continue;
-            AdventureMarker existing = adventureMarkers().stream()
-                    .filter(m -> m.mapId().equals(place.adventureId())).findFirst().orElse(null);
-            TilePoint center = existing == null ? new TilePoint(place.x(), place.y()) : new TilePoint(existing.x(), existing.y());
+            TilePoint center = campaignPlaces.get(place.id());
+            LocationPatch patch = campaignPatches.get(place.id());
             TilePoint accessible = null;
-            for (int radius = 0; radius <= 30 && accessible == null; radius++) {
+            for (int radius = 0; radius <= patch.rx && accessible == null; radius++) {
                 for (int dy = -radius; dy <= radius && accessible == null; dy++) {
                     for (int dx = -radius; dx <= radius; dx++) {
                         if (Math.abs(dx) + Math.abs(dy) != radius) continue;
                         int x = center.x() + dx, y = center.y() + dy;
                         TilePoint candidate = new TilePoint(x, y);
-                        if (isPassable(OVERWORLD_ID, x, y) && transitionAt(OVERWORLD_ID, x, y) == null
-                                && !campaignPlaces.containsValue(candidate)) {
+                        if (patch.kind.equals("guest_shrine")
+                                && (place.id().equals("sanctum_forge") ? y < patch.cy + 2 : y >= patch.cy + 2)) continue;
+                        if (patch.contains(x, y) && isPassable(OVERWORLD_ID, x, y)
+                                && transitionAt(OVERWORLD_ID, x, y) == null
+                                && (!campaignPlaces.containsValue(candidate) || candidate.equals(center))) {
                             accessible = candidate;
                             break;
                         }
@@ -148,30 +238,54 @@ public final class WorldMap {
             }
             if (accessible == null) throw new IllegalStateException("No reachable ground for campaign place " + place.id());
             campaignPlaces.put(place.id(), accessible);
-            landmarks.put(accessible, place.name());
-            area(OVERWORLD_ID).landmarks.put(accessible, place.name());
-            // Quest markers supply the interactive props; this persistent marker identifies the place even without a quest.
-            area(OVERWORLD_ID).addProp(new WorldProp(accessible.x(), accessible.y(), "quest_ward_marker", 38));
+            // The map icon stays on the structure/entrance; interactions use walkable ground beside it.
+            area(OVERWORLD_ID).landmarks.put(center, place.name());
+            List<TilePoint> walkable = new ArrayList<>();
+            java.util.ArrayDeque<TilePoint> pending = new java.util.ArrayDeque<>();
+            Set<TilePoint> seen = new HashSet<>();
+            pending.add(accessible);
+            seen.add(accessible);
+            while (!pending.isEmpty()) {
+                TilePoint p = pending.removeFirst();
+                if (transitionAt(OVERWORLD_ID, p.x(), p.y()) == null) walkable.add(p);
+                for (int[] d : new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}) {
+                    TilePoint next = new TilePoint(p.x() + d[0], p.y() + d[1]);
+                    // Shrine evidence occupies the altar wing; forge evidence stays in the workshop wing.
+                    boolean wing = !patch.kind.equals("guest_shrine")
+                            || (place.id().equals("sanctum_forge") ? next.y() >= patch.cy + 2 : next.y() < patch.cy + 2);
+                    if (wing && patch.contains(next.x(), next.y()) && !seen.contains(next)
+                            && isPassable(OVERWORLD_ID, next.x(), next.y())) {
+                        seen.add(next);
+                        pending.addLast(next);
+                    }
+                }
+            }
+            if (walkable.size() < 8) throw new IllegalStateException("Too little usable ground at " + place.name());
+            campaignWalkable.put(place.id(), List.copyOf(walkable));
         }
     }
 
     public TilePoint campaignPlacePoint(String id, int variant) {
-        TilePoint center = campaignPlaces.get(id);
-        if (center == null) throw new IllegalArgumentException("Unknown campaign place " + id);
-        List<TilePoint> candidates = new ArrayList<>();
-        for (int radius = 0; radius <= 6; radius++) {
-            for (int dy = -radius; dy <= radius; dy++) {
-                for (int dx = -radius; dx <= radius; dx++) {
-                    if (Math.abs(dx) + Math.abs(dy) != radius) continue;
-                    int x = center.x() + dx, y = center.y() + dy;
-                    if (isPassable(OVERWORLD_ID, x, y) && transitionAt(OVERWORLD_ID, x, y) == null)
-                        candidates.add(new TilePoint(x, y));
-                }
-            }
-        }
-        if (candidates.isEmpty()) throw new IllegalStateException("Campaign place lost its approach: " + id);
-        return candidates.get(Math.floorMod(variant * 3, candidates.size()));
+        List<TilePoint> candidates = campaignWalkable.get(id);
+        if (candidates == null) throw new IllegalArgumentException("Unknown campaign place " + id);
+        return candidates.get(Math.floorMod(variant, candidates.size()));
     }
+
+    public boolean campaignPlaceContains(String id, int x, int y) {
+        return campaignWalkable.getOrDefault(id, List.of()).contains(new TilePoint(x, y));
+    }
+
+    public List<CampaignMarker> campaignMarkers() {
+        return campaignPatches.entrySet().stream().map(e -> {
+            var place = StoryLocationCatalog.byId(e.getKey());
+            var p = e.getValue();
+            boolean forge = place.id().equals("sanctum_forge");
+            return new CampaignMarker(place.id(), place.name(), p.kind,
+                    p.cx + (forge ? 2 : 0), p.cy + (forge ? 3 : 0), p.rx, p.ry);
+        }).toList();
+    }
+
+    public record CampaignMarker(String id, String label, String kind, int x, int y, int radiusX, int radiusY) { }
 
     private void addStoryInvestigationSite(String id, String label, String parent, String enter, String leave) {
         MapArea site = new MapArea(id, label, "interior", editorTiles("interior", 24, 18));
@@ -236,6 +350,11 @@ public final class WorldMap {
             return 'm';
         }
         return area.tileAt(x, y);
+    }
+
+    public long visualRevision(String mapId) {
+        MapArea area = maps.get(mapId);
+        return area == null ? 0L : area.visualRevision();
     }
 
     public boolean isPassable(String mapId, int x, int y) {
@@ -867,7 +986,7 @@ public final class WorldMap {
             return false;
         }
         MapArea area = maps.get(PLAYER_VILLAGE_ID);
-        area.tiles[y][x] = tile;
+        area.setTile(x, y, tile);
         TilePoint point = new TilePoint(x, y);
         if (tile == playerVillageGroundTile()) {
             playerVillageTiles.remove(point);
@@ -1025,7 +1144,7 @@ public final class WorldMap {
     }
 
     /** Render and collision share the same top-left footprint anchor. */
-    public int[] interiorVisualFootprint(String asset) {
+    public static int[] interiorVisualFootprint(String asset) {
         return interiorHitboxFootprint(asset);
     }
 
@@ -1094,7 +1213,7 @@ public final class WorldMap {
             return false;
         }
         char resolved = tile == 'o' ? 'o' : 'i';
-        area.tiles[y][x] = resolved;
+        area.setTile(x, y, resolved);
         area.interiorRugs.remove(new TilePoint(x, y));
         playerInteriorTiles.computeIfAbsent(mapId, ignored -> new LinkedHashMap<>())
                 .put(new TilePoint(x, y), resolved);
@@ -1115,7 +1234,7 @@ public final class WorldMap {
         if (!canSetPlayerInteriorTile(area, x, y)) {
             return false;
         }
-        area.tiles[y][x] = resolved;
+        area.setTile(x, y, resolved);
         area.interiorRugs.remove(new TilePoint(x, y));
         return true;
     }
@@ -1275,7 +1394,7 @@ public final class WorldMap {
             if (editorInteriorPropAt(mapId, x, y) != null) {
                 return false;
             }
-            area.tiles[y][x] = resolved;
+            area.setTile(x, y, resolved);
             return true;
         }
         if (!Terrain.passable(tile) || tile == 'h' || tile == 'w' || tile == 'x' || tile == 'c' || tile == 'u' || tile == 'd') {
@@ -1288,7 +1407,7 @@ public final class WorldMap {
         if (prop != null && Terrain.connectingRoad(tile)) {
             return false;
         }
-        area.tiles[y][x] = tile;
+        area.setTile(x, y, tile);
         return true;
     }
 
@@ -1485,7 +1604,8 @@ public final class WorldMap {
                 theme = regional.theme;
                 houseLabel = RegionalBuildingTypes.name(sourceMapId, building);
             }
-            InteriorLayout layout = InteriorLayout.compose(theme, seed, InteriorStyle.forMap(mapId));
+            InteriorLayout layout = InteriorLayout.compose(theme, seed, InteriorStyle.forMap(mapId),
+                    !PLAYER_VILLAGE_ID.equals(sourceMapId));
             MapArea house = new MapArea(mapId, houseLabel,
                     "interior", layout.tiles());
             if (!isEmptyPlayerVillageInterior(sourceMapId, building)) {
@@ -1872,7 +1992,7 @@ public final class WorldMap {
         }
         LocationPatch location = locationAt(mapId, x, y);
         if (location != null) {
-            return location.label();
+            return locationName(location);
         }
         return Terrain.name(tileAt(mapId, x, y));
     }
@@ -1887,19 +2007,39 @@ public final class WorldMap {
 
     public List<GroundRegion> groundRegions() {
         if (groundRegionCache == null) groundRegionCache = locationPatches.stream()
-                .filter(p -> p.kind.equals("goblin_camp") || p.kind.equals("bandit_camp"))
-                .map(p -> new GroundRegion(p.kind, p.cx, p.cy, p.rx, p.ry, p.salt))
+                .filter(p -> OverworldLocationBlueprints.forKind(p.kind) != null)
+                .map(p -> new GroundRegion(p.kind, p.cx, p.cy, p.rx, p.ry, p.salt,
+                        exteriorIntent(p), exteriorClimate(p)))
                 .toList();
         return groundRegionCache;
     }
 
-    public double campGroundCoverage(double x, double y) {
+    public double locationGroundCoverage(double x, double y) {
         double coverage = 0;
         for (GroundRegion region : groundRegions()) coverage = Math.max(coverage, region.coverage(x, y));
         return coverage;
     }
 
-    public record GroundRegion(String kind, int x, int y, int radiusX, int radiusY, int seed) {
+    public boolean usesLayeredLocationGroundAt(int x, int y) {
+        for (GroundRegion region : groundRegions()) {
+            if (Math.abs(x - region.x()) <= region.radiusX() + 1
+                    && Math.abs(y - region.y()) <= region.radiusY() + 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Kept for callers compiled against the original camp-only footprint API. */
+    public double campGroundCoverage(double x, double y) {
+        return locationGroundCoverage(x, y);
+    }
+
+    public record GroundRegion(String kind, int x, int y, int radiusX, int radiusY, int seed,
+                               String intent, String climate) {
+        public GroundRegion(String kind, int x, int y, int radiusX, int radiusY, int seed) {
+            this(kind, x, y, radiusX, radiusY, seed, kind, "stone");
+        }
         public double coverage(double worldX, double worldY) {
             double dx = worldX - x - 0.5, dy = worldY - y - 0.5;
             if (Math.abs(dx) > radiusX + 2 || Math.abs(dy) > radiusY + 2) return 0;
@@ -1927,7 +2067,7 @@ public final class WorldMap {
         List<LocationSite> sites = new ArrayList<>();
         for (LocationPatch patch : locationPatches) {
             if (patch.kind.equals(kind)) {
-                sites.add(new LocationSite(patch.kind, patch.label(), patch.cx, patch.cy));
+                sites.add(new LocationSite(patch.kind, locationName(patch), patch.cx, patch.cy));
             }
         }
         return sites;
@@ -1966,7 +2106,7 @@ public final class WorldMap {
         if (locationKind != null && locationKind.startsWith("place:"))
             return campaignPlacePoint(locationKind.substring("place:".length()), variant);
         List<LocationPatch> matches = new ArrayList<>();
-        for (LocationPatch patch : locationPatches) {
+        for (LocationPatch patch : locationPatches.subList(0, legacyLocationPatchCount)) {
             if (patch.kind.equals(locationKind)) {
                 matches.add(patch);
             }
@@ -2039,6 +2179,21 @@ public final class WorldMap {
         MapArea overworld = new MapArea(OVERWORLD_ID, "Alderfall Overworld", "overworld", tiles);
         overworld.landmarks.putAll(landmarks);
         addBiomeProps(overworld, 0);
+        for (AdventureSite site : adventureSites) {
+            for (WorldProp prop : new ArrayList<>(overworld.propsInBounds(
+                    site.x() - 2, site.y() - 4, site.x() + 2, site.y() + 3))) {
+                overworld.removeProp(prop);
+            }
+        }
+        // Reserve authored surface layouts before scenery can occupy their structures and paths.
+        for (LocationPatch patch : new HashSet<>(campaignPatches.values())) {
+            if (isPrimaryAdventurePatch(patch)) continue;
+            for (WorldProp prop : new ArrayList<>(overworld.propsInBounds(
+                    patch.cx - patch.rx - 1, patch.cy - patch.ry - 1,
+                    patch.cx + patch.rx + 1, patch.cy + patch.ry + 1))) {
+                if (patch.contains(prop.x(), prop.y())) overworld.removeProp(prop);
+            }
+        }
         addLocationProps(overworld);
         addCrossingProps(overworld);
         overworld.landmarks.put(new TilePoint(183, 248), "The Old Gate of Alderfall");
@@ -2093,20 +2248,33 @@ public final class WorldMap {
         addCityInfillBuildings(buildings, area, variant);
         addMajorCivicBuildings(buildings, area, variant, town);
         if (town) {
-            addTownLandmarkBuildings(buildings, area, variant);
+            addTownLandmarkBuildings(buildings, area, id, variant);
+            applyTownBuildingProgram(id, buildings);
         }
         buildings = splitOversizedSettlementBuildings(buildings);
         cityBuildings.put(id, buildings);
+        removeLegacyCityWallChunks(area, variant);
+        stampSettlementBuildingFoundations(area, buildings, variant);
         applySettlementLayoutPlan(area, variant, town);
+        rebuildOrganicCityStreetNetwork(area, buildings, variant, town);
         connectSettlementBuildingPaths(area, buildings, Terrain.COBBLESTONE_ROAD);
-        addTownParks(area, variant, town ? 2 : 3);
+        repairDisconnectedSettlementRoads(area, buildings,
+                new TilePoint(Math.min(area.width() - 4, 17), Math.min(area.height() - 4, 12)),
+                area.id.hashCode() ^ 0x7135, Terrain.COBBLESTONE_ROAD);
         normalizeCityRoadsAndPaving(area, variant);
+        addTownParks(area, variant, town ? 2 : 3);
+        addOrthogonalCityWalls(area);
+        trimCityOutskirtPaving(area, variant);
+        repairDisconnectedSettlementRoads(area, buildings,
+                new TilePoint(Math.min(area.width() - 4, 17), Math.min(area.height() - 4, 12)),
+                area.id.hashCode() ^ 0x5A71, Terrain.COBBLESTONE_ROAD);
         addSettlementDistrictProps(area, variant, town);
         addCityProps(area, variant);
         addBusinessYardPropClusters(area, variant);
         if (town) {
             addTownProps(area, variant);
         }
+        clearCityWallClearance(area);
         maps.put(id, area);
         interiorNpcs.put(id, placeInquiryNpcs(id, buildings, variant, town ? 5 : 6));
         for (int dy = -2; dy <= 2; dy++) {
@@ -2123,12 +2291,265 @@ public final class WorldMap {
         addSettlementSite(id, label, label.contains("Town") ? "Town" : "City", ox, oy);
     }
 
+    /** Clears inherited slabs so the authored wall ring can sit inside walkable outskirts. */
+    private void removeLegacyCityWallChunks(MapArea area, String variant) {
+        char replacement = cityExpansionGroundTile(variant);
+        for (int y = 0; y < area.height(); y++) {
+            for (int x = 0; x < area.width(); x++) {
+                if (area.tiles[y][x] == 'x') {
+                    area.tiles[y][x] = replacement;
+                }
+            }
+        }
+    }
+
+    /**
+     * Places a sparse, square-plan fortification around the old town core. The expanded east and south
+     * quarters, plus the entire map boundary, remain open outskirts. Roads become passable gates instead
+     * of being severed by the wall.
+     */
+    private void addOrthogonalCityWalls(MapArea area) {
+        int left = 1;
+        int top = 1;
+        int bottom = firstClearHorizontalWallRow(area, 22, area.height() - 2, left, area.width() - 2);
+        int right = firstClearVerticalWallColumn(area, 33, area.width() - 2, top, bottom);
+        if (right - left < 8 || bottom - top < 8) {
+            return;
+        }
+        int topGate = nearestHorizontalWallGate(area, top, left + 3, right - 3, 17);
+        int bottomGate = nearestHorizontalWallGate(area, bottom, left + 3, right - 3, 17);
+        int leftGate = nearestVerticalWallGate(area, left, top + 3, bottom - 3, 12);
+        int rightGate = nearestVerticalWallGate(area, right, top + 3, bottom - 3, 12);
+        final int wallRight = right;
+        final int wallBottom = bottom;
+        area.props.removeIf(prop -> (prop.y() == top || prop.y() == wallBottom)
+                && prop.x() >= left && prop.x() <= wallRight
+                || (prop.x() == left || prop.x() == wallRight)
+                && prop.y() >= top && prop.y() <= wallBottom);
+        for (int x = left; x <= right; x++) {
+            stampOrthogonalCityWallTile(area, x, top);
+            stampOrthogonalCityWallTile(area, x, bottom);
+        }
+        for (int y = top + 1; y < bottom; y++) {
+            stampOrthogonalCityWallTile(area, left, y);
+            stampOrthogonalCityWallTile(area, right, y);
+        }
+        openHorizontalCityGate(area, topGate, top);
+        openHorizontalCityGate(area, bottomGate, bottom);
+        openVerticalCityGate(area, left, leftGate);
+        openVerticalCityGate(area, right, rightGate);
+    }
+
+    private int nearestHorizontalWallGate(MapArea area, int y, int minimum, int maximum, int preferred) {
+        int best = Math.max(minimum, Math.min(maximum, preferred));
+        int bestDistance = Integer.MAX_VALUE;
+        for (int x = minimum; x <= maximum; x++) {
+            if (!clearHorizontalGateSite(area, x, y)) continue;
+            int distance = Math.abs(x - preferred) + (Terrain.connectingRoad(area.tileAt(x, y)) ? 0 : 10_000);
+            if (distance < bestDistance) {
+                best = x;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    private int nearestVerticalWallGate(MapArea area, int x, int minimum, int maximum, int preferred) {
+        int best = Math.max(minimum, Math.min(maximum, preferred));
+        int bestDistance = Integer.MAX_VALUE;
+        for (int y = minimum; y <= maximum; y++) {
+            if (!clearVerticalGateSite(area, x, y)) continue;
+            int distance = Math.abs(y - preferred) + (Terrain.connectingRoad(area.tileAt(x, y)) ? 0 : 10_000);
+            if (distance < bestDistance) {
+                best = y;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    private boolean clearHorizontalGateSite(MapArea area, int x, int y) {
+        for (int cy = y - 2; cy <= y + 2; cy++) for (int cx = x - 2; cx <= x + 2; cx++) {
+            if (cityBuildingAt(area.id, cx, cy) != null || isCityWallBlockingTerrain(area.tileAt(cx, cy))) return false;
+        }
+        return true;
+    }
+
+    private boolean clearVerticalGateSite(MapArea area, int x, int y) {
+        for (int cy = y - 2; cy <= y + 2; cy++) for (int cx = x - 2; cx <= x + 2; cx++) {
+            if (cityBuildingAt(area.id, cx, cy) != null || isCityWallBlockingTerrain(area.tileAt(cx, cy))) return false;
+        }
+        return true;
+    }
+
+    private void openHorizontalCityGate(MapArea area, int x, int y) {
+        area.tiles[y][x] = Terrain.CITY_GATE;
+        stampGateApproachRoad(area, x, y - 1);
+        stampGateApproachRoad(area, x, y + 1);
+    }
+
+    private void openVerticalCityGate(MapArea area, int x, int y) {
+        area.tiles[y][x] = Terrain.CITY_GATE;
+        stampGateApproachRoad(area, x - 1, y);
+        stampGateApproachRoad(area, x + 1, y);
+    }
+
+    private void stampGateApproachRoad(MapArea area, int x, int y) {
+        if (x > 0 && y > 0 && x < area.width() - 1 && y < area.height() - 1
+                && cityBuildingAt(area.id, x, y) == null && !isCityWallBlockingTerrain(area.tileAt(x, y))) {
+            area.tiles[y][x] = Terrain.COBBLESTONE_ROAD;
+        }
+    }
+
+    private void clearCityWallClearance(MapArea area) {
+        List<TilePoint> gates = new ArrayList<>();
+        List<TilePoint> walls = new ArrayList<>();
+        for (int y = 1; y < area.height() - 1; y++) for (int x = 1; x < area.width() - 1; x++) {
+            if (area.tileAt(x, y) == Terrain.CITY_GATE) gates.add(new TilePoint(x, y));
+            if (area.tileAt(x, y) == 'x' || area.tileAt(x, y) == Terrain.CITY_GATE) walls.add(new TilePoint(x, y));
+        }
+        area.props.removeIf(prop -> walls.stream().anyMatch(wall ->
+                        Math.abs(prop.x() - wall.x()) <= 1 && Math.abs(prop.y() - wall.y()) <= 1)
+                || gates.stream().anyMatch(gate -> {
+            boolean horizontalWall = area.tileAt(gate.x() - 1, gate.y()) == 'x'
+                    || area.tileAt(gate.x() + 1, gate.y()) == 'x';
+            return horizontalWall
+                    ? prop.x() == gate.x() && Math.abs(prop.y() - gate.y()) <= 2
+                    : prop.y() == gate.y() && Math.abs(prop.x() - gate.x()) <= 2;
+        }));
+    }
+
+    private int firstClearVerticalWallColumn(MapArea area, int preferred, int maximum, int top, int bottom) {
+        for (int x = Math.min(preferred, maximum); x <= maximum; x++) {
+            boolean clear = true;
+            for (int y = top; y <= bottom; y++) {
+                if (cityBuildingAt(area.id, x - 1, y) != null || cityBuildingAt(area.id, x, y) != null
+                        || cityBuildingAt(area.id, x + 1, y) != null || isCityWallBlockingTerrain(area.tileAt(x, y))) {
+                    clear = false;
+                    break;
+                }
+            }
+            if (clear) {
+                return x;
+            }
+        }
+        return maximum;
+    }
+
+    private int firstClearHorizontalWallRow(MapArea area, int preferred, int maximum, int left, int right) {
+        for (int y = Math.min(preferred, maximum); y <= maximum; y++) {
+            boolean clear = true;
+            for (int x = left; x <= right; x++) {
+                if (cityBuildingAt(area.id, x, y - 1) != null || cityBuildingAt(area.id, x, y) != null
+                        || cityBuildingAt(area.id, x, y + 1) != null || isCityWallBlockingTerrain(area.tileAt(x, y))) {
+                    clear = false;
+                    break;
+                }
+            }
+            if (clear) {
+                return y;
+            }
+        }
+        return maximum;
+    }
+
+    private boolean isCityWallBlockingTerrain(char tile) {
+        return tile == 'w' || tile == '~' || tile == 'm';
+    }
+
+    private void stampOrthogonalCityWallTile(MapArea area, int x, int y) {
+        area.tiles[y][x] = 'x';
+    }
+
+    /** Outskirts keep roads and building foundations, but not fragments of the old all-city paving slab. */
+    private void trimCityOutskirtPaving(MapArea area, String variant) {
+        int left = area.width(), right = -1, top = area.height(), bottom = -1;
+        for (int y = 0; y < area.height(); y++) for (int x = 0; x < area.width(); x++) {
+            if (area.tileAt(x, y) != 'x' && area.tileAt(x, y) != Terrain.CITY_GATE) continue;
+            left = Math.min(left, x); right = Math.max(right, x);
+            top = Math.min(top, y); bottom = Math.max(bottom, y);
+        }
+        if (right < left || bottom < top) return;
+        char ground = cityExpansionGroundTile(variant);
+        for (int y = 0; y < area.height(); y++) for (int x = 0; x < area.width(); x++) {
+            boolean outside = x < left || x > right || y < top || y > bottom;
+            if (outside && isDecorativePavingTile(area.tileAt(x, y))
+                    && cityBuildingAt(area.id, x, y) == null) {
+                area.tiles[y][x] = ground;
+            }
+        }
+    }
+
+    /**
+     * Gives every rendered building a material base. The footprint is continuous, while the public apron
+     * is deliberately broken at the corners so a lot blends into its lane instead of becoming a gray box.
+     */
+    private void stampSettlementBuildingFoundations(MapArea area, List<CityBuilding> buildings, String variant) {
+        for (CityBuilding building : buildings) {
+            char foundation = settlementBuildingFoundationTile(variant, building.style());
+            char lotGround = cityExpansionGroundTile(variant);
+            boolean civic = isCivicSettlementBuildingStyle(building.style());
+            int sideInset = building.width() >= 9 ? 2 : building.width() >= 6 ? 1 : 0;
+            for (int y = building.y1(); y <= building.y2(); y++) {
+                for (int x = building.x1(); x <= building.x2(); x++) {
+                    if (x > 0 && y > 0 && x < area.width() - 1 && y < area.height() - 1) {
+                        boolean outsideVisualCore = x < building.x1() + sideInset
+                                || x > building.x2() - sideInset;
+                        boolean edge = x == building.x1() || x == building.x2()
+                                || y == building.y1() || y == building.y2();
+                        boolean corner = (x == building.x1() || x == building.x2())
+                                && (y == building.y1() || y == building.y2());
+                        int roll = Math.floorMod(hash(x, y,
+                                area.id.hashCode() ^ building.key().hashCode() ^ 0x62ad), 100);
+                        int softenChance = civic ? (corner ? 68 : 30) : (corner ? 88 : 54);
+                        area.tiles[y][x] = outsideVisualCore || edge && roll < softenChance
+                                ? lotGround : foundation;
+                    }
+                }
+            }
+            for (TilePoint door : cityBuildingDoorTiles(building)) {
+                if (door.x() > 0 && door.y() > 0 && door.x() < area.width() - 1 && door.y() < area.height() - 1) {
+                    area.tiles[door.y()][door.x()] = foundation;
+                }
+            }
+            int frontY = building.y2() + 1;
+            for (int x = building.x1(); x <= building.x2(); x++) {
+                if (frontY <= 0 || frontY >= area.height() - 1
+                        || Terrain.connectingRoad(area.tileAt(x, frontY))
+                        || area.tileAt(x, frontY) == 'w' || area.tileAt(x, frontY) == '~') {
+                    continue;
+                }
+                boolean corner = x == building.x1() || x == building.x2();
+                int roll = Math.floorMod(hash(x, frontY, area.id.hashCode() ^ building.key().hashCode()), 100);
+                if (!corner || roll < 44) {
+                    area.tiles[frontY][x] = foundation;
+                }
+            }
+        }
+    }
+
+    private char settlementBuildingFoundationTile(String variant, String style) {
+        boolean civic = isCivicSettlementBuildingStyle(style);
+        return switch (variant) {
+            case "belltower" -> civic ? 'C' : 'U';
+            case "sanctum" -> civic ? 'C' : 'V';
+            case "highwall" -> civic ? 'p' : 'C';
+            case "archive" -> civic ? 'p' : 'C';
+            default -> civic ? 'C' : 'p';
+        };
+    }
+
+    private boolean isCivicSettlementBuildingStyle(String style) {
+        return List.of("hall", "river_hall", "guild", "mage_tower", "bell_tower",
+                "sun_shrine", "watchtower", "arena", "shrine").contains(style);
+    }
+
     private void addVillage(String id, String label, int ox, int oy, String variant) {
         MapArea area = new MapArea(id, label, "village", villageTiles(variant));
         List<CityBuilding> buildings = villageBuildingTemplates(id, variant);
         cityBuildings.put(id, buildings);
         addOrganicVillagePaths(area, buildings, variant, Terrain.DIRT_ROAD);
-        roughenVillageRoadEdges(area, variant);
+        // Visual shoulders now come from continuous material masks, not random full road tiles.
         addVillageProps(area, variant);
         addTownParks(area, variant, 1 + Math.floorMod(id.hashCode(), 2));
         maps.put(id, area);
@@ -2512,33 +2933,92 @@ public final class WorldMap {
 
     private void addDungeon(String id, String label, int ox, int oy, int depth, String theme) {
         int floors = Math.max(3, Math.min(4, depth + 2));
+        String region = kingdomAt(ox, oy).id();
+        char exterior = dungeonExteriorBiome(ox, oy);
+        DungeonGenerator.SiteProfile profile = DungeonGenerator.profile(
+                id, label, theme, region, exterior, groveSeed);
         String firstFloor = dungeonFloorId(id, 1);
         for (int floor = 1; floor <= floors; floor++) {
             String floorId = dungeonFloorId(id, floor);
-            MapArea area = new MapArea(floorId, dungeonFloorLabel(label, theme, floor, floors), "dungeon", dungeonTiles(theme, floor, floors, floorId));
-            addDungeonProps(area, theme, floor, floors);
-            addDungeonStairProps(area, theme, floor, floors);
-            maps.put(floorId, area);
-            TilePoint upPoint = dungeonStairsUpPoint(theme);
-            TilePoint downPoint = dungeonStairsDownPoint(theme);
-            area.landmarks.put(upPoint, floor == 1 ? label : dungeonFloorLabel(label, theme, floor, floors));
-            if (floor < floors) {
-                area.landmarks.put(downPoint, "Stairs Down");
+            DungeonGenerator.FloorPlan plan = DungeonGenerator.generate(profile, floor, floors);
+            dungeonFloorPlans.put(floorId, plan);
+            MapArea area = new MapArea(floorId, DungeonGenerator.floorLabel(profile, floor, floors), "dungeon", plan.tiles());
+            for (DungeonGenerator.PropSpec prop : plan.props()) {
+                area.addProp(new WorldProp(prop.x(), prop.y(), prop.asset(), prop.size()));
             }
-            if (floor > 1) {
-                area.landmarks.put(upPoint, "Stairs Up");
+            maps.put(floorId, area);
+            TilePoint upPoint = plan.up();
+            TilePoint downPoint = plan.down();
+            area.landmarks.put(upPoint, floor == 1 ? label : ascendingStairLabel(profile, false));
+            if (downPoint != null) {
+                area.landmarks.put(downPoint, ascendingStairLabel(profile, true));
             }
         }
-        TilePoint upPoint = dungeonStairsUpPoint(theme);
-        TilePoint downPoint = dungeonStairsDownPoint(theme);
-        addTransition(OVERWORLD_ID, ox, oy, firstFloor, upPoint.x(), upPoint.y(), "You descend into " + label + ".");
-        addTransition(firstFloor, upPoint.x(), upPoint.y(), OVERWORLD_ID, ox, oy, "You climb back to the surface.");
+        DungeonGenerator.FloorPlan firstPlan = dungeonFloorPlans.get(firstFloor);
+        TilePoint upPoint = firstPlan.up();
+        boolean ascending = profile.verticality() == DungeonGenerator.Verticality.ASCENDING;
+        addTransition(OVERWORLD_ID, ox, oy, firstFloor, upPoint.x(), upPoint.y(),
+                ascending ? "You climb into " + label + "." : "You descend into " + label + ".");
+        addTransition(firstFloor, upPoint.x(), upPoint.y(), OVERWORLD_ID, ox, oy,
+                ascending ? "You descend back to the surface." : "You climb back to the surface.");
         for (int floor = 1; floor < floors; floor++) {
             String upper = dungeonFloorId(id, floor);
             String lower = dungeonFloorId(id, floor + 1);
-            addTransition(upper, downPoint.x(), downPoint.y(), lower, upPoint.x(), upPoint.y(), "You descend to floor " + (floor + 1) + ".");
-            addTransition(lower, upPoint.x(), upPoint.y(), upper, downPoint.x(), downPoint.y(), "You climb back to floor " + floor + ".");
+            DungeonGenerator.FloorPlan from = dungeonFloorPlans.get(upper);
+            DungeonGenerator.FloorPlan to = dungeonFloorPlans.get(lower);
+            TilePoint fromPoint = from.down();
+            TilePoint toPoint = to.up();
+            addTransition(upper, fromPoint.x(), fromPoint.y(), lower, toPoint.x(), toPoint.y(),
+                    ascending ? "You climb to storey " + (floor + 1) + "." : "You descend to depth " + (floor + 1) + ".");
+            addTransition(lower, toPoint.x(), toPoint.y(), upper, fromPoint.x(), fromPoint.y(),
+                    ascending ? "You descend to storey " + floor + "." : "You climb to depth " + floor + ".");
         }
+    }
+
+    private char dungeonExteriorBiome(int centerX, int centerY) {
+        char[] biomes = {'g', 'f', 's', 'n', 'v', 'b', 'm', 'q', 'w', 'P', '~'};
+        char best = 'g';
+        int bestScore = -1;
+        for (char biome : biomes) {
+            int score = 0;
+            for (int y = centerY - 7; y <= centerY + 7; y++) {
+                for (int x = centerX - 7; x <= centerX + 7; x++) {
+                    if (x < 0 || y < 0 || x >= COLS || y >= ROWS || tiles[y][x] != biome) continue;
+                    score += Math.max(1, 8 - Math.max(Math.abs(x - centerX), Math.abs(y - centerY)));
+                }
+            }
+            if (score > bestScore) {
+                best = biome;
+                bestScore = score;
+            }
+        }
+        return best;
+    }
+
+    private String ascendingStairLabel(DungeonGenerator.SiteProfile profile, boolean forward) {
+        boolean ascending = profile.verticality() == DungeonGenerator.Verticality.ASCENDING;
+        return (ascending == forward) ? "Stairs Up" : "Stairs Down";
+    }
+
+    public DungeonContext dungeonContext(String mapId) {
+        DungeonGenerator.FloorPlan plan = dungeonFloorPlans.get(mapId);
+        if (plan == null) return null;
+        DungeonGenerator.SiteProfile profile = plan.profile();
+        return new DungeonContext(profile.theme(), profile.region(), profile.folklore(), profile.exterior(),
+                profile.verticality().name().toLowerCase(), plan.floor(), plan.floors());
+    }
+
+    public List<DungeonEncounterSlot> dungeonEncounterSlots(String mapId) {
+        DungeonGenerator.FloorPlan plan = dungeonFloorPlans.get(mapId);
+        if (plan == null) return List.of();
+        List<DungeonEncounterSlot> result = new ArrayList<>();
+        for (DungeonGenerator.EncounterSpec encounter : plan.encounters()) {
+            if (transitionAt(mapId, encounter.x(), encounter.y()) != null
+                    || !propsAt(mapId, encounter.x(), encounter.y()).isEmpty()) continue;
+            result.add(new DungeonEncounterSlot(encounter.x(), encounter.y(), encounter.role(), encounter.group(),
+                    encounter.boss(), encounter.leash()));
+        }
+        return List.copyOf(result);
     }
 
     private void addDungeon(AdventureSite site) {
@@ -2878,15 +3358,16 @@ public final class WorldMap {
     private void applyCityFootprintNotches(char[][] grid, String variant) {
         int width = grid[0].length;
         int height = grid.length;
+        char outskirts = cityExpansionGroundTile(variant);
         if ("belltower".equals(variant)) {
-            rect(grid, width - 9, 1, width - 2, 7, 'x');
-            rect(grid, 1, height - 6, 7, height - 2, 'x');
+            rect(grid, width - 9, 1, width - 2, 7, outskirts);
+            rect(grid, 1, height - 6, 7, height - 2, outskirts);
         } else if ("archive".equals(variant)) {
-            rect(grid, width - 7, 1, width - 2, 5, 'x');
+            rect(grid, width - 7, 1, width - 2, 5, outskirts);
         } else if ("sanctum".equals(variant)) {
-            rect(grid, 1, height - 7, 8, height - 2, 'x');
+            rect(grid, 1, height - 7, 8, height - 2, outskirts);
         } else if ("highwall".equals(variant)) {
-            rect(grid, width - 6, height - 8, width - 2, height - 2, 'x');
+            rect(grid, width - 6, height - 8, width - 2, height - 2, outskirts);
         }
     }
 
@@ -3209,16 +3690,57 @@ public final class WorldMap {
         addScoredSettlementBuildings(buildings, area, variant, 3, settlementInfillLots(variant), "infill");
     }
 
-    private void addTownLandmarkBuildings(List<CityBuilding> buildings, MapArea area, String variant) {
-        CityBuilding landmark = switch (variant) {
-            case "archive" -> building("moonspire_mage_tower", 16, 14, 20, 17, "mage_tower", 2);
-            case "highwall" -> building("ironvale_arena", 16, 14, 21, 17, "arena", 1);
-            case "belltower" -> building("reedwatch_bell_tower", 16, 14, 20, 17, "bell_tower", 0);
-            case "sanctum" -> building("embermarket_sun_shrine", 16, 14, 20, 17, "sun_shrine", 2);
-            default -> building("briarbridge_river_hall", 16, 14, 20, 17, "river_hall", 0);
-        };
-        if (canAddCityInfillBuilding(buildings, area, landmark)) {
+    private void addTownLandmarkBuildings(List<CityBuilding> buildings, MapArea area, String id, String variant) {
+        RegionalSettlementIdentity.TownProfile profile = RegionalSettlementIdentity.townProfile(id);
+        RegionalSettlementIdentity.TownBuildingSpec landmarkSpec = profile == null || profile.buildings().isEmpty()
+                ? null : profile.buildings().get(0);
+        CityBuilding landmark = landmarkSpec == null
+                ? switch (variant) {
+                    case "archive" -> building("moonspire_mage_tower", 16, 14, 20, 17, "mage_tower", 2);
+                    case "highwall" -> building("ironvale_forge_keep", 16, 14, 21, 17, "arena", 1);
+                    case "belltower" -> building("reedwatch_bell_tower", 16, 14, 20, 17, "bell_tower", 0);
+                    case "sanctum" -> building("embermarket_sun_court", 16, 14, 20, 17, "sun_shrine", 2);
+                    default -> building("briarbridge_bridge_court", 16, 14, 20, 17, "river_hall", 0);
+                }
+                : building(landmarkSpec.key(), 16, 14,
+                "arena".equals(landmarkSpec.style()) ? 21 : 20, 17,
+                landmarkSpec.style(), Math.floorMod(id.hashCode(), 3));
+        if (canAddTownLandmarkBuilding(buildings, area, landmark)) {
             buildings.add(landmark);
+        }
+    }
+
+    private boolean canAddTownLandmarkBuilding(List<CityBuilding> buildings, MapArea area, CityBuilding candidate) {
+        for (CityBuilding building : buildings) {
+            if (rectsOverlap(candidate.x1(), candidate.y1(), candidate.x2(), candidate.y2(),
+                    building.x1(), building.y1(), building.x2(), building.y2())) {
+                return false;
+            }
+        }
+        for (int y = candidate.y1(); y <= candidate.y2(); y++) {
+            for (int x = candidate.x1(); x <= candidate.x2(); x++) {
+                char tile = area.tileAt(x, y);
+                if (tile == 'm' || tile == 'w' || tile == '~' || tile == 'x') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void applyTownBuildingProgram(String id, List<CityBuilding> buildings) {
+        RegionalSettlementIdentity.TownProfile profile = RegionalSettlementIdentity.townProfile(id);
+        if (profile == null) {
+            return;
+        }
+        for (int index = 0; index < buildings.size(); index++) {
+            CityBuilding existing = buildings.get(index);
+            RegionalSettlementIdentity.TownBuildingSpec spec = RegionalSettlementIdentity.townBuilding(id, existing);
+            if (spec == null || spec.style().equals(existing.style())) {
+                continue;
+            }
+            buildings.set(index, building(existing.key(), existing.x1(), existing.y1(), existing.x2(), existing.y2(),
+                    spec.style(), existing.palette()));
         }
     }
 
@@ -3259,6 +3781,11 @@ public final class WorldMap {
     }
 
     private boolean canAddCityInfillBuilding(List<CityBuilding> buildings, MapArea area, CityBuilding candidate) {
+        if (candidate.x1() <= 1 && candidate.x2() >= 1
+                || candidate.y1() <= 1 && candidate.y2() >= 1
+                || candidate.y1() <= 22 && candidate.y2() >= 22) {
+            return false;
+        }
         for (CityBuilding building : buildings) {
             if (rectsOverlap(candidate.x1(), candidate.y1(), candidate.x2(), candidate.y2(),
                     building.x1(), building.y1(), building.x2(), building.y2())) {
@@ -3504,7 +4031,7 @@ public final class WorldMap {
         if (area == null) {
             return;
         }
-        rect(area.tiles, building.x1(), building.y1(), building.x2(), building.y2(), tile);
+        area.fillTiles(building.x1(), building.y1(), building.x2(), building.y2(), tile);
     }
 
     private char playerVillageGroundTile() {
@@ -3624,7 +4151,7 @@ public final class WorldMap {
             List<TilePoint> doors = cityBuildingDoorTiles(building);
             for (int index = 0; index < doors.size(); index++) {
                 TilePoint door = doors.get(index);
-                TilePoint approach = nearestSettlementPathStart(area, door.x(), door.y() + 1, salt + index);
+                TilePoint approach = prepareSettlementDoorApproach(area, door, roadTile);
                 if (approach == null) {
                     continue;
                 }
@@ -3634,6 +4161,100 @@ public final class WorldMap {
             }
             stampBuildingFrontagePath(area, building, salt + building.key().hashCode(), roadTile);
         }
+        repairDisconnectedSettlementRoads(area, buildings, hub, salt ^ 0x7135, roadTile);
+    }
+
+    /**
+     * Replaces the inherited rectangular city grid with a connected street graph. Buildings retain their
+     * authored lots, but gates, civic space, district lanes and door approaches determine the roads.
+     */
+    private void rebuildOrganicCityStreetNetwork(MapArea area, List<CityBuilding> buildings,
+                                                 String variant, boolean town) {
+        char[][] source = copyTiles(area.tiles);
+        char ground = settlementStreetGroundTile(variant, town);
+        int width = area.width();
+        int height = area.height();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (!Terrain.connectingRoad(source[y][x])) {
+                    continue;
+                }
+                boolean waterCrossing = nearbyTileCount(source, x, y, 'w', 1) > 0
+                        || nearbyTileCount(source, x, y, '~', 1) > 0;
+                if (waterCrossing) {
+                    continue;
+                }
+                area.tiles[y][x] = ground;
+            }
+        }
+
+        int salt = area.id.hashCode() ^ variant.hashCode() ^ 0x4C31;
+        TilePoint hub = openSettlementPathAnchor(area, Math.min(width - 4, 17), Math.min(height - 4, 12), ground);
+        if (hub == null) {
+            return;
+        }
+        List<TilePoint> gates = List.of(
+                new TilePoint(17, 0),
+                new TilePoint(width - 1, 12),
+                new TilePoint(17, height - 1),
+                new TilePoint(0, 12)
+        );
+        for (int index = 0; index < gates.size(); index++) {
+            TilePoint gate = gates.get(index);
+            TilePoint opened = openSettlementPathAnchor(area, gate.x(), gate.y(), ground);
+            carveOrganicVillagePath(area, opened, hub, salt + index * 127, Terrain.COBBLESTONE_ROAD);
+        }
+
+        int[][] districtAnchors = town
+                ? new int[][]{{width / 4, height / 3}, {width * 3 / 4, height * 2 / 3}, {width / 3, height * 3 / 4}}
+                : new int[][]{{width / 4, height / 3}, {width * 3 / 4, height / 3},
+                {width / 4, height * 3 / 4}, {width * 3 / 4, height * 3 / 4}};
+        for (int index = 0; index < districtAnchors.length; index++) {
+            int[] anchor = districtAnchors[index];
+            TilePoint district = nearestSettlementPathStart(area, anchor[0], anchor[1], salt + index * 41);
+            if (district == null) {
+                continue;
+            }
+            TilePoint road = nearestVillageRoadTile(area, district, salt + index * 67);
+            carveOrganicVillagePath(area, district, road == null ? hub : road,
+                    salt + index * 173, Terrain.COBBLESTONE_ROAD);
+        }
+
+        char court = town ? 'G' : 'a';
+        for (int y = hub.y() - 2; y <= hub.y() + 2; y++) {
+            for (int x = hub.x() - 2; x <= hub.x() + 2; x++) {
+                if (Math.abs(x - hub.x()) + Math.abs(y - hub.y()) > 3
+                        || x < 1 || y < 1 || x >= width - 1 || y >= height - 1
+                        || cityBuildingAt(area.id, x, y) != null || Terrain.connectingRoad(area.tileAt(x, y))
+                        || !Terrain.passable(area.tileAt(x, y))) {
+                    continue;
+                }
+                area.tiles[y][x] = court;
+            }
+        }
+    }
+
+    private char settlementStreetGroundTile(String variant, boolean town) {
+        if (!town) {
+            return switch (variant) {
+                case "sanctum" -> 'b';
+                case "belltower" -> 'y';
+                default -> 'p';
+            };
+        }
+        return cityExpansionGroundTile(variant);
+    }
+
+    private TilePoint openSettlementPathAnchor(MapArea area, int x, int y, char ground) {
+        if (x < 0 || y < 0 || x >= area.width() || y >= area.height()
+                || cityBuildingAt(area.id, x, y) != null) {
+            return null;
+        }
+        if (!canUseSettlementPathTile(area, x, y)) {
+            area.tiles[y][x] = ground;
+        }
+        return canUseSettlementPathTile(area, x, y) ? new TilePoint(x, y) : null;
     }
 
     private TilePoint nearestVillageRoadTile(MapArea area, TilePoint start, int salt) {
@@ -3659,6 +4280,95 @@ public final class WorldMap {
             }
         }
         return null;
+    }
+
+    private void repairDisconnectedSettlementRoads(MapArea area, List<CityBuilding> buildings,
+                                                   TilePoint hub, int salt, char roadTile) {
+        Set<TilePoint> mainRoads = connectedSettlementRoads(area, hub);
+        if (mainRoads.isEmpty()) {
+            return;
+        }
+        int index = 0;
+        for (CityBuilding building : buildings) {
+            List<TilePoint> approaches = cityBuildingDoorTiles(building).stream()
+                    .map(door -> new TilePoint(door.x(), door.y() + 1))
+                    .filter(point -> point.x() >= 0 && point.y() >= 0
+                            && point.x() < area.width() && point.y() < area.height())
+                    .toList();
+            if (approaches.stream().anyMatch(mainRoads::contains)) {
+                continue;
+            }
+            TilePoint start = approaches.stream()
+                    .filter(point -> canUseSettlementPathTile(area, point.x(), point.y()))
+                    .findFirst().orElse(null);
+            if (start == null) {
+                List<TilePoint> doors = cityBuildingDoorTiles(building);
+                start = doors.isEmpty() ? null : prepareSettlementDoorApproach(area, doors.get(0), roadTile);
+            }
+            carvePathToSettlementRoadSet(area, start, mainRoads,
+                    salt + building.key().hashCode() + index++ * 97, roadTile);
+            mainRoads = connectedSettlementRoads(area, hub);
+        }
+    }
+
+    private Set<TilePoint> connectedSettlementRoads(MapArea area, TilePoint start) {
+        Set<TilePoint> reached = new HashSet<>();
+        if (start == null || start.x() < 0 || start.y() < 0 || start.x() >= area.width() || start.y() >= area.height()
+                || !Terrain.connectingRoad(area.tileAt(start.x(), start.y()))) {
+            return reached;
+        }
+        ArrayDeque<TilePoint> queue = new ArrayDeque<>();
+        reached.add(start);
+        queue.add(start);
+        while (!queue.isEmpty()) {
+            TilePoint point = queue.removeFirst();
+            for (int[] direction : new int[][]{{0, -1}, {1, 0}, {0, 1}, {-1, 0}}) {
+                TilePoint next = new TilePoint(point.x() + direction[0], point.y() + direction[1]);
+                if (next.x() < 0 || next.y() < 0 || next.x() >= area.width() || next.y() >= area.height()
+                        || reached.contains(next) || !Terrain.connectingRoad(area.tileAt(next.x(), next.y()))) {
+                    continue;
+                }
+                reached.add(next);
+                queue.addLast(next);
+            }
+        }
+        return reached;
+    }
+
+    private void carvePathToSettlementRoadSet(MapArea area, TilePoint start, Set<TilePoint> targets,
+                                              int salt, char roadTile) {
+        if (start == null || targets.isEmpty() || targets.contains(start)) {
+            return;
+        }
+        boolean[][] visited = new boolean[area.height()][area.width()];
+        TilePoint[][] previous = new TilePoint[area.height()][area.width()];
+        ArrayDeque<TilePoint> queue = new ArrayDeque<>();
+        visited[start.y()][start.x()] = true;
+        queue.add(start);
+        TilePoint end = null;
+        while (!queue.isEmpty()) {
+            TilePoint point = queue.removeFirst();
+            if (targets.contains(point)) {
+                end = point;
+                break;
+            }
+            for (int[] direction : settlementPathDirections(point.x(), point.y(), salt)) {
+                int nx = point.x() + direction[0];
+                int ny = point.y() + direction[1];
+                if (!canUseSettlementPathTile(area, nx, ny) || visited[ny][nx]) {
+                    continue;
+                }
+                visited[ny][nx] = true;
+                previous[ny][nx] = point;
+                queue.addLast(new TilePoint(nx, ny));
+            }
+        }
+        for (TilePoint point = end; point != null; point = previous[point.y()][point.x()]) {
+            stampSettlementPathTile(area, point.x(), point.y(), salt, roadTile);
+            if (point.equals(start)) {
+                break;
+            }
+        }
     }
 
     private void carveOrganicVillagePath(MapArea area, TilePoint start, TilePoint end, int salt, char roadTile) {
@@ -3826,7 +4536,7 @@ public final class WorldMap {
             List<TilePoint> doors = cityBuildingDoorTiles(building);
             for (int index = 0; index < doors.size(); index++) {
                 TilePoint door = doors.get(index);
-                TilePoint approach = nearestSettlementPathStart(area, door.x(), door.y() + 1, salt + index);
+                TilePoint approach = prepareSettlementDoorApproach(area, door, roadTile);
                 if (approach == null) {
                     continue;
                 }
@@ -3834,6 +4544,19 @@ public final class WorldMap {
             }
             stampBuildingFrontagePath(area, building, salt + building.key().hashCode(), roadTile);
         }
+    }
+
+    private TilePoint prepareSettlementDoorApproach(MapArea area, TilePoint door, char roadTile) {
+        int x = door.x();
+        int y = door.y() + 1;
+        if (x < 0 || y < 0 || x >= area.width() || y >= area.height()
+                || cityBuildingAt(area.id, x, y) != null) {
+            return null;
+        }
+        if (!canUseSettlementPathTile(area, x, y)) {
+            area.tiles[y][x] = roadTile == Terrain.DIRT_ROAD ? 'g' : 'p';
+        }
+        return canUseSettlementPathTile(area, x, y) ? new TilePoint(x, y) : null;
     }
 
     private TilePoint nearestSettlementPathStart(MapArea area, int x, int y, int salt) {
@@ -3921,8 +4644,12 @@ public final class WorldMap {
         if (y < 0 || y >= area.height()) {
             return;
         }
-        for (int x = building.x1(); x <= building.x2(); x++) {
-            stampSettlementPathTile(area, x, y, salt, roadTile);
+        for (TilePoint door : cityBuildingDoorTiles(building)) {
+            stampSettlementPathTile(area, door.x(), y, salt, roadTile);
+            if (building.width() >= 6) {
+                int side = Math.floorMod(hash(door.x(), y, salt), 2) == 0 ? -1 : 1;
+                stampSettlementPathTile(area, door.x() + side, y, salt + side, roadTile);
+            }
         }
     }
 
@@ -3952,9 +4679,7 @@ public final class WorldMap {
         if (area == null || !"city".equals(area.kind)) {
             return;
         }
-        reinforceCityRoadBackbone(area);
         removeOrphanDecorativePaving(area, variant);
-        addRoadsidePavingVariety(area, variant);
     }
 
     private void reinforceCityRoadBackbone(MapArea area) {
@@ -4016,13 +4741,18 @@ public final class WorldMap {
                 if (!isDecorativePavingTile(tile) || Terrain.connectingRoad(tile)) {
                     continue;
                 }
+                if (cityBuildingAt(area.id, x, y) != null) {
+                    continue;
+                }
                 int roadNeighbors = nearbyConnectingRoadCount(area.tiles, x, y, 1);
                 int roadReach = nearbyConnectingRoadCount(area.tiles, x, y, 2);
                 int sameNeighbors = nearbyTileCount(area.tiles, x, y, tile, 1);
                 boolean nearBuildingFront = cityBuildingAt(area.id, x, y - 1) != null
                         || cityBuildingAt(area.id, x, y + 1) != null;
                 int roll = Math.floorMod(hash(x, y, area.id.hashCode() ^ variant.hashCode() ^ 9041), 100);
-                if (roadNeighbors == 0 && (!nearBuildingFront || roadReach == 0)) {
+                if (sameNeighbors == 0 && !nearBuildingFront) {
+                    next[y][x] = ground;
+                } else if (roadNeighbors == 0 && (!nearBuildingFront || roadReach == 0)) {
                     next[y][x] = ground;
                 } else if (sameNeighbors >= 3 && roadNeighbors <= 1 && roll < 72) {
                     next[y][x] = ground;
@@ -4045,12 +4775,26 @@ public final class WorldMap {
                     continue;
                 }
                 int roadNeighbors = nearbyConnectingRoadCount(area.tiles, x, y, 1);
-                if (roadNeighbors == 0 || !Terrain.passable(tile)) {
+                int orthogonalRoads = orthogonalConnectingRoadCount(area, x, y);
+                boolean nearBuildingFront = cityBuildingAt(area.id, x, y - 1) != null;
+                int roll = Math.floorMod(hash(x, y, area.id.hashCode() ^ variant.hashCode() ^ 7027), 100);
+                if (roadNeighbors == 0 || !Terrain.passable(tile)
+                        || orthogonalRoads < 2 && !nearBuildingFront
+                        || roll >= (nearBuildingFront ? 58 : 34)) {
                     continue;
                 }
                 area.tiles[y][x] = roadsidePavingTileAvoidingMatches(area.tiles, x, y, variant);
             }
         }
+    }
+
+    private int orthogonalConnectingRoadCount(MapArea area, int x, int y) {
+        int count = 0;
+        if (Terrain.connectingRoad(area.tileAt(x - 1, y))) count++;
+        if (Terrain.connectingRoad(area.tileAt(x + 1, y))) count++;
+        if (Terrain.connectingRoad(area.tileAt(x, y - 1))) count++;
+        if (Terrain.connectingRoad(area.tileAt(x, y + 1))) count++;
+        return count;
     }
 
     private char roadsidePavingTileAvoidingMatches(char[][] tiles, int x, int y, String variant) {
@@ -4620,7 +5364,7 @@ public final class WorldMap {
         }
         if (!isInteriorOverlayAsset(asset) && !isInteriorWallDecorAsset(asset) && !isInteriorPassThroughAsset(asset)) {
             int[] placement = interiorPlacementFootprint(asset);
-            rect(area.tiles, x, y, x + placement[0] - 1, y + placement[1] - 1, 'k');
+            area.fillTiles(x, y, x + placement[0] - 1, y + placement[1] - 1, 'k');
         }
         area.addProp(new WorldProp(x, y, asset, 48));
     }
@@ -4638,7 +5382,7 @@ public final class WorldMap {
         for (Map.Entry<TilePoint, Character> entry : tiles.entrySet()) {
             TilePoint point = entry.getKey();
             if (canSetPlayerInteriorTile(area, point.x(), point.y())) {
-                area.tiles[point.y()][point.x()] = entry.getValue() == 'o' ? 'o' : 'i';
+                area.setTile(point.x(), point.y(), entry.getValue() == 'o' ? 'o' : 'i');
                 area.interiorRugs.remove(point);
             }
         }
@@ -4667,7 +5411,7 @@ public final class WorldMap {
         }
         if (!isInteriorOverlayAsset(prop.asset()) && !isInteriorWallDecorAsset(prop.asset()) && !isInteriorPassThroughAsset(prop.asset())) {
             int[] placement = interiorPlacementFootprint(prop.asset());
-            rect(area.tiles, prop.x(), prop.y(), prop.x() + placement[0] - 1, prop.y() + placement[1] - 1, 'k');
+            area.fillTiles(prop.x(), prop.y(), prop.x() + placement[0] - 1, prop.y() + placement[1] - 1, 'k');
         }
         area.addProp(prop);
     }
@@ -4677,7 +5421,7 @@ public final class WorldMap {
             return;
         }
         int[] footprint = interiorPlacementFootprint(prop.asset());
-        rect(area.tiles, prop.x(), prop.y(), prop.x() + footprint[0] - 1, prop.y() + footprint[1] - 1, 'i');
+        area.fillTiles(prop.x(), prop.y(), prop.x() + footprint[0] - 1, prop.y() + footprint[1] - 1, 'i');
     }
 
     private boolean canPlaceInteriorOverlay(MapArea area, int x, int y) {
@@ -4690,11 +5434,20 @@ public final class WorldMap {
                 return false;
             }
         }
-        return area.props.stream().anyMatch(prop -> {
+        return interiorSurfaceAt(area, x, y) != null;
+    }
+
+    public WorldProp interiorSurfaceAt(String mapId, int x, int y) {
+        MapArea area = maps.get(mapId);
+        return area == null ? null : interiorSurfaceAt(area, x, y);
+    }
+
+    private WorldProp interiorSurfaceAt(MapArea area, int x, int y) {
+        return area.props.stream().filter(prop -> {
             int[] footprint = interiorHitboxFootprint(prop.asset());
             return isSurfaceDetailAnchor(prop.asset()) && x >= prop.x() && y >= prop.y()
                     && x < prop.x() + footprint[0] && y < prop.y() + footprint[1];
-        });
+        }).findFirst().orElse(null);
     }
 
     private boolean canPlaceInteriorPassThrough(MapArea area, int x, int y, int width, int height) {
@@ -4790,7 +5543,9 @@ public final class WorldMap {
         return interiorHitboxFootprint(asset);
     }
 
-    private int[] interiorHitboxFootprint(String asset) {
+    private static int[] interiorHitboxFootprint(String asset) {
+        InteriorFurnishings.Furnishing furnishing = InteriorFurnishings.find(asset);
+        if (furnishing != null) return new int[]{furnishing.width(), furnishing.depth()};
         return switch (asset) {
             case "interior_bed_vertical", "interior_bakery_oven", "interior_resident_bed", "interior_traveler_trunk",
                     "interior_herb_drying_rack_v", "interior_linen_shelf", "interior_anvil_tool_rack",
@@ -4811,6 +5566,7 @@ public final class WorldMap {
     }
 
     private boolean isInteriorOverlayAsset(String asset) {
+        if (InteriorFurnishings.is(asset, InteriorFurnishings.Placement.TABLETOP)) return true;
         return switch (asset) {
             case "interior_tabletop_place_setting", "interior_tabletop_meal", "interior_tabletop_candle",
                     "interior_flower_vase", "interior_seed_bowl", "interior_mortar_pestle" -> true;
@@ -5152,6 +5908,27 @@ public final class WorldMap {
         int mountainDistance = distanceToAny(area, x, y, 3, new char[]{'m'});
         boolean nearMountain = mountainDistance <= 2 || distanceToAny(area, x, y, 4, new char[]{'q'}) <= 3;
         boolean snow = distanceToAny(area, x, y, 3, new char[]{'n'}) <= 2;
+        // Independent roll: node-density rolls are truncated and would bias material selection.
+        int regionalRoll = Math.floorMod(hash(x, y, patchSeed + 7319), 100);
+        String regionalOre = switch (tile) {
+            case 'v' -> "bog_iron";
+            case 'n' -> "froststeel";
+            case 's' -> "sunmetal";
+            case 'b' -> "emberite";
+            case 'f' -> naturalNeighborCount(area, x, y, 'f') >= 16 ? "verdant" : "";
+            default -> "";
+        };
+        if (!regionalOre.isEmpty() && regionalRoll < (tile == 'v' ? 35 : tile == 'f' ? 12 : 25)) {
+            return "deco_ore_" + regionalOre + "_vein";
+        }
+        // Regional nonmetal deposits use the remaining node slots, never roads or open water.
+        if (tile == 'b' && regionalRoll >= 25 && regionalRoll < 43) return "deco_ore_obsidian_vein";
+        if (tile == 'f' && regionalRoll >= 12 && regionalRoll < 24) return "deco_ore_amber_vein";
+        if ((tile == 's' && regionalRoll >= 25 && regionalRoll < 43)
+                || (tile == 'P' && regionalRoll < (nearWater ? 22 : 10))) return "deco_ore_rock_salt_vein";
+        if (tile == 'v' && nearWater && regionalRoll >= 35 && regionalRoll < 60) {
+            return "deco_tree_cypress_harvestable";
+        }
         if (prefersMountainResourceNode(tile, mountainDistance)) {
             return mountainResourceNodeFor(snow, tile == 'q', roll, patchSeed);
         }
@@ -5250,18 +6027,19 @@ public final class WorldMap {
     }
 
     private String mountainResourceNodeFor(boolean snow, boolean pass, int roll, int patchSeed) {
+        // Weight alone controls rarity: a second rarity gate made rare metals effectively absent.
         return weightedDecoration(roll, patchSeed, new DecorationOption[]{
                 option("deco_ore_iron_vein", pass ? 10 : 14),
                 option("deco_ore_copper_vein", pass ? 9 : 13),
                 option("deco_ore_coal_deposit", pass ? 12 : 14),
-                option("deco_ore_tin_vein", 7, 480),
-                option("deco_ore_silver_vein", 5, 230),
-                option("deco_ore_gold_vein", 3, 160),
-                option("deco_ore_mithril_vein", snow ? 5 : 2, 115),
-                option("deco_ore_cobalt_vein", snow ? 6 : 3, 180),
-                option("deco_ore_adamantite_vein", 2, 55),
-                option("deco_ore_crystal_vein", snow ? 6 : 4, 135),
-                option("deco_ore_steel_scrap", pass ? 5 : 2, 100)
+                option("deco_ore_tin_vein", 7),
+                option("deco_ore_silver_vein", 5),
+                option("deco_ore_gold_vein", 3),
+                option("deco_ore_mithril_vein", snow ? 5 : 2),
+                option("deco_ore_cobalt_vein", snow ? 6 : 3),
+                option("deco_ore_adamantite_vein", 2),
+                option("deco_ore_crystal_vein", snow ? 6 : 4),
+                option("deco_ore_steel_scrap", pass ? 5 : 2)
         });
     }
 
@@ -5509,6 +6287,9 @@ public final class WorldMap {
                     "deco_ore_tin_vein", "deco_ore_silver_vein", "deco_ore_gold_vein",
                     "deco_ore_mithril_vein", "deco_ore_cobalt_vein", "deco_ore_adamantite_vein",
                     "deco_ore_crystal_vein", "deco_ore_steel_scrap",
+                    "deco_ore_bog_iron_vein", "deco_ore_froststeel_vein", "deco_ore_sunmetal_vein",
+                    "deco_ore_emberite_vein", "deco_ore_verdant_vein", "deco_ore_obsidian_vein",
+                    "deco_ore_amber_vein", "deco_ore_rock_salt_vein",
                     "deco_wood_ironwood_log_pile", "deco_wood_fallen_ash_log" -> 36 + jitter * 4;
             case "deco_forest_ancient_roots", "deco_forest_shrine_stone", "deco_forest_fairy_pool",
                     "deco_imagen_grass_pond", "deco_marsh_lily_pool", "deco_marsh_bubble_pool",
@@ -5520,6 +6301,7 @@ public final class WorldMap {
                     "deco_mountain_crystal_cluster" -> 42 + jitter * 4;
             case "deco_cactus", "deco_desert_blooming_cactus" -> 46 + jitter * 4;
             case "deco_beach_coconuts" -> 28 + jitter * 3;
+            case "deco_tree_cypress_harvestable" -> 76 + jitter * 6;
             case "deco_beach_palm" -> 72 + jitter * 6;
             case "deco_beach_palm_cluster" -> 80 + jitter * 7;
             case "village_prop_palm_shade", "village_prop_net_drying_rack" -> 46 + jitter * 4;
@@ -6708,6 +7490,7 @@ public final class WorldMap {
     }
 
     private boolean isSurfaceDetailAnchor(String asset) {
+        if (InteriorFurnishings.is(asset, InteriorFurnishings.Placement.SURFACE)) return true;
         // These sprites already contain meals or working equipment. Extra dishes
         // obscure the art and (for ovens) appear to hover in front of the fire.
         if (isCookingInteriorAsset(asset) || asset.equals("interior_banquet_table_h")
@@ -6997,11 +7780,34 @@ public final class WorldMap {
             if (usesStructuredLocationRules(patch.kind)) {
                 addStructuredLocationProps(area, patch, primaryAdventurePatch);
             }
+            if (patch == campaignPatches.get("highwall_watch")) {
+                placeLocationRulePropNear(area, patch, patch.cx + 1, patch.cy - 1,
+                        "deco_crossing_flood_bell", patch.salt, true, 2);
+                placeLocationCluster(area, patch, patch.cx - 1, patch.cy - 2,
+                        new String[]{"location_graveyard_tombstones", "location_dungeon_grave_slabs"},
+                        new int[][]{{0, 0}, {1, 0}}, patch.salt, true);
+            }
+            if (patch == campaignPatches.get("glimmerfen_bellworks")) {
+                for (int dx : new int[]{-2, 2}) placeLocationRulePropNear(area, patch, patch.cx + dx, patch.cy - 2,
+                        "deco_crossing_flood_bell", patch.salt, true, 1);
+            }
+            // Blueprint decoration may be omitted by terrain/occupancy checks. Keep the named
+            // site's identifying object present even when its original slot was unavailable.
+            for (var entry : campaignPatches.entrySet()) {
+                if (entry.getValue() != patch) continue;
+                String asset = StoryLocationCatalog.byId(entry.getKey()).asset();
+                if (asset.equals("quest_ward_marker") || asset.equals("location_dungeon_stair_entrance")) continue;
+                boolean present = area.propsInBounds(patch.cx - patch.rx, patch.cy - patch.ry,
+                                patch.cx + patch.rx, patch.cy + patch.ry).stream().anyMatch(p -> p.asset().equals(asset));
+                if (!present) placeLocationRulePropNear(area, patch, patch.cx - 1, patch.cy + 1,
+                        asset, patch.salt, false, patch.rx + patch.ry);
+            }
         }
     }
 
     private boolean usesStructuredLocationRules(String kind) {
-        return kind.equals("farmland")
+        return List.of("guest_shrine", "caravan_halt", "bell_landing", "reed_beds", "tollhouse", "orchard").contains(kind)
+                || kind.equals("farmland")
                 || kind.equals("goblin_camp")
                 || kind.equals("bandit_camp")
                 || kind.equals("cave")
@@ -7015,6 +7821,9 @@ public final class WorldMap {
     }
 
     private void addStructuredLocationProps(MapArea area, LocationPatch patch, boolean primaryAdventurePatch) {
+        if (addBlueprintLocationProps(area, patch, primaryAdventurePatch)) {
+            return;
+        }
         switch (patch.kind) {
             case "farmland" -> addStructuredFieldProps(area, patch);
             case "goblin_camp", "bandit_camp" -> addStructuredCampProps(area, patch);
@@ -7023,9 +7832,96 @@ public final class WorldMap {
                     addStructuredDungeonApproachProps(area, patch, primaryAdventurePatch);
             case "old_road_marker" -> addStructuredOldRoadMarkerProps(area, patch);
             case "ruined_watchpost" -> addStructuredRuinedWatchpostProps(area, patch);
+            case "guest_shrine", "caravan_halt", "bell_landing", "reed_beds", "tollhouse", "orchard" ->
+                    addCampaignLayoutProps(area, patch);
             default -> {
             }
         }
+    }
+
+    /** Authored arrangements built with the same cluster, edge, and clearance rules as camps. */
+    private void addCampaignLayoutProps(MapArea area, LocationPatch p) {
+        switch (p.kind) {
+            case "guest_shrine" -> {
+                placeLocationEdgeProps(area, p, "location_dungeon_collapsed_wall", p.salt, 70, 2);
+                placeLocationCluster(area, p, p.cx - 2, p.cy - 2,
+                        new String[]{"location_dungeon_broken_altar", "location_dungeon_braziers", "quest_document_bundle"},
+                        new int[][]{{0, 0}, {2, 0}, {1, 1}}, p.salt, true);
+                placeLocationCluster(area, p, p.cx + 2, p.cy + 2,
+                        new String[]{"village_prop_anvil_stump", "location_camp_fire", "dungeon_prop_chain_stand", "location_camp_crates"},
+                        new int[][]{{0, 0}, {1, 0}, {1, 1}, {0, 2}}, p.salt + 3, true);
+            }
+            case "caravan_halt" -> {
+                placeLocationCluster(area, p, p.cx - 2, p.cy - 1,
+                        new String[]{"location_camp_tent", "location_camp_crates", "deco_imagen_road_camp"},
+                        new int[][]{{0, 0}, {1, 0}, {0, 2}}, p.salt, true);
+                placeLocationCluster(area, p, p.cx + 2, p.cy - 1,
+                        new String[]{"location_camp_tent", "location_camp_crates", "village_prop_produce_basket"},
+                        new int[][]{{0, 0}, {0, 1}, {-1, 0}}, p.salt + 3, true);
+            }
+            case "tollhouse" -> {
+                placeLocationEdgeProps(area, p, "location_farmland_fence", p.salt, 65, 2);
+                placeLocationCluster(area, p, p.cx - 2, p.cy - 1,
+                        new String[]{"location_camp_tent", "quest_document_bundle", "location_camp_crates", "deco_imagen_signpost"},
+                        new int[][]{{0, 0}, {1, 1}, {0, 2}, {3, 1}}, p.salt, true);
+            }
+            case "bell_landing" -> {
+                placeLocationRulePropNear(area, p, p.cx, p.cy - 1, "deco_crossing_flood_bell", p.salt, true, 1);
+                placeLocationCluster(area, p, p.cx - 2, p.cy,
+                        new String[]{"location_overgrown_landing", "location_camp_crates", "location_dungeon_broken_altar"},
+                        new int[][]{{0, 0}, {0, 1}, {3, -1}}, p.salt, true);
+                placeLocationSideAccentProps(area, p, new String[]{"deco_soft_water_reeds_gold", "deco_soft_water_wet_stones"}, p.salt, 95, 1);
+            }
+            case "reed_beds" -> {
+                placeLocationSideAccentProps(area, p, new String[]{"deco_soft_water_reeds_gold", "deco_soft_water_wet_stones"}, p.salt, 100, 1);
+                placeLocationInteriorScatter(area, p, new String[]{"deco_soft_water_reeds_gold", "deco_soft_water_reeds_gold"}, p.salt, 80);
+                placeLocationRulePropNear(area, p, p.cx - 2, p.cy + 1, "village_prop_produce_basket", p.salt, true, 1);
+            }
+            case "orchard" -> {
+                placeLocationEdgeProps(area, p, "location_farmland_fence", p.salt, 75, 2);
+                for (int dx : new int[]{-2, 2}) for (int dy : new int[]{-2, 1})
+                    placeLocationRuleProp(area, p, p.cx + dx, p.cy + dy, "deco_tree_fruit_harvestable", p.salt, true);
+                placeLocationCluster(area, p, p.cx - 1, p.cy - 1,
+                        new String[]{"quest_ward_marker", "village_prop_produce_basket", "village_prop_farm_tools"},
+                        new int[][]{{0, 0}, {2, 1}, {0, 3}}, p.salt, true);
+            }
+            default -> throw new IllegalArgumentException(p.kind);
+        }
+    }
+
+    /** Instantiates an authored location as one validated unit; legacy procedural builders remain fallbacks. */
+    private boolean addBlueprintLocationProps(MapArea area, LocationPatch patch, boolean primaryAdventurePatch) {
+        OverworldLocationBlueprints.Blueprint blueprint = OverworldLocationBlueprints.forSite(
+                patch.kind, patch.salt, exteriorIntent(patch), exteriorClimate(patch));
+        if (blueprint == null) {
+            return false;
+        }
+        int seed = patch.salt + 1709;
+        if (blueprint.hasPerimeter()) {
+            placeLocationEdgeProps(area, patch, blueprint.perimeterAsset(), seed,
+                    blueprint.perimeterChance(), blueprint.perimeterSpacing());
+        }
+        if (blueprint.hasSideDressing()) {
+            placeLocationSideAccentProps(area, patch, blueprint.sideAssets().toArray(String[]::new), seed + 11,
+                    blueprint.sideChance(), blueprint.sideSpacing());
+        }
+        int slotIndex = 0;
+        for (OverworldLocationBlueprints.Slot slot : blueprint.slots()) {
+            if (primaryAdventurePatch && slot.role() == OverworldLocationBlueprints.SlotRole.STRUCTURE) {
+                slotIndex++;
+                continue;
+            }
+            String asset = slot.assets().get(Math.floorMod(hash(patch.cx + slot.dx(), patch.cy + slot.dy(),
+                    seed + slotIndex * 37), slot.assets().size()));
+            placeLocationRuleProp(area, patch, patch.cx + slot.dx(), patch.cy + slot.dy(), asset,
+                    seed + slotIndex * 41, slot.allowEntranceReserve());
+            slotIndex++;
+        }
+        if (blueprint.hasScatter()) {
+            placeLocationInteriorScatter(area, patch, blueprint.scatterAssets().toArray(String[]::new),
+                    seed + 101, blueprint.scatterChance());
+        }
+        return true;
     }
 
     private void addStructuredFieldProps(MapArea area, LocationPatch patch) {
@@ -7147,6 +8043,26 @@ public final class WorldMap {
                     "deco_soft_water_wet_stones", "deco_soft_water_reeds_gold",
                     "location_dungeon_rubble_cairn", "dungeon_prop_lantern_stand"
             }, patch.salt + 105, 20);
+            return;
+        }
+
+        if (patch.kind.equals("abandoned_castle") || patch.kind.equals("prison")) {
+            // The gatehouse asset owns the wall line, towers, and opening. Loose edge wall sprites made
+            // these sites read as paper panels and frequently disagreed with the walkable entrance tile.
+            if (!primaryAdventurePatch) {
+                placeLocationRuleProp(area, patch, patch.cx, patch.cy,
+                        "location_dungeon_fortress_gate_imagegen", patch.salt + 106, true);
+            }
+            placeLocationSideAccentProps(area, patch, new String[]{
+                    "location_dungeon_rubble_cairn", "deco_imagen_flat_stone_stack",
+                    patch.kind.equals("prison") ? "dungeon_prop_chain_stand" : "dungeon_prop_castle_rubble"
+            }, patch.salt + 108, 34, 3);
+            placeLocationCluster(area, patch, patch.cx - 3, patch.cy + 2,
+                    new String[]{"location_dungeon_rubble_cairn", "dungeon_prop_lantern_stand"},
+                    new int[][]{{0, 0}, {-1, 1}}, patch.salt + 109, false);
+            placeLocationCluster(area, patch, patch.cx + 3, patch.cy + 2,
+                    new String[]{"location_dungeon_rubble_cairn", "dungeon_prop_castle_candles"},
+                    new int[][]{{0, 0}, {1, 1}}, patch.salt + 113, false);
             return;
         }
 
@@ -7305,6 +8221,7 @@ public final class WorldMap {
             return false;
         }
         char tile = area.tileAt(x, y);
+        if (asset.startsWith("deco_crossing_") && Terrain.connectingRoad(tile)) return false;
         if (tile == 'w' || tile == '~' || tile == 'c' || tile == 'u' || tile == 'h' || tile == 'x') {
             return false;
         }
@@ -7510,16 +8427,19 @@ public final class WorldMap {
         if (tile != 'd' || !isPrimaryAdventurePatch(patch)) {
             return null;
         }
-        return switch (patch.kind) {
-            case "cave" -> "location_overgrown_cave_entrance";
-            case "crypt", "graveyard" -> "location_dungeon_stair_entrance";
-            case "prison" -> "location_castle_ruins";
-            case "sewer" -> "location_dungeon_stair_entrance";
-            case "goblin_camp" -> "location_goblin_hut";
-            case "bandit_camp" -> "location_bandit_outpost";
-            case "abandoned_castle" -> "location_castle_ruins";
-            default -> null;
-        };
+        return DungeonExteriorCatalog.entrance(patch.kind, exteriorIntent(patch), exteriorClimate(patch));
+    }
+
+    private String exteriorIntent(LocationPatch patch) {
+        for (AdventureSite site : adventureSites) {
+            if (site.x() == patch.cx && site.y() == patch.cy)
+                return DungeonExteriorCatalog.intent(site.id(), site.kind());
+        }
+        return DungeonExteriorCatalog.intent("", patch.kind);
+    }
+
+    private String exteriorClimate(LocationPatch patch) {
+        return DungeonExteriorCatalog.climate(dungeonExteriorBiome(patch.cx, patch.cy));
     }
 
     private boolean isAdventureEntranceReserve(LocationPatch patch, int x, int y) {
@@ -7542,11 +8462,21 @@ public final class WorldMap {
 
     private void addAdventureEntranceMarkers(MapArea area, LocationPatch patch, int x, int y, int seed) {
         String[] markers = adventureEntranceMarkerAssets(patch.kind);
+        String intent = exteriorIntent(patch);
+        if (patch.kind.equals("cave")) {
+            markers = new String[]{DungeonExteriorCatalog.regionalProps(exteriorClimate(patch)).get(0),
+                    "dungeon_prop_lantern_stand"};
+        } else if (intent.equals("vampire_lair")) {
+            markers = new String[]{"dungeon_detail_vampire_gargoyle", "dungeon_detail_vampire_candelabrum"};
+        } else if (intent.equals("magic_tower")) {
+            markers = new String[]{"dungeon_prop_rune_pillar", "deco_imagen_crystal_cluster"};
+        }
         placeAdventureEntranceMarker(area, x - 2, y + 1, markers[0], seed);
         placeAdventureEntranceMarker(area, x + 2, y + 1, markers[1], seed + 17);
-        String accent = adventureEntranceAccentAsset(patch.kind, seed);
+        String accent = patch.kind.equals("cave") || intent.equals("magic_tower")
+                || intent.equals("vampire_lair") ? null : adventureEntranceAccentAsset(patch.kind, seed);
         if (accent != null) {
-            placeAdventureEntranceMarker(area, x, y + 2, accent, seed + 31);
+            placeAdventureEntranceMarker(area, x + 3, y + 2, accent, seed + 31);
         }
     }
 
@@ -7579,7 +8509,8 @@ public final class WorldMap {
             return;
         }
         char tile = area.tileAt(x, y);
-        if (tile == 'w' || tile == '~' || tile == 'c' || tile == 'u' || tile == 'x') {
+        if (tile == 'w' || tile == '~' || tile == 'c' || tile == 'u' || tile == 'x'
+                || Terrain.connectingRoad(tile) || transitionAt(area.id, x, y) != null) {
             return;
         }
         area.addProp(new WorldProp(x, y, asset, locationPropSize(asset, seed)));
@@ -7829,6 +8760,10 @@ public final class WorldMap {
             case "location_crypt_entrance", "location_dungeon_stair_entrance" -> 72;
             case "location_dungeon_braziers" -> 66;
             case "location_castle_ruins" -> 74;
+            case "location_dungeon_fortress_gate_imagegen" -> 196;
+            case "location_exterior_sand_entrance", "location_exterior_ice_entrance" -> 144;
+            case "location_exterior_vampire_entrance" -> 196;
+            case "location_exterior_arcane_entrance" -> 210;
             default -> base;
         };
     }
@@ -8143,6 +9078,7 @@ public final class WorldMap {
 
     private boolean isTallProp(String asset) {
         return isForestTree(asset)
+                || asset.equals("deco_tree_cypress_harvestable")
                 || isBeachPalm(asset)
                 || asset.equals("deco_snow_pine")
                 || asset.equals("deco_mountain_scrub_pine")
@@ -8474,6 +9410,8 @@ public final class WorldMap {
 
         addLocationPatches(seedSalt);
         addAdventureSites(seedSalt);
+        legacyLocationPatchCount = locationPatches.size();
+        buildCampaignPlaces();
         ensureOverworldTraversable();
         expandSmallOverworldIslands();
         upgradeRoadsNearCitiesToCobblestone();
@@ -8516,6 +9454,36 @@ public final class WorldMap {
             addAdventureSite("bandit_camp", "dungeon_crowhook_outpost_1", "Crowhook Bandit Camp",
                     banditCamp.x(), banditCamp.y(), 1, 5, 5, 991, new TilePoint(228, 185));
         }
+        // Append to preserve existing marker indices, quest references, and map IDs.
+        int ordinal = 0;
+        for (DungeonExteriorCatalog.Site spec : DungeonExteriorCatalog.NEW_SITES) {
+            TilePoint center = findRegionalDungeonCenter(spec, 1200 + ordinal * 37 + seedSalt);
+            if (center == null) throw new IllegalStateException("No regional dungeon placement: " + spec.id());
+            addAdventureSite(spec.theme(), spec.id(), spec.label(), center.x(), center.y(), spec.depth(),
+                    6, 5, 1200 + ordinal * 37, new TilePoint(spec.roadX(), spec.roadY()));
+            ordinal++;
+        }
+    }
+
+    private TilePoint findRegionalDungeonCenter(DungeonExteriorCatalog.Site spec, int salt) {
+        String region = kingdomAt(spec.x(), spec.y()).id();
+        for (int radius = 0; radius <= 64; radius++) {
+            TilePoint best = null;
+            int bestScore = Integer.MAX_VALUE;
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dx = -radius; dx <= radius; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) != radius) continue;
+                    int x = spec.x() + dx, y = spec.y() + dy;
+                    if (!canPlaceAdventureSiteCenter(x, y, 6, 5, 14, false)) continue;
+                    if (!kingdomAt(x, y).id().equals(region)) continue;
+                    if (spec.biomes().indexOf(dungeonExteriorBiome(x, y)) < 0) continue;
+                    int score = Math.floorMod(hash(x, y, salt), 997);
+                    if (score < bestScore) { best = new TilePoint(x, y); bestScore = score; }
+                }
+            }
+            if (best != null) return best;
+        }
+        return null;
     }
 
     private void addAdventureSite(String kind, String id, String label, int x, int y, int depth,
@@ -8524,6 +9492,10 @@ public final class WorldMap {
         if (site == null) {
             return;
         }
+        // Early procedural patches sometimes reserve the intended dungeon coordinate. Replace that
+        // scaffold instead of stacking two independently dressed locations on the same footprint.
+        locationPatches.removeIf(existing -> existing.contains(site.x(), site.y()));
+        groundRegionCache = null;
         addLocationPatch(kind, site.x(), site.y(), rx, ry, salt);
         stampAdventureSite(site.x(), site.y(), label);
         adventureSites.add(new AdventureSite(kind, id, label, site.x(), site.y(), depth));
@@ -8539,7 +9511,7 @@ public final class WorldMap {
         }
         TilePoint best = null;
         int bestScore = Integer.MAX_VALUE;
-        int searchRadius = Math.max(24, clearance + Math.max(rx, ry));
+        int searchRadius = Math.max(40, clearance + Math.max(rx, ry));
         for (int radius = 1; radius <= searchRadius; radius++) {
             for (int oy = -radius; oy <= radius; oy++) {
                 for (int ox = -radius; ox <= radius; ox++) {
@@ -8551,6 +9523,7 @@ public final class WorldMap {
                     if (!canPlaceAdventureSiteCenter(x, y, rx, ry, clearance, false)) {
                         continue;
                     }
+                    if (!kingdomAt(x, y).id().equals(kingdomAt(preferredX, preferredY).id())) continue;
                     int roadScore = nearAnyTile(x, y, new char[]{'r', 'T', 'K'}, 8) ? 0 : 90;
                     int score = radius * 10 + roadScore + Math.floorMod(hash(x, y, salt), 7);
                     if (score < bestScore) {
@@ -8579,12 +9552,22 @@ public final class WorldMap {
         if (x < rx + 4 || y < ry + 4 || x >= COLS - rx - 4 || y >= ROWS - ry - 4) {
             return false;
         }
+        for (AdventureSite other : adventureSites) {
+            long dx = x - other.x(), dy = y - other.y();
+            if (dx * dx + dy * dy < DungeonExteriorCatalog.MIN_SITE_DISTANCE * DungeonExteriorCatalog.MIN_SITE_DISTANCE)
+                return false;
+        }
         char tile = tiles[y][x];
         if (tile == 'w' || tile == '~' || tile == 'c' || tile == 'u' || tile == 'h' || tile == 'x') {
             return false;
         }
         if (nearAnyTile(x, y, new char[]{'w', 'c', 'u', 'd'}, Math.max(4, Math.max(rx, ry) / 2))) {
             return false;
+        }
+        // The visible building base and south landing must remain on dry land, even near a shore.
+        for (int oy = -3; oy <= 3; oy++) for (int ox = -2; ox <= 2; ox++) {
+            char support = tiles[y + oy][x + ox];
+            if (support == 'w' || support == '~' || support == 'c' || support == 'u' || support == 'h') return false;
         }
         return (allowExistingLocationAtCenter && locationAt(OVERWORLD_ID, x, y) != null
                     || farFromLocations(x, y, Math.max(10, Math.max(rx, ry) + 4)))
@@ -8829,6 +9812,13 @@ public final class WorldMap {
         landmarks.put(new TilePoint(cx, cy), patch.label());
     }
 
+    private String locationName(LocationPatch patch) {
+        for (var entry : campaignPatches.entrySet()) {
+            if (entry.getValue() == patch) return StoryLocationCatalog.byId(entry.getKey()).name();
+        }
+        return patch.label();
+    }
+
     private LocationPatch locationAt(String mapId, int x, int y) {
         if (!OVERWORLD_ID.equals(mapId)) {
             return null;
@@ -8889,6 +9879,13 @@ public final class WorldMap {
     }
 
     public record AdventureMarker(String kind, String mapId, String label, int x, int y, int depth) {
+    }
+
+    public record DungeonContext(String theme, String region, String folklore, char exterior,
+                                 String verticality, int floor, int floors) {
+    }
+
+    public record DungeonEncounterSlot(int x, int y, String role, int group, boolean boss, int leash) {
     }
 
     private record AdventureSite(String kind, String id, String label, int x, int y, int depth) {
@@ -9674,12 +10671,16 @@ public final class WorldMap {
     }
 
     private void stampAdventureSite(int cx, int cy, String name) {
+        char habitat = blendedSettlementApronTile(cx, cy);
         for (int oy = -1; oy <= 3; oy++) {
             for (int ox = -2; ox <= 2; ox++) {
                 int x = cx + ox;
                 int y = cy + oy;
                 if (x >= 0 && y >= 0 && x < COLS && y < ROWS && Math.abs(ox) + Math.max(0, -oy) <= 3) {
-                    tiles[y][x] = 'r';
+                    // A narrow route reaches the threshold; surrounding ground retains its biome.
+                    // Clear only impassable terrain in the old landing reserve.
+                    if (ox == 0 && oy >= 0) tiles[y][x] = 'r';
+                    else if (!Terrain.passable(tiles[y][x])) tiles[y][x] = habitat;
                 }
             }
         }

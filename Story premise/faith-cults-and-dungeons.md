@@ -2,7 +2,7 @@
 
 Status: Target fiction and implementation specification. These locations, factions, encounters, and outcomes are proposed content, not implemented gameplay.
 
-Implementation exception, 22 September 2026: the existing southern main quests now include an inspectable altered welcome, a blocked guest-vessel outlet, and an ordered action to disconnect Ember before releasing one captive fire guest. See [the main-story contracts](../Java/docs/main-story-rewrite-pass.md) and [runtime transcript](../Java/docs/main-story-dialogue.md). This uses existing regional quest sites and does not yet implement the complete temple layout, faction encounters, or alternative outcomes proposed below.
+Implementation exception, 22 September 2026: the southern main quests now include an inspectable altered welcome, a blocked guest-vessel outlet, and an ordered action to disconnect Ember before releasing one captive fire guest. These take place at the named Sunken Guest Shrine and its workshop, Sunken Shrine Forge, in the [location library](location-library.md). See [the main-story contracts](../Java/docs/main-story-rewrite-pass.md) and [runtime transcript](../Java/docs/main-story-dialogue.md). The full temple layout, faction encounters, and alternative outcomes proposed below remain future work.
 
 Read with the [Setting and Story Bible](world-framework.md) and [Narrative Rewrite Brief](narrative-rewrite-brief.md). All new religious institutions, rites, and supernatural rules below are original inventions for this fantasy setting. Their regional inspirations are described in the bible.
 

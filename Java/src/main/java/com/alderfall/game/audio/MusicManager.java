@@ -15,6 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public final class MusicManager {
     private static final float FADE_SECONDS = 7.5f;
+    private float fadeSeconds = FADE_SECONDS;
     private static final float CLOSE_EPSILON = 0.002f;
     private final Path musicDir;
     private final Map<String, PlayingTrack> activeTracks = new HashMap<>();
@@ -36,6 +37,11 @@ public final class MusicManager {
     }
 
     public void blend(String track, String bedTrack, float trackPresence) {
+        blend(track, bedTrack, trackPresence, FADE_SECONDS);
+    }
+
+    public void blend(String track, String bedTrack, float trackPresence, float fadeSeconds) {
+        this.fadeSeconds = Math.max(0.1f, fadeSeconds);
         if (track == null || track.isBlank()) {
             stop();
             return;
@@ -77,7 +83,7 @@ public final class MusicManager {
         long now = System.nanoTime();
         float elapsed = lastUpdateNanos == 0L ? 0.05f : Math.min(0.25f, (now - lastUpdateNanos) / 1_000_000_000.0f);
         lastUpdateNanos = now;
-        float step = elapsed / FADE_SECONDS;
+        float step = elapsed / fadeSeconds;
         Iterator<Map.Entry<String, PlayingTrack>> iterator = activeTracks.entrySet().iterator();
         while (iterator.hasNext()) {
             PlayingTrack playing = iterator.next().getValue();

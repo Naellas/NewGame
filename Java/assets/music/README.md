@@ -1,25 +1,55 @@
 # Music Pack
 
-- `zone_grasslands.wav` - open fields and early adventure, 96 BPM, 60.0s loop
-- `zone_forest.wav` - mysterious forest, 86 BPM, 67.0s loop
-- `zone_desert.wav` - dry desert travel, 88 BPM, 65.5s loop
-- `zone_marsh.wav` - slow marsh and fireflies, 74 BPM, 77.8s loop
-- `zone_mountains.wav` - cold mountain passes, 82 BPM, 70.2s loop
-- `zone_tundra.wav` - snow and long horizons, 70 BPM, 82.3s loop
-- `zone_badlands.wav` - dust, rock, and danger, 102 BPM, 56.5s loop
-- `zone_water.wav` - riverbanks and shorelines, 78 BPM, 73.8s loop
-- `town_village.wav` - warm village, 92 BPM, 62.6s loop
-- `dungeon_crypt.wav` - dark dungeon, 76 BPM, 75.8s loop
-- `battle_standard.wav` - standard battle, 138 BPM, 41.7s loop
-- `battle_boss.wav` - boss battle, 156 BPM, 36.9s loop
-- `stinger_victory.wav` - victory fanfare, 124 BPM, 46.5s loop
-- `zone_grasslands_ambient.wav` - soft grassland air and distant bells, 84 BPM, 68.6s loop
-- `zone_forest_ambient.wav` - mossy canopy ambience, 72 BPM, 80.0s loop
-- `zone_desert_ambient.wav` - warm desert dusk ambience, 76 BPM, 75.8s loop
-- `zone_marsh_ambient.wav` - misty marsh hush, 66 BPM, 87.3s loop
-- `zone_mountains_ambient.wav` - thin mountain wind and low echoes, 68 BPM, 84.7s loop
-- `zone_tundra_ambient.wav` - snowfield quiet and glassy tones, 62 BPM, 92.9s loop
-- `zone_badlands_ambient.wav` - soft red-rock dusk, 78 BPM, 73.8s loop
-- `zone_water_ambient.wav` - slow water shimmer, 66 BPM, 87.3s loop
+- `zone_grasslands.wav` - open fields and early adventure, 96 BPM, 80.0s loop
+- `zone_forest.wav` - mysterious forest, 86 BPM, 89.3s loop
+- `zone_desert.wav` - dry desert travel, 88 BPM, 87.3s loop
+- `zone_marsh.wav` - slow marsh and fireflies, 74 BPM, 103.8s loop
+- `zone_mountains.wav` - cold mountain passes, 82 BPM, 93.7s loop
+- `zone_tundra.wav` - snow and long horizons, 70 BPM, 109.7s loop
+- `zone_badlands.wav` - dust, rock, and danger, 102 BPM, 75.3s loop
+- `zone_water.wav` - riverbanks and shorelines, 78 BPM, 98.5s loop
+- `town_village.wav` - warm village, 92 BPM, 83.5s loop
+- `dungeon_crypt.wav` - Names Beneath the Stone — choir, bell, hush, 68 BPM, 112.9s loop
+- `battle_standard.wav` - Crossed Blades — horn, dulcimer, drive, 138 BPM, 55.7s loop
+- `battle_boss.wav` - Oathbreaker — horn, dulcimer, drive, 156 BPM, 49.2s loop
+- `stinger_victory.wav` - victory fanfare, 124 BPM, 61.9s loop
+- `zone_grasslands_ambient.wav` - soft grassland air and distant bells, 84 BPM, 91.4s loop
+- `zone_forest_ambient.wav` - mossy canopy ambience, 72 BPM, 106.7s loop
+- `zone_desert_ambient.wav` - warm desert dusk ambience, 76 BPM, 101.1s loop
+- `zone_marsh_ambient.wav` - misty marsh hush, 66 BPM, 116.4s loop
+- `zone_mountains_ambient.wav` - thin mountain wind and low echoes, 68 BPM, 112.9s loop
+- `zone_tundra_ambient.wav` - snowfield quiet and glassy tones, 62 BPM, 123.9s loop
+- `zone_badlands_ambient.wav` - soft red-rock dusk, 78 BPM, 98.5s loop
+- `zone_water_ambient.wav` - slow water shimmer, 66 BPM, 116.4s loop
+- `region_riverside.wav` - River dances: flowing harp and woodwind, 88 BPM, 87.3s loop
+- `town_riverside.wav` - River dances: flowing harp and woodwind (chamber town arrangement), 80 BPM, 96.0s loop
+- `region_highwall.wav` - Watchfires: low strings, horns and deep drums, 84 BPM, 91.4s loop
+- `town_highwall.wav` - Watchfires: low strings, horns and deep drums (chamber town arrangement), 76 BPM, 101.1s loop
+- `region_crownlands.wav` - Old oaths: lyrical woodwind and chamber strings, 94 BPM, 81.7s loop
+- `town_crownlands.wav` - Old oaths: lyrical woodwind and chamber strings (chamber town arrangement), 86 BPM, 89.3s loop
+- `region_belltower.wav` - Mist bells: suspended strings and distant chimes, 72 BPM, 106.7s loop
+- `town_belltower.wav` - Mist bells: suspended strings and distant chimes (chamber town arrangement), 64 BPM, 120.0s loop
+- `region_sanctum.wav` - Sun procession: plucked strings and frame drums, 104 BPM, 73.8s loop
+- `town_sanctum.wav` - Sun procession: plucked strings and frame drums (chamber town arrangement), 96 BPM, 80.0s loop
+- `region_northroad.wav` - Cairn song: broad horns and crystalline strings, 80 BPM, 96.0s loop
+- `town_northroad.wav` - Cairn song: broad horns and crystalline strings (chamber town arrangement), 72 BPM, 106.7s loop
+- `battle_pursuit.wav` - Through Thorn and Steel — oboe, lute, gallop, 146 BPM, 52.6s loop
+- `battle_skirmish.wav` - Dust on the Blade — flute, lute, syncopated, 132 BPM, 58.2s loop
+- `battle_depths.wav` - Below the Last Torch — cello, dulcimer, march, 124 BPM, 61.9s loop
+- `battle_elite_hunt.wav` - The Hunter Closes In — cello, lute, gallop, 148 BPM, 51.9s loop
+- `battle_elite_iron.wav` - Iron Resolve — horn, dulcimer, march, 128 BPM, 60.0s loop
+- `battle_elite_arcane.wav` - A Dangerous Art — oboe, bell, syncopated, 140 BPM, 54.9s loop
+- `battle_boss_requiem.wav` - Crown of Ash — organ, bell, march, 126 BPM, 61.0s loop
+- `battle_boss_tempest.wav` - Against the Storm — horn, lute, gallop, 164 BPM, 46.8s loop
+- `battle_boss_eclipse.wav` - The Sun Goes Dark — choir, dulcimer, syncopated, 144 BPM, 53.3s loop
+- `dungeon_crypt_depths.wav` - The Ossuary Answers — organ, bell, pulse, 76 BPM, 101.1s loop
+- `dungeon_cave.wav` - Mineral Light — flute, harp, hush, 72 BPM, 106.7s loop
+- `dungeon_cave_depths.wav` - Under the Mountain's Heart — cello, dulcimer, pulse, 80 BPM, 96.0s loop
+- `dungeon_castle.wav` - An Empty Throne — organ, harp, hush, 78 BPM, 98.5s loop
+- `dungeon_castle_depths.wav` - Banners of the Fallen — horn, bell, march, 86 BPM, 89.3s loop
+- `dungeon_prison.wav` - Behind Iron Doors — cello, dulcimer, pulse, 74 BPM, 103.8s loop
+- `dungeon_prison_depths.wav` - The Warden's Footsteps — choir, bell, syncopated, 84 BPM, 91.4s loop
+- `dungeon_bandit.wav` - Embers in the Hideout — oboe, lute, syncopated, 92 BPM, 83.5s loop
+- `dungeon_bandit_depths.wav` - The Captain's Watch — cello, lute, march, 104 BPM, 73.8s loop
 
 Generated with `python tools/musicgen.py`.

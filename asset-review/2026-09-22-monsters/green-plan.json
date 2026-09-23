@@ -1,0 +1,27 @@
+[
+  {
+    "name": "orc_raider",
+    "identity": "single-bladed axe, leather gear, spiked shoulder armor, green skin",
+    "target": "Java/assets/monsters/orc_raider.png"
+  },
+  {
+    "name": "orc_berserker",
+    "identity": "large double-headed axe, spiked shoulder armor, muscular green skin",
+    "target": "Java/assets/monsters/orc_berserker.png"
+  },
+  {
+    "name": "orc_shaman",
+    "identity": "skull-topped staff, horned headdress, green spell flame above right hand, ragged robes and green skin; retain intended floating spell sparks",
+    "target": "Java/assets/monsters/orc_shaman.png"
+  },
+  {
+    "name": "swamp_troll",
+    "identity": "bulky green troll with hanging moss, tusks, loincloth, heavy hands and feet, blue eyes",
+    "target": "Java/assets/monsters/swamp_troll.png"
+  },
+  {
+    "name": "marsh_drake",
+    "identity": "green drake with cream throat, horns, mossy scales, raised reeds, curled tail and claws",
+    "target": "Java/assets/monsters/marsh_drake.png"
+  }
+]

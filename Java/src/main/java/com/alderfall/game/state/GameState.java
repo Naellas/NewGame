@@ -14,6 +14,9 @@ import java.util.Random;
 import java.util.Set;
 
 public final class GameState {
+    public final ChestSystem chests = new ChestSystem();
+    public WorldProp activeChest;
+
     public record DialogueVideoPrompt(String key, String title, String caption, String assetPath) {
     }
     public record RoamingEventChoice(String label, Runnable action) {
@@ -63,6 +66,18 @@ public final class GameState {
     public record FastTravelDestination(String mapId, String label, String kind, int cost, String portalAsset) {
     }
     public record WorldAbilityOption(Actor actor, Ability ability, String effectKey, String label, String description) {
+    }
+    private record EnvironmentSnapshot(
+            String mapId,
+            int playerX,
+            int playerY,
+            int worldTick,
+            long visualRevision,
+            char biome,
+            WeatherCondition weather,
+            double windRadians,
+            double windStrength
+    ) {
     }
     public final GameConfig config;
     public final WorldMap world;
@@ -186,6 +201,7 @@ public final class GameState {
     private int nextTownConversationTick = 240;
     private static final int DIALOGUE_REVEAL_MS_PER_CHAR = 12;
     private static final int DIALOGUE_REVEAL_INITIAL_CHARS = 2;
+    private EnvironmentSnapshot environmentSnapshot;
 
     public GameState(GameConfig config) {
         this.config = config;
@@ -278,6 +294,8 @@ public final class GameState {
         villageBuildingAssignments.clear();
         villageBuildingDecorations.clear();
         villageStorage.clear();
+        chests.clear();
+        activeChest = null;
         partyScreenIndex = 0;
         resetVillageInterface();
         harvestedQuestResources.clear();
@@ -378,11 +396,11 @@ public final class GameState {
     }
 
     public char currentBiomeTile() {
-        return biomeTileAt(currentMapId, playerX, playerY);
+        return currentEnvironment().biome();
     }
 
     public WeatherCondition currentWeather() {
-        return weatherController.currentWeather(currentMapId, currentBiomeTile(), worldTick, dayNumber());
+        return currentEnvironment().weather();
     }
 
     public String weatherLabel() {
@@ -390,15 +408,44 @@ public final class GameState {
     }
 
     public double windRadians() {
-        return weatherController.windRadians(currentBiomeTile(), worldTick, dayNumber());
+        return currentEnvironment().windRadians();
     }
 
     public double windStrength() {
-        return weatherController.windStrength(currentWeather(), currentBiomeTile(), worldTick, dayNumber());
+        return currentEnvironment().windStrength();
     }
 
     public String windLabel() {
         return weatherController.windLabel(windRadians());
+    }
+
+    private EnvironmentSnapshot currentEnvironment() {
+        long visualRevision = world.visualRevision(currentMapId);
+        EnvironmentSnapshot cached = environmentSnapshot;
+        if (cached != null
+                && cached.mapId().equals(currentMapId)
+                && cached.playerX() == playerX
+                && cached.playerY() == playerY
+                && cached.worldTick() == worldTick
+                && cached.visualRevision() == visualRevision) {
+            return cached;
+        }
+        char biome = biomeTileAt(currentMapId, playerX, playerY);
+        int day = dayNumber();
+        WeatherCondition weather = weatherController.currentWeather(currentMapId, biome, worldTick, day);
+        EnvironmentSnapshot refreshed = new EnvironmentSnapshot(
+                currentMapId,
+                playerX,
+                playerY,
+                worldTick,
+                visualRevision,
+                biome,
+                weather,
+                weatherController.windRadians(biome, worldTick, day),
+                weatherController.windStrength(weather, biome, worldTick, day)
+        );
+        environmentSnapshot = refreshed;
+        return refreshed;
     }
 
     public void openPauseMenu() {
@@ -727,6 +774,11 @@ public final class GameState {
             interactQuestInteractible(interactible);
             return;
         }
+        WorldProp chest = chestNearPlayer();
+        if (chest != null) {
+            openChest(chest);
+            return;
+        }
         if (studyNearbyBookshelf()) {
             return;
         }
@@ -744,6 +796,38 @@ public final class GameState {
             return;
         }
         talkToNpc(npc);
+    }
+
+    public WorldProp chestNearPlayer() {
+        return world.propsInBounds(currentMapId, playerX - 1, playerY - 1, playerX + 2, playerY + 2).stream()
+                .filter(ChestSystem::isChest)
+                .filter(p -> Math.max(Math.abs(p.x() - playerX), Math.abs(p.y() - playerY)) <= 1)
+                .min(java.util.Comparator.comparingInt(p -> Math.abs(p.x() - playerX) + Math.abs(p.y() - playerY)))
+                .orElse(null);
+    }
+
+    public void openChest(WorldProp chest) {
+        if (mode != GameMode.EXPLORE || chest == null || !ChestSystem.isChest(chest)
+                || !world.props(currentMapId).contains(chest)
+                || Math.max(Math.abs(chest.x() - playerX), Math.abs(chest.y() - playerY)) > 1) return;
+        activeChest = chest;
+        chests.contents(currentMapId, chest);
+        mode = GameMode.CHEST;
+        status = "Chest opened. Take items or store supplies from your shared pack.";
+    }
+
+    public Map<String, Integer> chestContents() {
+        return activeChest == null ? Map.of() : chests.contents(currentMapId, activeChest);
+    }
+
+    public void transferChestItem(String key, boolean taking, int amount) {
+        if (mode != GameMode.CHEST || activeChest == null
+                || !world.props(currentMapId).contains(activeChest)
+                || Math.max(Math.abs(activeChest.x() - playerX), Math.abs(activeChest.y() - playerY)) > 1) return;
+        Map<String, Integer> contents = chestContents();
+        int moved = ChestSystem.transfer(taking ? contents : player.inventory,
+                taking ? player.inventory : contents, key, amount);
+        if (moved > 0) status = (taking ? "Took " : "Stored ") + moved + " x " + GameData.itemName(key) + ".";
     }
 
     public WorldProp townPortalNearPlayer() {
@@ -1532,6 +1616,8 @@ public final class GameState {
     }
 
     private String npcIntroductionLine(Npc npc) {
+        NpcBackstories.Profile history = NpcBackstories.profile(npc);
+        if (history != null) return history.introduction();
         String sample = npc.dialog().isEmpty() ? "" : stripSpeakerPrefix(npc.dialog().get(0), npc.name());
         String role = npcRoleIntroduction(npc);
         String line = "I am " + npc.name() + role + ".";
@@ -1554,6 +1640,7 @@ public final class GameState {
     }
 
     private String npcRoleIntroduction(Npc npc) {
+        if (npc.job() != null) return ", a " + npc.job().roleLabel().toLowerCase(java.util.Locale.ROOT);
         if (npc.recruitId() != null && GameData.RECRUITS.containsKey(npc.recruitId())) {
             return ", a " + GameData.RECRUITS.get(npc.recruitId()).className().toLowerCase();
         }
@@ -2114,14 +2201,25 @@ public final class GameState {
     }
 
     private DialogueLibrary.DialogueSession startDialogueSessionFor(Npc npc) {
+        Quest current = questForNpc(npc);
         return DialogueLibrary.startSession(
                 npc,
-                questForNpc(npc),
+                current,
                 npcBiomeContext(npc),
                 npcRelationship(npc),
                 random,
-                dialogueContextFor(npc)
+                dialogueContextFor(npc),
+                precedingQuestReport(npc, current)
         );
+    }
+
+    private String precedingQuestReport(Npc npc, Quest current) {
+        Quest first = npc.questId() == null ? null : quests.get(npc.questId());
+        if (current == null || first == null || current.chainOwnerId == null
+                || !current.chainOwnerId.equals(first.chainOwnerId)) return "";
+        return quests.values().stream().filter(q -> q.completed && current.id.equals(q.nextQuestId))
+                .filter(q -> current.chainOwnerId.equals(q.chainOwnerId))
+                .map(q -> QuestNarrative.clean(q.stages.getLast().completeDialog())).findFirst().orElse("");
     }
 
     private DialogueLibrary.DialogueContext dialogueContextFor(Npc npc) {
@@ -3088,13 +3186,6 @@ public final class GameState {
                 + npc.name().strip().toLowerCase().replaceAll("[^a-z0-9]+", "_");
     }
 
-    private static String weeklyLine(int seed, int salt, String... options) {
-        if (options == null || options.length == 0) {
-            return "";
-        }
-        return options[Math.floorMod(seed + salt * 9973, options.length)];
-    }
-
     private static String weeklyLocation(int seed, int salt, String... kinds) {
         if (kinds == null || kinds.length == 0) {
             return "";
@@ -3112,350 +3203,159 @@ public final class GameState {
         int rewardGold = 28 + Math.floorMod(seed / 7, 55);
         int rewardXp = 22 + Math.floorMod(seed / 11, 48);
         Npc missingTarget = weeklyQuestRelocationTarget(npc, seed);
-        return switch (template) {
-            case 0 -> new Quest(id, "Roadside Trouble", npc.name() + " needs the nearest road cleared before the next supply run.",
+        Quest generated = switch (template) {
+            case 0 -> new Quest(id, "Roadside Trouble", "",
                     "Goblin Scout", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.DEFEAT, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 41, "goblin_camp", "bandit_camp", "old_road_marker", "ruined_watchpost"),
                     weeklyLocationIndex(seed, 43), "quest_trail_marker_post", "goblin_scout",
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Scouts are testing the road again. Give them a reason to test somewhere else.",
-                            npc.name() + ": The supply road has eyes on it. Clear out two scouts before they get braver.",
-                            npc.name() + ": A quiet road is cheaper than a guarded caravan. Make the scouts choose another habit."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Two scouts should be enough to make the rest reconsider.",
-                            npc.name() + ": Keep count. One frightened scout is rumor; two gone quiet is a message.",
-                            npc.name() + ": The road does not need a legend. It needs two fewer watchers."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": The road sounds quieter. Come back before the rumor outruns you.",
-                            npc.name() + ": That should loosen the road. Bring me the answer before people invent one.",
-                            npc.name() + ": If the scouts are scattered, come back while the trail is still fresh."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. Small roads stay open by small victories.",
-                            npc.name() + ": That buys the carts a safer morning. Practical heroics are still heroics.",
-                            npc.name() + ": Good work. The road will not thank you, but everyone using it should."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 1 -> new Quest(id, "Market Errand", npc.name() + " asks for wheat from the marked farm before prices climb again.",
+            case 1 -> new Quest(id, "Market Errand", "",
                     "Wheat Sheaf", 3, rewardGold, rewardXp,
                     Quest.ObjectiveKind.GATHER, WorldMap.OVERWORLD_ID, "farmland", 0, "location_farmland_wheat", null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": The market needs food more than speeches. Bring three sheaves if your hands are free.",
-                            npc.name() + ": Prices climb when grain gets shy. Bring three wheat sheaves from the marked rows.",
-                            npc.name() + ": The stalls are already arguing with their ledgers. Three sheaves should calm them."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": The west field is marked. Try not to flatten what you do not carry.",
-                            npc.name() + ": Use the marked farm path. The owner forgives footprints faster than missing grain.",
-                            npc.name() + ": The wheat is marked at the field edge. Clean bundles, not handfuls of weeds."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": That should be enough grain. Bring it here.",
-                            npc.name() + ": Those sheaves will steady the market. Bring them in.",
-                            npc.name() + ": Good weight in your pack. Let me count it before the day gets hungry."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Useful work, and useful work is what keeps villages alive.",
-                            npc.name() + ": Good. A full stall settles more tempers than a speech ever could.",
-                            npc.name() + ": That helps. Bread begins as someone doing the dull thing on time."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 2 -> new Quest(id, "Old Marks", npc.name() + " wants old grave marks checked before another week of weather.",
+            case 2 -> new Quest(id, "Old Marks", "",
                     "Tombstone", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 47, "graveyard", "crypt", "abandoned_castle"),
                     weeklyLocationIndex(seed, 49), "location_graveyard_tombstones", null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Two old marks need eyes on them. Weather has been editing history again.",
-                            npc.name() + ": The graveyard stones are losing their names to rain. Check two before memory thins.",
-                            npc.name() + ": I need someone steady to read the old marks before moss does the talking."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Check the stones and remember what they say.",
-                            npc.name() + ": Look closely. A missing name can start a family argument that lasts years.",
-                            npc.name() + ": The markers are quiet work. Quiet does not mean optional."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": You saw the marks. Tell me what survived.",
-                            npc.name() + ": If you have the names, bring them back before the weather takes another vote.",
-                            npc.name() + ": That should be enough to update the record. Come back."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Names kept for another week. That matters.",
-                            npc.name() + ": Good. The dead ask little, and even that deserves doing.",
-                            npc.name() + ": That saves someone from being forgotten by inches. Thank you."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 3 -> new Quest(id, "Camp Smoke", npc.name() + " asks you to douse raider campfires before they become signals.",
+            case 3 -> new Quest(id, "Camp Smoke", "",
                     "Campfire", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 53, "goblin_camp", "bandit_camp"),
                     weeklyLocationIndex(seed, 55), "location_camp_fire", null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Smoke travels farther than sense. Put out two campfires before they speak for raiders.",
-                            npc.name() + ": Those fires are not just warmth. Douse two before they become signals.",
-                            npc.name() + ": A raider camp with smoke is a letter written in the sky. Smudge it out."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": The camp is marked. Quiet hands, quick boots.",
-                            npc.name() + ": Do it cleanly. Smoke gone, no speeches, no new fires.",
-                            npc.name() + ": Watch the wind. If the smoke sees you first, so will everyone else."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": No smoke? Then bring me the good news.",
-                            npc.name() + ": If the camp is dark, come tell me before they relight their courage.",
-                            npc.name() + ": That should blind their signals. Report back."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Excellent. Silence is cheaper than patrols.",
-                            npc.name() + ": Good. A dark camp makes a poor beacon.",
-                            npc.name() + ": That buys us a night with fewer bad surprises."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 4 -> new Quest(id, "Boundary Stones", npc.name() + " wants old ward markers checked before the local borders drift into argument.",
+            case 4 -> new Quest(id, "Boundary Stones", "",
                     "Ward Marker", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 59, "graveyard", "forest_shrine", "ruined_watchpost", "old_road_marker"),
                     weeklyLocationIndex(seed, 61), "quest_ward_marker", null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Borders begin as stones and end as quarrels. Check two ward markers before anyone redraws both.",
-                            npc.name() + ": Two ward markers need checking before neighbors start measuring with grudges.",
-                            npc.name() + ": The old boundary charms are fading. I need eyes on them before mouths get involved."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": The marked wards should still hold a little charm. Tell me which ones have gone quiet.",
-                            npc.name() + ": Look for cracked paint, cold runes, anything that says the line is tired.",
-                            npc.name() + ": Check the markers carefully. A lazy answer here becomes a loud one later."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": You have the ward signs? Good. Come back before the neighbors invent their own.",
-                            npc.name() + ": That is enough to settle the map. Bring it here.",
-                            npc.name() + ": If you know which stones still answer, come back before pride fills the silence."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": That settles the line for another week. Peace is mostly paperwork with better boots.",
-                            npc.name() + ": Good. A checked boundary is a quarrel that never got dressed.",
-                            npc.name() + ": That will keep the line boring. Boring borders are the best kind."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 5 -> new Quest(id, "Herbs Before Rain", npc.name() + " needs salve herbs from marked green edges before weather spoils them.",
+            case 5 -> new Quest(id, "Herbs Before Rain", "",
                     "Salve Herb", 3, rewardGold, rewardXp,
                     Quest.ObjectiveKind.GATHER, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 67, "farmland", "hidden_grove", "forest_shrine"),
                     weeklyLocationIndex(seed, 71), "quest_salve_herbs", null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Rain is coming, and the marked green edges have the herbs we need for salves. Gather three clean bundles.",
-                            npc.name() + ": The salve jars are low. Three herb bundles from the marked patch will save arguments later.",
-                            npc.name() + ": Weather is about to ruin good medicine. Gather the clean herbs before the rain bruises them."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": The marked rows are not glamorous, but glamour heals poorly.",
-                            npc.name() + ": Take only the healthy stems. Mud and hurry both make bad medicine.",
-                            npc.name() + ": The plants grow where boots usually miss them. Watch the edges."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": Bring the herbs in while they still smell like medicine.",
-                            npc.name() + ": Those bundles will do. Bring them back before they wilt into compost.",
-                            npc.name() + ": Good. Fresh herbs lose their virtue quickly once carried."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good bundles. By nightfall, these will be less pretty and more useful.",
-                            npc.name() + ": That will keep the salve pots honest for a few more days.",
-                            npc.name() + ": Well gathered. Someone will call this luck when it heals them."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 6 -> new Quest(id, "Missing by the Tree Line", npc.name() + " has a witness who saw someone cornered beyond the road.",
+            case 6 -> new Quest(id, "Missing by the Tree Line", "",
                     "Trapped Traveler", 1, rewardGold, rewardXp,
                     Quest.ObjectiveKind.RESCUE, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 73, "hidden_grove", "forest_shrine", "cave_mouth", "old_road_marker"),
                     weeklyLocationIndex(seed, 79), "quest_trail_marker_post", "wolf",
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Someone is trapped past the tree line. I need you fast, not dramatic.",
-                            npc.name() + ": A traveler is pinned beyond the road. Go now, before fear turns into silence.",
-                            npc.name() + ": We have one witness and no time. Find the trapped traveler and get them breathing easier."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Follow the marked danger and break whatever has them pinned.",
-                            npc.name() + ": Move with care, but move. A rescue that arrives late is just a report.",
-                            npc.name() + ": Listen for panic. Then make sure whatever caused it regrets staying nearby."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": If they are breathing and the road is clear, come back.",
-                            npc.name() + ": If the traveler is safe, I need to know before the search party tears itself apart.",
-                            npc.name() + ": You got them out? Then bring me the truth of it."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. A rescue is a victory that still has a pulse.",
-                            npc.name() + ": Good work. Alive is the best ending this sort of errand gets.",
-                            npc.name() + ": That is one less name for the worry lists. I will take that blessing."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 7 -> new Quest(id, "Hold the Storehouse", npc.name() + " expects raiders to test a supply point before nightfall.",
+            case 7 -> new Quest(id, "Hold the Storehouse", "",
                     "Storehouse", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.DEFEND, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 83, "goblin_camp", "bandit_camp", "ruined_watchpost", "old_road_marker"),
                     weeklyLocationIndex(seed, 89), "quest_watchpost_signal", "goblin",
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Raiders are circling the storehouse road. Hold the point before they learn we are soft.",
-                            npc.name() + ": The storehouse has drawn hungry eyes. Stand there long enough to disappoint them.",
-                            npc.name() + ": Supplies make cowards brave and raiders bold. Defend the marked point before nightfall."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Two pressure points are marked. Let them find resistance, not panic.",
-                            npc.name() + ": They will test the easy angle first. Make it expensive.",
-                            npc.name() + ": Hold steady. If the first push fails, most raiders remember other appointments."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": The storehouse still stands? Then bring me that answer.",
-                            npc.name() + ": If the supplies are safe, come back before everyone asks at once.",
-                            npc.name() + ": The line held? Good. I need the report."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. Grain in a storehouse is courage with a roof.",
-                            npc.name() + ": That keeps bellies full and tempers shorter than swords.",
-                            npc.name() + ": Good. A defended storehouse is a promise the settlement can actually keep."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 8 -> new Quest(id, "Hidden Clue", npc.name() + " needs a hidden clue found before weather or traffic buries it for good.",
+            case 8 -> new Quest(id, "Hidden Clue", "",
                     "Hidden Clue", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.SEARCH, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 97, "farmland", "hidden_grove", "cave_mouth", "ruined_watchpost", "old_road_marker"),
                     weeklyLocationIndex(seed, 101), "quest_cave_rune_cache", null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Something was hidden off the common path. Search carefully; the obvious answer is probably bait.",
-                            npc.name() + ": Weather has a way of hiding the honest part. Search the marked spots before rain smooths them over.",
-                            npc.name() + ": I need two signs from the marked place, and I need them before everyone decides what they mean."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": The marked places are small, muddy, and easy to overlook. That is why they matter.",
-                            npc.name() + ": Look beneath what seems ordinary. People hide guilt where tired eyes quit first.",
-                            npc.name() + ": Search slowly. A rushed clue becomes a guess with dirt on it."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": You found enough signs. Bring them here before mud edits them.",
-                            npc.name() + ": That should be enough to compare stories. Come back.",
-                            npc.name() + ": If you have the clues, bring them before the weather washes away the edges."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": That clue has weight. Now the story has less room to lie.",
-                            npc.name() + ": Good. The truth is still muddy, but at least now it is not missing.",
-                            npc.name() + ": That helps. A small clue can trip a large lie if placed correctly."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 9 -> new Quest(id, "Ask the Neighbors", npc.name() + " needs rumor separated from testimony before blame starts walking.",
-                    "the missing cart", 2, rewardGold, rewardXp,
+            case 9 -> new Quest(id, "Ask the Neighbors", "",
+                    "the split grain sack", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.ASK_AROUND, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Ask two people what they heard about the missing cart. I need patterns, not panic.",
-                            npc.name() + ": The missing cart has grown six stories by breakfast. Ask around and trim it back to facts.",
-                            npc.name() + ": Two neighbors heard something useful, or something rehearsed. Either way, I need to know."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Talk to people who do not share the same doorway. Repeated details matter.",
-                            npc.name() + ": Ask separately. Matching words from separate mouths are worth more than loud certainty.",
-                            npc.name() + ": Listen for the detail nobody thought was important enough to invent."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": Two accounts are enough to start with. Bring me the shape of it.",
-                            npc.name() + ": That gives us a pattern. Come back before the rumor grows decorations.",
-                            npc.name() + ": You have enough voices to compare. Bring me what overlaps."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. Rumor is less dangerous when it has been made to stand still.",
-                            npc.name() + ": That turns gossip into something a person can act on. Better already.",
-                            npc.name() + ": Good. Blame walks slower when testimony blocks the road."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 10 -> new Quest(id, "Plain Report", npc.name() + " wants the answer said directly before a bad decision becomes policy.",
+            case 10 -> new Quest(id, "Plain Report", "",
                     npc.name(), 1, rewardGold, rewardXp,
                     Quest.ObjectiveKind.REPORT, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": When you are ready, report the matter plainly. I need truth, not theatre.",
-                            npc.name() + ": I need this said clearly, before a bad guess becomes official.",
-                            npc.name() + ": Bring me the answer without ribbons on it. Pretty lies are still lies."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Tell me what you know. Do not sand the edges off it.",
-                            npc.name() + ": Say it straight. If it sounds ugly, that may be the useful part.",
-                            npc.name() + ": A report is not a comfort blanket. Keep it honest."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": That is enough to answer for. Finish the report.",
-                            npc.name() + ": You have the shape of it. Put it on record.",
-                            npc.name() + ": Good. Now say the part people can act on."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. A plain report can save more lives than a pretty promise.",
-                            npc.name() + ": That will do. Decisions need facts more than flourishes.",
-                            npc.name() + ": Good. The truth may bruise, but at least now it can work."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), "");
-            case 11 -> new Quest(id, "Safe Passage", npc.name() + " asks you to mark a usable path for someone who cannot fight through trouble.",
+            case 11 -> new Quest(id, "Safe Passage", "",
                     "Safe Road", 2, rewardGold, rewardXp,
                     Quest.ObjectiveKind.ESCORT, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 103, "old_road_marker", "ruined_watchpost", "hidden_grove", "cave_mouth"),
                     weeklyLocationIndex(seed, 107), "quest_trail_marker_post", null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Someone needs a route that does not turn brave people into mourned people. Walk the markers.",
-                            npc.name() + ": A traveler needs safe passage, not brave nonsense. Mark the route before they go.",
-                            npc.name() + ": There is a path that should hold if someone checks it first. Be that someone."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Reach the waypoints and make sure the path can be trusted.",
-                            npc.name() + ": Walk it as if someone slower follows you tomorrow, because they might.",
-                            npc.name() + ": Check the turns, the cover, and the ugly places where trouble likes to wait."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": The safe road is marked? Come back and make it official.",
-                            npc.name() + ": If the route holds, report back so nobody wagers a life on guesswork.",
-                            npc.name() + ": Good. A checked road is worth writing down."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. Not every rescue begins with screaming. Some begin with a road that holds.",
-                            npc.name() + ": That gives someone a chance to arrive without needing a song about it.",
-                            npc.name() + ": Good. The best escorts are the ones no one has to notice."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
-            case 12 -> new Quest(id, "Sealed Packet", npc.name() + " asks you to hand over a sealed packet only after agreeing not to read it.",
+            case 12 -> new Quest(id, "Sealed Packet", "",
                     npc.name(), 1, rewardGold, rewardXp,
                     Quest.ObjectiveKind.DELIVER, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": This packet needs delivered into my hands formally. A little ceremony keeps records honest.",
-                            npc.name() + ": I need this sealed packet handed over properly. Trust likes witnesses.",
-                            npc.name() + ": The seal matters more than the paper. Bring it to me unopened and on record."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Say you are delivering it, then let the seal speak for itself.",
-                            npc.name() + ": Keep the seal intact. Curiosity is not a delivery method.",
-                            npc.name() + ": Do not read it, do not explain it, do not improve it. Deliver it."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": The packet is here. Finish the handoff.",
-                            npc.name() + ": That seal looks honest. Complete the delivery.",
-                            npc.name() + ": Good. Now put it in the right hands before temptation grows legs."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. Some trust survives because people handle small things cleanly.",
-                            npc.name() + ": Cleanly done. A closed seal can say more than an open mouth.",
-                            npc.name() + ": Thank you. Small proprieties keep larger trusts from cracking."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), "");
-            case 13 -> new Quest(id, "Hard Truth", npc.name() + " asks you to decide whether a painful truth should be spoken now or carried carefully.",
+            case 13 -> new Quest(id, "Hard Truth", "",
                     "a difficult truth", 1, rewardGold, rewardXp,
                     Quest.ObjectiveKind.CHOICE, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": There is a truth here that will hurt someone. I need judgment, not eagerness.",
-                            npc.name() + ": A hard answer is waiting, and I do not trust myself to carry it alone.",
-                            npc.name() + ": This is not about being right loudly. Decide what kind of honesty the moment can survive."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Choose how this should be handled. Truth, mercy, protection, or consequence; none of them are weightless.",
-                            npc.name() + ": Think before choosing. Mercy can hide cowardice, and truth can hide cruelty.",
-                            npc.name() + ": Take the choice seriously. Someone else will have to live inside it."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": You have chosen. Come back and stand by it.",
-                            npc.name() + ": The choice is made. Bring it back with your name still on it.",
-                            npc.name() + ": That answer has a cost. Come tell me which one you accepted."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": I will remember how you carried that answer.",
-                            npc.name() + ": So be it. Sometimes the cleanest answer is still heavy.",
-                            npc.name() + ": I hear you. That choice will not vanish just because the words are done."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), id + "_choice");
-            case 14 -> new Quest(id, "Missing off the Road", missingTarget.name() + " left the settlement after an argument and has not returned.",
+            case 14 -> new Quest(id, "Missing off the Road", "",
                     missingTarget.name(), 1, rewardGold, rewardXp,
                     Quest.ObjectiveKind.TALK, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 109, "farmland", "hidden_grove", "old_road_marker", "forest_shrine"),
                     weeklyLocationIndex(seed, 113), missingTarget.sprite(), null,
-                    weeklyLine(seed, 0,
-                            npc.name() + ": " + missingTarget.name() + " is not where they should be. Find them before pride becomes a funeral.",
-                            npc.name() + ": " + missingTarget.name() + " walked out angry and has not come back. Please make this ordinary.",
-                            npc.name() + ": The outer road swallowed " + missingTarget.name() + " after an argument. Bring back more than guesses."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Search the marked trail. If you find them, listen first; panic makes poor witnesses.",
-                            npc.name() + ": If you find " + missingTarget.name() + ", let them speak before you drag them into anyone's version of events.",
-                            npc.name() + ": The road is marked. Look for hurt pride, hurt feet, or something worse."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": You found " + missingTarget.name() + ". Come back and tell me whether they are safe.",
-                            npc.name() + ": If " + missingTarget.name() + " is alive and heard, I need the rest.",
-                            npc.name() + ": Good, you found them. Now bring me the part that matters."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Good. A missing person found alive is worth more than any tidy explanation.",
-                            npc.name() + ": Thank you. An argument can be mended. A grave cannot.",
-                            npc.name() + ": Good. We can sort out pride after everyone is breathing."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null, rawNpcStateKey(missingTarget), "");
-            default -> new Quest(id, "Bad Tracks", npc.name() + " has found hoofprints, claw marks, and one nervous witness near the settlement edge.",
+            default -> new Quest(id, "Bad Tracks", "",
                     "Mountain Goat", 3, rewardGold, rewardXp,
                     Quest.ObjectiveKind.DEFEAT, WorldMap.OVERWORLD_ID,
                     weeklyLocation(seed, 127, "cave_mouth", "ruined_watchpost", "old_road_marker", "hidden_grove"),
                     weeklyLocationIndex(seed, 131), "quest_trail_marker_post", "mountain_goat",
-                    weeklyLine(seed, 0,
-                            npc.name() + ": Something keeps battering signs, rails, and patience. The tracks say goats. I blame ambition.",
-                            npc.name() + ": Three mountain goats have declared war on anything built by hands. Please negotiate firmly.",
-                            npc.name() + ": The settlement edge is losing a fight with horns and bad manners. Drive off three goats."),
-                    weeklyLine(seed, 1,
-                            npc.name() + ": Drive off three ridge-breakers before the road learns to duck.",
-                            npc.name() + ": They look harmless until the repairs bill arrives. Make them someone else's scenery.",
-                            npc.name() + ": Count three. Fewer than that and the remaining ones will call it a meeting."),
-                    weeklyLine(seed, 2,
-                            npc.name() + ": If the edge is quiet again, come back for the less dramatic part.",
-                            npc.name() + ": If the signs have stopped being attacked, report back.",
-                            npc.name() + ": The road is no longer under hoof? Good. Come tell me."),
-                    weeklyLine(seed, 3,
-                            npc.name() + ": Excellent. Repairs are easier when they stop moving.",
-                            npc.name() + ": Good. I prefer my infrastructure un-chewed and un-charged.",
-                            npc.name() + ": That should convince the fence to remain a fence for a while."),
+                    "",
+                    "",
+                    "",
+                    "",
                     Quest.QuestType.SIDE, null, null);
         };
+        return NpcQuestStories.refine(generated, npc, world);
     }
 
     private Npc weeklyQuestRelocationTarget(Npc giver, int seed) {
@@ -3501,6 +3401,7 @@ public final class GameState {
     }
 
     public void closeOverlay() {
+        activeChest = null;
         if (mode == GameMode.DEFENSE) {
             closeDefenseRaid();
             return;
@@ -3944,6 +3845,7 @@ public final class GameState {
     }
 
     public List<CraftingSystem.Recipe> availableCraftingRecipes() {
+        if (config.creativeCraftingMode) return CraftingSystem.sortRecipes(CraftingSystem.RECIPES);
         ensureStarterRecipeUnlocks();
         discoverRecipesFromInventory(false);
         return CraftingSystem.sortRecipes(CraftingSystem.recipesFor(currentWorkstation()).stream()
@@ -3952,11 +3854,32 @@ public final class GameState {
     }
 
     public List<CraftingSystem.Recipe> learnedCraftingRecipes() {
+        if (config.creativeCraftingMode) return CraftingSystem.sortRecipes(CraftingSystem.RECIPES);
         ensureStarterRecipeUnlocks();
         discoverRecipesFromInventory(false);
         return CraftingSystem.sortRecipes(CraftingSystem.RECIPES.stream()
                 .filter(recipe -> unlockedRecipeKeys.contains(recipe.key()))
                 .toList());
+    }
+
+    public void craftComponent(AssemblyCrafting.Slot slot, String materialKey) {
+        startAssemblyTask(AssemblyCrafting.componentRecipe(player, slot, materialKey));
+    }
+
+    public void assembleEquipment(AssemblyCrafting.Blueprint blueprint, Map<AssemblyCrafting.Slot, String> parts) {
+        startAssemblyTask(AssemblyCrafting.assemblyRecipe(player, blueprint, parts));
+    }
+
+    private void startAssemblyTask(CraftingSystem.Recipe recipe) {
+        if (mode != GameMode.CRAFTING || crafting.active()) return;
+        if (recipe == null) { status = "Prepare and select all required components first."; return; }
+        if (config.creativeCraftingMode) { status = crafting.creativeCraft(player, recipe); return; }
+        if (recipe.workstation() != currentWorkstation()) {
+            status = "Move to " + recipe.workstation().label() + " for " + recipe.name() + ".";
+            return;
+        }
+        status = crafting.beginCraft(player, recipe);
+        if (crafting.active()) mode = GameMode.EXPLORE;
     }
 
     public void craftRecipe(String recipeKey) {
@@ -3965,6 +3888,7 @@ public final class GameState {
         }
         ensureStarterRecipeUnlocks();
         CraftingSystem.Recipe recipe = CraftingSystem.recipeByKey(recipeKey);
+        if (config.creativeCraftingMode) { status = crafting.creativeCraft(player, recipe); return; }
         if (recipe != null && !unlockedRecipeKeys.contains(recipe.key())) {
             status = "You have not learned " + recipe.name() + " yet.";
             return;
@@ -4079,8 +4003,9 @@ public final class GameState {
         }
         int shown = Math.min(3, learned.size());
         String names = String.join(", ", learned.subList(0, shown));
-        String extra = learned.size() > shown ? " +" + (learned.size() - shown) + " more" : "";
-        return "Ingredient ideas unlocked: " + names + extra + ".";
+        String extra = learned.size() > shown ? ", and " + (learned.size() - shown) + " more" : "";
+        return learned.size() + " ingredient recipe" + (learned.size() == 1 ? "" : "s")
+                + " unlocked: " + names + extra + ".";
     }
 
     public void toggleQuestLog() {
@@ -7024,6 +6949,23 @@ public final class GameState {
     }
 
     private List<DungeonMonsterRuntime> generateDungeonMonsters(String mapId) {
+        List<WorldMap.DungeonEncounterSlot> planned = world.dungeonEncounterSlots(mapId);
+        if (!planned.isEmpty()) {
+            Random seeded = new Random(mapId.hashCode() * 31L + 1701L);
+            List<DungeonMonsterRuntime> monsters = new ArrayList<>();
+            int roamer = 0;
+            for (WorldMap.DungeonEncounterSlot slot : planned) {
+                String key = slot.boss()
+                        ? chooseDungeonBoss(mapId)
+                        : chooseDungeonRoamer(mapId, slot.role(), seeded);
+                // Keep the legacy sequential roamer id shape so old defeated-monster saves remain useful.
+                String id = slot.boss() ? mapId + ":boss" : mapId + ":" + roamer++;
+                monsters.add(new DungeonMonsterRuntime(id,
+                        GameData.MONSTERS.getOrDefault(key, GameData.MONSTERS.get("skeleton")),
+                        slot.boss(), slot.x(), slot.y(), seeded.nextInt(80), slot.leash()));
+            }
+            return monsters;
+        }
         List<TilePoint> candidates = new ArrayList<>();
         for (int y = 1; y < world.height(mapId) - 1; y++) {
             for (int x = 1; x < world.width(mapId) - 1; x++) {
@@ -7043,14 +6985,14 @@ public final class GameState {
         if (bossPoint != null) {
             candidates.remove(bossPoint);
             String bossKey = chooseDungeonBoss(mapId);
-            monsters.add(new DungeonMonsterRuntime(mapId + ":boss", GameData.MONSTERS.getOrDefault(bossKey, GameData.MONSTERS.get("wraith")), true, bossPoint.x(), bossPoint.y(), seeded.nextInt(80)));
+            monsters.add(new DungeonMonsterRuntime(mapId + ":boss", GameData.MONSTERS.getOrDefault(bossKey, GameData.MONSTERS.get("wraith")), true, bossPoint.x(), bossPoint.y(), seeded.nextInt(80), 6));
         }
         int count = Math.min(candidates.size(), dungeonRoamerCount(mapId));
         for (int i = 0; i < count; i++) {
             int index = seeded.nextInt(candidates.size());
             TilePoint point = candidates.remove(index);
             String key = chooseDungeonRoamer(mapId, seeded);
-            monsters.add(new DungeonMonsterRuntime(mapId + ":" + i, GameData.MONSTERS.getOrDefault(key, GameData.MONSTERS.get("skeleton")), false, point.x(), point.y(), seeded.nextInt(80)));
+            monsters.add(new DungeonMonsterRuntime(mapId + ":" + i, GameData.MONSTERS.getOrDefault(key, GameData.MONSTERS.get("skeleton")), false, point.x(), point.y(), seeded.nextInt(80), 9));
         }
         return monsters;
     }
@@ -7093,31 +7035,25 @@ public final class GameState {
     }
 
     private String dungeonSpawnTheme(String mapId) {
-        if (mapId.contains("redcap")) {
-            return "goblin";
-        }
-        if (mapId.contains("crowhook")) {
-            return "bandit";
-        }
-        if (mapId.contains("frosthollow") || mapId.contains("frost")) {
-            return "frost_cave";
-        }
-        if (mapId.contains("miredepth") || mapId.contains("mire")) {
-            return "mire_cave";
-        }
-        if (mapId.contains("blackvault")) {
-            return "castle";
-        }
-        if (mapId.contains("ironbarrow")) {
-            return "prison";
-        }
-        if (mapId.contains("belltower_sluice")) {
-            return "sewer";
-        }
-        if (mapId.contains("stonegate")) {
-            return "crypt";
-        }
-        return "crypt";
+        WorldMap.DungeonContext context = world.dungeonContext(mapId);
+        if (context == null) return "crypt";
+        return switch (context.theme()) {
+            case "goblin_camp" -> "goblin";
+            case "bandit_camp" -> "bandit";
+            case "abandoned_castle" -> "castle";
+            case "prison" -> "prison";
+            case "sewer" -> "sewer";
+            case "crypt" -> "crypt";
+            case "cave" -> {
+                yield switch (CavernStyle.biome(context.region(), context.exterior())) {
+                    case "ice" -> "frost_cave";
+                    case "moss" -> "mire_cave";
+                    case "sand" -> "sand_cave";
+                    default -> "cave";
+                };
+            }
+            default -> "crypt";
+        };
     }
 
     private String chooseDungeonBoss(String mapId) {
@@ -7127,6 +7063,8 @@ public final class GameState {
             case "bandit" -> "bandit_captain";
             case "frost_cave" -> depth > 2 ? "mountain_drake" : "frost_troll";
             case "mire_cave" -> depth > 2 ? "marsh_drake" : "swamp_troll";
+            case "sand_cave" -> depth > 2 ? "ash_scorpion" : "sand_stalker";
+            case "cave" -> depth > 2 ? "mountain_drake" : "frost_troll";
             case "castle" -> depth > 2 ? "nameless_warden" : "void_knight";
             case "prison" -> depth > 2 ? "void_knight" : "bone_knight";
             case "sewer" -> depth > 2 ? "swamp_troll" : "bog_beast";
@@ -7139,30 +7077,62 @@ public final class GameState {
         int depth = dungeonDepth(mapId);
         List<String> pool = switch (dungeonSpawnTheme(mapId)) {
             case "goblin" -> List.of(
-                    "goblin_scout", "goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher", "goblin_shaman");
+                    "goblin_scout", "goblin", "goblin_archer", "goblin_trapper", "goblin_skirmisher", "goblin_shaman");
             case "bandit" -> List.of(
-                    "bandit_cutthroat", "bandit_cutthroat", "bandit_archer", "bandit_archer", "bandit_captain", "orc_raider");
+                    "bandit_cutthroat", "bandit_cutthroat", "bandit_archer", "goblin_scout", "bandit_captain", "orc_raider", "wolf");
             case "frost_cave" -> depth > 1
-                    ? List.of("crypt_bat", "spider", "frost_wolf", "frost_wolf", "frost_troll", "ice_golem", "mountain_drake", "bandit_cutthroat")
-                    : List.of("crypt_bat", "spider", "spider", "frost_wolf", "bandit_cutthroat");
+                    ? List.of("crypt_bat", "spider", "frost_wolf", "snow_lynx", "frost_troll", "ice_golem", "mountain_drake", "bat", "bat")
+                    : List.of("crypt_bat", "spider", "bat", "frost_wolf", "bandit_cutthroat", "bat");
             case "mire_cave" -> depth > 1
-                    ? List.of("slime", "spider", "reed_serpent", "bog_beast", "bog_beast", "marsh_drake", "swamp_troll")
-                    : List.of("slime", "spider", "spider", "reed_serpent", "bog_beast");
+                    ? List.of("slime", "spider", "reed_serpent", "bog_beast", "river_eel", "marsh_drake", "swamp_troll", "bat")
+                    : List.of("slime", "spider", "bat", "reed_serpent", "bog_beast", "river_eel");
+            case "sand_cave" -> depth > 1
+                    ? List.of("bat", "spider", "glass_scorpion", "sand_stalker", "ember_imp", "ash_scorpion", "bat")
+                    : List.of("bat", "bat", "spider", "glass_scorpion", "sand_stalker");
+            case "cave" -> depth > 1
+                    ? List.of("crypt_bat", "spider", "slime", "orc_raider", "mountain_drake", "bat", "wolf")
+                    : List.of("crypt_bat", "bat", "spider", "slime", "orc_raider", "wolf");
             case "castle" -> depth > 1
-                    ? List.of("skeleton", "skeleton", "wraith", "bone_knight", "crypt_revenant", "void_knight", "elder_wraith")
-                    : List.of("skeleton", "skeleton", "wraith", "bone_knight", "crypt_revenant");
+                    ? List.of("skeleton", "crypt_bat", "wraith", "bone_knight", "crypt_revenant", "void_knight", "elder_wraith", "spider")
+                    : List.of("skeleton", "crypt_bat", "wraith", "bone_knight", "crypt_revenant", "spider");
             case "prison" -> depth > 1
                     ? List.of("skeleton", "bone_knight", "wraith", "crypt_revenant", "void_knight", "bandit_cutthroat")
-                    : List.of("skeleton", "skeleton", "bone_knight", "wraith", "bandit_cutthroat");
+                    : List.of("skeleton", "spider", "bone_knight", "wraith", "bandit_cutthroat", "bat");
             case "sewer" -> depth > 1
-                    ? List.of("slime", "slime", "river_eel", "reed_serpent", "spider", "bog_beast", "swamp_troll")
-                    : List.of("slime", "slime", "river_eel", "reed_serpent", "spider", "bog_beast");
+                    ? List.of("slime", "bat", "river_eel", "reed_serpent", "spider", "bog_beast", "swamp_troll")
+                    : List.of("slime", "bat", "river_eel", "reed_serpent", "spider", "bog_beast");
             case "crypt" -> depth > 1
-                    ? List.of("skeleton", "skeleton", "crypt_bat", "wraith", "bone_knight", "crypt_revenant", "elder_wraith")
-                    : List.of("skeleton", "skeleton", "crypt_bat", "wraith", "bone_knight");
+                    ? List.of("skeleton", "spider", "crypt_bat", "wraith", "bone_knight", "crypt_revenant", "elder_wraith")
+                    : List.of("skeleton", "skeleton", "crypt_bat", "wraith", "bone_knight", "spider");
             default -> List.of("crypt_bat", "skeleton", "spider", "wraith");
         };
         return pool.get(seeded.nextInt(pool.size()));
+    }
+
+    private String chooseDungeonRoamer(String mapId, String roomRole, Random seeded) {
+        String theme = dungeonSpawnTheme(mapId);
+        List<String> rolePool = switch (roomRole) {
+            case "guard" -> switch (theme) {
+                case "goblin" -> List.of("goblin_scout", "goblin_archer", "goblin_skirmisher");
+                case "bandit" -> List.of("bandit_cutthroat", "bandit_archer", "orc_raider");
+                case "crypt", "castle", "prison" -> List.of("skeleton", "bone_knight", "crypt_revenant");
+                default -> List.of();
+            };
+            case "shrine", "burial" -> switch (theme) {
+                case "crypt", "castle", "prison" -> List.of("wraith", "skeleton", "crypt_bat", "crypt_revenant");
+                case "goblin" -> List.of("goblin_shaman", "goblin_trapper");
+                default -> List.of();
+            };
+            case "works" -> switch (theme) {
+                case "sewer", "mire_cave" -> List.of("slime", "river_eel", "spider");
+                case "goblin" -> List.of("goblin_trapper", "goblin_scout");
+                case "bandit" -> List.of("bandit_archer", "bandit_cutthroat");
+                default -> List.of();
+            };
+            default -> List.of();
+        };
+        return rolePool.isEmpty() || seeded.nextInt(5) == 0
+                ? chooseDungeonRoamer(mapId, seeded) : rolePool.get(seeded.nextInt(rolePool.size()));
     }
 
     private void startDungeonMonsterBattle(DungeonMonsterRuntime monster) {
@@ -7229,7 +7199,9 @@ public final class GameState {
         if ("dungeon".equals(kind)) {
             return;
         }
-        if (Terrain.connectingRoad(tile) || "city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
+        String locationKind = world.locationKindAt(currentMapId, playerX, playerY);
+        boolean hostileSite = !locationMonsterPool(locationKind).isEmpty();
+        if ((Terrain.connectingRoad(tile) && !hostileSite) || "city".equals(kind) || "village".equals(kind) || "interior".equals(kind)) {
             return;
         }
         double chance = tile == 'd' ? config.dungeonEntranceEncounterChance : config.wildEncounterChance;
@@ -7243,7 +7215,7 @@ public final class GameState {
             return;
         }
         char monsterTile = "dungeon".equals(kind) ? 'd' : tile;
-        List<GameData.MonsterSpec> specs = chooseMonsterGroup(monsterTile).stream()
+        List<GameData.MonsterSpec> specs = chooseMonsterGroup(monsterTile, locationKind).stream()
                 .map(key -> GameData.MONSTERS.getOrDefault(key, GameData.MONSTERS.get("slime")))
                 .toList();
         battle = createBattle(specs, tile, kind);
@@ -7725,6 +7697,9 @@ public final class GameState {
                 }
                 int x = center.x() + dx;
                 int y = center.y() + dy;
+                String locationKind = quest.activeObjectiveLocationKind();
+                if (locationKind != null && locationKind.startsWith("place:")
+                        && !world.campaignPlaceContains(locationKind.substring(6), x, y)) continue;
                 if (!validQuestMonsterTile(x, y, localMonsters)) {
                     continue;
                 }
@@ -8905,6 +8880,11 @@ public final class GameState {
 
     private Battle createBattle(List<GameData.MonsterSpec> specs, char tile, String kind) {
         Battle created = new Battle(player, activeAllies(), specs, random, tile, kind, config.monsterLevelScaling);
+        created.setAnimationSpeed(config.combatAnimationSpeed);
+        created.backdrop = BattleScenery.choose(world.area(currentMapId), playerX, playerY, tile, created.backdrop);
+        if ("dungeon".equals(kind)) {
+            created.backdrop = BattleScenery.dungeon(world.dungeonContext(currentMapId), created.backdrop);
+        }
         applyWorldBattleAdvantage(created);
         configureBattleIntro(created, specs, tile, kind);
         return created;
@@ -10102,7 +10082,7 @@ public final class GameState {
         if (!isDungeonFloor(world.tileAt(currentMapId, x, y))) {
             return false;
         }
-        int roamRadius = monster.boss ? 6 : 9;
+        int roamRadius = monster.leash;
         if (Math.abs(x - monster.homeX) + Math.abs(y - monster.homeY) > roamRadius) {
             return false;
         }
@@ -10185,6 +10165,9 @@ public final class GameState {
     }
 
     private boolean canQuestMonsterMoveTo(QuestMonsterRuntime monster, int x, int y) {
+        Quest quest = quests.get(monster.questId);
+        String place = quest == null ? "" : quest.activeObjectiveLocationKind();
+        if (place != null && place.startsWith("place:") && !world.campaignPlaceContains(place.substring(6), x, y)) return false;
         char tile = world.tileAt(WorldMap.OVERWORLD_ID, x, y);
         if (!world.isPassable(WorldMap.OVERWORLD_ID, x, y) || Terrain.connectingRoad(tile) || tile == 'c' || tile == 'u' || tile == 'A') {
             return false;
@@ -10775,8 +10758,24 @@ public final class GameState {
         return cleaned.substring(0, Math.min(maxLength, cleaned.length()));
     }
 
-    private String chooseMonster(char tile) {
-        List<String> pool = switch (tile) {
+    /** Weak residents first: level gates may reduce variety, but never change a site's identity. */
+    static List<String> locationMonsterPool(String kind) {
+        if (kind == null) return List.of();
+        return switch (kind) {
+            case "goblin_camp" -> List.of("goblin_scout", "goblin_archer", "goblin_trapper", "goblin_skirmisher", "goblin_shaman");
+            case "bandit_camp" -> List.of("bandit_cutthroat", "bandit_archer", "bandit_captain");
+            case "graveyard", "crypt" -> List.of("skeleton", "crypt_bat", "wraith", "bone_knight", "crypt_revenant");
+            case "cave", "cave_mouth" -> List.of("crypt_bat", "spider", "stoneback_goat", "mountain_drake");
+            case "abandoned_castle" -> List.of("skeleton", "bandit_cutthroat", "bone_knight", "wraith");
+            case "prison" -> List.of("skeleton", "bandit_cutthroat", "bone_knight");
+            case "sewer" -> List.of("slime", "spider", "reed_serpent", "bog_beast");
+            default -> List.of();
+        };
+    }
+
+    private String chooseMonster(char tile, String locationKind) {
+        List<String> pool = locationMonsterPool(locationKind);
+        if (pool.isEmpty()) pool = switch (tile) {
             case 'f' -> List.of("doe", "crystal_hare", "moss_stag", "bramble_boar", "thornling", "spider", "bandit_archer", "marsh_drake");
             case 's' -> List.of("sand_stalker", "glass_scorpion", "ember_tortoise", "ember_imp", "bandit_cutthroat", "orc_raider", "orc_berserker", "red_dragon");
             case 'n' -> List.of("frost_wolf", "snow_lynx", "crypt_bat", "frost_troll", "ice_golem", "mountain_drake");
@@ -10791,7 +10790,7 @@ public final class GameState {
         return pool.get(random.nextInt(cap));
     }
 
-    private List<String> chooseMonsterGroup(char tile) {
+    private List<String> chooseMonsterGroup(char tile, String locationKind) {
         int count = 1;
         double roll = random.nextDouble();
         if (player.level >= 9 && roll < config.threeMonsterChance * 0.33) {
@@ -10806,7 +10805,7 @@ public final class GameState {
         count = Math.min(MAX_ENEMY_GROUP_SIZE, count);
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            keys.add(chooseMonster(tile));
+            keys.add(chooseMonster(tile, locationKind));
         }
         return keys;
     }
@@ -11064,6 +11063,7 @@ public final class GameState {
         final boolean boss;
         final int homeX;
         final int homeY;
+        final int leash;
         int x;
         int y;
         int fromX;
@@ -11073,12 +11073,13 @@ public final class GameState {
         int facingDy = 1;
         int nextThinkTick;
 
-        DungeonMonsterRuntime(String id, GameData.MonsterSpec spec, boolean boss, int x, int y, int nextThinkTick) {
+        DungeonMonsterRuntime(String id, GameData.MonsterSpec spec, boolean boss, int x, int y, int nextThinkTick, int leash) {
             this.id = id;
             this.spec = spec;
             this.boss = boss;
             this.homeX = x;
             this.homeY = y;
+            this.leash = Math.max(2, leash);
             this.x = x;
             this.y = y;
             this.fromX = x;

@@ -1,0 +1,170 @@
+[
+  {
+    "target": "Java/assets/npcs/npc_elowen_model_left.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_elowen_model_right.png",
+    "before_sha256": "0ea245fcb8df87b4586853aa07cac22f75520af89c329bd96f958cf21379c6c3",
+    "after_sha256": "d247c9ee3e701f8421681a47bc3184ed1f42a85b1e2985a24d8be1dd7baf8244"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_elowen_model_left_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_elowen_model_right_walk_anim.png",
+    "before_sha256": "78dd51e83749d7ac4b7e852ee78cfe4dc9bf46bd716f7e0fd49e844741088bd8",
+    "after_sha256": "87d75750ec0eca7766d1116df319ef968fa1f2c56b200cfec460771f20139ee5"
+  },
+  {
+    "target": "Java/assets/npcs/npc_elowen_model_right.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_elowen_model_left.png",
+    "before_sha256": "d247c9ee3e701f8421681a47bc3184ed1f42a85b1e2985a24d8be1dd7baf8244",
+    "after_sha256": "0ea245fcb8df87b4586853aa07cac22f75520af89c329bd96f958cf21379c6c3"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_elowen_model_right_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_elowen_model_left_walk_anim.png",
+    "before_sha256": "87d75750ec0eca7766d1116df319ef968fa1f2c56b200cfec460771f20139ee5",
+    "after_sha256": "78dd51e83749d7ac4b7e852ee78cfe4dc9bf46bd716f7e0fd49e844741088bd8"
+  },
+  {
+    "target": "Java/assets/npcs/npc_garruk_model_left.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_garruk_model_right.png",
+    "before_sha256": "5d69546bedf62e1faf3e05cc5ff515d87aabc9295193e78ab94dba5977a70f7d",
+    "after_sha256": "debae93b6a52fdd1154e1a6b97bf97d94382b090416462a9916d5cfb5280a7af"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_garruk_model_left_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_garruk_model_right_walk_anim.png",
+    "before_sha256": "cd8e0af2cc98e4f1b31a99d8b9dc9a069cd66fc66234d7987c27d698e13f473c",
+    "after_sha256": "bc1a7be54260eba6f794fc897ece8001c9d6b1b8bf90c55398276b1f35b3a69d"
+  },
+  {
+    "target": "Java/assets/npcs/npc_garruk_model_right.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_garruk_model_left.png",
+    "before_sha256": "debae93b6a52fdd1154e1a6b97bf97d94382b090416462a9916d5cfb5280a7af",
+    "after_sha256": "5d69546bedf62e1faf3e05cc5ff515d87aabc9295193e78ab94dba5977a70f7d"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_garruk_model_right_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_garruk_model_left_walk_anim.png",
+    "before_sha256": "bc1a7be54260eba6f794fc897ece8001c9d6b1b8bf90c55398276b1f35b3a69d",
+    "after_sha256": "cd8e0af2cc98e4f1b31a99d8b9dc9a069cd66fc66234d7987c27d698e13f473c"
+  },
+  {
+    "target": "Java/assets/npcs/npc_kael_model_left.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_kael_model_right.png",
+    "before_sha256": "43caa656fbea667929b3522cd452d6c07e8b72221adde1f6c8b5a603b1fd4c9b",
+    "after_sha256": "a6f4478572650476e8035015875a9393b3e016a6e892ba80df43030d9368e397"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_kael_model_left_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_kael_model_right_walk_anim.png",
+    "before_sha256": "4d513c278f4a931fb668923fdc4f2489091dce5d110eeefcdab4de530862b45b",
+    "after_sha256": "7a94832a3cf2a4a55278ae301ee5acacbe064d2a22d3a8892705007668b92959"
+  },
+  {
+    "target": "Java/assets/npcs/npc_kael_model_right.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_kael_model_left.png",
+    "before_sha256": "a6f4478572650476e8035015875a9393b3e016a6e892ba80df43030d9368e397",
+    "after_sha256": "43caa656fbea667929b3522cd452d6c07e8b72221adde1f6c8b5a603b1fd4c9b"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_kael_model_right_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_kael_model_left_walk_anim.png",
+    "before_sha256": "7a94832a3cf2a4a55278ae301ee5acacbe064d2a22d3a8892705007668b92959",
+    "after_sha256": "4d513c278f4a931fb668923fdc4f2489091dce5d110eeefcdab4de530862b45b"
+  },
+  {
+    "target": "Java/assets/npcs/npc_ren_model_left.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_ren_model_right.png",
+    "before_sha256": "8668b1139d33fa6948035030527faa20c80d030631a9d1432abd879e1fbea3b8",
+    "after_sha256": "8dcd3d33dd276edad80f48b744f6f9b0c33c3918f41cfbfc3ea19280b5221e92"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_ren_model_left_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_ren_model_right_walk_anim.png",
+    "before_sha256": "0bf6a823d5a75aeee2ff5073e1394b34802fc66482ab2b0a9a2a637412e1ab99",
+    "after_sha256": "41da6c4a316a22bbb330f5964eaca8fdd543ba31384beab9b705a93bae42143f"
+  },
+  {
+    "target": "Java/assets/npcs/npc_ren_model_right.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_ren_model_left.png",
+    "before_sha256": "8dcd3d33dd276edad80f48b744f6f9b0c33c3918f41cfbfc3ea19280b5221e92",
+    "after_sha256": "8668b1139d33fa6948035030527faa20c80d030631a9d1432abd879e1fbea3b8"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_ren_model_right_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_ren_model_left_walk_anim.png",
+    "before_sha256": "41da6c4a316a22bbb330f5964eaca8fdd543ba31384beab9b705a93bae42143f",
+    "after_sha256": "0bf6a823d5a75aeee2ff5073e1394b34802fc66482ab2b0a9a2a637412e1ab99"
+  },
+  {
+    "target": "Java/assets/npcs/npc_torin_model_left.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_torin_model_right.png",
+    "before_sha256": "b13797a5674201f5c04e844e226fe497cf33968b432fc8cfb99987f2dcf1c1e7",
+    "after_sha256": "c1b4bf3f9659843b2c98d849dfdc365ddcc9020cad438f21d6c037bc4bc9bace"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_torin_model_left_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_torin_model_right_walk_anim.png",
+    "before_sha256": "c34196f1dca08cee837d8a81100492a53e9ad8906677db60652025176874d6ae",
+    "after_sha256": "0ff9ded52471f85090e761fcbb6846317996f9149679b434e310a59fb5b73553"
+  },
+  {
+    "target": "Java/assets/npcs/npc_torin_model_right.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_torin_model_left.png",
+    "before_sha256": "c1b4bf3f9659843b2c98d849dfdc365ddcc9020cad438f21d6c037bc4bc9bace",
+    "after_sha256": "b13797a5674201f5c04e844e226fe497cf33968b432fc8cfb99987f2dcf1c1e7"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_torin_model_right_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_torin_model_left_walk_anim.png",
+    "before_sha256": "0ff9ded52471f85090e761fcbb6846317996f9149679b434e310a59fb5b73553",
+    "after_sha256": "c34196f1dca08cee837d8a81100492a53e9ad8906677db60652025176874d6ae"
+  },
+  {
+    "target": "Java/assets/npcs/npc_vexa_model_left.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_vexa_model_right.png",
+    "before_sha256": "0cf9eb2aa26da12e1d4848bfff0386c6b3a2955066b2d590ef74cc4a5488e099",
+    "after_sha256": "cf6d9c2bd0177bc9d6fed84c6d4b0318b92df756f3a04117700c99357c300feb"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_vexa_model_left_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_vexa_model_right_walk_anim.png",
+    "before_sha256": "062917ee6dffbc3fbb6a202c1a21de487cd4cf3e2c367b01959367d920713c3f",
+    "after_sha256": "baeeae40ecab27ffa3286d6f84d912b63c22c680b5a1a10839a910f2697f43c3"
+  },
+  {
+    "target": "Java/assets/npcs/npc_vexa_model_right.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_vexa_model_left.png",
+    "before_sha256": "cf6d9c2bd0177bc9d6fed84c6d4b0318b92df756f3a04117700c99357c300feb",
+    "after_sha256": "0cf9eb2aa26da12e1d4848bfff0386c6b3a2955066b2d590ef74cc4a5488e099"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_vexa_model_right_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_vexa_model_left_walk_anim.png",
+    "before_sha256": "baeeae40ecab27ffa3286d6f84d912b63c22c680b5a1a10839a910f2697f43c3",
+    "after_sha256": "062917ee6dffbc3fbb6a202c1a21de487cd4cf3e2c367b01959367d920713c3f"
+  },
+  {
+    "target": "Java/assets/npcs/npc_quartermaster_model_left.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_quartermaster_model_right.png",
+    "before_sha256": "9f5b734f000e233b441200930a347dada85df598139ce0a46a0fbb10d2aa1204",
+    "after_sha256": "41732deceb0175b73cd6e19d5434ebad6d9d3aec808032170ca75be8f3a1671d"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_quartermaster_model_left_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_quartermaster_model_right_walk_anim.png",
+    "before_sha256": "4178322589e30fb80afde16e19f97d023661729dcf7ab82a67046351ff8bfce1",
+    "after_sha256": "0cfbfca32355603df92742f1c554f13339983bddc78c29732508d87d7c358b42"
+  },
+  {
+    "target": "Java/assets/npcs/npc_quartermaster_model_right.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/npc_quartermaster_model_left.png",
+    "before_sha256": "41732deceb0175b73cd6e19d5434ebad6d9d3aec808032170ca75be8f3a1671d",
+    "after_sha256": "9f5b734f000e233b441200930a347dada85df598139ce0a46a0fbb10d2aa1204"
+  },
+  {
+    "target": "Java/assets/npcs/animations/npc_quartermaster_model_right_walk_anim.png",
+    "source": "asset-review/2026-09-22-npcs/before/Java/assets/npcs/animations/npc_quartermaster_model_left_walk_anim.png",
+    "before_sha256": "0cfbfca32355603df92742f1c554f13339983bddc78c29732508d87d7c358b42",
+    "after_sha256": "4178322589e30fb80afde16e19f97d023661729dcf7ab82a67046351ff8bfce1"
+  }
+]

@@ -38,11 +38,9 @@ For live profiling, `scripts/run-profile.ps1` enables average and maximum timing
 
 ## Generated Files
 
-Build products under `out/` and `out-check/`, local saves, local settings, map-editor exports, compiled `.class` files, and Python `__pycache__` bytecode are ignored. From the repository root, existing tracked generated artifacts can be removed from the index without deleting local copies with:
+Build products under `out/` and `out-*/`, local saves, local settings, map-editor exports, `temp/` scratch files, compiled `.class` files, Python `__pycache__` bytecode, and JVM profiling/crash output are ignored.
 
-```powershell
-git rm -r --cached out Java/tools/__pycache__
-```
+Build output and caches can be deleted when the game and development tools are closed; build scripts recreate them. Deleting `saves/` removes local play progress. Review exports and scratch files before clearing them. Keep source, assets, tools, and configuration defaults.
 
 ## Current Scope
 
@@ -106,8 +104,9 @@ The remaining `com.alderfall.game` classes are grouped into responsibility folde
 - Zoom: click `-`/`+` or use mouse wheel
 - Battle: click the action bar, or use `A`/`Space` attack, `R` run, `1`-`0` abilities, `H` use item
 - Dialog: click numbered conversation options, press `1`-`9`, or press `Enter`/`E` to advance
-- Shop: click `Buy`, `Hire`, or `Leave Shop`; number keys still buy matching items
-- Inventory: click item rows or use number keys
+- Shop: drag item tiles between stock and your pack to buy/sell one, or click a tile; `1`-`9` buy visible stock. Each grid scrolls independently under the pointer.
+- Inventory: click tiles or use `1`-`9` for visible items; drag items to equipment slots or the character, and drag equipped gear back to the pack.
+- Inventory and shops: use icon category tabs (All, Materials, Weapons, Armor, Consumables, Accessories, Misc). Click search to type an item name; matching tiles glow and search switches categories when needed. Clear with `x`; `Enter` or `Esc` leaves the search field.
 - Main menu: `Enter` new adventure, `L` load adventure, `S` settings
 - Pause menu: `Esc` or `P` from gameplay, then use Save / Load, Settings, Main Menu, or Resume
 - Save/load: `F5` / `F9`, or use the Save / Load menu
@@ -120,3 +119,9 @@ For a long-term 2D Java game, the recommended next engine step is libGDX once th
 ## Legacy Asset Tools
 
 The former Python asset scripts are retained under `Java/tools/` for regeneration and extraction work. Run them from the `Java` folder so their relative `assets/...` paths resolve against `Java/assets`.
+
+## Lootable chests
+
+Stand beside a chest and press `E` (or click a nearby chest) to open the chest and shared pack together. Use **Take 1**, **Store 1**, or **Stack** to transfer items, and **Take all** to collect everything. Both lists have page controls. Close with `Esc`. Equipped gear must be unequipped before storing it.
+
+Generated treasure rooms contain chests with randomized materials, weapons, and potions. Interior ironbound and screen chests also work as containers. Chest contents persist in saves, including empty chests and items you deposit. Older saves receive loot when each chest is first opened.

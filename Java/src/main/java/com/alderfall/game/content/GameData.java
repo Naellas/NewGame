@@ -2532,7 +2532,7 @@ public final class GameData {
     );
 
     public static final Map<String, Shop> SHOPS = Map.ofEntries(
-            Map.entry("riverside", new Shop("riverside", "Riverside Market", List.of(
+            Map.entry("riverside", new Shop("riverside", "Riverside Market", withCraftedStock("riverside", List.of(
                     "potion_small", "ether", "guard_tonic", "escape_scroll", "traveler_cloak", "iron_sword", "iron_ring", "silver_mace",
                     "scout_hood", "road_belt", "trail_leggings",
                     "rustbit_saber", "riverguard_blade", "cinderedge", "frostvein_sword", "thorncarver",
@@ -2561,8 +2561,8 @@ public final class GameData {
                     "new_potion_mint_ether_sip", "new_potion_bandage_balm", "new_potion_salted_travel_broth", "new_potion_copperleaf_tonic", "new_potion_blue_candle_tea",
                     "new_potion_thornbite_antidote", "new_potion_emberwarm_elixir", "new_potion_frostwake_cordial", "new_potion_stormbreath_tonic", "new_potion_moonmilk_salve",
                     "new_potion_oakskin_decoction", "new_potion_sunspoke_remedy", "new_potion_gravesalt_cleanser", "new_potion_duskstep_smoke_vial"
-            ))),
-            Map.entry("highwall", new Shop("highwall", "Highwall Quartermaster", List.of(
+            )))),
+            Map.entry("highwall", new Shop("highwall", "Highwall Quartermaster", withCraftedStock("highwall", List.of(
                     "potion_small", "potion_large", "ether", "battle_kit", "escape_scroll", "steel_sword", "iron_mail", "ranger_coat",
                     "shadow_dagger", "iron_helm", "guard_gauntlets", "iron_boots", "steel_greaves",
                     "woodcutter_axe", "raider_hatchet", "ironbeard_axe", "steelcleaver", "frosthew_axe",
@@ -2585,8 +2585,8 @@ public final class GameData {
                     "new_accessory_nightwater_signet", "new_potion_cobalt_focus_phial", "new_potion_redreef_brine", "new_potion_archive_ink_tonic", "new_potion_rimehook_liniment",
                     "new_potion_lanternfall_restorative", "new_potion_widowglass_antivenom", "new_potion_thunderroot_charge", "new_potion_mirechant_poultice", "new_potion_kingsmark_battle_kit",
                     "new_potion_hearthflame_reviver", "new_potion_starshard_ether", "new_potion_nightwater_draught"
-            ))),
-            Map.entry("crypt_vendor", new Shop("crypt_vendor", "Crypt Provisioner", List.of(
+            )))),
+            Map.entry("crypt_vendor", new Shop("crypt_vendor", "Crypt Provisioner", withCraftedStock("crypt_vendor", List.of(
                     "potion_large", "ether", "guard_tonic", "battle_kit", "escape_scroll", "flame_staff", "acolyte_mantle",
                     "night_leathers", "warden_plate", "phoenix_feather", "focus_sash", "softstep_boots", "warded_pauldrons",
                     "stormglass_blade", "duskwake_sword", "kingsroad_claymore", "marshlight_cutlass", "obsidian_fang",
@@ -2609,8 +2609,14 @@ public final class GameData {
                     "new_accessory_seal_of_the_twelfth", "new_potion_bellringer_incense", "new_potion_glass_choir_serum", "new_potion_oathroot_fortifier", "new_potion_vesper_thorn_salve",
                     "new_potion_samir_sunbrew", "new_potion_cassia_gate_tonic", "new_potion_maera_margin_tea", "new_potion_lyra_mercy_vial", "new_potion_dawn_crown_elixir",
                     "new_potion_worldroot_panacea", "new_potion_alderfall_star_phial", "new_potion_twelfth_silence_flask"
-            )))
+            ))))
     );
+
+    private static List<String> withCraftedStock(String shopId, List<String> existing) {
+        List<String> stock = new ArrayList<>(existing);
+        stock.addAll(AssemblyCrafting.vendorStock(shopId));
+        return List.copyOf(stock);
+    }
 
     public static final Map<String, RecruitSpec> RECRUITS = Map.ofEntries(
             recruit("marla", "Marla", "npc_marla", "Cleric", 44, 24, 7, 2,
@@ -2827,9 +2833,9 @@ public final class GameData {
                     "It looked lonely. That is all I am saying without a lawyer."
             ), null, null),
             new Npc("village_oakhaven", "Farmer Joss", "npc_citizen_man", 19, 14, List.of(
-                    "A patrol without fed horses is just a group of tired people standing in a road.",
-                    "Bring hay from the west field and I will keep the watch mounts from chewing the gate."
-            ), "hay_for_horses", null),
+                    "Mind the axle by my boots. I thought I could mend it before anyone needed the cart. That was optimistic.",
+                    "I put the dry hay aside myself. A horse can't tell you the feed is bad until it's already eaten it."
+            ), "hay_for_horses", null, NpcJob.farmer()),
             new Npc("village_oakhaven", "Rowan", "npc_ren", 8, 15, List.of(
                     "That scarecrow keeps turning when nobody admits touching it.",
                     "I need someone brave enough to inspect straw without pretending straw cannot be suspicious."
@@ -3697,10 +3703,14 @@ public final class GameData {
         if (ability == null) {
             return List.of();
         }
-        if (!ability.statusHints().isEmpty()) {
-            return ability.statusHints();
+        List<AbilityStatus> hints = ability.statusHints().isEmpty()
+                ? statusHintsForAbility(ability.name(), ability.kind()) : ability.statusHints();
+        String effect = battleEffectForAbility(ability);
+        if (effect.contains("frost") || effect.contains("glacier")) {
+            return hints.stream().map(hint -> hint.key().equals("weak")
+                    ? new AbilityStatus("frozen", hint.target(), hint.chance()) : hint).toList();
         }
-        return statusHintsForAbility(ability.name(), ability.kind());
+        return hints;
     }
 
     public static String battleEffectForAbility(Ability ability) {

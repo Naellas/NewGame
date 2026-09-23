@@ -1,9 +1,11 @@
 # Java project generated output and local runtime state
 out/
 out-check/
+out-*/
 saves/
 config/settings.properties
 exports/
+temp/
 
 # Compiled classes and Python tool caches
 *.class

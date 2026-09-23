@@ -14,7 +14,7 @@ public final class PropPlacement {
     private static final java.util.Map<String, Kind> KINDS = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static Placement at(WorldMap world, String mapId, WorldProp prop) {
-        if (!WorldMap.OVERWORLD_ID.equals(mapId)) return FIXED;
+        if (!usesOffsets(world, mapId)) return FIXED;
         Kind kind = kind(prop.asset());
         if (kind == Kind.FIXED) return FIXED;
         int seed = prop.x() * 73428767 ^ prop.y() * 912931 ^ prop.asset().hashCode() ^ mapId.hashCode();
@@ -39,6 +39,12 @@ public final class PropPlacement {
             default -> 1;
         };
         return new Placement(x, y, scale, kind);
+    }
+
+    public static boolean usesOffsets(WorldMap world, String mapId) {
+        return WorldMap.OVERWORLD_ID.equals(mapId)
+                || ("village".equals(world.kind(mapId)) && !WorldMap.PLAYER_VILLAGE_ID.equals(mapId)
+                && !mapId.startsWith("editor_") && !mapId.equals("player_village"));
     }
 
     public static Kind kind(String asset) {

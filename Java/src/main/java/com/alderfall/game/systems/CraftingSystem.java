@@ -82,6 +82,35 @@ public final class CraftingSystem {
     private Map<String, Integer> lastCompletedOutput = Map.of();
 
     public static final Map<String, ItemInfo> CRAFTING_ITEMS = Map.ofEntries(
+            Map.entry("obsidian_shard", new ItemInfo("Obsidian Shard", "deco_ore_obsidian_vein", "Sharp volcanic glass mined from badlands outcrops.")),
+            Map.entry("raw_amber", new ItemInfo("Raw Amber", "deco_ore_amber_vein", "Fossil resin uncovered in eroded old forest soil.")),
+            Map.entry("rock_salt", new ItemInfo("Rock Salt", "deco_ore_rock_salt_vein", "Halite crystals from dry coastal and desert deposits.")),
+            Map.entry("obsidian_glass", new ItemInfo("Honed Obsidian", "material_obsidian_glass", "Knapped volcanic blade blanks for fine weapons.")),
+            Map.entry("polished_amber", new ItemInfo("Polished Amber", "material_polished_amber", "Warm translucent resin polished for charms.")),
+            Map.entry("refined_salt", new ItemInfo("Refined Salt", "material_refined_salt", "Clean salt for preserving travel food.")),
+            Map.entry("cypress_wood", new ItemInfo("Cypress Wood", "material_cypress_wood", "Water-resistant reddish timber from marsh cypress trees.")),
+            Map.entry("bog_iron_ore", new ItemInfo("Bog Iron Ore", "material_bog_iron_ore", "Iron-rich nodules gathered from marsh sediment.")),
+            Map.entry("froststeel_ore", new ItemInfo("Froststeel Ore", "material_froststeel_ore", "Cold blue ore found beneath tundra frost.")),
+            Map.entry("sunmetal_ore", new ItemInfo("Sunmetal Ore", "material_sunmetal_ore", "Sun-warmed ore exposed by desert winds.")),
+            Map.entry("emberite_ore", new ItemInfo("Emberite Ore", "material_emberite_ore", "Heat-tempered ore from badlands outcrops.")),
+            Map.entry("verdant_ore", new ItemInfo("Verdant Ore", "material_verdant_ore", "Root-veined ore found in old forest soil.")),
+            Map.entry("iron_ingot", new ItemInfo("Iron Ingot", "material_iron_ingot", "Refined iron stock for forge recipes.")),
+            Map.entry("copper_ingot", new ItemInfo("Copper Ingot", "material_copper_ingot", "Refined copper stock for forge recipes.")),
+            Map.entry("tin_ingot", new ItemInfo("Tin Ingot", "material_tin_ingot", "Refined tin stock for forge recipes.")),
+            Map.entry("silver_ingot", new ItemInfo("Silver Ingot", "material_silver_ingot", "Refined silver stock for forge recipes.")),
+            Map.entry("gold_ingot", new ItemInfo("Gold Ingot", "material_gold_ingot", "Refined gold stock for forge recipes.")),
+            Map.entry("mithril_ingot", new ItemInfo("Mithril Ingot", "material_mithril_ingot", "Refined mithril stock for forge recipes.")),
+            Map.entry("cobalt_ingot", new ItemInfo("Cobalt Ingot", "material_cobalt_ingot", "Refined cobalt stock for forge recipes.")),
+            Map.entry("adamantite_ingot", new ItemInfo("Adamantite Ingot", "material_adamantite_ingot", "Refined adamantite stock for forge recipes.")),
+            Map.entry("bog_iron_ingot", new ItemInfo("Bog Iron Ingot", "material_bog_iron_ingot", "Refined bog iron stock for forge recipes.")),
+            Map.entry("froststeel_ingot", new ItemInfo("Froststeel Ingot", "material_froststeel_ingot", "Refined froststeel stock for forge recipes.")),
+            Map.entry("sunmetal_ingot", new ItemInfo("Sunmetal Ingot", "material_sunmetal_ingot", "Refined sunmetal stock for forge recipes.")),
+            Map.entry("emberite_ingot", new ItemInfo("Emberite Ingot", "material_emberite_ingot", "Refined emberite stock for forge recipes.")),
+            Map.entry("verdant_ingot", new ItemInfo("Verdant Ingot", "material_verdant_ingot", "Refined verdant stock for forge recipes.")),
+            Map.entry("bronze_ingot", new ItemInfo("Bronze Ingot", "material_bronze_ingot", "Refined bronze stock for forge recipes.")),
+            Map.entry("steel_ingot", new ItemInfo("Steel Ingot", "material_steel_ingot", "Refined steel stock for forge recipes.")),
+            Map.entry("ancient_wood", new ItemInfo("Ancient Wood", "material_ancient_wood", "Dense heartwood recovered from ancient forest roots.")),
+            Map.entry("palm_wood", new ItemInfo("Palm Wood", "material_palm_wood", "Fibrous coastal timber from palms.")),
             Map.entry("wood", new ItemInfo("Wood", "material_wood", "Crafting ingredient from chopped trees.")),
             Map.entry("oak_wood", new ItemInfo("Oak Wood", "material_oak_wood", "Dense shield-ready timber from oak trees.")),
             Map.entry("birch_wood", new ItemInfo("Birch Wood", "material_birch_wood", "Pale flexible wood used for light handles and bows.")),
@@ -120,6 +149,18 @@ public final class CraftingSystem {
             Map.entry("flower_blossom", new ItemInfo("Flower Blossom", "material_flower_blossom", "A fragrant reagent for calming tinctures.")),
             Map.entry("garden_vegetables", new ItemInfo("Garden Vegetables", "material_garden_vegetables", "Fresh produce from tended planters.")),
             Map.entry("flint", new ItemInfo("Flint", "material_flint", "Sharp stone for simple field tools.")),
+            Map.entry("linen_cloth", new ItemInfo("Linen Cloth", "material_linen_cloth", "Woven from gathered plant fiber.")),
+            Map.entry("wool_cloth", new ItemInfo("Wool Cloth", "material_wool_cloth", "Woven from sheep and mountain-goat wool.")),
+            Map.entry("silk_cloth", new ItemInfo("Silk Cloth", "material_silk_cloth", "Woven from silk dropped by spiders.")),
+            Map.entry("moonweave_cloth", new ItemInfo("Moonweave Cloth", "material_moonweave_cloth", "Infuse silk with gathered glowroot and elder wood.")),
+            Map.entry("starweave_cloth", new ItemInfo("Starweave Cloth", "material_starweave_cloth", "Enchant moonweave with crystal dust and refined silver.")),
+            Map.entry("tanned_leather", new ItemInfo("Tanned Leather", "material_tanned_leather", "Tan animal skins with gathered plant fiber.")),
+            Map.entry("hardened_leather", new ItemInfo("Hardened Leather", "material_hardened_leather", "Heat-treat tanned leather using mined coal.")),
+            Map.entry("reinforced_leather", new ItemInfo("Reinforced Leather", "material_reinforced_leather", "Reinforce hardened leather with boar or troll hide.")),
+            Map.entry("frosthide_leather", new ItemInfo("Frosthide Leather", "material_frosthide_leather", "Bind reinforced leather with frost shards from frost wolves, trolls, or ice golems.")),
+            Map.entry("dragonscale_leather", new ItemInfo("Dragonscale Leather", "material_dragonscale_leather", "Layer reinforced leather with creature scales and fiery ember shards.")),
+            Map.entry("spider_silk", new ItemInfo("Spider Silk", "material_spider_silk", "Dropped by spiders. Weave into silk cloth.")),
+            Map.entry("thick_hide", new ItemInfo("Thick Hide", "material_thick_hide", "Dropped by bramble boars and swamp or frost trolls. Reinforces leather.")),
             Map.entry("plant_fiber", new ItemInfo("Plant Fiber", "material_plant_fiber", "Tough cordage from grasses, reeds, and bark.")),
             Map.entry("clay", new ItemInfo("Clay", "material_clay", "Workable earth used in cooking and alchemy vessels.")),
             Map.entry("coal", new ItemInfo("Coal", "material_coal", "Hot-burning fuel for forgework and field fires.")),
@@ -167,7 +208,7 @@ public final class CraftingSystem {
             "campfire_coal"
     );
 
-    public static final List<Recipe> RECIPES = List.of(
+    private static final List<Recipe> BASE_RECIPES = List.of(
             recipe("stone_axe", "Stone Axe", null,
                     Map.of("stone", 2, "flint", 1, "plant_fiber", 1), "stone_axe", 1, 60,
                     "A crude field axe tied from stone and fiber."),
@@ -184,10 +225,10 @@ public final class CraftingSystem {
                     Map.of("deadwood", 2, "flint", 1), "coal", 3, 65,
                     Profession.WOODCUTTING.id(), Map.of(Profession.WOODCUTTING.id(), 1),
                     "Burn dry deadwood down into hotter forge fuel."),
-            recipe("tin_copper_alloy", "Tin-Copper Alloy", Workstation.ANVIL,
-                    Map.of("copper_ore", 2, "tin_ore", 1, "coal", 1), "steel_scrap", 1, 90,
+            recipe("tin_copper_alloy", "Bronze Alloy", Workstation.ANVIL,
+                    Map.of("copper_ore", 2, "tin_ore", 1, "coal", 1), "bronze_ingot", 1, 90,
                     Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 2, Profession.MINING.id(), 2),
-                    "Work soft ores into repairable metal stock for simple fittings."),
+                    "Alloy copper and tin into bronze stock for tools and fittings."),
             recipe("coconut_rations", "Coconut Rations", null,
                     Map.of("coconut", 2, "plant_fiber", 1), "trail_rations", 1, 80,
                     Profession.COOKING.id(), Map.of(Profession.COOKING.id(), 2, Profession.SURVIVAL.id(), 2),
@@ -464,25 +505,168 @@ public final class CraftingSystem {
                     "Solari's ember rite shapes heat, glass, and ash into a socket stone.")
     );
 
+    public static final List<Recipe> RECIPES = resourceRecipes();
+
+    private static List<Recipe> resourceRecipes() {
+        List<Recipe> recipes = new ArrayList<>(BASE_RECIPES);
+        for (String metal : List.of("iron", "copper", "tin", "silver", "gold", "mithril", "cobalt", "adamantite", "bog_iron", "froststeel", "sunmetal", "emberite", "verdant")) {
+            String ingot = metal + "_ingot";
+            recipes.add(recipe("smelt_" + metal, "Smelt " + itemName(ingot), Workstation.ANVIL,
+                    Map.of(metal + "_ore", 2, "coal", 1), ingot, 1, 90,
+                    "Smelt two pieces of ore into refined forge stock."));
+        }
+        recipes.add(recipe("smelt_bronze", "Alloy Bronze Ingots", Workstation.ANVIL,
+                Map.of("copper_ingot", 2, "tin_ingot", 1, "coal", 1), "bronze_ingot", 3, 110,
+                "Alloy refined copper and tin into bronze."));
+        recipes.add(recipe("smelt_steel", "Smelt Steel", Workstation.ANVIL,
+                Map.of("iron_ingot", 1, "coal", 2), "steel_ingot", 1, 110,
+                "Temper refined iron with carbon into steel."));
+        recipes.add(recipe("recycle_steel", "Recycle Steel Scrap", Workstation.ANVIL,
+                Map.of("steel_scrap", 2, "coal", 1), "steel_ingot", 1, 80,
+                "Recover usable steel from old scrap."));
+        // Keep existing raw-ore recipes and saved recipe keys usable; offer refined alternatives.
+        for (Recipe base : BASE_RECIPES) {
+            if (base.workstation() != Workstation.ANVIL || base.category() == RecipeCategory.MATERIAL) continue;
+            Map<String, Integer> cost = new LinkedHashMap<>();
+            boolean refined = false;
+            for (var entry : base.cost().entrySet()) {
+                String key = entry.getKey();
+                boolean metal = key.endsWith("_ore") || key.equals("steel_scrap");
+                if (metal) {
+                    key = key.equals("steel_scrap") ? "steel_ingot" : key.replace("_ore", "_ingot");
+                    refined = true;
+                }
+                cost.put(key, metal ? (entry.getValue() + 1) / 2 : entry.getValue());
+            }
+            if (refined) recipes.add(recipe(base.key() + "_refined", base.name() + " (Ingots)",
+                    base.workstation(), cost, base.resultKey(), base.resultAmount(), base.ticks(),
+                    base.profession(), base.professionRequirements(), "Forge with refined stock. " + base.description()));
+        }
+        for (String wood : List.of("oak_wood", "birch_wood", "pine_wood", "willow_wood", "maple_wood",
+                "ash_wood", "elder_wood", "magic_wood", "ancient_wood", "palm_wood", "cypress_wood", "fruitwood", "ironwood")) {
+            recipes.add(recipe("saw_" + wood, "Saw " + itemName(wood), Workstation.CARPENTER,
+                    Map.of(wood, 1), "wood", 2, 45, "Cut typed timber into general building lumber."));
+        }
+        recipes.add(recipe("ancient_staff", "Ancient Heartwood Staff", Workstation.CARPENTER,
+                Map.of("ancient_wood", 3, "elder_wood", 1, "crystal_dust", 2), "oakheart_staff", 1, 150,
+                "Shape ancient heartwood and elder into a spell-friendly staff."));
+        recipes.add(recipe("bronze_pickaxe", "Bronze-Fitted Pickaxe", Workstation.ANVIL,
+                Map.of("bronze_ingot", 2, "wood", 2), "iron_pickaxe", 1, 140,
+                "Fit a durable mining tool with bronze stock."));
+        recipes.add(recipe("forge_bog_iron", "Bog Iron Forgework", Workstation.ANVIL,
+                Map.of("bog_iron_ingot", 3, "oak_wood", 2), "iron_kite_shield", 1, 190,
+                "Use regional metal to forge iron kite shield."));
+        recipes.add(recipe("forge_froststeel", "Froststeel Forgework", Workstation.ANVIL,
+                Map.of("froststeel_ingot", 3, "frost_shard", 2, "skin", 1), "frostguard_aegis", 1, 190,
+                "Use regional metal to forge frostguard aegis."));
+        recipes.add(recipe("forge_sunmetal", "Sunmetal Forgework", Workstation.ANVIL,
+                Map.of("sunmetal_ingot", 3, "crystal_dust", 1), "sunward_medallion", 1, 190,
+                "Set sunmetal around a crystal core to forge a sunward medallion."));
+        recipes.add(recipe("forge_gold_medallion", "Gold Sunward Medallion", Workstation.ANVIL,
+                Map.of("gold_ingot", 3, "crystal_dust", 2), "sunward_medallion", 1, 190,
+                "Shape refined gold around a bright crystal core."));
+        recipes.add(recipe("forge_emberite", "Emberite Forgework", Workstation.ANVIL,
+                Map.of("emberite_ingot", 3, "ember_shard", 2, "scale", 1), "emberward_shield", 1, 190,
+                "Use regional metal to forge emberward shield."));
+        recipes.add(recipe("forge_verdant", "Verdant Forgework", Workstation.ANVIL,
+                Map.of("verdant_ingot", 3, "ancient_wood", 2, "silver_ingot", 1), "silver_mace", 1, 190,
+                "Use regional metal to forge silver mace."));
+        recipes.add(recipe("process_obsidian", "Hone Obsidian", Workstation.ANVIL,
+                Map.of("obsidian_shard", 3, "stone", 1), "obsidian_glass", 2, 95,
+                "Knapp and hone volcanic glass into sharp blade blanks."));
+        recipes.add(recipe("process_amber", "Polish Amber", Workstation.CARPENTER,
+                Map.of("raw_amber", 2, "plant_fiber", 1), "polished_amber", 1, 75,
+                "Polish fossil resin with a fiber pad for jewelwork."));
+        recipes.add(recipe("process_salt", "Refine Salt", Workstation.OVEN,
+                Map.of("rock_salt", 2, "coal", 1), "refined_salt", 3, 85,
+                "Clean and dry halite crystals into cooking salt."));
+        recipes.add(recipe("resource_salted_fish", "Salted Fish Rations", Workstation.OVEN,
+                Map.of("raw_fish", 2, "refined_salt", 1), "trail_rations", 3, 95,
+                "Preserve fish with salt for long journeys."));
+        recipes.add(recipe("resource_salted_meat", "Cured Meat Rations", Workstation.OVEN,
+                Map.of("wild_meat", 2, "refined_salt", 1), "trail_rations", 3, 105,
+                "Cure gathered meat into lasting travel rations."));
+        recipes.add(recipe("resource_amber_seal", "Amber Marshlight Seal", Workstation.ANVIL,
+                Map.of("polished_amber", 2, "bog_iron_ingot", 2, "glowroot", 1), "marshlight_seal", 1, 180,
+                Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 4),
+                "Set warm amber and glowroot into a bog-iron seal."));
+        recipes.add(recipe("resource_obsidian_fang", "Forge Obsidian Fang", Workstation.ANVIL,
+                Map.of("obsidian_glass", 4, "steel_ingot", 2, "cypress_wood", 2), "obsidian_fang", 1, 230,
+                Profession.CRAFTING.id(), Map.of(Profession.CRAFTING.id(), 6, Profession.MINING.id(), 4),
+                "Bind honed volcanic glass to a steel core with a moisture-resistant cypress grip."));
+        recipes.add(recipe("resource_cypress_rack", "Cypress Net Drying Rack", Workstation.CARPENTER,
+                Map.of("cypress_wood", 2, "plant_fiber", 3), "village_prop_net_drying_rack", 1, 110,
+                "Build a rot-resistant rack from marsh timber."));
+        recipes.add(recipe("process_linen_cloth", "Linen Cloth", Workstation.CARPENTER,
+                Map.of("plant_fiber", 3), "linen_cloth", 1, 80,
+                Profession.TAILORING.id(), Map.of(Profession.TAILORING.id(), 1),
+                "Woven from gathered plant fiber."));
+        recipes.add(recipe("process_wool_cloth", "Wool Cloth", Workstation.CARPENTER,
+                Map.of("wool", 3), "wool_cloth", 1, 100,
+                Profession.TAILORING.id(), Map.of(Profession.TAILORING.id(), 2),
+                "Woven from sheep and mountain-goat wool."));
+        recipes.add(recipe("process_silk_cloth", "Silk Cloth", Workstation.CARPENTER,
+                Map.of("spider_silk", 3), "silk_cloth", 1, 120,
+                Profession.TAILORING.id(), Map.of(Profession.TAILORING.id(), 4),
+                "Woven from silk dropped by spiders."));
+        recipes.add(recipe("process_moonweave_cloth", "Moonweave Cloth", Workstation.CARPENTER,
+                Map.of("silk_cloth", 2, "glowroot", 2, "elder_wood", 1), "moonweave_cloth", 1, 140,
+                Profession.TAILORING.id(), Map.of(Profession.TAILORING.id(), 6),
+                "Infuse silk with gathered glowroot and elder wood."));
+        recipes.add(recipe("process_starweave_cloth", "Starweave Cloth", Workstation.CARPENTER,
+                Map.of("moonweave_cloth", 2, "crystal_dust", 3, "silver_ingot", 1), "starweave_cloth", 1, 160,
+                Profession.TAILORING.id(), Map.of(Profession.TAILORING.id(), 8),
+                "Enchant moonweave with crystal dust and refined silver."));
+        recipes.add(recipe("process_tanned_leather", "Tanned Leather", Workstation.CARPENTER,
+                Map.of("skin", 2, "plant_fiber", 1), "tanned_leather", 1, 80,
+                Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 1),
+                "Tan animal skins with gathered plant fiber."));
+        recipes.add(recipe("process_hardened_leather", "Hardened Leather", Workstation.CARPENTER,
+                Map.of("tanned_leather", 2, "coal", 1), "hardened_leather", 1, 100,
+                Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 2),
+                "Heat-treat tanned leather using mined coal."));
+        recipes.add(recipe("process_reinforced_leather", "Reinforced Leather", Workstation.CARPENTER,
+                Map.of("hardened_leather", 2, "thick_hide", 2), "reinforced_leather", 1, 120,
+                Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 4),
+                "Reinforce hardened leather with boar or troll hide."));
+        recipes.add(recipe("process_frosthide_leather", "Frosthide Leather", Workstation.CARPENTER,
+                Map.of("reinforced_leather", 2, "frost_shard", 2), "frosthide_leather", 1, 140,
+                Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 6),
+                "Bind reinforced leather with frost shards from frost wolves, trolls, or ice golems."));
+        recipes.add(recipe("process_dragonscale_leather", "Dragonscale Leather", Workstation.CARPENTER,
+                Map.of("reinforced_leather", 2, "scale", 4, "ember_shard", 2), "dragonscale_leather", 1, 160,
+                Profession.LEATHERWORKING.id(), Map.of(Profession.LEATHERWORKING.id(), 8),
+                "Layer reinforced leather with creature scales and fiery ember shards."));
+        return List.copyOf(recipes);
+    }
+
     private ActiveTask activeTask;
 
     public static String itemName(String key) {
+        AssemblyCrafting.Component part = AssemblyCrafting.component(key);
+        if (part != null) return part.name();
         ItemInfo info = CRAFTING_ITEMS.get(key);
         return info == null ? null : info.name();
     }
 
     public static String itemIcon(String key) {
+        AssemblyCrafting.Component part = AssemblyCrafting.component(key);
+        if (part != null) return itemIcon(part.material().key());
         ItemInfo info = CRAFTING_ITEMS.get(key);
         return info == null ? null : info.icon();
     }
 
     public static String itemDetail(String key) {
+        AssemblyCrafting.Component part = AssemblyCrafting.component(key);
+        if (part != null) return part.material().summary() + ". " + part.quality().label
+                + " component for the " + part.slot().label + " slot. Used in equipment assembly.";
         ItemInfo info = CRAFTING_ITEMS.get(key);
-        return info == null ? "" : info.detail();
+        MaterialCatalog.Material material = MaterialCatalog.get(key);
+        return (info == null ? "" : info.detail()) + (material == null ? "" : " " + material.summary());
     }
 
     public static boolean isCraftingOnlyItem(String key) {
-        return CRAFTING_ITEMS.containsKey(key);
+        return CRAFTING_ITEMS.containsKey(key) || AssemblyCrafting.component(key) != null;
     }
 
     public static Workstation workstationForAsset(String asset) {
@@ -573,11 +757,13 @@ public final class CraftingSystem {
             categories.add(RecipeCategory.WEAPON);
             categories.add(RecipeCategory.ARMOR);
             categories.add(RecipeCategory.TOOL);
+            categories.add(RecipeCategory.MATERIAL);
         }
         if (hasAny(text, "carpenter", "woodworker", "woodwright", "bowyer", "fletcher", "joiner")) {
             categories.add(RecipeCategory.WEAPON);
             categories.add(RecipeCategory.TOOL);
             categories.add(RecipeCategory.DECOR);
+            categories.add(RecipeCategory.MATERIAL);
         }
         if (hasAny(text, "cook", "baker", "innkeeper", "tavern", "brewer", "chef")) {
             categories.add(RecipeCategory.CONSUMABLE);
@@ -745,9 +931,12 @@ public final class CraftingSystem {
     }
 
     private GatherCandidate gatherCandidateAt(WorldMap world, String mapId, int x, int y) {
-        WorldProp prop = world.propAt(mapId, x, y);
-        if (prop != null && isGatherableProp(prop.asset())) {
-            return new GatherCandidate(propGatherLabel(prop.asset()), new TilePoint(x, y), 'P', prop.asset());
+        List<WorldProp> props = world.propsAt(mapId, x, y);
+        for (int i = props.size() - 1; i >= 0; i--) {
+            WorldProp prop = props.get(i);
+            if (isGatherableProp(prop.asset())) {
+                return new GatherCandidate(propGatherLabel(prop.asset()), new TilePoint(x, y), 'P', prop.asset());
+            }
         }
         char tile = world.tileAt(mapId, x, y);
         if (tile == 'm' || tile == 'q') {
@@ -875,7 +1064,7 @@ public final class CraftingSystem {
                 case "steel_scrap" -> "steel scrap";
                 case "crystal_dust" -> "crystals";
                 case "coal" -> "coal";
-                default -> "ore";
+                default -> itemName(oreKey).toLowerCase();
             };
         }
         String woodKey = typedWoodKey(lower);
@@ -894,7 +1083,7 @@ public final class CraftingSystem {
                 case "ironwood" -> "ironwood";
                 case "enchanted_bark" -> "enchanted bark";
                 case "glowroot" -> "glowroot";
-                default -> "wood";
+                default -> itemName(woodKey).toLowerCase();
             };
         }
         if (lower.contains("seed_bowl")) {
@@ -1115,6 +1304,10 @@ public final class CraftingSystem {
         if (random.nextDouble() < 0.45) {
             addLoot(output, "wood", 1);
         }
+        if (woodKey.equals("palm_wood")) {
+            addLoot(output, "palm_frond", 1);
+            if (random.nextBoolean()) addLoot(output, "coconut", 1);
+        }
         if (lower.contains("fruit") && random.nextDouble() < 0.65) {
             addLoot(output, "garden_vegetables", 1);
         }
@@ -1166,6 +1359,12 @@ public final class CraftingSystem {
     }
 
     private static String typedWoodKey(String lower) {
+        if (lower.equals("deco_tree_cypress_harvestable")) return "cypress_wood";
+        if (lower.equals("deco_forest_ancient_roots")) return "ancient_wood";
+        if (lower.equals("deco_beach_palm") || lower.equals("deco_beach_palm_cluster") || lower.equals("deco_palm")) return "palm_wood";
+        if (lower.equals("deco_tree_round") || lower.equals("deco_tree_young")
+                || lower.equals("deco_forest_broadleaf_cluster")) return "oak_wood";
+
         if (lower.contains("oak_harvestable")) {
             return "oak_wood";
         }
@@ -1214,6 +1413,15 @@ public final class CraftingSystem {
     }
 
     private static String typedOreKey(String lower) {
+        if (lower.equals("deco_ore_obsidian_vein")) return "obsidian_shard";
+        if (lower.equals("deco_ore_amber_vein")) return "raw_amber";
+        if (lower.equals("deco_ore_rock_salt_vein")) return "rock_salt";
+        if (lower.equals("deco_ore_bog_iron_vein")) return "bog_iron_ore";
+        if (lower.equals("deco_ore_froststeel_vein")) return "froststeel_ore";
+        if (lower.equals("deco_ore_sunmetal_vein")) return "sunmetal_ore";
+        if (lower.equals("deco_ore_emberite_vein")) return "emberite_ore";
+        if (lower.equals("deco_ore_verdant_vein")) return "verdant_ore";
+
         if (lower.contains("iron_vein")) {
             return "iron_ore";
         }
@@ -1409,6 +1617,7 @@ public final class CraftingSystem {
         if (lower.isBlank()) {
             return PropProfile.NONE;
         }
+        if (typedWoodKey(lower) != null) return PropProfile.WOOD;
         if (lower.contains("coconut")) {
             return PropProfile.COCONUT;
         }
@@ -1534,6 +1743,14 @@ public final class CraftingSystem {
                 || lower.equals("deco_stump");
     }
 
+    /** Testing only: retain actual output/quality, but never spend resources or grant XP. */
+    public String creativeCraft(Actor actor, Recipe recipe) {
+        if (activeTask != null) return "Already busy: " + activeTask.actionLabel + ".";
+        if (recipe == null) return "That recipe is not available.";
+        actor.addItem(recipe.resultKey(), recipe.resultAmount());
+        return "Creative crafted " + recipe.resultAmount() + "x " + GameData.itemName(recipe.resultKey()) + ". No materials spent or XP earned.";
+    }
+
     public String beginCraft(Actor actor, Recipe recipe) {
         if (activeTask != null) {
             return "Already busy: " + activeTask.actionLabel + ".";
@@ -1571,6 +1788,7 @@ public final class CraftingSystem {
     }
 
     private static int craftedOutputBonus(Actor actor, Recipe recipe) {
+        if (recipe.resultKey().startsWith("part1~") || recipe.resultKey().startsWith("gear1~")) return 0;
         String profession = recipe.profession();
         int bonus = 0;
         if ("crafting".equals(profession)) {
@@ -1616,14 +1834,33 @@ public final class CraftingSystem {
                 }
             }
         }
+        String completedAction = activeTask.actionLabel;
         int earnedCharacterXp = activeTask.characterXp;
         activeTask = null;
-        String levels = levelNotes.isEmpty() ? "" : " Skills improved: " + String.join(", ", levelNotes) + ".";
-        String regularXp = earnedCharacterXp <= 0 ? "" : " +" + earnedCharacterXp + " XP.";
+        String levels = levelNotes.isEmpty() ? "" : " Skill gains: " + String.join(", ", levelNotes) + ".";
+        String regularXp = earnedCharacterXp <= 0 ? "" : " Earned " + earnedCharacterXp + " XP.";
         if (!characterNotes.isEmpty()) {
             regularXp += " " + String.join(" ", characterNotes);
         }
-        return "Finished: +" + label + "." + regularXp + levels;
+        return completedTaskLabel(completedAction, label) + regularXp + levels;
+    }
+
+    private static String completedTaskLabel(String action, String loot) {
+        String normalized = action == null ? "" : action.toLowerCase();
+        if (normalized.startsWith("crafting")) {
+            return "Crafted " + loot + ".";
+        }
+        if (normalized.startsWith("fishing")) {
+            return "Caught " + loot + ".";
+        }
+        if (normalized.startsWith("mining") || normalized.startsWith("chipping")) {
+            return "Mined " + loot + ".";
+        }
+        if (normalized.startsWith("gathering") || normalized.startsWith("chopping")
+                || normalized.startsWith("hewing")) {
+            return "Gathered " + loot + ".";
+        }
+        return "Finished: " + loot + ".";
     }
 
     private static Recipe recipe(
@@ -1706,6 +1943,9 @@ public final class CraftingSystem {
     }
 
     private static void rollMonsterLoot(String monsterKey, Random random, Map<String, Integer> loot) {
+        if ("spider".equals(monsterKey)) addLoot(loot, "spider_silk", 1);
+        if (Set.of("bramble_boar", "swamp_troll", "frost_troll").contains(monsterKey))
+            addLoot(loot, "thick_hide", 1);
         switch (monsterKey) {
             case "sheep" -> addLoot(loot, "wool", 1 + random.nextInt(2));
             case "crystal_hare" -> {
@@ -1899,9 +2139,12 @@ public final class CraftingSystem {
         }
         List<String> parts = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : loot.entrySet()) {
-            parts.add(entry.getValue() + " " + GameData.itemName(entry.getKey()));
+            parts.add(entry.getValue() + "× " + GameData.itemName(entry.getKey()));
         }
-        return String.join(", ", parts);
+        if (parts.size() == 1) {
+            return parts.get(0);
+        }
+        return String.join(", ", parts.subList(0, parts.size() - 1)) + " and " + parts.get(parts.size() - 1);
     }
 
     private static final class ActiveTask {

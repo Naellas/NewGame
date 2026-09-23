@@ -269,10 +269,10 @@ public final class CompanionDialogueQaExport {
 
     private static String questPath(Npc companion, Quest quest) {
         String root = "Discuss " + quest.title;
-        if (!quest.accepted) return root + "|Why does this matter now";
-        if (quest.completed) return root + "|What have we actually established";
+        if (!quest.accepted) return root + "|How did this start";
+        if (quest.completed) return root + "|What do we know so far";
         if (quest.ready()) return root + "|Report the completed work";
-        return root + "|What still needs to be done";
+        return root + "|Where should I begin";
     }
 
     private static String offerClarifyProbe(Npc companion, Quest quest) {
@@ -345,6 +345,10 @@ public final class CompanionDialogueQaExport {
         report.append("#### ").append(pathSpec.replace("|", " -> ")).append("\n\n");
         appendNode(report, "NPC", session.line(trust), session.optionLabels());
         for (String step : steps) {
+            while (session.optionLabels().equals(List.of("Continue"))) {
+                session.choose(0);
+                appendNode(report, "NPC (continued)", session.line(trust), session.optionLabels());
+            }
             int optionIndex = findOption(session.optionLabels(), step);
             if (optionIndex < 0) {
                 report.append("- Missing option containing: `").append(step).append("`\n\n");
@@ -421,6 +425,7 @@ public final class CompanionDialogueQaExport {
         String sampleName = pathSpec.replace("|", " -> ");
         checkSampleNode(findings, sampleName, "opening", session.line(trust), session.optionLabels(), seenLines, questStageSample);
         for (String step : pathSpec.split("\\|")) {
+            while (session.optionLabels().equals(List.of("Continue"))) session.choose(0);
             List<String> options = session.optionLabels();
             int optionIndex = findOption(options, step);
             if (optionIndex < 0) {

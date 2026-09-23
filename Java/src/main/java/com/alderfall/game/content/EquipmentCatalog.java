@@ -395,7 +395,7 @@ final class EquipmentCatalog {
         }
         Equipment equipment = equipment(key);
         if (equipment != null) {
-            return equipment.icon();
+            return ItemAppearance.icon(equipment);
         }
         String craftingIcon = CraftingSystem.itemIcon(key);
         return craftingIcon == null ? "icon_chest" : craftingIcon;
@@ -415,6 +415,7 @@ final class EquipmentCatalog {
     }
 
     public static Equipment equipment(String key) {
+        if (key != null && key.startsWith("gear1~")) return AssemblyCrafting.equipment(key);
         Equipment direct = EQUIPMENT.get(key);
         if (direct != null) {
             return direct;

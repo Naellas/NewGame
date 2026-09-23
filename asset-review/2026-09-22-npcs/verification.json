@@ -1,0 +1,34 @@
+{
+  "refreshed_characters": 6,
+  "direction_corrected_characters": 7,
+  "baseline_files": 300,
+  "changed_pngs": 90,
+  "changed_metadata": 2,
+  "unchanged_files": 208,
+  "archived_originals_verified": 300,
+  "normalized_work_strips": [
+    {
+      "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.png",
+      "before": [
+        768,
+        128
+      ],
+      "after": [
+        576,
+        128
+      ]
+    },
+    {
+      "path": "Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.png",
+      "before": [
+        768,
+        128
+      ],
+      "after": [
+        576,
+        128
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -93,6 +93,8 @@ public final class RegionalBuildingTypes {
     }
 
     public static String name(String mapId, CityBuilding building) {
+        RegionalSettlementIdentity.TownBuildingSpec town = RegionalSettlementIdentity.townBuilding(mapId, building);
+        if (town != null) return town.label();
         Type type = type(mapId, building);
         if (type == null) return "";
         String place = mapId.substring(mapId.indexOf('_') + 1);

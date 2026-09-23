@@ -10,12 +10,17 @@ import java.util.Arrays;
 /** Rendering-only coverage, chunk seams, zoom, and edit invalidation checks. */
 public final class LayeredTerrainTest {
     public static void main(String[] args) {
+        require(LayeredTerrainRenderer.supports("city"), "City terrain is not using continuous blending");
+        require(LayeredTerrainRenderer.settlementMaterial('x', 'n', true) == 'n',
+                "City walls do not expose regional ground beneath their sprites");
+        require(RoadSurface.isMaterial(LayeredTerrainRenderer.settlementMaterial('p', 'n', true)),
+                "City paving is not mapped into a blendable material");
         GameState state = new GameState(GameConfig.load(Path.of("").toAbsolutePath().normalize()));
         state.currentMapId = state.world.createEditorMap("editor_layers", "Layers", "village", 30, 24);
         MapArea area = state.world.area(state.currentMapId);
         for (int y = 0; y < area.tiles.length; y++) {
             for (int x = 0; x < area.tiles[y].length; x++) {
-                area.tiles[y][x] = x < 12 ? 'w' : y < 10 ? 'n' : 'g';
+                area.setTile(x, y, x < 12 ? 'w' : y < 10 ? 'n' : 'g');
             }
         }
         char[][] before = Arrays.stream(area.tiles).map(char[]::clone).toArray(char[][]::new);
@@ -58,7 +63,7 @@ public final class LayeredTerrainTest {
         compare(direct.getSubimage(24, 24, 16 * 24, 12 * 24), scrolled);
         require(Arrays.deepEquals(before, area.tiles), "Rendering mutated gameplay tiles");
         var old = layers.tile(state, painter, 12, 14, 48);
-        area.tiles[14][11] = 'g';
+        area.setTile(11, 14, 'g');
         require(layers.tile(state, painter, 12, 14, 48) != old, "Neighbor edit did not invalidate surface");
         BufferedImage edited = render(renderer, state, true, 6, 5, 18, 14);
         compare(render(renderer, state, false, 6, 5, 18, 14), edited);

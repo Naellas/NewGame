@@ -12,8 +12,14 @@
 /Java/saves/
 /Java/config/settings.properties
 /Java/exports/
+/Java/temp/
 
 # Compiled classes and Python tool caches
 *.class
 __pycache__/
 *.pyc
+
+# JVM profiling recordings and crash reports
+*.jfr
+hs_err_pid*.log
+replay_pid*.log

@@ -17,9 +17,8 @@ public final class QuestNarrative {
     public static String subject(Quest quest) {
         if (MainStoryContent.supports(quest)) return MainStoryContent.subject(quest);
         if (quest.completed) return clean(quest.activeCompleteDialog());
-        if (quest.ready()) return "The work for this stage is done. " + clean(quest.activeReadyDialog());
-        return quest.accepted ? "We are working on " + quest.title + ". The next step is " + quest.activeStage().title() + "."
-                : clean(quest.activeStartDialog());
+        if (quest.ready()) return clean(quest.activeReadyDialog());
+        return clean(quest.activeStartDialog());
     }
 
     public static String findings(Quest quest) {
@@ -210,6 +209,7 @@ public final class QuestNarrative {
         }
         CompanionQuestContent.refine(result);
         MainStoryContent.refine(result);
+        result.replaceAll((id, quest) -> NpcQuestStories.refine(quest));
         return Map.copyOf(result);
     }
 

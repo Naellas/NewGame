@@ -15,6 +15,26 @@ Each settlement has two commons selected from accessible open ground. Their posi
 
 Three new house sprites and a timber-walk texture were generated with the built-in imagegen tool. Their subdued materials, overhead view and south-facing doors match the existing game art. Most ordinary northern, southern and Fenland homes use them; some older houses and all specialised businesses and story buildings retain their established appearances. Source prompts and provenance are in [prompts.md](../assets/city/regional/prompts.md). The PNGs were copied unmodified, with scaling performed by the renderer.
 
+The overworld now uses the same authored-cutout approach as Archive City. Briarbridge, Ironvale, Reedwatch, Embermarket, Northwatch and Greyharbor each have a unique town silhouette. The twelve named villages resolve through six cultural silhouettes: Hearth, River, North, Sun, Fen and Freeholds. This keeps settlements within one region visually related while their interiors, names and story content remain individual. The exact asset mapping lives in `RegionalSettlementIdentity.overworldAsset`, and generation provenance is in [settlement-overworld-prompts.md](../assets/city/overworld/settlement-overworld-prompts.md).
+
+## Town interior programs
+
+Towns no longer inherit only the capital's generic building mix. Each has a folklore-led civic program and two named quarters. Required institutions retain stable lot keys so their doors, generated interiors and saves remain compatible.
+
+| Town | Named quarters | Required civic and working buildings |
+| --- | --- | --- |
+| Briarbridge | Charter Quay; Abbey Orchards | Bridge Court, Guest Abbey, Charter Granary, Ferry Lodge, Millwheel Workshop |
+| Ironvale | Forge Ward; Names Court | Forge Keep, North Armory, Hall of Names, Winter Smokehouse, Pass Barracks |
+| Moonspire | Survey Close; Seed Ledger Ward | Survey Tower, Map Stacks, Common Granary, Public Scriptorium, Illuminators' Workshop |
+| Reedwatch | Bell Landing; Reedwright Walk | Listening Tower, Bellwrights' Workshop, Flood Bellhouse, Reedworkers' House, Eelers' Landing |
+| Embermarket | First-Cup Court; Cistern Ward | Sun Court, Water Ledger House, Cistern House, Caravanserai, Irrigators' Apothecary |
+| Northwatch | Signal Yard; Rescue Close | Signal Tower, Ropewrights' Shed, Rescue Lodge, Winter Rescue Stores, Stranded Travelers' Hall |
+| Greyharbor | Beacon Quay; Returned Crews Walk | Storm Beacon, Netmakers' Loft, Rescue Lodge, Raised Storm Stores, Returned Crews House |
+
+The interior generator removes the inherited rectangular road grid, joins four gates to a civic hub, branches lanes toward the named quarters and repairs any detached door-road component. Building footprints receive culture-appropriate stone, packed-earth or timber footings with softened sides and broken aprons; this prevents transparent building margins from exposing water or dungeon-wall tiles without creating rectangular paving mats. Functional districts use sparse, irregular material fields around their institutions rather than hard walls.
+
+Town walls now stop at the outer map boundary. All interior wall tiles, including the old solid footprint notches, become regional ground so the expanded map reads as usable outskirts rather than a dark wall block. Capitals may retain narrow authored defensive lines, but their former solid corner notches are also regional outskirts; fortification comes from gates and landmark buildings rather than filled rectangles.
+
 ## Generation and compatibility
 
 - Regional changes run after story and abbey entrances are registered. Building keys and lots remain stable, and entrances, NPC anchors, landmarks, harvestable resources and important props are protected from new water.
@@ -25,8 +45,10 @@ Three new house sprites and a timber-walk texture were generated with the built-
 
 ## Validation and review
 
-`RegionalSettlementTest` checks 24 settlements and 48 commons across seeds 0, 42 and 2026: asset availability and house transparency, accessible doors and directional exits, common features, worker targets, daily routines, regional waterways, deterministic regeneration and saved-position recovery. `--render` also captures nine representative settlements using the actual game renderer at noon. `--render-only` makes the captures alone.
+`RegionalSettlementTest` checks 24 settlements and 48 commons across seeds 0, 42 and 2026: asset availability and house transparency, accessible doors and directional exits, common features, worker targets, daily routines, regional waterways, deterministic regeneration and saved-position recovery. Town checks additionally enforce unique building and district programs, safe foundations, absence of orphan interior walls, gate-connected institution streets and a limit on uninterrupted straight roads. `--layout-only` runs the structural checks independently from the asset catalogue. `--render` also captures sixteen representative settlements using the actual game renderer at noon. `--render-only` makes the captures alone.
 
-Captures are under `asset-review/regions/` at the workspace root, including `city_highwall.png`, `city_sanctum.png`, `city_belltower.png`, `village_sunmere.png` and `village_mireford.png`.
+Captures are under `asset-review/regions/` at the workspace root. They include all five capitals, all seven towns and four representative villages.
 
-The change is a regional settlement pass, not a replacement for every civic building, interior, enemy camp or quest. Existing main street layouts and building footprints remain; the different waterways, open spaces, ordinary homes and working commons supply the new regional character.
+Overworld silhouette captures are under `asset-review/settlement-overworld/`. They include all six unique towns and one representative village from every regional family, rendered through the actual camera, lighting, weather and road layers.
+
+The change is a regional settlement pass, not a replacement for every individual building interior, enemy camp or quest. Stable building lots remain, while the street graph, foundations, district surfaces, waterways, open spaces, ordinary homes and working commons are rebuilt into the regional character.

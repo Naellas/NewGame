@@ -16,6 +16,8 @@ public final class WorldMapTerrainCache {
     private double kingdomWorldY;
     private double kingdomWorldW;
     private double kingdomWorldH;
+    private long terrainRevision = Long.MIN_VALUE;
+    private long kingdomRevision = Long.MIN_VALUE;
 
     public BufferedImage image(WorldMap world, int width, int height, boolean kingdoms) {
         return image(world, width, height, kingdoms, 0.0, 0.0, WorldMap.COLS, WorldMap.ROWS);
@@ -24,7 +26,10 @@ public final class WorldMapTerrainCache {
     public BufferedImage image(WorldMap world, int width, int height, boolean kingdoms,
                                double worldX, double worldY, double worldW, double worldH) {
         BufferedImage cached = kingdoms ? kingdomCache : terrainCache;
+        long revision = world.visualRevision(WorldMap.OVERWORLD_ID);
+        long cachedRevision = kingdoms ? kingdomRevision : terrainRevision;
         if (cached != null && cached.getWidth() == width && cached.getHeight() == height
+                && cachedRevision == revision
                 && sameViewport(kingdoms, worldX, worldY, worldW, worldH)) {
             return cached;
         }
@@ -46,12 +51,14 @@ public final class WorldMapTerrainCache {
             kingdomWorldY = worldY;
             kingdomWorldW = worldW;
             kingdomWorldH = worldH;
+            kingdomRevision = revision;
         } else {
             terrainCache = image;
             terrainWorldX = worldX;
             terrainWorldY = worldY;
             terrainWorldW = worldW;
             terrainWorldH = worldH;
+            terrainRevision = revision;
         }
         return image;
     }
@@ -59,6 +66,8 @@ public final class WorldMapTerrainCache {
     public void clear() {
         terrainCache = null;
         kingdomCache = null;
+        terrainRevision = Long.MIN_VALUE;
+        kingdomRevision = Long.MIN_VALUE;
     }
 
     private boolean sameViewport(boolean kingdoms, double worldX, double worldY, double worldW, double worldH) {

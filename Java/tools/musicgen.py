@@ -1,9 +1,9 @@
 """
 Procedural music generator for the RPG.
 
-Creates short loop-friendly WAV tracks for zones, battles, and stingers.
-The synth is intentionally simple and dependency-free: square/triangle/sine
-voices, light percussion, and deterministic presets.
+Creates developed stereo instrumental scores for regions, towns and battles.
+The default renderer uses NumPy; --legacy preserves the original synth and
+the existing audition sample workflows.
 
 Usage:
     python tools/musicgen.py
@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets" / "music"
 SAMPLE_RATE = 22_050
 TAU = math.pi * 2
-DEFAULT_BARS = 24
+DEFAULT_BARS = 32
 
 NOTE_INDEX = {
     "C": 0,
@@ -51,6 +51,7 @@ NOTE_INDEX = {
 }
 
 SCALES = {
+    "C_minor": ["C", "D", "Eb", "F", "G", "Ab", "Bb"],
     "C_major": ["C", "D", "E", "F", "G", "A", "B"],
     "A_minor": ["A", "B", "C", "D", "E", "F", "G"],
     "D_dorian": ["D", "E", "F", "G", "A", "B", "C"],
@@ -535,6 +536,13 @@ for ambient_name, (base_name, mood, tempo) in AMBIENT_VARIANTS.items():
     )
 
 
+from music_score import add_regional_presets, add_encounter_presets
+
+add_regional_presets(PRESETS, replace)
+PRESETS["dungeon_crypt"] = replace(PRESETS["dungeon_crypt"], scale="C_minor")
+add_encounter_presets(PRESETS, replace)
+
+
 def note_frequency(note: str, octave: int) -> float:
     semitone = NOTE_INDEX[note] - NOTE_INDEX["A"] + (octave - 4) * 12
     return 440.0 * (2 ** (semitone / 12))
@@ -970,6 +978,7 @@ def generate_sample_pack(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate procedural RPG music loops.")
+    parser.add_argument("--legacy", action="store_true", help="Use the original mono synth renderer.")
     parser.add_argument("--list", action="store_true", help="List available track presets and exit.")
     parser.add_argument("--only", nargs="+", choices=sorted(PRESETS), help="Only generate these presets.")
     parser.add_argument("--bars", type=int, default=DEFAULT_BARS, help=f"Bars per loop. Default: {DEFAULT_BARS}.")
@@ -1029,14 +1038,21 @@ def main() -> None:
     print(f"Generating {len(names)} music loop(s) into {output_dir}...")
     for name in names:
         preset = PRESETS[name]
-        audio = render_track(name, preset, args.bars)
         path = output_dir / f"{name}.wav"
-        write_wav(path, audio)
+        if args.legacy:
+            audio = render_track(name, preset, args.bars)
+            write_wav(path, audio)
+        else:
+            from music_score import render_score, write_score
+            audio = render_score(name, preset, args.bars, NOTE_INDEX, SCALES)
+            write_score(path, audio)
         generated.append((name, path, preset, args.bars))
         print(f"- {name}: {path}")
 
     manifest = output_dir / "README.md"
     manifest.write_text(make_manifest(generated), encoding="utf-8")
+    from music_score import write_encounter_player
+    write_encounter_player(output_dir)
     print(f"Done. Manifest: {manifest}")
 
 

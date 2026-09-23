@@ -1,0 +1,22 @@
+[
+  {
+    "key": "hearth_gate_vertical",
+    "prompt": "Precisely edit this existing transparent pixel-art game sprite. Remove ONLY the iron portcullis bars inside the central arch: the entire arch opening must be empty with genuine alpha=0 transparency. It is an open walk-through gate, no bars or door. Preserve every other stone, tower, connector, color, silhouette, size and placement exactly. No redesign. Preserve transparent exterior background, opaque architecture, and complete silhouette.",
+    "hint": "Generated images are saved to C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978 as C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-9c6f3196-a0ee-41e0-8902-2864c5928472.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+  },
+  {
+    "key": "fen_gate_vertical",
+    "prompt": "Precisely edit this existing transparent pixel-art game sprite. Remove ONLY the iron portcullis bars inside the central arch: the entire arch opening must be empty with genuine alpha=0 transparency. It is an open walk-through gate, no bars or door. Preserve every other stone, tower, connector, color, silhouette, size and placement exactly. No redesign. Preserve transparent exterior background, opaque architecture, and complete silhouette.",
+    "hint": "Generated images are saved to C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978 as C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-137320db-39a9-4a95-a208-9bd276b3b477.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+  },
+  {
+    "key": "freeholds_gate_vertical",
+    "prompt": "Precisely edit this existing transparent pixel-art game sprite. Remove ONLY the iron portcullis bars inside the central arch: the entire arch opening must be empty with genuine alpha=0 transparency. It is an open walk-through gate, no bars or door. Preserve every other stone, tower, connector, color, silhouette, size and placement exactly. No redesign. Preserve transparent exterior background, opaque architecture, and complete silhouette.",
+    "hint": "Generated images are saved to C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978 as C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-7ce3d698-bdc5-4632-a010-55f8a112c13e.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+  },
+  {
+    "key": "sun_gate_horizontal",
+    "prompt": "Background extraction only: remove the ENTIRE brown and black backdrop and glow from around this sandstone gatehouse AND from inside the central arch opening. Make every background pixel transparent alpha=0. No replacement backdrop, no haze, no shadow. Keep all sandstone architecture completely opaque and unchanged. PNG with real RGBA transparency, isolated full gatehouse.",
+    "hint": "Generated images are saved to C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978 as C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-fa650713-3e0c-4f7f-bd0e-3a1ff714d401.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+  }
+]

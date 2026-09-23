@@ -25,7 +25,13 @@ public final class GameConfig {
     public int masterVolume = 80;
     public int musicVolume = 70;
     public int sfxVolume = 75;
+    public double combatAnimationSpeed = 1.0;
+
+    public static double clampCombatAnimationSpeed(double speed) {
+        return Double.isFinite(speed) ? Math.max(0.5, Math.min(3.0, speed)) : 1.0;
+    }
     public boolean creativeBuildMode = true;
+    public boolean creativeCraftingMode = false;
     public boolean showMapEditorButton = true;
     public String cameraMode = "smooth";
     public int cameraSmoothing = 68;
@@ -85,6 +91,12 @@ public final class GameConfig {
             config.masterVolume = readInt(props, "masterVolume", config.masterVolume);
             config.musicVolume = readInt(props, "musicVolume", config.musicVolume);
             config.sfxVolume = readInt(props, "sfxVolume", config.sfxVolume);
+            try {
+                config.combatAnimationSpeed = clampCombatAnimationSpeed(Double.parseDouble(props.getProperty("combatAnimationSpeed", "1.0")));
+            } catch (NumberFormatException ignored) {
+                config.combatAnimationSpeed = 1.0;
+            }
+            config.creativeCraftingMode = readBoolean(props, "creativeCraftingMode", false);
             config.creativeBuildMode = readBoolean(props, "creativeBuildMode", config.creativeBuildMode);
             config.showMapEditorButton = readBoolean(props, "showMapEditorButton", config.showMapEditorButton);
             config.cameraMode = readChoice(props, "cameraMode", config.cameraMode, "locked", "smooth", "look_ahead", "dead_zone");
@@ -111,6 +123,8 @@ public final class GameConfig {
         props.setProperty("masterVolume", Integer.toString(masterVolume));
         props.setProperty("musicVolume", Integer.toString(musicVolume));
         props.setProperty("sfxVolume", Integer.toString(sfxVolume));
+        props.setProperty("combatAnimationSpeed", Double.toString(clampCombatAnimationSpeed(combatAnimationSpeed)));
+        props.setProperty("creativeCraftingMode", Boolean.toString(creativeCraftingMode));
         props.setProperty("creativeBuildMode", Boolean.toString(creativeBuildMode));
         props.setProperty("showMapEditorButton", Boolean.toString(showMapEditorButton));
         props.setProperty("cameraMode", cameraMode);

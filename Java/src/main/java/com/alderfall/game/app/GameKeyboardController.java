@@ -16,8 +16,21 @@ final class GameKeyboardController extends KeyAdapter {
         this.panel = panel;
     }
 
+    @Override
+    public void keyTyped(KeyEvent event) {
+        if (panel.state.mode == GameMode.INVENTORY) panel.inventoryRenderer.browser.typed(event.getKeyChar());
+        if (panel.state.mode == GameMode.SHOP) {
+            panel.shopRenderer.stockBrowser.typed(event.getKeyChar());
+            panel.shopRenderer.packBrowser.typed(event.getKeyChar());
+        }
+        panel.repaint();
+    }
+
         @Override
         public void keyPressed(KeyEvent event) {
+            if (panel.state.mode == GameMode.INVENTORY && panel.inventoryRenderer.browser.keyPressed(event)
+                    || panel.state.mode == GameMode.SHOP && (panel.shopRenderer.stockBrowser.keyPressed(event)
+                    || panel.shopRenderer.packBrowser.keyPressed(event))) { panel.repaint(); return; }
             int code = event.getKeyCode();
             boolean repeatedKeyPress = !pressedKeys.add(code);
             if (panel.state.mode == GameMode.MAIN_MENU) {
@@ -259,7 +272,7 @@ final class GameKeyboardController extends KeyAdapter {
                 if (code == KeyEvent.VK_I) {
                     panel.state.toggleInventory();
                 } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    panel.state.useInventoryItem(panel.inventoryItemScroll + code - KeyEvent.VK_1);
+                    panel.inventoryRenderer.useVisibleItem(code - KeyEvent.VK_1);
                 }
             } else if (panel.state.mode == GameMode.CRAFTING) {
                 if (code == KeyEvent.VK_C || code == KeyEvent.VK_Q) {
@@ -335,7 +348,7 @@ final class GameKeyboardController extends KeyAdapter {
                 }
             } else if (panel.state.mode == GameMode.SHOP) {
                 if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    panel.state.buyShopItem(panel.shopItemScroll + code - KeyEvent.VK_1);
+                    panel.shopRenderer.useVisibleItem(code - KeyEvent.VK_1);
                 } else if (code == KeyEvent.VK_H) {
                     panel.state.hireActiveRecruit();
                 }

@@ -30,3 +30,9 @@ class_mage_model_cast_anim.frames
 ```
 
 The game falls back to the normal static sprite when a matching animation file is missing.
+
+For padded strips, an optional sibling `<sprite>_<action>_anim.framebounds` file
+can define a shared viewport inside every frame as `x y width height` in source
+pixels. The same rectangle is used for every pose, preserving relative motion
+and the ground baseline. Invalid or out-of-frame rectangles are ignored. This
+does not change the sheet's equal-width frame division; specify `.frames` too.

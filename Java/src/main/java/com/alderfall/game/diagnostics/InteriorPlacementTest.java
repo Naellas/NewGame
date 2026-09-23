@@ -52,6 +52,7 @@ public final class InteriorPlacementTest {
             boolean supported = world.props(id).stream().anyMatch(p -> {
                 if (p == detail || p.asset().startsWith("interior_tabletop_")) return false;
                 boolean surface = p.asset().contains("table") || p.asset().contains("counter")
+                        || InteriorFurnishings.is(p.asset(), InteriorFurnishings.Placement.SURFACE)
                         || p.asset().contains("cupboard")
                         || p.asset().contains("desk") || p.asset().contains("workbench")
                         || p.asset().contains("alchemy") || p.asset().contains("sawhorse");

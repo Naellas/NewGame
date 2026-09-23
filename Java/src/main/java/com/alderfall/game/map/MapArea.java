@@ -6,17 +6,22 @@ import com.alderfall.game.RegionalSettlementIdentity.District;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public final class MapArea {
     public final String id;
     public final String label;
     public final String kind;
     public final char[][] tiles;
-    public final java.util.Set<TilePoint> interiorRugs = new java.util.HashSet<>();
-    public final Map<TilePoint, String> landmarks = new HashMap<>();
+    private long visualRevision = 1L;
+    public final Set<TilePoint> interiorRugs = new RevisionSet<>();
+    public final Map<TilePoint, String> landmarks = new RevisionMap<>();
     public final List<WorldProp> props = new IndexedPropList();
     public final List<District> districts = new ArrayList<>();
     private final List<WorldProp> orderedProps = new ArrayList<>();
@@ -47,6 +52,38 @@ public final class MapArea {
             return 'm';
         }
         return tiles[y][x];
+    }
+
+    public boolean setTile(int x, int y, char tile) {
+        if (x < 0 || y < 0 || x >= width() || y >= height() || tiles[y][x] == tile) {
+            return false;
+        }
+        tiles[y][x] = tile;
+        markVisualChange();
+        return true;
+    }
+
+    public void fillTiles(int x1, int y1, int x2, int y2, char tile) {
+        boolean changed = false;
+        for (int y = Math.max(0, y1); y <= Math.min(height() - 1, y2); y++) {
+            for (int x = Math.max(0, x1); x <= Math.min(width() - 1, x2); x++) {
+                if (tiles[y][x] != tile) {
+                    tiles[y][x] = tile;
+                    changed = true;
+                }
+            }
+        }
+        if (changed) {
+            markVisualChange();
+        }
+    }
+
+    public long visualRevision() {
+        return visualRevision;
+    }
+
+    public void markVisualChange() {
+        visualRevision++;
     }
 
     public void addProp(WorldProp prop) {
@@ -179,6 +216,80 @@ public final class MapArea {
         public void clear() {
             orderedProps.clear();
             propsByTile.clear();
+        }
+    }
+
+    private final class RevisionMap<K, V> extends HashMap<K, V> {
+        @Override
+        public V put(K key, V value) {
+            boolean existed = containsKey(key);
+            V previous = super.put(key, value);
+            if (!existed || !Objects.equals(previous, value)) {
+                markVisualChange();
+            }
+            return previous;
+        }
+
+        @Override
+        public void putAll(Map<? extends K, ? extends V> values) {
+            for (Map.Entry<? extends K, ? extends V> entry : values.entrySet()) {
+                put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        @Override
+        public V remove(Object key) {
+            if (!containsKey(key)) {
+                return null;
+            }
+            V removed = super.remove(key);
+            markVisualChange();
+            return removed;
+        }
+
+        @Override
+        public void clear() {
+            if (!isEmpty()) {
+                super.clear();
+                markVisualChange();
+            }
+        }
+    }
+
+    private final class RevisionSet<E> extends HashSet<E> {
+        @Override
+        public boolean add(E value) {
+            boolean changed = super.add(value);
+            if (changed) {
+                markVisualChange();
+            }
+            return changed;
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> values) {
+            boolean changed = false;
+            for (E value : values) {
+                changed |= add(value);
+            }
+            return changed;
+        }
+
+        @Override
+        public boolean remove(Object value) {
+            boolean changed = super.remove(value);
+            if (changed) {
+                markVisualChange();
+            }
+            return changed;
+        }
+
+        @Override
+        public void clear() {
+            if (!isEmpty()) {
+                super.clear();
+                markVisualChange();
+            }
         }
     }
 }

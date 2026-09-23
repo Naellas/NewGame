@@ -8,7 +8,7 @@ You survived the shrine breach. Oathstead needs to learn what failed before its 
 
 ### Examine the burned shrine
 
-Opening: Sit down a moment. You reached us alive; we can start there. When you can manage the walk, show me where the road shrine broke. The families here are trusting another ward to keep them safe.
+Opening: Sit down a moment. You reached us alive; we can start there. When you can manage the walk, show me where the road shrine broke. The families here are trusting another ward to keep them safe. Enter the Burned Road Shrine from the shrine-path entrance inside Oathstead.
 
 Action: Examine the burned altar in the Road Shrine, reached from Oathstead's shrine path.
 
@@ -16,7 +16,7 @@ Observed result: The altar is scorched, but the damage is concentrated around it
 
 ### Inspect the broken socket
 
-Opening: The socket took the worst of it. Look inside the break; a mark beneath the soot may survive even where the outer carving is gone.
+Opening: The socket took the worst of it. Look inside the break; a mark beneath the soot may survive even where the outer carving is gone. Enter the Burned Road Shrine from the shrine-path entrance inside Oathstead.
 
 Action: Inspect the broken socket beside the altar in the Road Shrine.
 
@@ -50,13 +50,21 @@ Requires observed evidence: `shrine_damage`.
 >
 > NPC: It means we should ask. I watched you stagger into camp; I did not watch her break the shrine. Keep those two things separate.
 
+> Player: Where is Burned Road Shrine, and what am I looking for?
+>
+> NPC: Enter the Burned Road Shrine from the shrine-path entrance inside Oathstead. Look for: Burned altar, cracked stone socket, carved fragment, ash deposit.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Proof in the Road Dust (`ms_road_dust`)
 
 Carry physical evidence of the attack toward an answer about Oathstead's defenses, instead of facing Vaelthara again with no more knowledge than before.
 
 ### Secure the carved fragment
 
-Opening: There is a loose fragment in the shrine's broken socket. Bring it out with its carving intact, then collect ash from beside it. Selene needs something she can examine.
+Opening: There is a loose fragment in the shrine's broken socket. Bring it out with its carving intact, then collect ash from beside it. Selene needs something she can examine. Enter the Burned Road Shrine from the shrine-path entrance inside Oathstead.
 
 Action: Recover the carved fragment from the marked rubble in the Road Shrine.
 
@@ -64,7 +72,7 @@ Observed result: You secured the fragment. Its inner carving is still readable; 
 
 ### Examine the ash deposit
 
-Opening: The fragment is secured. Collect ash from beside its socket as well; Selene needs to compare the material, not just hear my description.
+Opening: The fragment is secured. Collect ash from beside its socket as well; Selene needs to compare the material, not just hear my description. Enter the Burned Road Shrine from the shrine-path entrance inside Oathstead.
 
 Action: Collect the marked ash sample beside the shrine's broken socket.
 
@@ -86,15 +94,23 @@ Requires observed evidence: `shrine_fragment`.
 >
 > NPC: Enough to put a real question before the Archive. Collect the ash too; Selene may be able to compare the burn with older breaches. I cannot read either one.
 
+> Player: Where is Burned Road Shrine, and what am I looking for?
+>
+> NPC: Enter the Burned Road Shrine from the shrine-path entrance inside Oathstead. Look for: Burned altar, cracked stone socket, carved fragment, ash deposit.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Oathstead Must Stand (`ms_oathstead_stand`)
 
 Give Oathstead's workers room to build while you pursue the knowledge its future defense will need.
 
 ### Oathstead Must Stand
 
-Opening: Six wolves are threatening the road our timber workers use. They cannot build shelter while watching the trees for teeth. Deal with that danger, then take your shrine evidence to Selene.
+Opening: Six wolves are threatening the road our timber workers use. They cannot build shelter while watching the trees for teeth. Deal with that danger, then take your shrine evidence to Selene. Leave Oathstead for the timber road beside the camp; use the named red quest marker.
 
-Action: Defeat 6 marked Grey Wolf opponents. Follow the quest markers to their encounter.
+Action: At Oathstead Timber Road: Defeat 6 marked Grey Wolf opponents. Follow the quest markers to their encounter. Leave Oathstead for the timber road beside the camp; use the named red quest marker.
 
 Observed result: Six wolves have been dealt with. Maelis can send the next work party along the camp road; the palisade still needs building.
 
@@ -112,13 +128,21 @@ Report: Good. Our workers can use the road again. Take the fragment and ash to S
 >
 > NPC: One where a person can ask for shelter without first proving useful. Once they have eaten, we can ask what work they can manage. I would like that much to survive the winter.
 
+> Player: Where is Oathstead Timber Road, and what am I looking for?
+>
+> NPC: Leave Oathstead for the timber road beside the camp; use the named red quest marker. Look for: A timber-stack marker beside the camp road.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Names Under Dust (`ms_names_dust`)
 
 Establish whether the road shrine and Oathstead share a ward design, then find the builders' instructions needed to investigate its weakness.
 
 ### Read the ward maintenance record
 
-Opening: You brought a piece of the shrine Vaelthara broke. The carving resembles our ward diagrams. Before I send you back to Oathstead with a comforting guess, compare it with the maintenance record here.
+Opening: You brought a piece of the shrine Vaelthara broke. The carving resembles our ward diagrams. Before I send you back to Oathstead with a comforting guess, compare it with the maintenance record here. Find Selene in Archive City, then the marked Ward Maintenance Record and Damaged Ward Index in the city reading station.
 
 Action: Read the marked ward maintenance record in Archive City.
 
@@ -126,13 +150,13 @@ Observed result: The record depicts the same carving as the shrine fragment and 
 
 ### Check the missing instructions
 
-Opening: There it is: Oathstead, under the same ward pattern. Now check the builders' index. We need the instructions for that pattern, not another reassurance from me.
+Opening: There it is: Oathstead, under the same ward pattern. Now check the builders' index. We need the instructions for that pattern, not another reassurance from me. Find Selene in Archive City, then the marked Ward Maintenance Record and Damaged Ward Index in the city reading station.
 
 Action: Inspect the damaged ward index beside the Archive's reading station.
 
-Observed result: The index lists northern and southern ward instructions, but its vault-access page has been removed.
+Observed result: The builders' index lists northern and southern ward instructions. The leaf titled 'Old Oath Vault: Keeper's Instructions' is missing. A ransom demand tucked into the index says to pay for the stolen Archive papers at Crowhook Bandit Camp.
 
-Report: The record names Oathstead under the shrine's pattern. The index points to northern and southern instructions, but the vault-access page is gone. Our theft report names Crowhook. That is our next lead.
+Report: The shrine and Oathstead use the same ward pattern. We need to compare the instructions kept with the Stone of Memory beneath Archive City. The keeper's instructions were stolen, and the ransom demand in the index names Crowhook Bandit Camp. Recover that document so we can examine the stone safely.
 
 > Player: Can Oathstead survive the attack I saw?
 >
@@ -154,51 +178,75 @@ Requires observed evidence: `archive_record`.
 
 Requires observed evidence: `archive_index`.
 
-> Player: The vault page was removed. Was that deliberate?
+> Player: What exactly did the bandits take?
 >
-> NPC: A page is missing from a working index. That establishes a loss, not the thief's reason. Crowhook is our lead for recovering it; the older omissions will take longer to explain.
+> NPC: The leaf titled 'Old Oath Vault: Keeper's Instructions'. It describes the seal protecting the Stone of Memory beneath Archive City. The ransom demand tucked into this index names Crowhook Bandit Camp as the place to pay.
 
-## The Stolen Index (`ms_stolen_index`)
+> Player: Why do we need those instructions?
+>
+> NPC: We need to examine the Memory pedestal without damaging its protective seal. Guessing at the carvings could destroy the very record that might explain the shrine attack.
+
+> Player: Where is Archive Ward Reading Station, and what am I looking for?
+>
+> NPC: You can find me in Archive City, then the marked Ward Maintenance Record and Damaged Ward Index in the city reading station. Look for: Two labeled document bundles: Ward Maintenance Record and Damaged Ward Index.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
+## The Missing Vault Instructions (`ms_stolen_index`)
 
 Recover the missing vault instructions so Selene can investigate the network protecting Oathstead.
 
-### Clear the page cache
+### Defeat Crowhook's cache guards
 
-Opening: The Archive's theft report says the missing page was taken toward Crowhook. Three cutthroats guard the marked cache. Clear them, then search the papers; killing the guards will not open our vault.
+Opening: The bandits took a leaf headed 'Old Oath Vault: Keeper's Instructions'. It describes the protective seal around the Stone of Memory beneath Archive City. Their ransom demand names Crowhook Bandit Camp on Belltower's southern approach. Defeat the three cutthroats guarding the papers, then search the cache for that heading.
 
-Action: Defeat the three marked cutthroats guarding the page cache at Crowhook.
+Action: At Crowhook Bandit Camp: Defeat the three marked cutthroats guarding the page cache at Crowhook. Find Crowhook Bandit Camp on the southern approach to Belltower.
 
-Observed result: The marked guards are defeated. The page still needs to be recovered.
+Observed result: Crowhook's three cache guards are defeated. Search the Stolen Vault Instructions cache for the leaf headed 'Old Oath Vault: Keeper's Instructions'.
 
-### Recover the vault page
+### Recover the keeper's instructions
 
-Opening: You have cleared the guards. Search the document cache before leaving Crowhook; the vault is still closed without its instructions.
+Opening: You have defeated Crowhook's three cache guards. Search the Stolen Vault Instructions marker for the leaf headed 'Old Oath Vault: Keeper's Instructions'. Bring that document to Selene in Archive City. Find Crowhook Bandit Camp on the southern approach to Belltower.
 
-Action: Search the marked document cache at Crowhook for the vault page.
+Action: At Crowhook Bandit Camp: Search the marked document cache at Crowhook for the vault page. Find Crowhook Bandit Camp on the southern approach to Belltower.
 
-Observed result: You recovered the page describing the Old Oath Vault's entry seal. It identifies the Stone of Memory inside.
+Observed result: You recovered the leaf headed 'Old Oath Vault: Keeper's Instructions'. It describes the entry seal and Memory pedestal beneath Archive City, including how to release the Stone of Memory safely.
 
-Report: This is the vault page. It names a Stone of Memory and gives the entry seal beneath the Archive. We can finally compare an instruction with the place it was written for.
+Report: This is the missing keeper's document. It describes the seal and Memory pedestal inside the Old Oath Vault beneath Archive City. Enter the vault, compare the carved seal with these instructions, then examine the pedestal before removing the stone.
 
-> Player: How do you know to look at Crowhook?
+> Player: Which stolen document am I looking for?
 >
-> NPC: The Archive's theft report names Crowhook as the place the stolen papers were taken. I did not see the theft. Until you search that cache, it is a lead.
+> NPC: A single leaf headed 'Old Oath Vault: Keeper's Instructions'. It explains the carvings around the Stone of Memory's pedestal beneath Archive City. Look for that heading in the bandits' document cache; I need the instructions intact.
 
-> Player: Why would raiders want ward instructions?
+> Player: Why are you sending me to Crowhook Bandit Camp?
 >
-> NPC: They may know what the page opens, or simply know that we will pay for it. Recover it before we decide whose plan this serves.
+> NPC: The ransom demand left in the builders' index names Crowhook as the place to pay for the stolen Archive papers. Crowhook is a bandit camp on Belltower's southern approach. I have marked the camp and its document cache on your map.
+
+> Player: Why would bandits steal instructions for an old vault?
+>
+> NPC: They stole Archive papers and want us to buy them back. The missing keeper's instructions were among those papers. We need that particular document because the Stone of Memory may help us understand the ward Vaelthara broke.
 
 Requires observed evidence: `ms_stolen_index_guards`.
 
-> Player: The guards are dead. Do we have what we need?
+> Player: The three cache guards are dead. What should I search?
 >
-> NPC: The cache is accessible. We still need the page itself. Do not leave the answer behind because the fighting is over.
+> NPC: Search the marked Stolen Vault Instructions cache at Crowhook Bandit Camp. Find the leaf headed 'Old Oath Vault: Keeper's Instructions', then bring it back to me in Archive City.
 
 Requires observed evidence: `ms_stolen_index_page`.
 
 > Player: What does the Stone of Memory remember?
 >
-> NPC: The vault page calls it a keeper of names and terms. If that description is accurate, it may preserve what the wards were instructed to recognize. Let us compare the actual seal before touching it.
+> NPC: The instructions describe a stone that preserves the names of people serving the protective wards and the promises they made. If those promises were changed, Memory may preserve enough for us to compare the versions. First we must inspect its pedestal beneath Archive City.
+
+> Player: Where is Crowhook Bandit Camp, and what am I looking for?
+>
+> NPC: Find Crowhook Bandit Camp on the southern approach to Belltower. The red quest markers identify the three cache guards, then the Stolen Vault Instructions. Look for: Crowhook's named camp entrance and the Stolen Vault Instructions cache.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
 
 ## The First Socket (`ms_first_socket`)
 
@@ -214,7 +262,7 @@ Observed result: The entry seal matches the recovered instructions. The chamber 
 
 ### Examine the Memory pedestal
 
-Opening: The entry seal matches. Now examine the Memory pedestal. Its instructions should tell us what the stone can be asked to preserve.
+Opening: The entry seal matches. Now examine the Memory pedestal. Its instructions should tell us what the stone can be asked to preserve. Use the Old Oath Vault entrance inside Archive City.
 
 Action: Inspect the marked Memory pedestal, then report to Selene to complete the recovery.
 
@@ -250,47 +298,59 @@ Requires observed evidence: `vault_memory`.
 >
 > NPC: People defending their homes can still harm others. I will not accuse particular builders without evidence. I will not assume their victory excuses everything either.
 
+> Player: Where is Old Oath Vault, and what am I looking for?
+>
+> NPC: Use the Old Oath Vault entrance inside Archive City. Inspect the Vault Entry Seal, then the Memory Pedestal. Look for: Entry seal, twelve-socket mural, and pedestal labeled Memory.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Watchtower Without Bells (`ms_watchtower_bells`)
 
 Trace the failure of Highwall's warning chain on the road carrying food and refugees between the northern holds and the rest of Alderfall.
 
 ### Inspect the split signal bell
 
-Opening: The Highwall pass is losing its warning signals. Families used to leave ale at the cairns and trust the watch to answer the bells. Now the road is dangerous and the bells are broken. Inspect the three marked sites before I send more people through.
+Opening: Highwall Cairn Watch is the bell post beside our old roadwatch graves, southwest of the city. Its bell should warn supply carts of danger. It has fallen silent. Inspect the Split Signal Bell, the Cairn Watch Names beside it, and the Copied Watch Signal by the road before I send another cart through.
 
-Action: Inspect the marked signal bell on the northern watch route.
+Action: At Highwall Cairn Watch: Inspect the marked signal bell on the northern watch route. Leave Highwall Gate and follow the named Highwall Cairn Watch marker southwest of the city.
 
-Observed result: The bell's clapper is wedged with a strip of banner cloth. It could not ring freely. The cloth carries a stitched household name.
+Observed result: A strip of banner cloth jams the bell's clapper. Its stitching reads 'Fenrik household: pass watch'. The obstruction prevented this bell from warning the supply carts.
 
 ### Read the cairn watch names
 
-Opening: Read the marked watch inscription beside the northern cairns.
+Opening: Read the marked watch inscription beside the northern cairns. Leave Highwall Gate and follow the named Highwall Cairn Watch marker southwest of the city.
 
-Action: Read the marked watch inscription beside the northern cairns.
+Action: At Highwall Cairn Watch: Read the marked watch inscription beside the northern cairns. Leave Highwall Gate and follow the named Highwall Cairn Watch marker southwest of the city.
 
-Observed result: The cairn inscription names the same household as the cloth. Its watch oath ends at the spring thaw; the name belongs to a duty with an ending.
+Observed result: The burial stone names the Fenrik household, matching the cloth in the bell. Its oath reads: 'Guard the supply road until the spring thaw.' These dead watchmen were promised an end to their duty.
 
 ### Compare the raiders' signal
 
-Opening: Inspect the marked signal scratched beside the watch route, then report to Odrick.
+Opening: Inspect the marked signal scratched beside the watch route, then report to Odrick. Leave Highwall Gate and follow the named Highwall Cairn Watch marker southwest of the city.
 
-Action: Inspect the marked signal scratched beside the watch route, then report to Odrick.
+Action: At Highwall Cairn Watch: Inspect the marked signal scratched beside the watch route, then report to Odrick. Leave Highwall Gate and follow the named Highwall Cairn Watch marker southwest of the city.
 
-Observed result: A newer scratch repeats the watch's safe-passage signal beside a raider mark. The bell was obstructed and the signal copied. Neither finding proves Vaelthara ordered it.
+Observed result: The roadside post shows the watch's all-clear pattern: two short bell strokes. A newer scratch copies that pattern beside a raider mark. Someone learned how to signal a safe road while the warning bell was jammed.
 
-Report: The bell was obstructed, a household's watch name used, and our safe-passage signal copied. This was interference, not just winter damage. Three brutes still hold the marked route. Break their force before I send repair crews through.
+Report: The bell was obstructed, the Fenrik household's watch name used, and our safe-passage signal copied. Three orc brutes still hold Highwall Supply Pass, southeast of the city. Break their force before I send repair crews through.
 
-> Player: What do northern bells have to do with the shrine?
+> Player: Who used the bell at Highwall Cairn Watch?
 >
-> NPC: A ward needs warning before it needs strength. Our pass bells used to carry an alarm from cairn to watchtower. If they fail, food carts and fleeing families reach the danger before my soldiers hear of it.
+> NPC: My roadwatch soldiers. Two short strokes meant the supply road was open; three slow strokes warned cart drivers to stop. The bell stands beside the burial mounds of watchmen who died defending that road.
 
-> Player: Do the ancestors really answer them?
+> Player: Why put the warning bell beside those graves?
 >
-> NPC: That is what the cairn keepers teach. I know living watchmen used the same signals. Inspect the three sites; I need to know where the chain broke.
+> NPC: The watchmen's families believe the dead can carry a warning when fog hides the living patrols. The families who tend those stone mounds are called cairn keepers. They maintain the graves and recite the dead watchmen's names; they are not another military order.
 
-> Player: Why are there burial cairns beside a military road?
+> Player: What exactly should I inspect at Highwall Cairn Watch?
 >
-> NPC: The holds bury their watchkeepers facing the pass. Families bring warm ale at the first snow and ask for another winter's warning. Kharvok has made people afraid to visit their own dead.
+> NPC: Start with the Split Signal Bell. Then read the Cairn Watch Names cut into the burial stone beside it. Finally, examine the Copied Watch Signal scratched beside the road. Each object has its own red quest marker.
+
+> Player: How does that help Oathstead?
+>
+> NPC: Highwall's carts carry food toward the central settlements, including your camp. If a raider can imitate our all-clear signal while the warning bell is silent, those carts can be led straight into an ambush.
 
 Requires observed evidence: `north_watch_roster`.
 
@@ -302,15 +362,23 @@ Requires observed evidence: `north_watch_roster`.
 >
 > NPC: It proves someone obstructed our bell with named banner cloth. We need his actual standard before we can say what he changed.
 
+> Player: Where is Highwall Cairn Watch, and what am I looking for?
+>
+> NPC: Leave Highwall Gate and follow the named Highwall Cairn Watch marker southwest of the city. Inspect the Split Signal Bell, Cairn Watch Names, and Copied Watch Signal. Look for: A split signal bell, a watch-name inscription, and a scratched safe-passage signal.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Raiders at the Pass (`ms_raiders_pass`)
 
 Remove the force preventing Highwall from restoring its road and responding to Kharvok's command over the northern boundary.
 
 ### Raiders at the Pass
 
-Opening: Three orc brutes hold the marked route. While they stay there, neither carts nor repair crews can use it. Break that force; afterward we face the standard Kharvok has raised over the pass.
+Opening: Three orc brutes hold the marked route. While they stay there, neither carts nor repair crews can use it. Break that force; afterward we face the standard Kharvok has raised over the pass. Follow Highwall's southeastern road to Highwall Supply Pass.
 
-Action: Defeat 3 marked Orc Brute opponents. Follow the quest markers to their encounter.
+Action: At Highwall Supply Pass: Defeat 3 marked Orc Brute opponents. Follow the quest markers to their encounter. Follow Highwall's southeastern road to Highwall Supply Pass.
 
 Observed result: The three marked orc brutes are defeated. Odrick still needs to organize patrols before he can promise travelers a safe pass.
 
@@ -328,25 +396,33 @@ Report: The brutes are down. I still need patrols on that road. Your next enemy 
 >
 > NPC: Northern standards carry the names of the households that raised them. Kharvok stitches surrendered flags together. The keepers believe he is using those names to command service. I know he has a force behind him.
 
-## Frosthollow Standard (`ms_frosthollow_standard`)
+> Player: Where is Highwall Supply Pass, and what am I looking for?
+>
+> NPC: Follow Highwall's southeastern road to Highwall Supply Pass. The three red encounter markers identify the orc brutes blocking the carts. Look for: Road barricade and abandoned supply crates.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
+## The Stolen Watch Oath (`ms_frosthollow_standard`)
 
 Break Kharvok's hold on the northern pass and recover Iron, which strengthens a boundary but cannot decide whom it should protect.
 
 ### Frosthollow Standard
 
-Opening: Kharvok has raised his stolen standards at Frosthollow. Defeat him, then examine the fallen standard. We have seen names used to obstruct our warning bell; now we need to know what he has sewn into those names.
+Opening: Kharvok, the commander occupying Banner Cairn north of Highwall, has sewn the names of our dead roadwatchmen into his standard. Defeat him, then read that banner. We found a household's name on the cloth jamming our warning bell; we need to compare it with the names he is using.
 
-Action: Defeat 1 marked Kharvok the Banner-Bound opponents. Follow the quest markers to their encounter.
+Action: At Banner Cairn: Defeat 1 marked Kharvok the Banner-Bound opponents. Follow the quest markers to their encounter. Find Banner Cairn north of Highwall Gate.
 
 Observed result: Kharvok is defeated. His fallen standard can now be examined; the names sewn into it still need to be read.
 
 ### Read the fallen standard
 
-Opening: Examine the marked fallen standard at Kharvok's encounter site, then return to Odrick.
+Opening: Examine the marked fallen standard at Kharvok's encounter site, then return to Odrick. Find Banner Cairn north of Highwall Gate.
 
-Action: Examine the marked fallen standard at Kharvok's encounter site, then return to Odrick.
+Action: At Banner Cairn: Examine the marked fallen standard at Kharvok's encounter site, then return to Odrick. Find Banner Cairn north of Highwall Gate.
 
-Observed result: Beneath the added stitching, the standard promises a watch only until the spring thaw. New thread covers that ending and names Kharvok as the one who may release the watch. You have evidence of an altered obligation, not merely a defeated commander.
+Observed result: Kharvok's standard names the Fenrik household, the dead roadwatchmen named on the Highwall burial stone. New thread covers 'until the spring thaw' with 'until Kharvok grants release'. The commander changed their seasonal duty into service only he could end.
 
 Report: Kharvok has fallen, and his standard shows how he changed the oath: the watch could end only when he released it. Take Iron. It holds a boundary under pressure. I will ask the cairn keepers to tend the names we found; his defeat alone does not finish their work.
 
@@ -372,39 +448,47 @@ Requires observed evidence: `north_fallen_standard`.
 >
 > NPC: We have stopped him and read the standard. I still need the cairn keepers to attend to the disturbed oaths. I will not announce peace at their graves before that work is done.
 
+> Player: Where is Banner Cairn, and what am I looking for?
+>
+> NPC: Find Banner Cairn north of Highwall Gate. Defeat Kharvok at the red encounter marker, then inspect Kharvok's Fallen Standard at the same cairn. Look for: A named burial mound and the fallen standard revealed after Kharvok's defeat.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Shrine Without Shadow (`ms_shrine_shadow`)
 
 Investigate southern fire wards whose failures threaten caravan hospitality and the routes that keep the Sunrealm supplied.
 
 ### Inspect the guest cup
 
-Opening: A well-road shrine should offer shade and a safe lamp. This vessel has become dangerous to approach. Examine its guest cup, the words of welcome, and the outlet. Before we condemn the guest, I want to know what its keepers built around it.
+Opening: At Sunken Guest Shrine, southwest of Sanctum, a fire spirit lives inside a shrine vessel. The keepers invited it to warm travelers and power the road's protective magic. The vessel has begun burning its keepers. Examine the spirit's cup, the welcome carved beneath it, and the outlet it should be able to leave through.
 
-Action: Inspect the marked guest cup at the damaged southern shrine.
+Action: At Sunken Guest Shrine: Inspect the marked guest cup at the damaged southern shrine. Go southwest from Sanctum Gate to Sunken Guest Shrine.
 
 Observed result: The cup beside the altar bears a greeting to a fire guest. Its rim is scorched on the inside, beneath a later iron collar.
 
 ### Read the welcome beneath the collar
 
-Opening: Read the marked welcome inscription at the southern shrine.
+Opening: Read the marked welcome inscription at the southern shrine. Go southwest from Sanctum Gate to Sunken Guest Shrine.
 
-Action: Read the marked welcome inscription at the southern shrine.
+Action: At Sunken Guest Shrine: Read the marked welcome inscription at the southern shrine. Go southwest from Sanctum Gate to Sunken Guest Shrine.
 
 Observed result: The old welcome says the guest gives warmth until moonset, then may depart. A newer command cut across it demands warmth until the keeper releases the vessel.
 
 ### Examine the sealed outlet
 
-Opening: Inspect the marked outlet of the southern fire vessel, then report to Solari.
+Opening: Inspect the marked outlet of the southern fire vessel, then report to Solari. Go southwest from Sanctum Gate to Sunken Guest Shrine.
 
-Action: Inspect the marked outlet of the southern fire vessel, then report to Solari.
+Action: At Sunken Guest Shrine: Inspect the marked outlet of the southern fire vessel, then report to Solari. Go southwest from Sanctum Gate to Sunken Guest Shrine.
 
 Observed result: The outlet named in the welcome has been plugged with iron. Soot has collected behind the plug. This vessel's departure route was physically closed; the survey does not identify who ordered it.
 
-Report: The welcome allowed departure at moonset. Someone changed that command and plugged the outlet with iron. This vessel held a captive. We must reach the forge and disconnect its draw before opening it. First, clear the imps on the caravan route.
+Report: The welcome allowed the fire spirit to leave at moonset. Someone changed those words and plugged its exit with iron. We must disconnect the draw at Sunken Shrine Forge before opening the vessel. First, clear the six imps at Glass Caravan Halt so our recovery crews can use that road.
 
-> Player: Is the sacred fire a god?
+> Player: What do you mean by a guest inside the fire vessel?
 >
-> NPC: Our temples honor the sun. The presence welcomed into a fire vessel is a guest, with duties of its own. Worship and hospitality are different obligations.
+> NPC: A fire spirit. Shrine keepers invite one into a heatproof cup and ask it to warm travelers and power the shrine's protective magic. We call the spirit a guest because it is supposed to be free to leave. Our temple worships the sun; the spirit in the cup is not our god.
 
 > Player: Then why would a guest burn its keepers?
 >
@@ -430,19 +514,27 @@ Requires observed evidence: `south_closed_outlet`.
 >
 > NPC: Then this was confinement, whatever name the keeper gave it. We have the changed words and the blocked outlet. At the forge, we must disconnect the draw before opening the vessel.
 
+> Player: Where is Sunken Guest Shrine, and what am I looking for?
+>
+> NPC: Go southwest from Sanctum Gate to Sunken Guest Shrine. Inspect the Cracked Guest Cup, Old Welcome Inscription, and Sealed Vessel Outlet. Look for: Guest cup, words cut into its stone stand, and an iron-plugged outlet.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Caravan of Glass (`ms_caravan_glass`)
 
 Reach the southern forge by removing the creatures that prevent recovery along the caravan route.
 
 ### Caravan of Glass
 
-Opening: Six ember imps threaten the shrine road. The caravan carries vessels made for guest flames, and supplies we need to recover. Clear the imps; afterward I can arrange the work of bringing those stores back.
+Opening: Six ember imps threaten the shrine road. The caravan carries vessels made for guest flames, and supplies we need to recover. Clear the imps; afterward I can arrange the work of bringing those stores back. Follow the road southwest from Sanctum toward Embermarket.
 
-Action: Defeat 6 marked Ember Imp opponents. Follow the quest markers to their encounter.
+Action: At Glass Caravan Halt: Defeat 6 marked Ember Imp opponents. Follow the quest markers to their encounter. Follow the road southwest from Sanctum toward Embermarket.
 
 Observed result: Six ember imps are defeated. Solari can arrange the caravan's recovery; the fight itself did not deliver its oil or supplies.
 
-Report: The imps are dealt with. I will arrange recovery of the caravan stores. Go to the marked forge shrine: examine the cradle, disconnect Ember, then open the vessel. I authorize the guest's release. We will have to replace the warmth it was forced to give.
+Report: The imps are dealt with. I will arrange recovery of the caravan stores. Return to Sunken Shrine Forge, behind the altar we investigated: examine Ember's cradle, disconnect the stone, then open the spirit's vessel. I authorize that release. We will have to replace the warmth it was forced to give.
 
 > Player: Are the ember imps the shrine's guests?
 >
@@ -456,39 +548,47 @@ Report: The imps are dealt with. I will arrange recovery of the caravan stores. 
 >
 > NPC: It makes recovery possible. The caravan stores still need collecting, and the forge must be examined. I will not ask you to pretend a battle delivered our oil.
 
+> Player: Where is Glass Caravan Halt, and what am I looking for?
+>
+> NPC: Follow the road southwest from Sanctum toward Embermarket. Find Glass Caravan Halt and the six marked ember imps around it. Look for: Caravan crates beside an extinguished camp hearth.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Ember Socket Rite (`ms_ember_socket_rite`)
 
 Recover Ember with an understanding of the difference between sharing protective power and extracting it from a captive source.
 
 ### Inspect Ember's transfer cradle
 
-Opening: We found a welcome changed into confinement. At the forge, inspect the transfer cradle, lift Ember clear, then open the guest's outlet. Follow that order. I authorize the release and will answer for the repair work it leaves us.
+Opening: Return to Sunken Shrine Forge, the workshop behind Sunken Guest Shrine southwest of Sanctum. Its iron channel draws heat from the same captive fire spirit you investigated. Inspect Ember's cradle, lift the stone clear, then open the vessel's outlet. I authorize the release and will answer for replacing the heat the road wards will lose.
 
-Action: Inspect the marked transfer cradle at the forge shrine.
+Action: At Sunken Shrine Forge: Inspect the marked transfer cradle at the forge shrine. Return to Sunken Guest Shrine southwest of Sanctum.
 
 Observed result: Ember's cradle is linked to a guest vessel by an iron collar. The directions say to lift the stone clear before opening the guest's outlet; otherwise the cradle keeps drawing heat.
 
 ### Lift Ember clear of the cradle
 
-Opening: Use the marked cradle release to lift Ember clear of the transfer channel.
+Opening: Use the marked cradle release to lift Ember clear of the transfer channel. Return to Sunken Guest Shrine southwest of Sanctum.
 
-Action: Use the marked cradle release to lift Ember clear of the transfer channel.
+Action: At Sunken Shrine Forge: Use the marked cradle release to lift Ember clear of the transfer channel. Return to Sunken Guest Shrine southwest of Sanctum.
 
 Observed result: You lift Ember clear of its transfer channel. The channel stops glowing, but a small flame still presses against the vessel's closed outlet. The guest has not yet been released.
 
 ### Open the guest's outlet
 
-Opening: Open the marked outlet of the disconnected guest vessel, then report to Solari.
+Opening: Open the marked outlet of the disconnected guest vessel, then report to Solari. Return to Sunken Guest Shrine southwest of Sanctum.
 
-Action: Open the marked outlet of the disconnected guest vessel, then report to Solari.
+Action: At Sunken Shrine Forge: Open the marked outlet of the disconnected guest vessel, then report to Solari. Return to Sunken Guest Shrine southwest of Sanctum.
 
 Observed result: You unfasten the outlet. A thin flame rises through it, pauses above the guest cup, and vanishes into the daylight. The vessel is empty and cool. This guest has left; the other shrines still need attention.
 
 Report: You disconnected the draw and opened the outlet. The guest left. Take Ember: it transfers power, but is not itself the fire we imprisoned. That vessel is cold now. I will answer for finding willing sources and repairing the shrines; releasing one guest has not done that work for us.
 
-> Player: Why does the forge have a guest's cup?
+> Player: What connects the fire spirit to the Stone of Ember?
 >
-> NPC: A vessel is offered shelter before its fire is asked to give warmth. That is how I was taught the rite. The Stone of Ember transfers power; our prayers insist that the giving must be willing.
+> NPC: The forge behind Sunken Guest Shrine's altar contains Ember's transfer cradle. An iron channel connects it to the same guest cup you examined. While seated, Ember draws that spirit's heat into the road wards. Lift the stone out before opening the vessel's outlet, or the cradle will keep pulling on the spirit.
 
 > Player: What if the guest cannot refuse?
 >
@@ -520,19 +620,27 @@ Requires observed evidence: `ember_open_outlet`.
 >
 > NPC: It is a means of transfer, not the fire itself. Take Ember for the Gate. We must find power that can be offered without trapping its source.
 
+> Player: Where is Sunken Shrine Forge, and what am I looking for?
+>
+> NPC: Return to Sunken Guest Shrine southwest of Sanctum. Its workshop is marked Sunken Shrine Forge. Inspect Ember Transfer Cradle, use Ember Cradle Release, then open Guest Vessel Outlet. Look for: Transfer cradle, release lever, and the vessel's outlet.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Bell That Rang Alone (`ms_bell_alone`)
 
 Investigate Fenland signals that may guide displaced families toward danger instead of toward shelter.
 
 ### The Bell That Rang Alone
 
-Opening: A landing bell is sounding where no keeper should be pulling the rope. A boat can follow that sound straight into deep water. Inspect the three marked rope sites; I need to know what our warning chain can still be trusted to do.
+Opening: A landing bell is sounding where no keeper should be pulling the rope. A boat can follow that sound straight into deep water. Inspect the three marked rope sites; I need to know what our warning chain can still be trusted to do. Follow Belltower's southeastern water road to Reedbank Bell Landing.
 
-Action: Inspect 3 marked Bell Rope locations. Report only what those inspections establish.
+Action: At Reedbank Bell Landing: Inspect 3 marked Bell Rope locations. Report only what those inspections establish. Follow Belltower's southeastern water road to Reedbank Bell Landing.
 
 Observed result: You checked the three marked bell-rope sites. Ysra can use the survey to investigate the failing warnings; the cause is still unproven.
 
-Report: Your survey gives the bellkeepers somewhere to begin. Mireford's sick cannot wait for the whole marsh to make sense. Gather fever reed before we face the danger below Miredepth.
+Report: The keepers have your survey of Reedbank Bell Landing. Mireford's sick need help while they investigate the bell. Gather six samples at Mireford Fever-Reed Beds, south of the village, before we face Velmora below Miredepth Cave.
 
 > Player: Why listen to a bell no one rang?
 >
@@ -540,11 +648,19 @@ Report: Your survey gives the bellkeepers somewhere to begin. Mireford's sick ca
 
 > Player: Who rings from beneath the water?
 >
-> NPC: Fenland keepers call them Deep Listeners. Some say they remember the drowned roads. I can teach you our warning rhythms; I cannot tell you who answers every bell.
+> NPC: Ferry families tell stories of water spirits listening from the drowned riverbed. They call those spirits Deep Listeners. Some families leave a little bread by the landing bell and ask them to guide lost boats. That belief does not tell us who is ringing the unattended bell at Reedbank.
 
 > Player: What does this mean for Oathstead?
 >
 > NPC: Your camp needs travelers to reach it alive. Our bells connect the waterways to the roads. A ward behind a palisade will not save a family led into deep water on the way there.
+
+> Player: Where is Reedbank Bell Landing, and what am I looking for?
+>
+> NPC: Follow Belltower's southeastern water road to Reedbank Bell Landing. Check the three marked bell-rope fittings. Look for: Landing bell, three rope fittings, and a reed shrine.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
 
 ## Medicine for Mireford (`ms_medicine_mireford`)
 
@@ -552,9 +668,9 @@ Keep the Fenland investigation connected to living patients who cannot wait for 
 
 ### Medicine for Mireford
 
-Opening: Mireford needs fever reed. Gather six samples from the marked sources. We can investigate the drowned bells and still make time for people who need help tonight.
+Opening: Mireford needs fever reed. Gather six samples from the marked sources. We can investigate the drowned bells and still make time for people who need help tonight. Leave Mireford by its southern road.
 
-Action: Gather 6 Fever Reed samples from the marked sources.
+Action: At Mireford Fever-Reed Beds: Gather 6 Fever Reed samples from the marked sources. Leave Mireford by its southern road.
 
 Observed result: Six fever-reed samples are secured. Give Ysra your report so the medicine can be prepared; the patients have not yet been treated.
 
@@ -572,15 +688,23 @@ Report: Six samples. That gives the medicine work a start; the patients still ne
 >
 > NPC: A fresh bundle marks a household that will shelter a stranded traveler. When the water rises, you can see it above the door. I would like Mireford to be able to keep offering that welcome.
 
+> Player: Where is Mireford Fever-Reed Beds, and what am I looking for?
+>
+> NPC: Leave Mireford by its southern road. Collect six marked fever-reed samples at Mireford Fever-Reed Beds, then return to me in Belltower. Look for: Six labeled Fever Reed gathering points.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Miredepth Below (`ms_miredepth_below`)
 
 Defeat the power threatening the marsh crossings and recover Tides, while leaving the identity of every drowned voice an open question.
 
 ### Miredepth Below
 
-Opening: Velmora holds the depths below Miredepth. The keepers call her Bell-Drowned, but none can give me a trustworthy account of her first life. We know she is calling the dead against the living. Stop her, then return for Tides.
+Opening: Velmora holds the depths below Miredepth. The keepers call her Bell-Drowned, but none can give me a trustworthy account of her first life. We know she is calling the dead against the living. Stop her, then return for Tides. Find Miredepth Cave east of Belltower.
 
-Action: Defeat 1 marked Velmora, the Bell-Drowned opponents. Follow the quest markers to their encounter.
+Action: At Miredepth Cave: Defeat 1 marked Velmora, the Bell-Drowned opponents. Follow the quest markers to their encounter. Find Miredepth Cave east of Belltower.
 
 Observed result: Velmora is defeated. Report to Ysra for the recovered stone. The Fenlands still need their damaged warning bells restored.
 
@@ -598,15 +722,23 @@ Report: Velmora is defeated. Take the Stone of Tides from this recovery. It gove
 >
 > NPC: These marshes cover old crossings. The keepers associate Tides with opening and closing a route through changing water. Recover it here; that does not give us command of every river or sea.
 
+> Player: Where is Miredepth Cave, and what am I looking for?
+>
+> NPC: Find Miredepth Cave east of Belltower. The red quest encounter and the cave lead to Velmora's threat; report her defeat to Ysra. Look for: Miredepth's named cave entrance and Velmora's encounter marker.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Toll Ledger (`ms_toll_ledger`)
 
 Trace the missing supplies on Riverside's bridges, where ordinary trade meets the paths and obligations of the Briar Courts.
 
 ### The Toll Ledger
 
-Opening: Oathstead needs grain, and our supply route is losing it. Read the three marked toll records. Before I accuse a bridge keeper or a Briar Court, I need to know what the accounts actually say.
+Opening: Oathstead needs grain, and our supply route is losing it. Read the three marked toll records. Before I accuse a bridge keeper or a Briar Court, I need to know what the accounts actually say. Find Briarbridge Tollhouse just south of Briarbridge.
 
-Action: Inspect 3 marked Toll Ledger locations. Report only what those inspections establish.
+Action: At Briarbridge Tollhouse: Inspect 3 marked Toll Ledger locations. Report only what those inspections establish. Find Briarbridge Tollhouse just south of Briarbridge.
 
 Observed result: The three marked toll records have been examined. Report to Mirella; reading them has not returned the missing grain to Riverside.
 
@@ -618,11 +750,19 @@ Report: We have the toll survey. Eight raiders still hold the marked supply rout
 
 > Player: A court? Whose court?
 >
-> NPC: The Briar Courts hold paths beyond our river roads. Their hunts have rules older than my office. I can collect a bridge toll; I cannot assume the hunt recognizes my seal.
+> NPC: The Briar Courts are supernatural households said to rule the forest paths west of our river towns. Travelers describe antlered riders and roads that appear only at dusk. Riverside governs the human bridges. A toll paid to my clerk may mean nothing to a rider on one of those paths.
 
 > Player: Oathstead cannot eat an explanation.
 >
 > NPC: No. That is why I need the route cleared as well as the loss understood. Otherwise the next grain barge follows the first into somebody else's store.
+
+> Player: Where is Briarbridge Tollhouse, and what am I looking for?
+>
+> NPC: Find Briarbridge Tollhouse just south of Briarbridge. Read the three marked Toll Ledger entries, then report to me in Riverside. Look for: Tollhouse document table and three labeled ledger entries.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
 
 ## Redcap Trade (`ms_redcap_trade`)
 
@@ -630,9 +770,9 @@ Disrupt the raiders blocking Riverside's supplies without treating every western
 
 ### Redcap Trade
 
-Opening: Eight raiders are holding the supply route. Redcaps trade at the edges of Briar hunts, but I cannot tell you who bought this grain. Break their hold first. Then we can pursue what their scavengers carried away.
+Opening: Eight raiders are holding the supply route. Redcaps trade at the edges of Briar hunts, but I cannot tell you who bought this grain. Break their hold first. Then we can pursue what their scavengers carried away. Take Riverside's southeastern road to Redcap Supply Camp.
 
-Action: Defeat 8 marked Goblin Raider opponents. Follow the quest markers to their encounter.
+Action: At Redcap Supply Camp: Defeat 8 marked Goblin Raider opponents. Follow the quest markers to their encounter. Take Riverside's southeastern road to Redcap Supply Camp.
 
 Observed result: Eight marked raiders are defeated. The stolen supply route can now be searched; this does not mean its crates have reached Riverside.
 
@@ -650,15 +790,23 @@ Report: The raiders are dealt with. The stores still need recovering. There is a
 >
 > NPC: It still has to be recovered and moved. Clearing the route gives Riverside a chance to do that. I cannot put bread in Oathstead's ovens by declaring the road safe.
 
+> Player: Where is Redcap Supply Camp, and what am I looking for?
+>
+> NPC: Take Riverside's southeastern road to Redcap Supply Camp. Follow the marked raiders, then the scavenger carrying the stolen stone. Look for: Stolen supply crates and red quest encounter markers.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Glowing Thing in the Mud (`ms_glowing_mud`)
 
 Recover Hunger from the stolen supply route and distinguish the network's use of excess force from its possible abuse of living harvests.
 
 ### Glowing Thing in the Mud
 
-Opening: The marked scavenger is our next target. We need the stone recovered from the stolen goods. The old accounts call it Hunger: a useful name if you remember to ask what it feeds on.
+Opening: The marked scavenger is our next target. We need the stone recovered from the stolen goods. The old accounts call it Hunger: a useful name if you remember to ask what it feeds on. Take Riverside's southeastern road to Redcap Supply Camp.
 
-Action: Defeat 1 marked Goblin Skirmisher opponents. Follow the quest markers to their encounter.
+Action: At Redcap Supply Camp: Defeat 1 marked Goblin Skirmisher opponents. Follow the quest markers to their encounter. Take Riverside's southeastern road to Redcap Supply Camp.
 
 Observed result: The marked scavenger is defeated. Report to Mirella to complete recovery of the Stone of Hunger.
 
@@ -676,15 +824,23 @@ Report: Take the Stone of Hunger. The river accounts say it once drew in surplus
 >
 > NPC: Perhaps it can absorb something she sends at us. First learn what it takes and where that power goes. I would rather owe you a barge of grain than discover we fed the stone another village's winter.
 
+> Player: Where is Redcap Supply Camp, and what am I looking for?
+>
+> NPC: Take Riverside's southeastern road to Redcap Supply Camp. Follow the marked raiders, then the scavenger carrying the stolen stone. Look for: Stolen supply crates and red quest encounter markers.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Orchard Ward (`ms_orchard_ward`)
 
 Face a wounded guardian of a living ward and recover Roots without confusing the creature's defeat with the orchard's healing.
 
 ### The Orchard Ward
 
-Opening: We used to leave the first fallen apple for the stag. Now Rootmaw attacks the people tending the trees. Stop it before another household loses someone to the orchard that feeds us.
+Opening: Rootmaw is the great stag that used to guard Oakhaven Ward Orchard. Our families left the first fallen apple for it each year. Now it attacks the people tending our fruit trees. Stop Rootmaw at the orchard southeast of Oakhaven before another worker is killed.
 
-Action: Defeat 1 marked Rootmaw Stag opponents. Follow the quest markers to their encounter.
+Action: At Oakhaven Ward Orchard: Defeat 1 marked Rootmaw Stag opponents. Follow the quest markers to their encounter. Leave Oakhaven for the orchard southeast of the village.
 
 Observed result: Rootmaw is defeated. Rowan can begin tending the damaged orchard; its ward still needs attention.
 
@@ -702,15 +858,23 @@ Report: Rootmaw is down. I will tend the orchard, but that will take more than a
 >
 > NPC: Our ward reaches from tree to tree. The old name for the stone describes protection shared through living ground. If you rebuild the network, remember that its roads run through places people eat from.
 
+> Player: Where is Oakhaven Ward Orchard, and what am I looking for?
+>
+> NPC: Leave Oakhaven for the orchard southeast of the village. Find Rootmaw at the Oakhaven Ward Orchard encounter marker. Look for: Old orchard ward stone and Rootmaw's encounter.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## Names on Cold Stone (`ms_names_cold_stone`)
 
 Recover Graves while confronting the possibility that the old defense continues to demand service from people who should be at rest.
 
 ### Names on Cold Stone
 
-Opening: The names on Stonegate's graves are damaged, and the Nameless Warden attacks those who approach. Our burial words release a person from duties held in life. I fear that release is failing. Stop the Warden so the graves can be reached again.
+Opening: At Stonegate Crypt, the names have been scratched from burial stones and an undead guardian called the Nameless Warden attacks visitors. The Stone of Graves once marked the end of a dead person's service to the wards. Stop the Warden so we can recover that stone and begin restoring the names.
 
-Action: Defeat 1 marked The Nameless Warden opponents. Follow the quest markers to their encounter.
+Action: At Stonegate Crypt: Defeat 1 marked The Nameless Warden opponents. Follow the quest markers to their encounter. Find Stonegate Crypt northwest of Highwall.
 
 Observed result: The Nameless Warden is defeated. Hollis can return to the burial ground, but the scratched names still need restoring.
 
@@ -728,15 +892,23 @@ Report: The Warden has fallen. The names still need restoring. Take Graves: its 
 >
 > NPC: Because a promise to protect a road should not outlast the person who made it. If you reach the network's command, remember that some of its servants may have been waiting centuries to be allowed to die.
 
+> Player: Where is Stonegate Crypt, and what am I looking for?
+>
+> NPC: Find Stonegate Crypt northwest of Highwall. Stop the Nameless Warden at its marked encounter or in the crypt, then return to me in Archive City. Look for: Named crypt entrance and the Warden's encounter marker.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Cold Road (`ms_cold_road`)
 
 Recover Frost from the northern road and recognize the difference between buying time against disaster and trapping a place in endless suspension.
 
 ### The Cold Road
 
-Opening: The Hailback Broodmother blocks Snowrest's winter road. We have families waiting on supplies that must come through that pass. Stop her; the road crews will still have work after the fighting.
+Opening: A giant mountain spider called the Hailback Broodmother has blocked Snowrest Winter Pass, east of our village. Our food and medicine carts need that road. Kill the Broodmother at the marked encounter so the road crews can get through.
 
-Action: Defeat 1 marked Hailback Broodmother opponents. Follow the quest markers to their encounter.
+Action: At Snowrest Winter Pass: Defeat 1 marked Hailback Broodmother opponents. Follow the quest markers to their encounter. Follow the road east from Snowrest to Snowrest Winter Pass.
 
 Observed result: The Hailback Broodmother is defeated. Elric still needs to arrange winter supplies and patrols; this encounter did not deliver firewood or medicine.
 
@@ -754,15 +926,23 @@ Report: The Broodmother is defeated. We still need supply runs and patrols. Take
 >
 > NPC: The old keepers used Frost to slow a failing ward until help arrived. In these mountains, a little time can save a settlement. A delay that never ends can bury one.
 
+> Player: Where is Snowrest Winter Pass, and what am I looking for?
+>
+> NPC: Follow the road east from Snowrest to Snowrest Winter Pass. Stop the Hailback Broodmother at its red encounter marker. Look for: Winter road marker and the Broodmother's encounter.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Missing Bell Rope (`ms_missing_bell_rope`)
 
 Recover Bells while establishing the physical work still needed to carry warnings between the Fenlands and Oathstead.
 
 ### The Missing Bell Rope
 
-Opening: A bell line needs a sound foundation before it needs a heroic speech. Inspect both marked foundations. The Bells stone belongs to this network, and I need to know what we can build around it.
+Opening: A bell line needs a sound foundation before it needs a heroic speech. Inspect both marked foundations. The Bells stone belongs to this network, and I need to know what we can build around it. Find Glimmerfen Bell Foundations southeast of Glimmerfen.
 
-Action: Inspect 2 marked Old Bell Foundation locations. Report only what those inspections establish.
+Action: At Glimmerfen Bell Foundations: Inspect 2 marked Old Bell Foundation locations. Report only what those inspections establish. Find Glimmerfen Bell Foundations southeast of Glimmerfen.
 
 Observed result: Both marked bell-foundation sites have been inspected. Nessa can use the survey for repairs; no new rope or hooks have been installed.
 
@@ -780,15 +960,23 @@ Report: That gives me a repair survey. Take Bells. It coordinates warnings acros
 >
 > NPC: We name the landing it must guide people home to. My teacher made me say it clearly, even when no one else was in the workshop. It kept me thinking about the person listening in the rain.
 
+> Player: Where is Glimmerfen Bell Foundations, and what am I looking for?
+>
+> NPC: Find Glimmerfen Bell Foundations southeast of Glimmerfen. Inspect both marked foundations, then report to me in the village. Look for: Two labeled Old Bell Foundation inspection points.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Blackvault Mark (`ms_blackvault_mark`)
 
 Recover Ash and confront the accumulated cost of a defense whose spent power was stored where later generations could ignore it.
 
 ### The Blackvault Mark
 
-Opening: Blackvault held the residue of old ward workings. Its maintenance books describe stores that should have been discharged. Sareth now blocks access to the Ash stone. Defeat him so that recovery can begin.
+Opening: Blackvault Ruins, west of Redcairn, stored dangerous magical force left over from the old protective wards. Its books describe chambers that should have been emptied using the Stone of Ash. An armed guardian called Sareth now blocks our access. Defeat him so we can recover the stone.
 
-Action: Defeat 1 marked Sareth, the Cinder Knife opponents. Follow the quest markers to their encounter.
+Action: At Blackvault Ruins: Defeat 1 marked Sareth, the Cinder Knife opponents. Follow the quest markers to their encounter. Find Blackvault Ruins west of Redcairn.
 
 Observed result: Sareth is defeated. Report to Damar for the Stone of Ash. The other wards in Blackvault have not been cleared by this fight.
 
@@ -796,15 +984,23 @@ Report: Sareth is defeated. Take Ash. It gives spent power a way out of the netw
 
 > Player: What was Blackvault built to contain?
 >
-> NPC: Spent ward power. The maintenance books call it residue; the old keepers called it ash. Both names let people imagine it had become harmless. The stores still need somewhere safe to discharge.
+> NPC: The magical force left after the old protective wards stopped an attack. The keepers sent that force into storage chambers at Blackvault, west of Redcairn. Their maintenance books say the Stone of Ash was used to drain the chambers safely.
 
-> Player: Was Vaelthara made to contain it too?
+> Player: Why has that become dangerous?
 >
-> NPC: That is a claim we would need evidence for. Blackvault gives us a place to examine what the network discarded. It does not give me access to Vaelthara's memories.
+> NPC: The books list chambers that were filled but never emptied. I cannot tell you how much power remains in them. Sareth blocks access to the Ash stone, so recovering it is the first task.
 
 > Player: Why is Sareth guarding the waste?
 >
 > NPC: I can tell you Sareth blocks access to the Ash stone. I cannot tell you what bargain put him there. Defeat him, and we can recover the means to release spent power instead of letting it build up.
+
+> Player: Where is Blackvault Ruins, and what am I looking for?
+>
+> NPC: Find Blackvault Ruins west of Redcairn. Defeat Sareth at the marked encounter or in the ruins, then return to me in Redcairn. Look for: Blackvault's named entrance and Sareth's encounter marker.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
 
 ## A Camp Worth Defending (`ms_camp_defending`)
 
@@ -812,7 +1008,7 @@ Defend the home built after the shrine attack and make voluntary cooperation, ra
 
 ### A Camp Worth Defending
 
-Opening: Morvane's raid is coming for Oathstead. This is the camp that took you in after the shrine; now it is home to people with nowhere else to stand. Use the defense point when you are ready. We have to hold.
+Opening: Morvane, one of Vaelthara's commanders, is bringing raiders against Oathstead. This is the camp that sheltered you after the shrine attack. Use Oathstead's defense point when you are ready to lead the defense; the people living here need us to hold. Return to Maelis in Oathstead.
 
 Action: Use the marked Oathstead defense point and repel the raid.
 
@@ -840,13 +1036,21 @@ Report: We held. You are still here, and so are the people who stood with you. T
 >
 > NPC: We defend with the people and defenses we have. No single missing friend makes the rest of us helpless. Use the defense point when you are ready to face the raid.
 
+> Player: Where is Oathstead Camp, and what am I looking for?
+>
+> NPC: Return to me in Oathstead. Use the camp defense point for Morvane's raid; carry the mainland representatives' answers back to Maelis afterward. Look for: Camp hearth, Maelis, and the defense point.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
+
 ## The Kingdoms Answer (`ms_kingdoms_answer`)
 
 Gather five explicit mainland commitments for Oathstead and the Gate expedition, while allowing each participant to state the limits of their help.
 
 ### Request Mirella's commitment
 
-Opening: Oathstead held. Now you want grain for a longer fight. I can make a commitment, but the barges will still need an escort.
+Opening: Oathstead held. Now you want grain for a longer fight. I can make a commitment, but the barges will still need an escort. Return to Maelis in Oathstead.
 
 Action: Speak with Mirella and explicitly request support for Oathstead and the Old Gate expedition.
 
@@ -854,7 +1058,7 @@ Observed result: Riverside will supply grain for Oathstead's defenders. The barg
 
 ### Request Odrick's commitment
 
-Opening: Maelis needs a watch that can hold while you are at the Gate. Let us be precise about the detail I can promise.
+Opening: Maelis needs a watch that can hold while you are at the Gate. Let us be precise about the detail I can promise. Return to Maelis in Oathstead.
 
 Action: Speak with Odrick and explicitly request support for Oathstead and the Old Gate expedition.
 
@@ -862,7 +1066,7 @@ Observed result: Highwall will send a watch detail to Oathstead. The soldiers ha
 
 ### Request Selene's commitment
 
-Opening: If you are going to open the Gate, you need the surviving instructions in your hands. The Archive must stop treating access as a favor.
+Opening: If you are going to open the Gate, you need the surviving instructions in your hands. The Archive must stop treating access as a favor. Return to Maelis in Oathstead.
 
 Action: Speak with Selene and explicitly request support for Oathstead and the Old Gate expedition.
 
@@ -870,7 +1074,7 @@ Observed result: The Archive will share its surviving ward instructions. Selene 
 
 ### Request Ysra's commitment
 
-Opening: I can ask our bellkeepers to carry warnings for Oathstead. Before you rely on them, hear where our promise ends.
+Opening: I can ask our bellkeepers to carry warnings for Oathstead. Before you rely on them, hear where our promise ends. Return to Maelis in Oathstead.
 
 Action: Speak with Ysra and explicitly request support for Oathstead and the Old Gate expedition.
 
@@ -878,7 +1082,7 @@ Observed result: The bellkeepers will relay warnings between the settlements. Ys
 
 ### Request Solari's commitment
 
-Opening: I will answer for Sanctum's support. I cannot answer for every power beyond the Gate.
+Opening: I will answer for Sanctum's support. I cannot answer for every power beyond the Gate. Return to Maelis in Oathstead.
 
 Action: Speak with Solari and explicitly request support for Oathstead and the Old Gate expedition.
 
@@ -930,7 +1134,7 @@ Open the route to Vaelthara's command site with the twelve stones, carrying the 
 
 ### The Twelve Stones of the Gate
 
-Opening: You have all twelve stones. Take them to the Old Gate and open the way to the Hollow Throne. Vaelthara left a survivor at the shrine. She is about to face someone who has learned what her rule would cost.
+Opening: You have all twelve stones. Take them to the Old Gate and open the way to the Hollow Throne. Vaelthara left a survivor at the shrine. She is about to face someone who has learned what her rule would cost. Accept Maelis's Gate quest after collecting all twelve stones.
 
 Action: Inspect 1 marked Old Gate of Alderfall locations. Report only what those inspections establish.
 
@@ -953,4 +1157,12 @@ Report: The Gate is open. Beyond it is the power that broke the road shrine. Her
 > Player: When I first arrived, you barely knew me.
 >
 > NPC: You needed a blanket. I had one. We did not need the whole future settled before beginning.
+
+> Player: Where is Old Gate of Alderfall, and what am I looking for?
+>
+> NPC: Accept Maelis's Gate quest after collecting all twelve stones. Follow the Old Gate of Alderfall marker and interact with the portal. Look for: The existing twelve-stone portal marker.
+
+> Player: What is a ward?
+>
+> NPC: A protective enchantment fixed to a place or an object. A shrine might keep hostile spirits off a road; a burial ward might keep the dead at rest. Someone must maintain the carving, vessel, bell, or other object carrying the enchantment.
 

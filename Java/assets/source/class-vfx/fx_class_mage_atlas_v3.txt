@@ -1,0 +1,18 @@
+Use case: stylized-concept. Asset type: ONE production fantasy RPG VFX SPRITE ATLAS for Mage. Exact rectangular grid: 5 equal-width COLUMNS and 5 equal-height ROWS (25 slots), evenly spaced edge-to-edge across entire canvas. Requested canvas 2560 by 2560 pixels. ALL slots are exactly equal rectangles; NO border, grid lines, numbers or text. Every effect centered inside its own slot with 18% transparent padding on EVERY side. No sprites may cross cell boundaries. Genuinely transparent RGBA background and holes. Empty unused slots must remain transparent. Match the reference creature's textured hand-painted pixel art: earthy shadows, crisp pixel clusters, selective bright edges, NO smooth vector disks, NO glossy icons, NO broad airbrushed bloom. Battle-view isolated magical/weapon IMPACT OVERLAYS, not inventory icons, no characters, no shields/weapons sitting as items, no scenery. Palette: amethyst, midnight blue, silver with element-specific colors. Each slot is separately designed for the named ability; vary silhouette and internal structure, not merely color. Area abilities get wide fan/eruption compositions; heals and wards have open transparent centers. Ordered slots, read LEFT TO RIGHT then TOP TO BOTTOM:
+Row 1 column 1: Absolute Winter — chipped ice fragments and a frosty eruption; wide multi-target impact.
+Row 1 column 2: Arcane Burst — fractured arcane glyph fragments and curling magical energy; focused impact.
+Row 1 column 3: Astral Refuge — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; party restoration motif.
+Row 1 column 4: Astral Verdict — fractured arcane glyph fragments and curling magical energy; focused impact.
+Row 1 column 5: Chain Spark — forked lightning filaments and jagged crackling sparks; wide multi-target impact.
+Row 2 column 1: Chaos Bloom — fractured arcane glyph fragments and curling magical energy; wide multi-target impact.
+Row 2 column 2: Comet Spiral — fractured arcane glyph fragments and curling magical energy; wide multi-target impact.
+Row 2 column 3: Frost Lance — chipped ice fragments and a frosty eruption; focused impact.
+Row 2 column 4: Ley Reversal — fractured arcane glyph fragments and curling magical energy; focused impact.
+Row 2 column 5: Mana Bloom — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; party restoration motif.
+Row 3 column 1: Meteor Thread — fractured arcane glyph fragments and curling magical energy; focused impact.
+Row 3 column 2: Phoenix Equation — ragged textured flame burst and embers; wide multi-target impact.
+Row 3 column 3: Prismatic Collapse — fractured arcane glyph fragments and curling magical energy; wide multi-target impact.
+Row 3 column 4: Renewing Ward — restorative ascending wisps or herb/petal/medicine motifs framing an empty center; focused impact.
+Row 3 column 5: Star Mantle — a protective arc or hollow ward structure assembling around an empty center; protective/evasive, non-damaging.
+Row 4 column 1: Worldfire Sigil — ragged textured flame burst and embers; wide multi-target impact.
+Remaining slots 17 through 25: completely transparent. Keep the exact regular grid, no text. Reference images are style only, do not copy their subjects.

@@ -1,0 +1,14 @@
+{
+  "catalog_entries": 80,
+  "unique_static_sprites_reviewed": 58,
+  "static_replacements": 27,
+  "animation_replacements": 1,
+  "attack_frame_counts": {
+    "skeleton": 6,
+    "spider": 6
+  },
+  "archived_originals": 28,
+  "hash_errors": [],
+  "other_static_sprites_unchanged": 31,
+  "other_changes": []
+}

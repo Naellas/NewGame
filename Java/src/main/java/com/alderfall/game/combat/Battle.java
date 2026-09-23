@@ -16,6 +16,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public final class Battle {
+    private double animationSpeed = 1.0;
+
+    public void setAnimationSpeed(double speed) {
+        animationSpeed = GameConfig.clampCombatAnimationSpeed(speed);
+    }
     public static final int MAX_ENEMIES = 5;
     public static final int MAX_PLAYER_COMPANIONS = 3;
     private static final int INTRO_TOTAL_TICKS = 84;
@@ -67,7 +72,7 @@ public final class Battle {
     private final double monsterLevelScaling;
     public final Queue<String> log = new ArrayDeque<>();
     public final List<FloatingText> floaters = new ArrayList<>();
-    public final String backdrop;
+    public String backdrop;
     public final char terrain;
     public final String mapKind;
     public boolean finished;
@@ -779,7 +784,7 @@ public final class Battle {
         List<Actor> healTargets = List.of();
         List<Actor> damageTargets = List.of();
         Actor effectTarget = actor;
-        String effectKind = "shield";
+        String effectKind = effectForAbility(ability);
         if (ability.kind() == Ability.AbilityKind.HEAL) {
             if (requiresExplicitAllyTarget(ability) && !hasExplicitPartyTarget()) {
                 addLog("Choose an ally target before using " + ability.name() + ".");
@@ -790,7 +795,7 @@ public final class Battle {
                 return;
             }
             effectTarget = healTargets.get(0);
-            effectKind = "heal";
+            effectKind = effectForAbility(ability);
         } else if (ability.kind() == Ability.AbilityKind.DAMAGE) {
             damageTargets = damageTargetsFor(ability);
             if (damageTargets.isEmpty()) {
@@ -815,10 +820,14 @@ public final class Battle {
                     finalEffectKind,
                     actor,
                     finalEffectTarget,
+                    finalHealTargets,
+                    finalHealTargets.size() > 1 ? BattleActionAnimation.VisualMode.AOE : BattleActionAnimation.VisualMode.SINGLE,
                     10,
                     8,
                     12,
-                    () -> {
+                    step -> {
+                        // Healing resolves the whole recipient list once; all recipients still get visual collisions.
+                        if (step.index() != 0) return;
                         resolveHealAbility(actor, ability, finalHealTargets, finalEnemyTarget);
                         applyMpFlow(actor);
                         applyPostCastMomentum(actor);
@@ -829,10 +838,14 @@ public final class Battle {
                     finalEffectKind,
                     actor,
                     actor,
+                    ability.hasTag("party_guard") || hasEquipmentEffect(actor, EquipmentEffectHooks.DEFEND_STEADIES_ALLIES)
+                            ? new ArrayList<>(livingParty()) : List.of(actor),
+                    BattleActionAnimation.VisualMode.AOE,
                     8,
                     1,
                     12,
-                    () -> {
+                    step -> {
+                        if (step.index() != 0) return;
                         defend(actor, ability, 4 + actor.skillRank("stalwart_guard"));
                         applyAbilityStatuses(actor, ability, actor, finalEnemyTarget);
                         applyMpFlow(actor);
@@ -865,6 +878,8 @@ public final class Battle {
                     }
             );
         }
+        if (actionAnimation != null && actionAnimation.source == actor)
+            actionAnimation.configureVisual(ability.name(), ability.kind());
     }
 
     public boolean playerUseItem(Item item) {
@@ -1469,7 +1484,7 @@ public final class Battle {
         if (targetStatuses.containsKey("vulnerable")) {
             score += 0.9;
         }
-        if (targetStatuses.containsKey("weak")) {
+        if ((targetStatuses.containsKey("weak") || targetStatuses.containsKey("frozen"))) {
             score -= 0.35;
         }
         if (isGuarding(target)) {
@@ -1637,7 +1652,7 @@ public final class Battle {
         if (actor != player && partyMembers.contains(actor)) {
             modified += player.skillRank("shared_training") + player.skillRank("pack_coordination");
         }
-        if (bucket.containsKey("weak")) {
+        if ((bucket.containsKey("weak") || bucket.containsKey("frozen"))) {
             modified = (int) (modified * 0.70);
         }
         if (bucket.containsKey("haste")) {
@@ -1693,7 +1708,7 @@ public final class Battle {
             return false;
         }
         boolean removed = false;
-        for (String key : List.of("poison", "burn", "weak", "vulnerable")) {
+        for (String key : List.of("poison", "burn", "weak", "frozen", "vulnerable")) {
             removed |= bucket.remove(key) != null;
         }
         if (bucket.isEmpty()) {
@@ -1780,7 +1795,7 @@ public final class Battle {
             modified = Math.max(1, (int) Math.round(modified * 0.55));
             parried = true;
         }
-        if (ability == null && bucket.containsKey("weak") && hasEquipmentEffect(attacker, EquipmentEffectHooks.BASIC_ATTACK_WEAK)) {
+        if (ability == null && (bucket.containsKey("weak") || bucket.containsKey("frozen")) && hasEquipmentEffect(attacker, EquipmentEffectHooks.BASIC_ATTACK_WEAK)) {
             modified = Math.max(1, (int) Math.round(modified * 1.18));
         }
         String damageMode = damageModeFor(ability);
@@ -1811,7 +1826,7 @@ public final class Battle {
         if (bucket.containsKey("vulnerable")) {
             modified = (int) (modified * 1.25);
         }
-        if (bucket.containsKey("weak") && attacker.skillRank("frostbite") > 0) {
+        if ((bucket.containsKey("weak") || bucket.containsKey("frozen")) && attacker.skillRank("frostbite") > 0) {
             modified = (int) (modified * (1.0 + attacker.skillRank("frostbite") * 0.05));
         }
         double typeMultiplier = enemies.contains(target)
@@ -2628,7 +2643,19 @@ public final class Battle {
         if (finished || actionAnimation != null || source == null || target == null) {
             return false;
         }
-        actionAnimation = new BattleActionAnimation(source, target, visualTargets, visualMode, kind, castFrames, travelFrames, impactFrames);
+        actionAnimation = new BattleActionAnimation(source, target, visualTargets, visualMode, kind, castFrames, travelFrames, impactFrames, animationSpeed);
+        if (partyMembers.contains(source)) {
+            String mode = switch (kind) {
+                case "strike" -> "basic";
+                case "bash" -> "heavy";
+                case "cleave" -> "cleave";
+                case "shield", "ward" -> "guard";
+                case "dust" -> "dodge";
+                default -> null;
+            };
+            if (mode != null) actionAnimation.configureVisual(ClassAbilityVfx.attackName(source.className, mode),
+                    source == target ? Ability.AbilityKind.DEFEND : Ability.AbilityKind.DAMAGE);
+        }
         animationImpact = onImpact;
         animationComplete = onComplete;
         effectKind = actionAnimation.effectKind;
@@ -2767,13 +2794,6 @@ public final class Battle {
         if ("dungeon".equals(mapKind)) {
             return "battle_dungeon_hall_backdrop";
         }
-        return switch (terrain) {
-            case 'f' -> "battle_forest_backdrop";
-            case 's', 'b' -> "battle_desert_backdrop";
-            case 'n' -> "battle_snow_backdrop";
-            case 'q', 'm' -> "battle_mountain_backdrop";
-            case 'd' -> "battle_dungeon_cavern_backdrop";
-            default -> "battle_plains_backdrop";
-        };
+        return BattleScenery.outdoor(terrain);
     }
 }

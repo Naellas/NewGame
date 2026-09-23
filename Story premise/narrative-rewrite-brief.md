@@ -10,6 +10,8 @@ Encounter companions: [Faith, Cults, Camps, and Dungeons](faith-cults-and-dungeo
 
 Implementation follow-through: [Quest Objective Refinement Plan](../Java/docs/quest-objective-refinement-plan.md) defines completion rules, world placement, pilot quest revisions, save migration, and validation for turning this brief into playable objectives.
 
+Player comprehension is an additional acceptance requirement: introduce unfamiliar people, objects, customs, and locations before relying on their names. Use the [fixed location library](location-library.md) and [dialogue clarity review](dialogue-clarity-and-place-review.md). “The page,” “the ancestors,” and “the sites” are not clear references unless the conversation has already identified which document, dead people, and destinations it means. Required destinations must be actual named game places, not an arbitrary camp index disguised by prose.
+
 ## 1. Scope and source of truth
 
 Rewrite NPC greetings, local rumors, work conversations, quest offers, progress lines, completion reactions, companion personal conversations, companion quest chains, ambient conversations, travel banter, and regional responses to the main campaign. Update the opening and ending to match the revised premise.
@@ -35,6 +37,12 @@ Keep existing quest, NPC, recruit, item, and map identifiers where their meaning
 Neither local spirits nor every companion antagonist become servants of Vaelthara. Her campaign exploits existing vulnerabilities, but people and other beings retain independent motives.
 
 ## 3. NPC writing specification
+
+Runtime follow-through: [Physical places and conversations about people](../Java/docs/location-and-character-pass.md) implements generated campaign sites, paged quest conversations, twenty cast backgrounds and revised weekly requests. [Character introductions](../Java/docs/npc-background-conversations.md) and [local conversations](../Java/docs/local-quest-conversations.md) are generated from the current content.
+
+Start with the incident and the person, not a quest title or an objective checklist. Let the player advance through several short passages before a response menu: introduce the speaker's work, explain what happened and how they learned it, then explain their personal stake and request. Use as many passages as the scene needs. Optional questions deepen or challenge that account instead of standing in for its missing introduction.
+
+A first meeting must not presume friendship or shared history. Give a reason this NPC would ask an unfamiliar traveler for help, and let the player question it. Public background can be volunteered; intimate admissions require a relationship or shared work appropriate to the character. Preserve that distinction on return visits. Between tasks, recall the particular completed action or discovery that caused the next request; never import an unplayed predecessor's findings. Reading, accepting, promising and completing remain separate actions.
 
 Before writing a named NPC, record their home, current community, work, immediate need, belief, private preference, important relationship, and knowledge limits. A displaced northern baker living in Sanctum should have a different outlook from a local temple guard. Do not select a complete personality from region alone.
 

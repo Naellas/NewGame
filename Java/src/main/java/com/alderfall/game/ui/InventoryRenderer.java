@@ -24,11 +24,20 @@ public final class InventoryRenderer {
     private final AssetStore assets;
     private final GameState state;
     private final Effects effects;
+    public final ItemBrowser browser = new ItemBrowser();
+    private boolean assemblyMode;
+    private final AssemblyRenderer assemblyRenderer;
+    private List<String> visibleItems = List.of();
+
+    public void useVisibleItem(int index) {
+        if (index >= 0 && index < visibleItems.size()) state.usePartyInventoryItem(visibleItems.get(index));
+    }
 
     public InventoryRenderer(AssetStore assets, GameState state, Effects effects) {
         this.assets = assets;
         this.state = state;
         this.effects = effects;
+        this.assemblyRenderer = new AssemblyRenderer(assets, state, effects);
     }
 
 
@@ -88,6 +97,84 @@ public final class InventoryRenderer {
         drawInventoryDragGhost(g);
     }
 
+    private int chestPage;
+    private int chestPackPage;
+    private Object displayedChest;
+
+    public void drawChest(Graphics2D g) {
+        if (displayedChest != state.activeChest) {
+            displayedChest = state.activeChest;
+            chestPage = chestPackPage = 0;
+        }
+        effects.inventoryDragZones().clear();
+        effects.inventoryDropZones().clear();
+        int w = Math.min(1080, effects.gameAreaWidth() - 40);
+        int h = Math.min(740, effects.viewHeight() - 60);
+        int x = effects.gameAreaCenteredX(w), y = 30;
+        effects.drawOverlayBase(g, x, y, w, h);
+        g.setColor(new Color(246, 224, 151));
+        g.setFont(new Font("SansSerif", Font.BOLD, 26));
+        g.drawString("Chest & Inventory", x + 24, y + 40);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawString("Transfer one item or a full stack. Equipped items stay on your character.", x + 24, y + 65);
+        int half = (w - 60) / 2;
+        drawChestPane(g, x + 20, y + 84, half, h - 164, true);
+        drawChestPane(g, x + 40 + half, y + 84, half, h - 164, false);
+        effects.actionButton(g, x + 24, y + h - 62, 130, 32, "Take all", () -> {
+            for (String key : new ArrayList<>(state.chestContents().keySet()))
+                state.transferChestItem(key, true, Integer.MAX_VALUE);
+        }, new Color(55, 78, 61), new Color(113, 148, 103), !state.chestContents().isEmpty());
+        effects.actionButton(g, x + w - 144, y + h - 62, 120, 32, "Close [Esc]", state::closeOverlay,
+                new Color(83, 61, 61), new Color(149, 96, 88), true);
+        g.setColor(new Color(246, 224, 151));
+        effects.drawClippedString(g, state.status, x + 24, y + h - 12, w - 48);
+    }
+
+    private void drawChestPane(Graphics2D g, int x, int y, int w, int h, boolean taking) {
+        g.setColor(new Color(20, 23, 31));
+        g.fillRoundRect(x, y, w, h, 10, 10);
+        g.setColor(new Color(246, 224, 151));
+        g.setFont(new Font("SansSerif", Font.BOLD, 17));
+        g.drawString(taking ? "Chest" : "Shared Pack", x + 14, y + 28);
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>((taking ? state.chestContents() : state.player.inventory).entrySet());
+        entries.removeIf(e -> e.getValue() <= 0);
+        int rows = Math.max(1, (h - 88) / 54);
+        int pages = Math.max(1, (entries.size() + rows - 1) / rows);
+        int page = Math.max(0, Math.min(taking ? chestPage : chestPackPage, pages - 1));
+        if (taking) chestPage = page; else chestPackPage = page;
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        if (entries.isEmpty()) {
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawString(taking ? "Empty - you can store items here." : "Your pack is empty.", x + 14, y + 66);
+        }
+        for (int i = page * rows; i < Math.min(entries.size(), (page + 1) * rows); i++) {
+            var entry = entries.get(i);
+            String key = entry.getKey();
+            int rowY = y + 42 + (i - page * rows) * 54;
+            g.drawImage(assets.sprite(GameData.itemIcon(key), 36), x + 10, rowY, null);
+            g.setColor(Color.WHITE);
+            effects.drawClippedString(g, GameData.itemName(key), x + 54, rowY + 16, w - 198);
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawString("x" + entry.getValue(), x + 54, rowY + 34);
+            effects.tooltipZones().add(new TooltipZone(new Rectangle(x + 8, rowY, w - 144, 48),
+                    GameData.itemName(key), inventoryTooltip(key, entry.getValue()), GameData.itemIcon(key), new Color(149, 130, 88)));
+            String verb = taking ? "Take" : "Store";
+            effects.actionButton(g, x + w - 138, rowY + 6, 66, 32, verb + " 1",
+                    () -> state.transferChestItem(key, taking, 1), new Color(52, 65, 82), new Color(95, 116, 144), true);
+            effects.actionButton(g, x + w - 66, rowY + 6, 56, 32, "Stack",
+                    () -> state.transferChestItem(key, taking, Integer.MAX_VALUE), new Color(52, 65, 82), new Color(95, 116, 144), true);
+        }
+        effects.actionButton(g, x + 12, y + h - 36, 70, 26, "Previous", () -> {
+            if (taking) chestPage--; else chestPackPage--;
+        }, new Color(52, 65, 82), new Color(95, 116, 144), page > 0);
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawString((page + 1) + " / " + pages, x + w / 2 - 18, y + h - 17);
+        effects.actionButton(g, x + w - 82, y + h - 36, 70, 26, "Next", () -> {
+            if (taking) chestPage++; else chestPackPage++;
+        }, new Color(52, 65, 82), new Color(95, 116, 144), page + 1 < pages);
+    }
+
     private void drawInventoryPackGrid(Graphics2D g, int x, int y, int w, int h) {
         g.setColor(new Color(20, 23, 31, 220));
         g.fillRoundRect(x, y, w, h, 8, 8);
@@ -100,20 +187,24 @@ public final class InventoryRenderer {
         int gap = 10;
         int cell = 76;
         int gridX = x + 18;
-        int gridY = y + 48;
+        List<Map.Entry<String, Integer>> entries = browser.items(new ArrayList<>(state.player.inventory.keySet())).stream()
+                .map(key -> Map.entry(key, state.player.inventory.get(key))).toList();
+        browser.draw(g, x + 18, y + 40, w - 36, h - 40, effects.buttons());
+        int gridY = y + 154;
         int gridW = w - 36;
-        int gridH = h - 72;
+        int gridH = h - 178;
         int cols = Math.max(4, Math.max(1, (gridW + gap) / (cell + gap)));
-        int rows = Math.max(3, Math.max(1, (gridH + gap) / (cell + gap)));
+        int rows = Math.max(1, (gridH + gap) / (cell + gap));
         int visible = Math.max(1, cols * rows);
-        Rectangle packDrop = new Rectangle(x + 10, y + 42, w - 20, h - 54);
+        Rectangle packDrop = new Rectangle(x + 10, gridY - 4, w - 20, Math.max(cell, gridH));
         effects.inventoryDropZones().add(new InventoryDropZone(packDrop, InventoryDropKind.PACK, null));
         drawInventoryDropHint(g, packDrop, "Drop gear here to unequip");
 
-        List<Map.Entry<String, Integer>> entries = new ArrayList<>(state.player.inventory.entrySet());
         int maxScroll = Math.max(0, entries.size() - visible);
-        effects.setInventoryItemScroll(Math.max(0, Math.min(effects.inventoryItemScroll(), maxScroll)));
+        browser.scroll = Math.max(0, Math.min(browser.scroll, maxScroll));
+        effects.setInventoryItemScroll(browser.scroll);
         int end = Math.min(entries.size(), effects.inventoryItemScroll() + visible);
+        visibleItems = entries.subList(browser.scroll, end).stream().map(Map.Entry::getKey).toList();
         for (int i = effects.inventoryItemScroll(); i < end; i++) {
             Map.Entry<String, Integer> entry = entries.get(i);
             int local = i - effects.inventoryItemScroll();
@@ -122,10 +213,9 @@ public final class InventoryRenderer {
             int cellX = gridX + col * (cell + gap);
             int cellY = gridY + row * (cell + gap);
             Rectangle bounds = new Rectangle(cellX, cellY, cell, cell);
-            int buttonIndex = i;
             effects.inventoryDragZones().add(new InventoryDragZone(bounds, entry.getKey(), null));
             effects.buttons().add(new UiButton(bounds, "inventory-item:" + entry.getKey(), () -> {
-                state.useInventoryItem(buttonIndex);
+                state.usePartyInventoryItem(entry.getKey());
                 effects.repaintPanel();
             }));
             drawInventoryPackCell(g, bounds, entry.getKey(), entry.getValue(), local);
@@ -133,7 +223,7 @@ public final class InventoryRenderer {
         if (entries.isEmpty()) {
             g.setFont(new Font("SansSerif", Font.PLAIN, 16));
             g.setColor(new Color(210, 213, 222));
-            g.drawString("Your pack is empty.", gridX, gridY + 32);
+            g.drawString("No items in this category or search.", gridX, gridY + 32);
         }
         effects.drawScrollIndicator(g, x + w - 12, gridY, Math.min(gridH, rows * (cell + gap) - gap), entries.size(), effects.inventoryItemScroll(), visible);
     }
@@ -155,12 +245,14 @@ public final class InventoryRenderer {
         Color border = equipment != null
                 ? ShopRenderer.rarityColor(equipment.rarity())
                 : item != null ? new Color(103, 151, 117) : new Color(125, 136, 172);
+        if (craftingOnly) border = ShopRenderer.rarityColorForItem(itemKey);
         if (item != null) {
             border = ShopRenderer.rarityColor(item.rarity());
         }
         if (craftingOnly) {
             border = new Color(161, 124, 83);
         }
+        if (!browser.query.isBlank() && browser.matches(itemKey)) border = new Color(255, 216, 122);
         if (hovered || draggedOver) {
             border = new Color(151, 177, 112);
         }
@@ -192,9 +284,10 @@ public final class InventoryRenderer {
     }
 
     public List<CraftingSystem.Recipe> displayedCraftingRecipes() {
+        if (assemblyMode) return List.of();
         CraftingSystem.Workstation workstation = state.currentWorkstation();
         List<CraftingSystem.Recipe> recipes = state.learnedCraftingRecipes();
-        if (workstation != null) {
+        if (workstation != null && !state.config.creativeCraftingMode) {
             recipes = recipes.stream()
                     .filter(recipe -> recipe.workstation() == workstation)
                     .toList();
@@ -227,6 +320,16 @@ public final class InventoryRenderer {
         int panelY = 86;
         int panelH = 620;
         effects.drawOverlayBase(g, panelX, panelY, panelW, panelH);
+        if (assemblyMode) {
+            assemblyRenderer.draw(g, panelX, panelY);
+            effects.actionButton(g, panelX + 800, panelY + 24, 100, 30, "Close", state::toggleCrafting,
+                    new Color(83, 61, 61), new Color(149, 96, 88), true);
+            effects.actionButton(g, panelX + 625, panelY + 24, 160, 30, "Recipe Book", () -> assemblyMode = false,
+                    new Color(44, 57, 68), new Color(118, 150, 161), true);
+            return;
+        }
+        effects.actionButton(g, panelX + 700, panelY + 24, 200, 30, "Equipment Workshop", () -> assemblyMode = true,
+                new Color(44, 57, 68), new Color(118, 150, 161), true);
         CraftingSystem.Workstation workstation = state.currentWorkstation();
         CraftingSystem.RecipeCategory[] categories = CraftingSystem.RecipeCategory.values();
         if (effects.craftingRecipeCategoryIndex() < 0 || effects.craftingRecipeCategoryIndex() > categories.length) {
@@ -312,8 +415,8 @@ public final class InventoryRenderer {
 
     private void drawRecipeBookSlot(Graphics2D g, Rectangle bounds, CraftingSystem.Recipe recipe, int visibleIndex) {
         boolean hovered = effects.hoverPoint() != null && bounds.contains(effects.hoverPoint());
-        boolean stationReady = recipe.workstation() == null || recipe.workstation() == state.currentWorkstation();
-        boolean craftable = stationReady && CraftingSystem.canCraft(state.player, recipe) && !state.crafting.active();
+        boolean stationReady = state.config.creativeCraftingMode || recipe.workstation() == null || recipe.workstation() == state.currentWorkstation();
+        boolean craftable = stationReady && (state.config.creativeCraftingMode || CraftingSystem.canCraft(state.player, recipe)) && !state.crafting.active();
         Color border = switch (recipe.category()) {
             case CONSUMABLE -> new Color(103, 151, 117);
             case WEAPON -> new Color(170, 120, 92);
@@ -363,8 +466,8 @@ public final class InventoryRenderer {
         String output = recipe.resultAmount() + "x " + GameData.itemName(recipe.resultKey());
         String station = "Crafted at: " + recipeStationLabel(recipe) + ".";
         String needs = "Requires: " + CraftingSystem.requirementLabel(recipe) + ".";
-        boolean stationReady = recipe.workstation() == null || recipe.workstation() == state.currentWorkstation();
-        String readiness = stationReady
+        boolean stationReady = state.config.creativeCraftingMode || recipe.workstation() == null || recipe.workstation() == state.currentWorkstation();
+        String readiness = state.config.creativeCraftingMode ? "Creative crafting: instant, free, no XP; requirements bypassed." : stationReady
                 ? CraftingSystem.canCraft(state.player, recipe) ? "Ready to craft here." : "You know this recipe, but need more requirements."
                 : "Move to " + recipeStationLabel(recipe) + " to craft it.";
         return recipe.category().label() + ". Output: " + output + ". " + station + " " + needs + " " + recipe.description() + " " + readiness;

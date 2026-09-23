@@ -29,6 +29,7 @@ final class BattleRenderer {
     );
 
     private final AssetStore assets;
+    private final java.util.Map<BufferedImage, BufferedImage> hitMasks = new java.util.WeakHashMap<>();
 
     BattleRenderer(AssetStore assets) {
         this.assets = assets;
@@ -36,11 +37,11 @@ final class BattleRenderer {
 
     void drawBackdrop(Graphics2D g, Battle battle, int x, int y, int w, int h) {
         g.drawImage(assets.cover(battle.backdrop, w, h), x, y, null);
-        g.setPaint(new GradientPaint(x, y, new Color(8, 10, 16, 70), x, y + h, new Color(8, 10, 16, 218)));
+        g.setPaint(new GradientPaint(x, y, new Color(8, 10, 16, 24), x, y + h, new Color(8, 10, 16, 110)));
         g.fillRect(x, y, w, h);
         g.setPaint(null);
         g.setColor(new Color(20, 18, 18, 92));
-        g.fillRect(x, y + h - 300, w, 300);
+        g.fillRect(x, y + h - 180, w, 180);
     }
 
     BattleActorPose actorPose(Battle battle, Actor actor, boolean enemySide) {
@@ -53,16 +54,19 @@ final class BattleRenderer {
         String kind = animation.effectKind == null ? "strike" : animation.effectKind;
         String className = actor.className == null ? "" : actor.className;
         if (source) {
-            return sourcePose(animation, className, kind, direction);
+            return sourcePose(animation, className, animation.visualProfile() == null ? kind : animation.visualProfile().poseKind(), direction);
         }
-        if (animation.stage() != BattleActionAnimation.Stage.IMPACT) {
+        double progress = animation.collisionProgress(animation.targets.indexOf(actor));
+        boolean restorative = animation.actionKind() == null ? restorativeEffect(kind)
+                : animation.actionKind() != Ability.AbilityKind.DAMAGE;
+        if (progress < 0 || progress >= 1 || restorative) {
             return BattleActorPose.REST;
         }
-        double impact = Math.sin(animation.impactProgress() * Math.PI);
+        double impact = Math.sin(Math.min(1, progress * 4) * Math.PI * 0.5) * Math.pow(1 - progress, 2);
         return new BattleActorPose(
-                (int) Math.round(-direction * impact * 14.0),
-                (int) Math.round(-impact * 4.0),
-                direction * impact * 0.045,
+                (int) Math.round(-direction * impact * 24.0),
+                (int) Math.round(-impact * 7.0),
+                direction * impact * 0.085,
                 1.0 + impact * 0.035,
                 1.0 - impact * 0.025
         );
@@ -80,9 +84,34 @@ final class BattleRenderer {
         spriteG.dispose();
     }
 
+    void drawHitFlash(Graphics2D g, BufferedImage image, int x, int y, int width, int height, BattleActorPose pose, int flash) {
+        if (flash <= 0) return;
+        BufferedImage mask = hitMasks.computeIfAbsent(image, source -> {
+            BufferedImage tinted = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D tint = tinted.createGraphics();
+            tint.drawImage(source, 0, 0, null);
+            tint.setComposite(AlphaComposite.SrcIn);
+            tint.setColor(new Color(255, 246, 214));
+            tint.fillRect(0, 0, tinted.getWidth(), tinted.getHeight());
+            tint.dispose();
+            return tinted;
+        });
+        drawActorSprite(g, mask, x, y, width, height, pose, Math.min(0.65f, flash / 18.0f));
+    }
+
     boolean physicalEffect(String kind) {
         return switch (kind == null ? "" : kind) {
             case "strike", "impact", "bash", "slash", "cleave", "fang", "claw", "volley", "pierce" -> true;
+            default -> false;
+        };
+    }
+
+    private boolean restorativeEffect(String kind) {
+        return switch (kind) {
+            case "heal", "regeneration", "shield", "ward", "item", "grove_hymn", "root_memory", "seraphic_hymn",
+                    "mend_unique", "shadow_salve_unique", "mercy_wellspring_unique", "panacea_toss_unique",
+                    "primeval_bloom_unique", "smoke_veil_unique", "stone_guard_unique", "aegis_circle_unique",
+                    "citadel_protocol_unique", "halo_bastion_unique" -> true;
             default -> false;
         };
     }
@@ -109,9 +138,9 @@ final class BattleRenderer {
     }
 
     private BattleActorPose sourcePose(BattleActionAnimation animation, String className, String kind, int direction) {
-        boolean physical = physicalEffect(kind) || isPhysicalClass(className);
-        boolean ranged = isRangedClass(className) || "volley".equals(kind) || "pierce".equals(kind);
-        boolean magic = !physical || isMagicClass(className) || magicalEffect(kind);
+        boolean ranged = "volley".equals(kind) || "pierce".equals(kind) || kind.contains("shot") || kind.contains("arrow") || kind.contains("volley");
+        boolean physical = physicalEffect(kind) || ranged || kind.contains("dual_cut") || kind.contains("shield_ram")
+                || kind.contains("hemostatic") || kind.contains("titan_hammer") || kind.contains("final_challenge");
         return switch (animation.stage()) {
             case CAST -> {
                 double p = animation.castProgress();
@@ -134,13 +163,13 @@ final class BattleRenderer {
                             0.98
                     );
                 }
-                double weave = Math.sin(p * Math.PI * 4.0);
+                double charge = p * p * (3 - 2 * p);
                 yield new BattleActorPose(
-                        (int) Math.round(weave * 4.0),
-                        (int) Math.round(-Math.sin(p * Math.PI) * 12.0),
-                        weave * 0.06,
-                        1.0 - Math.sin(p * Math.PI) * 0.02,
-                        1.0 + Math.sin(p * Math.PI) * 0.05
+                        (int) Math.round(-direction * charge * 10),
+                        (int) Math.round(-charge * 8),
+                        -direction * charge * 0.07,
+                        1.0 - charge * 0.025,
+                        1.0 + charge * 0.035
                 );
             }
             case TRAVEL -> {
@@ -156,10 +185,11 @@ final class BattleRenderer {
                     );
                 }
                 double settle = 1.0 - p;
+                double release = Math.sin(Math.min(1, p * 4) * Math.PI) * settle;
                 yield new BattleActorPose(
-                        (int) Math.round(Math.sin(p * Math.PI * 2.0) * 3.0),
-                        (int) Math.round(-settle * 6.0),
-                        Math.sin(p * Math.PI * 2.0) * 0.025,
+                        (int) Math.round(direction * (-10 * settle + release * 24)),
+                        (int) Math.round(-settle * 8.0),
+                        direction * (-0.07 * settle + release * 0.15),
                         1.0,
                         1.0 + settle * 0.025
                 );

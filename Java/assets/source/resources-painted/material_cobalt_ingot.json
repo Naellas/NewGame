@@ -1,0 +1,6 @@
+{
+  "file": "items/material_cobalt_ingot.png",
+  "prompt": "Use case: stylized-concept. Create ONE standalone transparent PNG sprite for a 2D top-down fantasy RPG. Hand-painted pixel-art-inspired style, crisp chunky forms and strong silhouette readable at 48 pixels, three-quarter overhead view, upper-left light, no outline frame. Entire object centered in square canvas, 15 percent transparent margins, genuine alpha transparency. No text, letters, labels, UI, border, sheet, checkerboard, scenery or floor rectangle. Match the provided verdant node STYLE: naturally shaped faceted forms, restrained painted shading, moderate detail and illustrated fantasy materials. Do not turn it into coarse block pixel art or a realistic photograph. Inventory icon of one cobalt ingot: simple solid beveled trapezoidal metal bar laid diagonally, top and two sides visible, naturally shaded broad faces. royal blue with navy side and cyan edge. A manufactured bar, never a crystal or rock. No ground or glowing aura.",
+  "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c90e-ad37-74d3-9998-533d6664cfe6\\exec-6471d686-c085-420a-b091-923b1fb711fe.png",
+  "mode": "built-in image_gen"
+}

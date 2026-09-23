@@ -48,6 +48,8 @@ final class OverworldLandmarkPropGenerator {
     }
 
     private static void addLocationHooks(MapArea area, boolean[][] occupied, TilePoint point, String label, char tile) {
+        // Playable dungeons already have regional, purpose-specific blueprint markers.
+        if (tile == 'd') return;
         String lower = label.toLowerCase(Locale.ROOT);
         int salt = labelSalt(label, point);
         if (lower.contains("camp")) {

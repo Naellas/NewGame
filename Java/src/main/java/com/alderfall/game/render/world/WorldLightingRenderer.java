@@ -29,7 +29,11 @@ public final class WorldLightingRenderer {
     private static final Color BIOME_TINT_ROAD = new Color(230, 196, 130);
     private static final Color BIOME_TINT_GRASS = new Color(176, 205, 127);
     private static final float[] RADIAL_GLOW_FRACTIONS = {0.0f, 0.42f, 1.0f};
+    private static final float[] LAYERED_GLOW_FRACTIONS = {0.0f, 0.25f, 0.42f, 0.593f, 1.0f};
+    private static final float[] LAYERED_CORE_FACTORS = {1.0f, 0.321f, 0.162f, 0.0f, 0.0f};
+    private static final float[] LAYERED_SPREAD_FACTORS = {1.0f, 0.596f, 0.322f, 0.226f, 0.0f};
     private static final int MAX_ACTIVE_WORLD_LIGHTS = 48;
+    private static final int LIGHT_STATE_HOLD_FRAMES = 24;
 
     private final GameState state;
     private final Effects effects;
@@ -50,6 +54,10 @@ public final class WorldLightingRenderer {
     private BufferedImage vignetteCache;
     private int vignetteInnerAlpha = -1;
     private int vignetteOuterAlpha = -1;
+    private int cachedLightingTick = Integer.MIN_VALUE;
+    private int cachedDaylightState;
+    private float cachedLightingDaylight = 0.18f;
+    private int cachedLightingMinutes;
 
     public WorldLightingRenderer(GameState state, Effects effects) {
         this.state = state;
@@ -169,7 +177,7 @@ public final class WorldLightingRenderer {
         shadow.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Composite oldComposite = shadow.getComposite();
 
-        float castAlpha = (float) (0.08f * strength * (0.35f + (float) state.daylightLevel() * 0.65f) * (1.0 - lightInfluence * 0.35));
+        float castAlpha = (float) (0.08f * strength * (0.35f + lightingDaylight() * 0.65f) * (1.0 - lightInfluence * 0.35));
         shadow.setComposite(AlphaComposite.SrcOver.derive(castAlpha));
         shadow.setColor(new Color(4, 6, 9));
         shadow.fillOval(x + castX - (castW - w) / 2, y + castY, castW, castH);
@@ -352,8 +360,8 @@ public final class WorldLightingRenderer {
     }
 
     private double sunProgress() {
-        int minutes = state.timeOfDayMinutes();
-        return clamp((minutes - 360) / 720.0, 0.0, 1.0);
+        refreshLightingState();
+        return clamp((cachedLightingMinutes - 360) / 720.0, 0.0, 1.0);
     }
 
     private double sunAltitude() {
@@ -361,7 +369,7 @@ public final class WorldLightingRenderer {
     }
 
     private float shadowStrength() {
-        double daylight = state.daylightLevel();
+        double daylight = lightingDaylight();
         double altitude = sunAltitude();
         double horizonBoost = (1.0 - altitude) * 0.28;
         return (float) Math.max(0.38, Math.min(1.0, daylight * 0.62 + horizonBoost));
@@ -418,7 +426,7 @@ public final class WorldLightingRenderer {
                 }
                 int cx = worldTileCenter(wx, tileSize) + scaled(Math.floorMod(seed / 13, 13) - 6);
                 int cy = worldTileCenter(wy, tileSize) + scaled(Math.floorMod(seed / 31, 11) - 5);
-                float pulse = (float) (0.84 + Math.sin(context.frame() * 0.055 + seed * 0.01) * 0.08);
+                float pulse = lightState(seed, 0.84f, 0.015f);
                 Color color = tile == 'n' ? new Color(172, 219, 255) : new Color(255, 204, 118);
                 addWorldLight(cx, cy, scaled(tile == 'c' || tile == 'u' ? 84 : 48), color, 0.16f * visibility * pulse, true);
             }
@@ -507,11 +515,11 @@ public final class WorldLightingRenderer {
     }
 
     private float lanternPulse(int seed) {
-        return (float) (0.88 + Math.sin(context.frame() * 0.11 + seed * 0.013) * 0.08);
+        return lightState(seed, 0.88f, 0.025f);
     }
 
     private float windowPulse(int seed) {
-        return (float) (0.90 + Math.sin(context.frame() * 0.045 + seed * 0.007) * 0.05);
+        return lightState(seed, 0.90f, 0.015f);
     }
 
     private int buildingLightSeed(CityBuilding building) {
@@ -540,7 +548,7 @@ public final class WorldLightingRenderer {
                 int seed = Math.abs(settlement[0] * 7349 + settlement[1] * 9127 + i * 1451);
                 int sx = cx + scaled(Math.floorMod(seed, 70) - 35);
                 int sy = cy + scaled(Math.floorMod(seed / 41, 48) - 18);
-                float pulse = (float) (0.78 + Math.sin(context.frame() * 0.06 + i * 1.8) * 0.10);
+                float pulse = lightState(seed, 0.78f, 0.02f);
                 addWorldLight(sx, sy, scaled(30), new Color(255, 219, 142), 0.08f * visibility * pulse, false);
             }
         }
@@ -598,8 +606,7 @@ public final class WorldLightingRenderer {
         for (WorldLight light : activeWorldLights) {
             int cx = (int) Math.round(light.x - camX * (double) tileSize);
             int cy = (int) Math.round(light.y - camY * (double) tileSize);
-            int coreRadius = Math.max(1, (int) Math.round(light.radius * 1.08));
-            int spreadRadius = Math.max(coreRadius + 1, (int) Math.round(light.radius * 1.82));
+            int spreadRadius = Math.max(2, (int) Math.round(light.radius * 1.82));
             if (cx + spreadRadius < -tileSize || cy + spreadRadius < -tileSize
                     || cx - spreadRadius >= visibleCols * tileSize + tileSize
                     || cy - spreadRadius >= visibleRows * tileSize + tileSize) {
@@ -607,10 +614,29 @@ public final class WorldLightingRenderer {
             }
             Graphics2D spill = (Graphics2D) g.create();
             clipInteriorLight(spill, light, camX * (double) tileSize, camY * (double) tileSize, tileSize);
-            drawRadialGlow(spill, cx, cy, spreadRadius, light.color, Math.min(0.11f, light.alpha * 0.30f));
-            drawRadialGlow(spill, cx, cy, coreRadius, light.color, Math.min(0.20f, light.alpha * 0.82f));
+            drawLayeredRadialGlow(spill, cx, cy, spreadRadius, light.color,
+                    Math.min(0.20f, light.alpha * 0.82f), Math.min(0.11f, light.alpha * 0.30f));
             spill.dispose();
         }
+    }
+
+    private void drawLayeredRadialGlow(Graphics2D g, int cx, int cy, int spreadRadius,
+                                        Color color, float coreAlpha, float spreadAlpha) {
+        Color[] colors = new Color[LAYERED_GLOW_FRACTIONS.length];
+        for (int i = 0; i < LAYERED_GLOW_FRACTIONS.length; i++) {
+            float core = coreAlpha * LAYERED_CORE_FACTORS[i];
+            float spread = spreadAlpha * LAYERED_SPREAD_FACTORS[i];
+            float combined = 1.0f - (1.0f - core) * (1.0f - spread);
+            colors[i] = new Color(color.getRed(), color.getGreen(), color.getBlue(),
+                    clamp(Math.round(combined * 255), 0, 255));
+        }
+        Composite oldComposite = g.getComposite();
+        Paint oldPaint = g.getPaint();
+        g.setComposite(AlphaComposite.SrcOver);
+        g.setPaint(new RadialGradientPaint(cx, cy, spreadRadius, LAYERED_GLOW_FRACTIONS, colors));
+        g.fillOval(cx - spreadRadius, cy - spreadRadius, spreadRadius * 2, spreadRadius * 2);
+        g.setPaint(oldPaint);
+        g.setComposite(oldComposite);
     }
 
     public void drawBiomeLightTints(Graphics2D g, int camX, int camY, int visibleCols, int visibleRows, int tileSize) {
@@ -619,22 +645,42 @@ public final class WorldLightingRenderer {
             return;
         }
         Composite oldComposite = g.getComposite();
-        float daylight = (float) state.daylightLevel();
+        float daylight = lightingDaylight();
         for (int sy = 0; sy < visibleRows; sy++) {
-            for (int sx = 0; sx < visibleCols; sx++) {
-                int wx = camX + sx;
-                int wy = camY + sy;
-                char tile = effects.visibleTerrainTile(state.world.tileAt(state.currentMapId, wx, wy), wx, wy);
-                Color tint = biomeLightTint(tile);
-                float alpha = biomeLightAlpha(tile) * (0.72f + daylight * 0.55f);
-                int px = sx * tileSize;
-                int py = sy * tileSize;
-                g.setComposite(AlphaComposite.SrcOver.derive(alpha));
-                g.setColor(tint);
-                g.fillRect(px, py, tileSize, tileSize);
+            int runStart = 0;
+            char runTile = 0;
+            for (int sx = 0; sx <= visibleCols; sx++) {
+                char tile = 0;
+                if (sx < visibleCols) {
+                    int wx = camX + sx;
+                    int wy = camY + sy;
+                    tile = biomeLightGroup(effects.visibleTerrainTile(
+                            state.world.tileAt(state.currentMapId, wx, wy), wx, wy));
+                }
+                if (sx == 0) {
+                    runTile = tile;
+                    continue;
+                }
+                if (sx == visibleCols || tile != runTile) {
+                    float alpha = biomeLightAlpha(runTile) * (0.72f + daylight * 0.55f);
+                    g.setComposite(AlphaComposite.SrcOver.derive(alpha));
+                    g.setColor(biomeLightTint(runTile));
+                    g.fillRect(runStart * tileSize, sy * tileSize, (sx - runStart) * tileSize, tileSize);
+                    runStart = sx;
+                    runTile = tile;
+                }
             }
         }
         g.setComposite(oldComposite);
+    }
+
+    private char biomeLightGroup(char tile) {
+        return switch (tile) {
+            case 'n', 's', 'v', 'b', 'f', 'w' -> tile;
+            case 'm', 'q' -> 'm';
+            case 'r', 'T', 'K', 'c', 'u' -> 'r';
+            default -> 'g';
+        };
     }
 
     private Color biomeLightTint(char tile) {
@@ -725,7 +771,7 @@ public final class WorldLightingRenderer {
             return new Color(255, 151, 58);
         }
         if (asset.contains("forge") || asset.contains("oven") || asset.contains("stove")
-                || asset.contains("hearth")) {
+                || asset.contains("hearth") || asset.equals("interior_fireplace")) {
             return new Color(255, 154, 72);
         }
         if (asset.contains("street_lamp") || asset.contains("lantern") || asset.contains("sconce")
@@ -771,21 +817,29 @@ public final class WorldLightingRenderer {
 
     private float propGlowPulse(WorldProp prop) {
         String asset = prop.asset();
-        double phase = prop.x() * 0.7 + prop.y() * 0.4;
+        int seed = prop.asset().hashCode() ^ prop.x() * 928371 ^ prop.y() * 364479;
         if (WorldPropRenderer.isFireProp(asset)) {
-            return (float) (0.88
-                    + Math.sin(context.frame() * 0.26 + phase) * 0.14
-                    + Math.sin(context.frame() * 0.57 + phase * 1.7) * 0.08);
+            return lightState(seed, 0.88f, 0.035f);
         }
         if (WorldPropRenderer.isMagicGlowProp(asset)) {
-            return (float) (0.90 + Math.sin(context.frame() * 0.085 + phase) * 0.12);
+            return lightState(seed, 0.90f, 0.03f);
         }
-        return (float) (0.90 + Math.sin(context.frame() * 0.10 + phase) * 0.10);
+        return lightState(seed, 0.90f, 0.02f);
+    }
+
+    private float lightState(int seed, float base, float variation) {
+        int step = Math.floorDiv(context.frame(), LIGHT_STATE_HOLD_FRAMES);
+        int mixed = seed ^ step * 0x9e3779b9;
+        mixed ^= mixed >>> 16;
+        mixed *= 0x7feb352d;
+        mixed ^= mixed >>> 15;
+        int level = Math.floorMod(mixed, 5) - 2;
+        return base + variation * level * 0.5f;
     }
 
     public float lightVisibilityForAsset(String asset) {
         if (isHouseInterior()) {
-            if (asset.startsWith("interior_wall_window")) return (float) state.daylightLevel();
+            if (asset.startsWith("interior_wall_window")) return lightingDaylight();
             return 0.88f + nightFactor() * 0.12f;
         }
         float night = nightFactor();
@@ -837,7 +891,28 @@ public final class WorldLightingRenderer {
     }
 
     public float nightFactor() {
-        return (float) Math.max(0.0, Math.min(1.0, (0.92 - state.daylightLevel()) / 0.74));
+        return (float) Math.max(0.0, Math.min(1.0, (0.92 - lightingDaylight()) / 0.74));
+    }
+
+    private int daylightState() {
+        refreshLightingState();
+        return cachedDaylightState;
+    }
+
+    private float lightingDaylight() {
+        refreshLightingState();
+        return cachedLightingDaylight;
+    }
+
+    private void refreshLightingState() {
+        if (cachedLightingTick == state.worldTick) {
+            return;
+        }
+        cachedLightingTick = state.worldTick;
+        double normalized = (state.daylightLevel() - 0.18) / 0.82;
+        cachedDaylightState = clamp((int) Math.round(normalized * 24.0), 0, 24);
+        cachedLightingDaylight = (float) (0.18 + cachedDaylightState * (0.82 / 24.0));
+        cachedLightingMinutes = state.timeOfDayMinutes() / 10 * 10;
     }
 
 

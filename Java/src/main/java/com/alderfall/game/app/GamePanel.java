@@ -92,7 +92,7 @@ public final class GamePanel extends JPanel {
     private static final int IDLE_ANIMATION_TRIGGER_FRAMES = 18;
     private static final int IDLE_ANIMATION_FRAME_DIVISOR = 10;
     private static final int MAX_BATTLE_PARTICLES = 22;
-    private static final int MAX_STATUS_LOG_ENTRIES = 100;
+    private static final int MAX_STATUS_LOG_ENTRIES = 250;
     private static final int[][] MINIMAP_COVERAGE = {
             {15, 9},
             {21, 13},
@@ -153,8 +153,8 @@ public final class GamePanel extends JPanel {
     private final WorldAtmosphereRenderer worldAtmosphereRenderer;
     private final WorldLightingRenderer worldLightingRenderer;
     private final VillageOverlayRenderer villageOverlayRenderer;
-    private final ShopRenderer shopRenderer;
-    private final InventoryRenderer inventoryRenderer;
+    final ShopRenderer shopRenderer;
+    final InventoryRenderer inventoryRenderer;
     private final CharacterRenderer characterRenderer;
     private final DialogueRenderer dialogueRenderer;
     private final QuestLogRenderer questLogRenderer;
@@ -265,10 +265,23 @@ public final class GamePanel extends JPanel {
     private String activeProfessionId = Profession.WOODCUTTING.id();
     private final List<PlacementPulse> placementPulses = new ArrayList<>();
 
+    private SettingsCategory settingsCategory = SettingsCategory.GRAPHICS;
+
+    private enum SettingsCategory {
+        GRAPHICS("Graphics"), COMBAT("Combat"), GAMEPLAY("Gameplay"), AUDIO("Audio"), DEBUG("Debug");
+
+        private final String label;
+
+        SettingsCategory(String label) {
+            this.label = label;
+        }
+    }
+
     private enum SliderKind {
         CHANCE,
         DIFFICULTY,
         VOLUME,
+        ANIMATION,
         CAMERA
     }
 
@@ -721,6 +734,8 @@ public final class GamePanel extends JPanel {
                 });
         this.shopRenderer = new ShopRenderer(assets, state,
                 new ShopRenderer.Effects() {
+                    public List<UiButton> buttons() { return GamePanel.this.buttons; }
+                    public List<TooltipZone> tooltipZones() { return GamePanel.this.tooltipZones; }
                     @Override
                     public int shopItemScroll() {
                         return GamePanel.this.shopItemScroll;
@@ -1639,6 +1654,8 @@ public final class GamePanel extends JPanel {
                     drawQuestLog(g);
                 } else if (!uiHidden && visibleMode == GameMode.SKILLS) {
                     drawPartyOverview(g);
+                } else if (!uiHidden && visibleMode == GameMode.CHEST) {
+                    inventoryRenderer.drawChest(g);
                 } else if (!uiHidden && visibleMode == GameMode.INVENTORY) {
                     drawInventory(g);
                 } else if (!uiHidden && visibleMode == GameMode.CRAFTING) {
@@ -2691,7 +2708,7 @@ public final class GamePanel extends JPanel {
         double hitX = (tile.x() - camX) * (double) tileSize + tileSize / 2.0;
         double hitY = (tile.y() - camY) * (double) tileSize + gatherToolHitYOffset(tool, tileSize);
         WorldProp targetProp = gatherVisualProp(candidate);
-        if (targetProp != null && WorldMap.OVERWORLD_ID.equals(state.currentMapId)) {
+        if (targetProp != null && PropPlacement.usesOffsets(state.world, state.currentMapId)) {
             Rectangle bounds = worldRenderer.propBounds(targetProp, tileSize, camX, camY);
             hitX = bounds.getCenterX();
             hitY = bounds.getMaxY() - bounds.height * 0.22;
@@ -2999,7 +3016,7 @@ public final class GamePanel extends JPanel {
         Stroke oldStroke = g.getStroke();
 
         WorldProp prop = gatherVisualProp(target);
-        if (npc == null && prop != null && WorldMap.OVERWORLD_ID.equals(state.currentMapId)
+        if (npc == null && prop != null && PropPlacement.usesOffsets(state.world, state.currentMapId)
                 && PropPlacement.kind(prop.asset()) != PropPlacement.Kind.FIXED) {
             Rectangle bounds = worldRenderer.propBounds(prop, tileSize, camX, camY);
             int width = Math.max(tileSize / 3, Math.min(tileSize, bounds.width * 2 / 3));
@@ -3057,7 +3074,7 @@ public final class GamePanel extends JPanel {
     }
 
     private boolean isOreResourceAsset(String asset) {
-        return asset.contains("iron_vein")
+        return asset.startsWith("deco_ore_") || asset.contains("iron_vein")
                 || asset.contains("copper_vein")
                 || asset.contains("coal_deposit")
                 || asset.contains("tin_vein")
@@ -3864,6 +3881,8 @@ public final class GamePanel extends JPanel {
     }
 
     private NearbyPrompt nearestQuestPrompt() {
+        WorldProp chest = state.chestNearPlayer();
+        if (chest != null) return new NearbyPrompt(chest.x(), chest.y(), "Chest", Quest.ObjectiveKind.SEARCH, "Open");
         NearbyPrompt best = null;
         int bestDistance = Integer.MAX_VALUE;
         WorldProp board = state.settlementBoardNearPlayer();
@@ -6110,8 +6129,17 @@ public final class GamePanel extends JPanel {
         if (state.world.isPlayerSettlement(settlement)) {
             return state.world.playerVillageSettlementStage().asset();
         }
+        String authoredAsset = RegionalSettlementIdentity.overworldAsset(settlement.id());
+        if (!authoredAsset.isEmpty()) {
+            return authoredAsset;
+        }
         if ("City".equals(settlement.kind()) || "Town".equals(settlement.kind())) {
-            return "city_overworld_cluster_large";
+            return switch (settlement.id()) {
+                case "city_highwall" -> "city_overworld_village_snow";
+                case "city_sanctum" -> "city_overworld_village_desert";
+                case "city_belltower" -> "city_overworld_village_marsh";
+                default -> "city_overworld_cluster_large";
+            };
         }
         return "city_overworld_village_" + settlementBiomeVariant(settlement);
     }
@@ -6189,6 +6217,7 @@ public final class GamePanel extends JPanel {
                 accent
         ));
         drawSettlementApron(g, settlement, px, py, drawSize);
+        drawSettlementRoadApproaches(g, settlement, px, py, drawSize);
         drawShadow(g, px + drawSize / 5, py + drawSize - scaled(18), drawSize * 3 / 5, scaled(16));
         g.drawImage(assets.spriteFit(asset, drawSize, drawSize), px, py, null);
         if (hoverPoint != null && hoverBounds.contains(hoverPoint)) {
@@ -6339,6 +6368,66 @@ public final class GamePanel extends JPanel {
             apron.fillOval(fleckX - fleckW / 2, fleckY - fleckH / 2, fleckW, fleckH);
         }
         apron.dispose();
+    }
+
+    /** Carries the world road material under a settlement's authored gates instead of ending at its apron. */
+    private void drawSettlementRoadApproaches(Graphics2D g, WorldMap.SettlementSite settlement,
+                                               int px, int py, int drawSize) {
+        int centerX = px + drawSize / 2;
+        int centerY = py + drawSize / 2 + scaled(10);
+        int reachX = drawSize / 2 + scaled("Town".equals(settlement.kind()) ? 30 : 24);
+        int reachY = drawSize / 3 + scaled("Town".equals(settlement.kind()) ? 24 : 20);
+        int[][] directions = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+        Graphics2D road = (Graphics2D) g.create();
+        road.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        for (int[] direction : directions) {
+            char material = settlementApproachRoad(settlement.x(), settlement.y(), direction[0], direction[1]);
+            if (!Terrain.connectingRoad(material)) {
+                continue;
+            }
+            int innerX = centerX + direction[0] * drawSize / 5;
+            int innerY = centerY + direction[1] * drawSize / 6;
+            int outerX = centerX + direction[0] * reachX;
+            int outerY = centerY + direction[1] * reachY;
+            Color shoulder = material == Terrain.COBBLESTONE_ROAD
+                    ? new Color(124, 119, 109, 104)
+                    : material == Terrain.PACKED_ROAD
+                    ? new Color(132, 105, 65, 104)
+                    : new Color(156, 118, 70, 98);
+            Color core = material == Terrain.COBBLESTONE_ROAD
+                    ? new Color(143, 137, 124, 132)
+                    : material == Terrain.PACKED_ROAD
+                    ? new Color(143, 111, 68, 132)
+                    : new Color(166, 126, 75, 126);
+            road.setColor(shoulder);
+            road.setStroke(new BasicStroke(Math.max(2, scaled(28)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            road.drawLine(innerX, innerY, outerX, outerY);
+            road.setColor(core);
+            road.setStroke(new BasicStroke(Math.max(2, scaled(18)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            road.drawLine(innerX, innerY, outerX, outerY);
+            int seed = settlement.x() * 928371 + settlement.y() * 364479 + direction[0] * 97 + direction[1] * 193;
+            road.setColor(new Color(225, 200, 149, 42));
+            road.setStroke(new BasicStroke(Math.max(1, scaled(2)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            for (int i = 1; i <= 4; i++) {
+                double t = i / 5.0;
+                int fx = (int) Math.round(innerX + (outerX - innerX) * t);
+                int fy = (int) Math.round(innerY + (outerY - innerY) * t);
+                int jitter = Math.floorMod(seed + i * 31, Math.max(2, scaled(10))) - scaled(5);
+                if (direction[0] == 0) fx += jitter; else fy += jitter;
+                road.fillOval(fx - scaled(2), fy - scaled(1), scaled(4), scaled(2));
+            }
+        }
+        road.dispose();
+    }
+
+    private char settlementApproachRoad(int wx, int wy, int dx, int dy) {
+        for (int distance = 3; distance <= 8; distance++) {
+            char tile = state.world.tileAt(WorldMap.OVERWORLD_ID, wx + dx * distance, wy + dy * distance);
+            if (Terrain.connectingRoad(tile)) {
+                return tile;
+            }
+        }
+        return 0;
     }
 
     private void drawSettlementNeighborBlend(Graphics2D g, int wx, int wy, int cx, int cy, int radiusX, int radiusY) {
@@ -6559,7 +6648,7 @@ public final class GamePanel extends JPanel {
             case "grass", "forest", "tundra" -> 8;
             case "water", "road", "desert", "marsh", "badlands", "mountain", "mountain_massif_tile" -> 4;
             case "dungeon_cave_floor", "dungeon_castle_floor" -> 3;
-            case "beach", "submerged_sand" -> 2;
+            case "beach" -> 2;
             default -> 1;
         };
         if (count <= 1) {
@@ -6867,18 +6956,17 @@ public final class GamePanel extends JPanel {
         g.drawLine(x + 12, y + 30, x + w - 12, y + 30);
 
         int contentX = x + 12;
-        int contentY = y + 47;
+        int contentY = y + 42;
         int contentW = w - 34;
-        int lineHeight = 16;
+        int lineHeight = 15;
         int contentBottomPadding = state.crafting.active() ? 28 : 12;
-        int visibleLines = Math.max(1, (h - 40 - contentBottomPadding) / lineHeight);
+        int visibleLines = Math.max(1, (h - 33 - contentBottomPadding) / lineHeight);
         g.setFont(new Font("SansSerif", Font.PLAIN, 13));
         FontMetrics metrics = g.getFontMetrics();
         List<StatusLogLine> lines = new ArrayList<>();
-        int textWidth = contentW - 12;
         for (int messageIndex = 0; messageIndex < statusLog.size(); messageIndex++) {
             String message = statusLog.get(messageIndex);
-            List<String> wrapped = wrappedTooltipLines(metrics, message, textWidth);
+            List<String> wrapped = wrappedTooltipLines(metrics, message, contentW);
             StatusLogTone tone = statusLogTone(message);
             boolean latest = messageIndex == statusLog.size() - 1;
             for (int lineIndex = 0; lineIndex < wrapped.size(); lineIndex++) {
@@ -6894,7 +6982,7 @@ public final class GamePanel extends JPanel {
         int end = Math.min(lines.size(), start + visibleLines);
 
         Shape oldClip = g.getClip();
-        g.setClip(new Rectangle(contentX, y + 32, contentW, h - 42 - contentBottomPadding));
+        g.setClip(new Rectangle(contentX - 8, y + 31, contentW + 8, h - 34 - contentBottomPadding));
         for (int i = start; i < end; i++) {
             StatusLogLine line = lines.get(i);
             int lineY = contentY + (i - start) * lineHeight;
@@ -6904,8 +6992,8 @@ public final class GamePanel extends JPanel {
 
         if (maxScroll > 0) {
             int trackX = x + w - 14;
-            int trackY = y + 34;
-            int trackH = h - 48 - contentBottomPadding;
+            int trackY = y + 32;
+            int trackH = h - 42 - contentBottomPadding;
             int thumbH = Math.max(18, trackH * visibleLines / Math.max(visibleLines + maxScroll, 1));
             int thumbTravel = Math.max(1, trackH - thumbH);
             int thumbY = trackY + (int) Math.round((maxScroll - statusLogScroll) / (double) maxScroll * thumbTravel);
@@ -6920,26 +7008,28 @@ public final class GamePanel extends JPanel {
         Color accent = statusLogAccent(line.tone());
         if (line.latest()) {
             g.setColor(new Color(accent.getRed(), accent.getGreen(), accent.getBlue(), 18));
-            g.fillRoundRect(x + 7, y - 12, width - 7, lineHeight, 4, 4);
+            g.fillRoundRect(x - 3, y - 11, width + 3, lineHeight, 4, 4);
         }
 
         g.setColor(line.firstLine() ? accent : new Color(accent.getRed(), accent.getGreen(), accent.getBlue(), 72));
         if (line.firstLine()) {
-            g.fillRoundRect(x, y - 10, 3, 11, 3, 3);
+            g.fillRoundRect(x - 7, y - 9, 3, 10, 3, 3);
         } else {
-            g.fillRect(x + 1, y - 12, 1, lineHeight);
+            g.fillRect(x - 6, y - 11, 1, lineHeight);
         }
 
         FontMetrics metrics = g.getFontMetrics();
-        int cursor = x + 11;
+        int cursor = x;
+        int tokenStart = 0;
         Color base = statusLogTextColor(line.tone());
         for (String token : line.text().split("(?<=\\s)|(?=\\s)")) {
             if (token.isEmpty()) {
                 continue;
             }
-            g.setColor(statusLogTokenColor(token, base));
+            g.setColor(statusLogTokenColor(line.text(), token, tokenStart, line.tone(), base));
             g.drawString(token, cursor, y);
             cursor += metrics.stringWidth(token);
+            tokenStart += token.length();
             if (cursor > x + width) {
                 return;
             }
@@ -6948,9 +7038,32 @@ public final class GamePanel extends JPanel {
 
     private StatusLogTone statusLogTone(String message) {
         String normalized = message == null ? "" : message.strip().toLowerCase();
-        if (normalized.startsWith("finished:") || normalized.startsWith("victory!")
-                || normalized.startsWith("loot:") || normalized.startsWith("completed:")
-                || normalized.contains("level up") || normalized.contains("skills improved:")) {
+        if (normalized.contains("cannot ") || normalized.contains("can't ")
+                || normalized.contains("not enough") || normalized.contains("nothing useful")
+                || normalized.contains("already busy") || normalized.contains("failed")
+                || normalized.contains("blocked") || normalized.startsWith("no ")
+                || normalized.contains("requires level") || normalized.contains("does not ")) {
+            return StatusLogTone.WARNING;
+        }
+        if (normalized.startsWith("quest ") || normalized.startsWith("tracking quest:")
+                || normalized.contains("quest stage") || normalized.contains("objective")) {
+            return StatusLogTone.QUEST;
+        }
+        if (normalized.startsWith("battle") || normalized.startsWith("victory")
+                || normalized.startsWith("defeated") || normalized.contains(" attacks!")
+                || normalized.contains("'s turn") || normalized.startsWith("targeting ")
+                || normalized.startsWith("ally target:") || normalized.startsWith("escaped from battle")) {
+            return StatusLogTone.COMBAT;
+        }
+        if (normalized.startsWith("finished:") || normalized.startsWith("gathered ")
+                || normalized.startsWith("crafted ") || normalized.startsWith("caught ")
+                || normalized.startsWith("mined ") || normalized.startsWith("loot:")
+                || normalized.startsWith("bought ") || normalized.startsWith("sold ")
+                || normalized.startsWith("paid ") || normalized.startsWith("used ")
+                || normalized.startsWith("revived ") || normalized.contains(" unlocked:")
+                || normalized.contains(" learned ") || normalized.contains(" equipped ")
+                || normalized.contains(" improved ") || normalized.contains(" gained ")
+                || normalized.contains(" earned ") || normalized.contains("level up")) {
             return StatusLogTone.REWARD;
         }
         if (normalized.startsWith("gathering") || normalized.startsWith("fishing")
@@ -6960,13 +7073,9 @@ public final class GamePanel extends JPanel {
                 || normalized.startsWith("reading") || normalized.endsWith("...")) {
             return StatusLogTone.ACTION;
         }
-        if (normalized.contains("cannot ") || normalized.contains("can't ")
-                || normalized.contains("not enough") || normalized.contains("nothing useful")
-                || normalized.contains("already busy") || normalized.contains("failed")) {
-            return StatusLogTone.WARNING;
-        }
         if (normalized.startsWith("you enter ") || normalized.startsWith("you leave ")
-                || normalized.startsWith("saved ") || normalized.startsWith("loaded ")) {
+                || normalized.startsWith("heading for ") || normalized.startsWith("saved ")
+                || normalized.startsWith("loaded ") || normalized.endsWith(" updated.")) {
             return StatusLogTone.SYSTEM;
         }
         return StatusLogTone.NARRATIVE;
@@ -6976,6 +7085,8 @@ public final class GamePanel extends JPanel {
         return switch (tone) {
             case ACTION -> new Color(91, 196, 190);
             case REWARD -> new Color(133, 207, 116);
+            case QUEST -> new Color(221, 184, 91);
+            case COMBAT -> new Color(222, 128, 96);
             case WARNING -> new Color(236, 132, 112);
             case SYSTEM -> new Color(118, 166, 226);
             case NARRATIVE -> new Color(116, 125, 151);
@@ -6986,30 +7097,71 @@ public final class GamePanel extends JPanel {
         return switch (tone) {
             case ACTION -> new Color(197, 225, 221);
             case REWARD -> new Color(204, 230, 194);
+            case QUEST -> new Color(232, 216, 171);
+            case COMBAT -> new Color(236, 196, 180);
             case WARNING -> new Color(241, 194, 181);
             case SYSTEM -> new Color(198, 216, 239);
             case NARRATIVE -> new Color(184, 191, 207);
         };
     }
 
-    private Color statusLogTokenColor(String token, Color fallback) {
-        String cleaned = token.replaceAll("^[^A-Za-z0-9+]+|[^A-Za-z0-9]+$", "");
+    private Color statusLogTokenColor(String line, String token, int tokenStart, StatusLogTone tone, Color fallback) {
+        if (token.isBlank()) {
+            return fallback;
+        }
+        String cleaned = token.replaceAll("^[^A-Za-z0-9+%-]+|[^A-Za-z0-9/%-]+$", "");
         String normalized = cleaned.toLowerCase();
-        if (cleaned.matches("\\+?\\d+(?:/\\d+)?")) {
+        if (cleaned.matches("[+-]?\\d+(?:/\\d+)?(?:%|g)?")) {
             return new Color(247, 211, 117);
         }
-        if (normalized.equals("xp") || normalized.equals("level") || normalized.equals("skills")) {
+        if (normalized.equals("xp") || normalized.equals("level") || normalized.equals("skills")
+                || normalized.equals("skill") || normalized.equals("mp")) {
             return new Color(193, 166, 247);
         }
-        if (normalized.equals("finished") || normalized.equals("victory") || normalized.equals("completed")) {
-            return new Color(151, 226, 132);
+        if (normalized.equals("gold") || normalized.endsWith("g") && normalized.matches("\\d+g")) {
+            return new Color(247, 211, 117);
+        }
+        if (isStatusLogKeyword(normalized)) {
+            return statusLogAccent(tone);
+        }
+        int colon = line.indexOf(':');
+        if (colon >= 0 && colon < 34 && tokenStart <= colon) {
+            return statusLogAccent(tone);
+        }
+        if (colon >= 0 && tokenStart > colon
+                && (line.substring(0, colon).toLowerCase().contains("unlocked")
+                || line.substring(0, colon).toLowerCase().contains("learned"))) {
+            return new Color(201, 178, 245);
+        }
+        if (insideQuantityPhrase(line, tokenStart)) {
+            return new Color(158, 222, 164);
         }
         return statusColorForToken(token, fallback);
+    }
+
+    private boolean isStatusLogKeyword(String token) {
+        return switch (token) {
+            case "finished", "gathered", "crafted", "caught", "mined", "earned", "gained",
+                    "unlocked", "learned", "completed", "victory", "bought", "sold", "paid",
+                    "equipped", "improved", "saved", "loaded", "failed", "blocked", "requires" -> true;
+            default -> false;
+        };
+    }
+
+    private boolean insideQuantityPhrase(String line, int tokenStart) {
+        int clauseStart = 0;
+        for (char delimiter : new char[]{',', '.', ':', ';'}) {
+            clauseStart = Math.max(clauseStart, line.lastIndexOf(delimiter, Math.max(0, tokenStart - 1)) + 1);
+        }
+        String clause = line.substring(clauseStart, Math.min(tokenStart + 1, line.length())).stripLeading();
+        return clause.matches("[+]?\\d+[x×]?\\s+.*");
     }
 
     private enum StatusLogTone {
         ACTION,
         REWARD,
+        QUEST,
+        COMBAT,
         WARNING,
         SYSTEM,
         NARRATIVE
@@ -7890,11 +8042,14 @@ public final class GamePanel extends JPanel {
         for (Actor foe : battle.enemies()) {
             drawBattleEnemySprite(g, battle, foe, x, y, w, h);
         }
+        drawBattleEffect(g, battle, x, y, w, h);
+        // Combat information stays readable over even the largest area impacts.
+        for (int i = 0; i < visibleParty; i++) {
+            drawBattlePartyCard(g, battle, party.get(i), x, y, w, h);
+        }
         for (Actor foe : battle.enemies()) {
             drawBattleEnemyCard(g, battle, foe, x, y, w, h);
         }
-
-        drawBattleEffect(g, battle, x, y, w, h);
         drawBattleFloaters(g, battle, x, y);
         if (battle.flashTimer > 0) {
             Graphics2D flash = (Graphics2D) g.create();
@@ -7907,11 +8062,11 @@ public final class GamePanel extends JPanel {
         if (active != null) {
             g.setFont(new Font("SansSerif", Font.BOLD, 16));
             g.setColor(new Color(246, 224, 151));
-            g.drawString(active.name + "'s turn", x + 42, y + h - 288);
+            g.drawString(active.name + "'s turn", x + 42, y + h - 174);
         }
 
-        drawBattleLog(g, battle, x + 34, y + h - 268, 620, 142);
-        drawBattleActionBar(g, battle, x + 34, y + h - 156, w - 68, 132);
+        drawBattleLog(g, battle, x + w - 454, y + h - 146, 420, 112);
+        drawBattleActionBar(g, battle, x + 34, y + h - 156, w - 502, 132);
         if (battleVfxDebug) {
             drawBattleVfxDebugOverlay(g, battle, x + w - 368, y + 24, 334, 142);
         }
@@ -8340,8 +8495,8 @@ public final class GamePanel extends JPanel {
     private void drawBattlePartyMember(Graphics2D g, Battle battle, Actor actor, boolean active, int panelX, int panelY, int panelW, int panelH) {
         int[] slot = battlePartyPosition(battle, actor, panelX, panelY, panelW, panelH);
         boolean selected = battle.hasExplicitPartyTarget() && actor == battle.selectedPartyMember();
-        int spriteW = 170;
-        int spriteH = 220;
+        int spriteW = 150;
+        int spriteH = 194;
         int cardW = 178;
         int cardH = 86;
         String animationAction = battleActorAnimationAction(battle, actor);
@@ -8353,7 +8508,7 @@ public final class GamePanel extends JPanel {
         int lunge = active && !stripAnimating ? battle.playerLunge : 0;
         int shake = active && !stripAnimating ? battle.playerOffset : 0;
         int bob = actor.alive() && !stripAnimating ? (int) Math.round(Math.sin((frame + battle.partyMembers().indexOf(actor) * 8) * 0.18) * 3.0) : 0;
-        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleRenderer.actorPose(battle, actor, false);
+        BattleActorPose pose = battleRenderer.actorPose(battle, actor, false);
         int drawX = slot[0] + lunge + shake + pose.xOffset();
         int drawY = slot[1] + bob - (stripAnimating ? 0 : battle.castOffset(actor)) + pose.yOffset();
         int renderY = drawY - renderExtraH;
@@ -8371,7 +8526,9 @@ public final class GamePanel extends JPanel {
                 pose,
                 1.0f
         );
-        drawBattleHitFlash(g, battle.hitFlash(actor), drawX, drawY, spriteW, spriteH);
+        battleRenderer.drawHitFlash(g, battleActorImage(battle, actor, actorSprite, renderedAction, spriteW, renderH),
+                drawX, renderY, spriteW, renderH, pose, battle.hitFlash(actor));
+        battleVfxRenderer.drawActorStatuses(g, battle, actor, drawX, drawY, spriteW, spriteH);
         if (selected && actor.alive()) {
             drawBattlePartyTargetMarker(g, drawX, drawY, spriteW, spriteH);
         }
@@ -8384,12 +8541,26 @@ public final class GamePanel extends JPanel {
             int pulse = 8 + (frame % 12);
             g.drawOval(drawX + 18 - pulse / 2, drawY + spriteH - 36 - pulse / 3, spriteW - 36 + pulse, 28 + pulse / 2);
         }
-        int cardX = drawX + (spriteW - cardW) / 2;
-        int cardY = drawY + spriteH - 4;
+
+        if (!actor.alive()) {
+            g.setColor(new Color(9, 10, 16, 150));
+            g.fillRoundRect(drawX, drawY, spriteW, spriteH, 8, 8);
+            g.setColor(new Color(238, 239, 244));
+            drawCenteredIn(g, "Down", drawX, drawY + spriteH / 2, spriteW);
+        }
+    }
+
+    private void drawBattlePartyCard(Graphics2D g, Battle battle, Actor actor, int panelX, int panelY, int panelW, int panelH) {
+        int[] slot = battlePartyPosition(battle, actor, panelX, panelY, panelW, panelH);
+        boolean active = actor == battle.activeActor();
+        boolean selected = battle.hasExplicitPartyTarget() && actor == battle.selectedPartyMember();
+        int spriteW = 150, spriteH = 194, cardW = 178, cardH = 86;
+        int cardX = slot[0] + (spriteW - cardW) / 2;
+        int cardY = slot[1] + spriteH - 4;
         g.setColor(new Color(12, 14, 22, 205));
         g.fillRoundRect(cardX, cardY, cardW, cardH, 8, 8);
-        g.setColor(selected ? new Color(132, 190, 255) : new Color(86, 98, 128));
-        g.setStroke(new BasicStroke(selected ? 3f : 1.5f));
+        g.setColor(selected ? new Color(132, 190, 255) : active ? new Color(242, 208, 124) : new Color(86, 98, 128));
+        g.setStroke(new BasicStroke(selected || active ? 3f : 1.5f));
         g.drawRoundRect(cardX, cardY, cardW, cardH, 8, 8);
         g.setFont(new Font("SansSerif", Font.BOLD, 13));
         g.setColor(new Color(238, 239, 244));
@@ -8400,21 +8571,15 @@ public final class GamePanel extends JPanel {
         smallBar(g, cardX + 16, cardY + 48, actor.hp, actor.maxHp, new Color(190, 76, 82), "HP");
         smallBar(g, cardX + 16, cardY + 66, actor.mp, actor.maxMp, new Color(84, 129, 205), "MP");
         drawStatusIcons(g, battle, actor, cardX + cardW + 8, cardY + 10);
-        if (!actor.alive()) {
-            g.setColor(new Color(9, 10, 16, 150));
-            g.fillRoundRect(drawX, drawY, spriteW, spriteH, 8, 8);
-            g.setColor(new Color(238, 239, 244));
-            drawCenteredIn(g, "Down", drawX, drawY + spriteH / 2, spriteW);
-        }
     }
 
     private void drawBattleEnemySprite(Graphics2D g, Battle battle, Actor foe, int panelX, int panelY, int panelW, int panelH) {
         int[] slot = battleEnemyPosition(battle, foe, panelX, panelY, panelW, panelH);
         int index = Math.max(0, battle.enemies().indexOf(foe));
         boolean selected = foe == battle.selectedEnemy();
-        double scale = enemySpriteScale(battle.monsterSpecFor(foe));
-        int baseSpriteW = 230;
-        int baseSpriteH = 230;
+        double scale = battleEnemyScale(battle, foe);
+        int baseSpriteW = BattleFormation.enemySize(battle.enemies().size());
+        int baseSpriteH = baseSpriteW;
         int spriteW = Math.max(120, (int) Math.round(baseSpriteW * scale));
         int spriteH = Math.max(120, (int) Math.round(baseSpriteH * scale));
         int cardW = 220;
@@ -8427,7 +8592,7 @@ public final class GamePanel extends JPanel {
         int lunge = stripAnimating ? 0 : battle.enemyLunge(foe);
         int shake = foe.alive() && !stripAnimating ? battle.monsterOffset : 0;
         int bob = foe.alive() && !stripAnimating ? (int) Math.round(Math.sin((frame + index * 10) * 0.16) * 3.0) : 0;
-        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleRenderer.actorPose(battle, foe, true);
+        BattleActorPose pose = battleRenderer.actorPose(battle, foe, true);
         int drawX = slot[0] + (baseSpriteW - spriteW) / 2 + shake - lunge + pose.xOffset();
         int drawY = slot[1] + (baseSpriteH - spriteH) + bob - (stripAnimating ? 0 : battle.castOffset(foe)) + pose.yOffset();
         int renderY = drawY - renderExtraH;
@@ -8446,7 +8611,9 @@ public final class GamePanel extends JPanel {
                 pose,
                 fade
         );
-        drawBattleHitFlash(g, battle.hitFlash(foe), drawX, drawY, spriteW, spriteH);
+        battleRenderer.drawHitFlash(g, battleActorImage(battle, foe, foe.sprite, renderedAction, spriteW, renderH),
+                drawX, renderY, spriteW, renderH, pose, battle.hitFlash(foe));
+        battleVfxRenderer.drawActorStatuses(g, battle, foe, drawX, drawY, spriteW, spriteH);
         if (selected && foe.alive()) {
             drawBattleEnemyTargetMarker(g, drawX, drawY, spriteW, spriteH);
         } else if (battle.isCasting(foe)) {
@@ -8464,9 +8631,9 @@ public final class GamePanel extends JPanel {
     private void drawBattleEnemyCard(Graphics2D g, Battle battle, Actor foe, int panelX, int panelY, int panelW, int panelH) {
         int[] slot = battleEnemyPosition(battle, foe, panelX, panelY, panelW, panelH);
         boolean selected = foe == battle.selectedEnemy();
-        double scale = enemySpriteScale(battle.monsterSpecFor(foe));
-        int baseSpriteW = 230;
-        int baseSpriteH = 230;
+        double scale = battleEnemyScale(battle, foe);
+        int baseSpriteW = BattleFormation.enemySize(battle.enemies().size());
+        int baseSpriteH = baseSpriteW;
         int spriteW = Math.max(120, (int) Math.round(baseSpriteW * scale));
         int spriteH = Math.max(120, (int) Math.round(baseSpriteH * scale));
         int cardW = 220;
@@ -8477,12 +8644,12 @@ public final class GamePanel extends JPanel {
         int lunge = stripAnimating ? 0 : battle.enemyLunge(foe);
         int shake = foe.alive() && !stripAnimating ? battle.monsterOffset : 0;
         int bob = foe.alive() && !stripAnimating ? (int) Math.round(Math.sin((frame + Math.max(0, battle.enemies().indexOf(foe)) * 10) * 0.16) * 3.0) : 0;
-        BattleActorPose pose = stripAnimating ? BattleActorPose.REST : battleRenderer.actorPose(battle, foe, true);
+        BattleActorPose pose = battleRenderer.actorPose(battle, foe, true);
         int drawX = slot[0] + (baseSpriteW - spriteW) / 2 + shake - lunge + pose.xOffset();
         int drawY = slot[1] + (baseSpriteH - spriteH) + bob - (stripAnimating ? 0 : battle.castOffset(foe)) + pose.yOffset();
         drawY -= renderExtraH;
-        int cardX = drawX + (spriteW - cardW) / 2;
-        int cardY = drawY + renderExtraH + spriteH - 4;
+        int cardX = slot[0] + (baseSpriteW - cardW) / 2;
+        int cardY = slot[1] + baseSpriteH - 4;
         g.setColor(selected ? new Color(40, 31, 16, 222) : new Color(12, 14, 22, 205));
         g.fillRoundRect(cardX, cardY, cardW, cardH, 8, 8);
         g.setColor(selected ? new Color(255, 220, 150) : new Color(86, 88, 102));
@@ -8503,22 +8670,6 @@ public final class GamePanel extends JPanel {
                 monsterTooltip(battle, foe),
                 "sprite:" + battle.monsterSpecFor(foe).sprite()
         ));
-    }
-
-    private void drawBattleHitFlash(Graphics2D g, int flash, int drawX, int drawY, int spriteW, int spriteH) {
-        if (flash <= 0) {
-            return;
-        }
-        Graphics2D flashG = (Graphics2D) g.create();
-        float alpha = Math.min(0.45f, flash / 18.0f);
-        flashG.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        flashG.setColor(new Color(255, 246, 214));
-        flashG.fillRoundRect(drawX + 8, drawY + 8, spriteW - 16, spriteH - 18, 10, 10);
-        flashG.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(0.65f, alpha + 0.18f)));
-        flashG.setStroke(new BasicStroke(3f));
-        flashG.setColor(new Color(255, 217, 128));
-        flashG.drawRoundRect(drawX + 12, drawY + 12, spriteW - 24, spriteH - 26, 10, 10);
-        flashG.dispose();
     }
 
     private void drawBattleIncomingTelegraph(Graphics2D g, String label, int danger, int drawX, int drawY, int spriteW) {
@@ -8639,13 +8790,22 @@ public final class GamePanel extends JPanel {
         if (animation == null || actor == null || !animation.involves(actor)) {
             return "idle";
         }
-        if (actor == animation.target && animation.stage() == BattleActionAnimation.Stage.IMPACT) {
+        boolean damage = animation.actionKind() == null || animation.actionKind() == Ability.AbilityKind.DAMAGE;
+        int recipient = animation.targets.indexOf(actor);
+        if (actor != animation.source && recipient >= 0 && damage && animation.collisionProgress(recipient) >= 0) {
             return "hit";
         }
         if (actor != animation.source) {
             return "idle";
         }
         String kind = animation.effectKind == null ? "strike" : animation.effectKind;
+        ClassAbilityVfx.Profile profile = animation.visualProfile();
+        if (profile != null) {
+            if (profile.kind() == Ability.AbilityKind.DEFEND) return "defend";
+            if (profile.kind() == Ability.AbilityKind.HEAL) return "cast";
+            if (profile.family() == ClassAbilityVfx.Family.PIERCE) return "shoot";
+            return profile.melee() ? "attack" : "cast";
+        }
         if ("shield".equals(kind) || "ward".equals(kind)) {
             return "defend";
         }
@@ -8811,66 +8971,41 @@ public final class GamePanel extends JPanel {
         return battleVfxRenderer.effectSoundName(kind);
     }
 
+    private double battleEnemyScale(Battle battle, Actor actor) {
+        double scale = enemySpriteScale(battle.monsterSpecFor(actor));
+        return battle.enemies().size() >= 3 ? Math.min(1.08, scale) : scale;
+    }
+
     private int[] battleActorCenter(Battle battle, Actor actor, int panelX, int panelY, int panelW, int panelH) {
-        if (battle.enemies().contains(actor)) {
-            int[] slot = battleEnemyPosition(battle, actor, panelX, panelY, panelW, panelH);
-            return new int[]{slot[0] + 115 + battle.monsterOffset - battle.enemyLunge(actor), slot[1] + 112};
+        boolean enemy = battle.enemies().contains(actor);
+        int[] slot = enemy ? battleEnemyPosition(battle, actor, panelX, panelY, panelW, panelH)
+                : battlePartyPosition(battle, actor, panelX, panelY, panelW, panelH);
+        int base = enemy ? BattleFormation.enemySize(battle.enemies().size()) : 150;
+        int height = enemy ? Math.max(120, (int) Math.round(base * battleEnemyScale(battle, actor))) : 194;
+        int foot = slot[1] + (enemy ? base : height);
+        if (actor == null) return new int[]{slot[0] + base / 2, foot - height / 2};
+        String action = battleActorAnimationAction(battle, actor);
+        boolean strip = battleActorUsesStrip(actor, enemy ? actor.sprite : battleActorSprite(actor), action);
+        BattleActorPose pose = battleRenderer.actorPose(battle, actor, enemy);
+        int index = Math.max(0, (enemy ? battle.enemies() : battle.partyMembers()).indexOf(actor));
+        int bob = actor.alive() && !strip ? (int) Math.round(Math.sin((frame + index * (enemy ? 10 : 8)) * (enemy ? 0.16 : 0.18)) * 3.0) : 0;
+        int dx = 0;
+        if (!strip) {
+            if (enemy) dx = (actor.alive() ? battle.monsterOffset : 0) - battle.enemyLunge(actor);
+            else if (actor == battle.activeActor()) dx = battle.playerLunge + battle.playerOffset;
         }
-        int[] slot = battlePartyPosition(battle, actor, panelX, panelY, panelW, panelH);
-        int x = slot[0] + 85;
-        int y = slot[1] + 108;
-        if (actor == battle.activeActor()) {
-            x += battle.playerLunge + battle.playerOffset;
-        }
-        return new int[]{x, y};
+        return new int[]{slot[0] + base / 2 + dx + pose.xOffset(),
+                foot - (int) Math.round(height * 0.48) + bob + pose.yOffset() - (strip ? 0 : battle.castOffset(actor))};
     }
 
     private int[] battlePartyPosition(Battle battle, Actor actor, int panelX, int panelY, int panelW, int panelH) {
-        int index = Math.max(0, battle.partyMembers().indexOf(actor));
-        index = Math.min(3, index);
-        int count = Math.max(1, Math.min(4, battle.partyMembers().size()));
-        int left = panelX + 130;
-        int right = panelX + 390;
-        int high = panelY + 122;
-        int mid = panelY + 326;
-        int low = panelY + 530;
-        int[][] one = {{panelX + 250, mid}};
-        int[][] two = {{left, panelY + 206}, {left, panelY + 454}};
-        int[][] three = {{left, high}, {left, low - 36}, {right, mid - 6}};
-        int[][] four = {{left, high}, {right, high}, {left, low}, {right, low}};
-        int[][] positions = switch (count) {
-            case 1 -> one;
-            case 2 -> two;
-            case 3 -> three;
-            default -> four;
-        };
-        return positions[index];
+        return BattleFormation.position(false, battle.partyMembers().indexOf(actor), battle.partyMembers().size(),
+                panelX, panelY, panelW, panelH);
     }
 
     private int[] battleEnemyPosition(Battle battle, Actor actor, int panelX, int panelY, int panelW, int panelH) {
-        int index = Math.max(0, battle.enemies().indexOf(actor));
-        index = Math.min(4, index);
-        int count = Math.max(1, Math.min(5, battle.enemies().size()));
-        int right = panelX + panelW;
-        int enemyLeft = Math.max(panelX + 72, right - 650);
-        int enemyRight = Math.max(enemyLeft + 180, Math.min(right - 270, right - 370));
-        int enemyMid = enemyLeft + (enemyRight - enemyLeft) / 2;
-        int high = panelY + 122;
-        int mid = panelY + 326;
-        int low = panelY + 530;
-        int[][] one = {{Math.max(panelX + 180, right - 500), mid}};
-        int[][] two = {{enemyLeft, panelY + 168}, {enemyRight, panelY + 454}};
-        int[][] three = {{enemyRight, high}, {enemyRight, low - 36}, {enemyLeft, mid - 6}};
-        int[][] four = {{enemyLeft, high}, {enemyRight, high}, {enemyLeft, low}, {enemyRight, low}};
-        int[][] five = {{enemyMid, high - 28}, {enemyLeft, mid - 42}, {enemyRight, mid - 42}, {enemyLeft, low - 18}, {enemyRight, low - 18}};
-        int[][] positions = switch (count) {
-            case 1 -> one;
-            case 2 -> two;
-            case 3 -> three;
-            case 4 -> four;
-            default -> five;
-        };
-        return positions[index];
+        return BattleFormation.position(true, battle.enemies().indexOf(actor), battle.enemies().size(),
+                panelX, panelY, panelW, panelH);
     }
 
     private void drawDialog(Graphics2D g) {
@@ -9267,6 +9402,7 @@ public final class GamePanel extends JPanel {
         if (state.worldMapKingdoms) {
             WorldMapOverlayRenderer.drawKingdomLabels(g, worldMapViewport, state.world.kingdoms());
         }
+        List<Rectangle> placeLabels = new ArrayList<>();
         for (WorldMap.SettlementSite settlement : state.world.settlementSites()) {
             if (worldMapVisible(worldMapViewport, settlement.x(), settlement.y(), 8.0)) {
                 int dx = settlement.x() > worldMapViewport.worldX() + worldMapViewport.worldW() * 0.68 ? -78 : 12;
@@ -9274,11 +9410,19 @@ public final class GamePanel extends JPanel {
                 boolean playerSettlement = state.world.isPlayerSettlement(settlement);
                 Rectangle markerBounds = WorldMapOverlayRenderer.drawSettlementMarker(
                         g, worldMapViewport, settlement, kingdom, playerSettlement, dx, -9);
+                placeLabels.add(markerBounds);
                 Color markerColor = playerSettlement ? new Color(255, 226, 128)
                         : kingdom == null ? new Color(245, 214, 117) : new Color(kingdom.colorRgb());
                 tooltipZones.add(new TooltipZone(markerBounds, settlement.label(),
                         settlementTooltip(settlement, kingdom), null, markerColor));
             }
+        }
+        for (WorldMap.CampaignMarker site : state.world.campaignMarkers()) {
+            if (!worldMapVisible(worldMapViewport, site.x(), site.y(), 0.0)) continue;
+            Rectangle bounds = WorldMapOverlayRenderer.drawCampaignMarker(g, worldMapViewport, site, placeLabels);
+            var place = StoryLocationCatalog.byId(site.id());
+            tooltipZones.add(new TooltipZone(bounds, site.label(),
+                    place.purpose() + "\n" + place.landmark() + "\n" + place.route()));
         }
         long objectivesStarted = renderMetrics.start();
         List<GameState.QuestObjective> activeObjectives = state.activeQuestObjectives();
@@ -9616,8 +9760,8 @@ public final class GamePanel extends JPanel {
             g.setColor(new Color(8, 11, 16, 170));
             g.fillRect(0, 0, viewWidth(), viewHeight());
         }
-        int w = 812;
-        int h = 760;
+        int w = 940;
+        int h = 640;
         int x = overlay ? gameAreaCenteredX(w) : centeredX(w);
         int y = centeredY(h);
         drawOverlayBase(g, x, y, w, h);
@@ -9625,49 +9769,70 @@ public final class GamePanel extends JPanel {
         g.setColor(new Color(244, 213, 141));
         drawCenteredIn(g, "Settings", x, y + 46, w);
 
-        g.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Monster Spawn Ratios", x + 52, y + 96);
-        drawChanceRow(g, x + 52, y + 132, "Wild", state.config.wildEncounterChance, "wild");
-        drawChanceRow(g, x + 52, y + 184, "Dungeon", state.config.dungeonEncounterChance, "dungeon");
-        drawChanceRow(g, x + 52, y + 236, "Dungeon Entrance", state.config.dungeonEntranceEncounterChance, "dungeon_entrance");
+        int tabX = x + 52;
+        for (SettingsCategory category : SettingsCategory.values()) {
+            boolean selected = settingsCategory == category;
+            actionButton(g, tabX, y + 72, 160, 38, category.label, () -> {
+                settingsCategory = category;
+                activeSlider = null;
+            }, selected ? new Color(74, 66, 93) : new Color(35, 39, 54),
+                    selected ? new Color(164, 143, 197) : new Color(86, 98, 128), true);
+            tabX += 168;
+        }
 
-        g.drawString("Monster Group Ratios", x + 52, y + 316);
-        drawChanceRow(g, x + 52, y + 352, "Two Monsters", state.config.twoMonsterChance, "two_monsters");
-        drawChanceRow(g, x + 52, y + 404, "Three Monsters", state.config.threeMonsterChance, "three_monsters");
+        int left = x + 52;
+        switch (settingsCategory) {
+            case GRAPHICS -> {
+                drawSettingsHeading(g, left, y + 154, "Graphics Quality");
+                drawChoiceRow(g, left, y + 178, "Render", renderQuality().label, this::previousRenderQuality, this::nextRenderQuality);
+                drawChoiceRow(g, left, y + 230, "Weather", weatherQuality().label, this::previousWeatherQuality, this::nextWeatherQuality);
+            }
+            case COMBAT -> {
+                drawSettingsHeading(g, left, y + 154, "Monster Spawn Ratios");
+                drawChanceRow(g, left, y + 178, "Wild", state.config.wildEncounterChance, "wild");
+                drawChanceRow(g, left, y + 222, "Dungeon", state.config.dungeonEncounterChance, "dungeon");
+                drawChanceRow(g, left, y + 266, "Dungeon Entrance", state.config.dungeonEntranceEncounterChance, "dungeon_entrance");
 
-        g.drawString("Monster Difficulty", x + 52, y + 468);
-        drawMonsterLevelScalingRow(g, x + 52, y + 504);
+                drawSettingsHeading(g, left, y + 342, "Monster Group Ratios");
+                drawChanceRow(g, left, y + 366, "Two Monsters", state.config.twoMonsterChance, "two_monsters");
+                drawChanceRow(g, left, y + 410, "Three Monsters", state.config.threeMonsterChance, "three_monsters");
 
-        g.drawString("Audio", x + 470, y + 96);
-        drawVolumeRow(g, x + 470, y + 132, "Master", state.config.masterVolume, "master");
-        drawVolumeRow(g, x + 470, y + 184, "Music", state.config.musicVolume, "music");
-        drawVolumeRow(g, x + 470, y + 236, "SFX", state.config.sfxVolume, "sfx");
-        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        g.setColor(new Color(165, 174, 193));
-        wrap(g, "Music blends between biome themes over time, with softer ambient variants during longer exploration.", x + 470, y + 294, 260, 18);
-
-        g.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Movement & Camera", x + 470, y + 366);
-        drawChoiceRow(g, x + 470, y + 394, "Camera", cameraMode().label, this::previousCameraMode, this::nextCameraMode);
-        drawChoiceRow(g, x + 470, y + 438, "Speed", movementSpeed().label, this::previousMovementSpeed, this::nextMovementSpeed);
-        drawCameraSmoothingRow(g, x + 470, y + 482);
-        drawToggleRow(g, x + 470, y + 526, "Look-Ahead", state.config.cameraLookAhead, this::toggleCameraLookAhead);
-
-        g.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Graphics", x + 470, y + 588);
-        drawChoiceRow(g, x + 470, y + 616, "Render", renderQuality().label, this::previousRenderQuality, this::nextRenderQuality);
-        drawChoiceRow(g, x + 470, y + 660, "Weather", weatherQuality().label, this::previousWeatherQuality, this::nextWeatherQuality);
-
-        g.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Village", x + 52, y + 588);
-        drawToggleRow(g, x + 52, y + 620, "Creative Build", state.config.creativeBuildMode, this::toggleCreativeBuildMode);
-        drawToggleRow(g, x + 52, y + 658, "Editor Button", state.config.showMapEditorButton, this::toggleMapEditorButton);
+                drawSettingsHeading(g, left, y + 486, "Monster Difficulty");
+                drawMonsterLevelScalingRow(g, left, y + 510);
+                drawSettingsHeading(g, x + 540, y + 154, "Battle Animations");
+                drawAnimationSpeedRow(g, x + 540, y + 178);
+            }
+            case GAMEPLAY -> {
+                drawSettingsHeading(g, left, y + 154, "Movement & Camera");
+                drawChoiceRow(g, left, y + 178, "Camera", cameraMode().label, this::previousCameraMode, this::nextCameraMode);
+                drawChoiceRow(g, left, y + 230, "Speed", movementSpeed().label, this::previousMovementSpeed, this::nextMovementSpeed);
+                drawCameraSmoothingRow(g, left, y + 282);
+                drawToggleRow(g, left, y + 334, "Look-Ahead", state.config.cameraLookAhead, this::toggleCameraLookAhead);
+            }
+            case AUDIO -> {
+                drawSettingsHeading(g, left, y + 154, "Volume");
+                drawVolumeRow(g, left, y + 178, "Master", state.config.masterVolume, "master");
+                drawVolumeRow(g, left, y + 230, "Music", state.config.musicVolume, "music");
+                drawVolumeRow(g, left, y + 282, "SFX", state.config.sfxVolume, "sfx");
+                g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                g.setColor(new Color(165, 174, 193));
+                wrap(g, "Music blends between biome themes over time, with softer ambient variants during longer exploration.", left, y + 354, 490, 18);
+            }
+            case DEBUG -> {
+                drawSettingsHeading(g, left, y + 154, "Creative Tools");
+                drawToggleRow(g, left, y + 178, "Creative Build", state.config.creativeBuildMode, this::toggleCreativeBuildMode);
+                drawToggleRow(g, left, y + 230, "Editor Button", state.config.showMapEditorButton, this::toggleMapEditorButton);
+                drawToggleRow(g, left, y + 282, "Creative Crafting", state.config.creativeCraftingMode, this::toggleCreativeCraftingMode);
+            }
+        }
 
         actionButton(g, x + w - 170, y + h - 58, 120, 34, "Back", state::closeSettings, new Color(48, 55, 70), new Color(89, 102, 125), true);
+    }
+
+    private void drawSettingsHeading(Graphics2D g, int x, int y, String label) {
+        g.setFont(new Font("SansSerif", Font.BOLD, 18));
+        g.setColor(new Color(230, 225, 206));
+        g.drawString(label, x, y);
     }
 
     private void drawToggleRow(Graphics2D g, int x, int y, String label, boolean enabled, Runnable toggle) {
@@ -9702,6 +9867,30 @@ public final class GamePanel extends JPanel {
         drawSliderTrack(g, track, state.config.cameraSmoothing / 100.0, sliderHovered(bounds), sliderActive(SliderKind.CAMERA, "camera_smoothing"), 11);
         g.setColor(new Color(220, 224, 232));
         g.drawString(state.config.cameraSmoothing + "%", x + 272, y + 22);
+    }
+
+    private void drawAnimationSpeedRow(Graphics2D g, int x, int y) {
+        g.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        g.setColor(new Color(220, 224, 232));
+        g.drawString("Animation speed", x, y + 22);
+        Rectangle track = new Rectangle(x + 142, y + 8, 150, 10);
+        Rectangle bounds = new Rectangle(x + 136, y - 2, 162, 32);
+        registerSlider(bounds, track, SliderKind.ANIMATION, "combat_speed");
+        drawSliderTrack(g, track, (state.config.combatAnimationSpeed - 0.5) / 2.5,
+                sliderHovered(bounds), sliderActive(SliderKind.ANIMATION, "combat_speed"), 11);
+        g.setColor(new Color(220, 224, 232));
+        g.drawString(String.format(java.util.Locale.ROOT, "%.1fx", state.config.combatAnimationSpeed), x + 306, y + 22);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g.setColor(new Color(165, 174, 193));
+        g.drawString("0.5x slow  /  1x normal  /  3x fast", x, y + 43);
+    }
+
+    private void setAnimationSpeed(double speed) {
+        double value = GameConfig.clampCombatAnimationSpeed(Math.round(speed * 10) / 10.0);
+        if (value == state.config.combatAnimationSpeed) return;
+        state.config.combatAnimationSpeed = value;
+        if (state.battle != null) state.battle.setAnimationSpeed(value);
+        saveSettings();
     }
 
     private void drawKeybindRow(Graphics2D g, int x, int y, String scope, String key, String action) {
@@ -10762,6 +10951,14 @@ public final class GamePanel extends JPanel {
         };
     }
 
+    private void toggleCreativeCraftingMode() {
+        state.config.creativeCraftingMode = !state.config.creativeCraftingMode;
+        state.status = state.config.creativeCraftingMode
+                ? "Creative crafting enabled: instant, free crafts anywhere, no profession gates or XP."
+                : "Creative crafting disabled. Normal crafting requirements restored.";
+        saveSettings();
+    }
+
     private void toggleCreativeBuildMode() {
         state.config.creativeBuildMode = !state.config.creativeBuildMode;
         state.status = state.config.creativeBuildMode
@@ -10962,6 +11159,7 @@ public final class GamePanel extends JPanel {
             case DIFFICULTY -> setMonsterLevelScaling(fraction);
             case VOLUME -> setVolumeSetting(activeSlider.key(), (int) Math.round(fraction * 100));
             case CAMERA -> setCameraSmoothing((int) Math.round(fraction * 100));
+            case ANIMATION -> setAnimationSpeed(0.5 + fraction * 2.5);
         }
     }
 
@@ -11244,6 +11442,10 @@ public final class GamePanel extends JPanel {
                     return;
                 }
             }
+            if (SwingUtilities.isLeftMouseButton(event)) {
+                if (state.mode == GameMode.SHOP) shopRenderer.press(hoverPoint);
+                if (state.mode == GameMode.INVENTORY) inventoryRenderer.browser.focusAt(hoverPoint);
+            }
             if (state.mode == GameMode.INVENTORY && SwingUtilities.isLeftMouseButton(event)) {
                 startInventoryDrag(hoverPoint);
             }
@@ -11256,6 +11458,7 @@ public final class GamePanel extends JPanel {
         @Override
         public void mouseDragged(MouseEvent event) {
             hoverPoint = logicalPoint(event);
+            if (state.mode == GameMode.SHOP) shopRenderer.move(hoverPoint);
             if (activeSlider != null) {
                 updateActiveSlider(hoverPoint);
                 repaint();
@@ -11287,6 +11490,10 @@ public final class GamePanel extends JPanel {
         public void mouseReleased(MouseEvent event) {
             Point point = logicalPoint(event);
             hoverPoint = point;
+            if (shopRenderer.release(point)) {
+                pressedButtonBounds = null; pressedButtonLabel = null;
+                suppressNextClick = true; repaint(); return;
+            }
             Rectangle releaseButtonBounds = pressedButtonBounds == null ? null : new Rectangle(pressedButtonBounds);
             String releaseButtonLabel = pressedButtonLabel;
             if (activeSlider != null) {
@@ -11410,7 +11617,7 @@ public final class GamePanel extends JPanel {
                 return;
             }
             if (state.mode == GameMode.INVENTORY) {
-                inventoryItemScroll = Math.max(0, inventoryItemScroll + event.getWheelRotation());
+                inventoryRenderer.browser.wheel(logicalPoint(event), event.getWheelRotation());
                 repaint();
                 return;
             }
@@ -11445,10 +11652,12 @@ public final class GamePanel extends JPanel {
                 return;
             }
             if (state.mode == GameMode.SHOP) {
-                shopItemScroll = Math.max(0, shopItemScroll + event.getWheelRotation());
+                shopRenderer.stockBrowser.wheel(logicalPoint(event), event.getWheelRotation());
+                shopRenderer.packBrowser.wheel(logicalPoint(event), event.getWheelRotation());
                 repaint();
                 return;
             }
+            if (state.mode == GameMode.CHEST) return;
             if (state.mode == GameMode.SAVE_MENU) {
                 saveListScroll = Math.max(0, saveListScroll + event.getWheelRotation());
                 repaint();
@@ -11481,6 +11690,16 @@ public final class GamePanel extends JPanel {
             int tileSize = tileSize();
             int targetX = (int) Math.floor(lastCameraX + x / (double) tileSize);
             int targetY = (int) Math.floor(lastCameraY + y / (double) tileSize);
+            for (WorldProp prop : state.world.propsAt(state.currentMapId, targetX, targetY)) {
+                if (ChestSystem.isChest(prop)
+                        && Math.max(Math.abs(prop.x() - state.playerX), Math.abs(prop.y() - state.playerY)) <= 1) {
+                    clearPlayerPath();
+                    clearQueuedMove();
+                    state.openChest(prop);
+                    repaint();
+                    return;
+                }
+            }
             CityBuilding clickedBuilding = buildingAtScreenPoint(new Point(x, y));
             if (clickedBuilding != null
                     && clickedBuilding.contains(targetX, targetY)

@@ -687,6 +687,20 @@ public final class SkillTrees {
         addProfession(SURVIVAL_PROFESSION_TREE, node("snare_lines", "Snare Lines", "Survival can turn field work into extra skin, bone, or food.", 2, 3, 3, List.of("weather_eye"), Map.of(), null, "Survival"));
         addProfession(SURVIVAL_PROFESSION_TREE, node("emergency_cache", "Emergency Cache", "+1 Survival cap and effective level; rare field finds improve.", 1, 1, 3, List.of("trailcraft_path", "weather_eye"), Map.of(), null, "Survival"));
 
+        for (Profession profession : List.of(Profession.SMITHING, Profession.TAILORING, Profession.CARPENTRY,
+                Profession.ARMORCRAFT, Profession.ALCHEMY, Profession.JEWELLERY)) {
+            Map<String, SkillNode> tree = new LinkedHashMap<>();
+            String training = profession.id() + "_training";
+            String mastery = profession.id() + "_mastery";
+            addProfession(tree, node(training, profession.label() + " Training",
+                    "+1 effective " + profession.label() + " level per rank. Improves crafting quality and speed.",
+                    2, 1, 0, List.of(), Map.of(), null, profession.label()));
+            addProfession(tree, node(mastery, profession.label() + " Mastery",
+                    "+1 profession cap and effective level per rank. Higher workmanship improves final stats.",
+                    2, 1, 1, List.of(training), Map.of(), null, profession.label()));
+            PROFESSION_SKILL_TREES.put(profession.id(), tree);
+        }
+
         SkillNode masterOfTrades = node("master_of_trades", "Master of Trades", "+1 cap and +1 effective level to every profession.", 1, 3, 4, List.of("trade_foundations"), Map.of(), null, "Professions");
         addProfession(WOODCUTTING_PROFESSION_TREE, masterOfTrades);
         addProfession(FISHING_PROFESSION_TREE, masterOfTrades);
