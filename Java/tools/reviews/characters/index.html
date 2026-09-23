@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alderfall character and monster animation review</title>
+<style>
+body{margin:40px auto;padding:0 24px;max-width:1100px;background:#141b22;color:#eee5cf;font:16px system-ui}
+h1{font:32px Georgia}p{color:#bec7cc;line-height:1.6}button,input{font:inherit}button{background:#273541;color:#eee5cf;border:1px solid #617584;padding:8px 18px;border-radius:5px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin:30px 0}figure{margin:0;padding:16px;background:#202a32;border:1px solid #364752;border-radius:10px}canvas{width:100%;image-rendering:pixelated}figcaption{margin-top:12px;font-weight:600}label{margin-left:20px}a{color:#e5c889}
+.review-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0}.review-tabs [aria-selected="true"]{background:#476454;border-color:#9dc8ac}.review-tabs button:focus-visible{outline:3px solid #ebcd86;outline-offset:3px}[role="tabpanel"][hidden]{display:none}#movement-panel iframe{width:100%;height:1100px;border:1px solid #364752;border-radius:10px;background:#121b20} @media(max-width:600px){body{margin:20px auto;padding:0 12px}.grid{grid-template-columns:1fr}}
+</style>
+<h1>Echoes of Alderfall Ă‚· Character motion</h1>
+<div class="review-tabs" role="tablist" aria-label="Character review">
+<button id="tab-characters" role="tab" aria-controls="character-gallery" aria-selected="true">Character animations</button>
+<button id="tab-movement" role="tab" aria-controls="movement-panel" aria-selected="false" tabindex="-1">Movement physics simulator</button>
+<button id="tab-dialogue" role="tab" aria-controls="dialogue-panel" aria-selected="false" tabindex="-1">Dialogue animation</button>
+</div>
+<section id="character-gallery" role="tabpanel" aria-labelledby="tab-characters">
+<p><a href="#dialogue-motion">Dialogue motion review: painted lips, head and shoulder gestures, and attention turns</a> Ă˘â‚¬â€ť all 26 dialogue figures, with face close-ups, original-art comparisons and frame stepping.</p>
+<p>The complete player, companion and NPC roster. Combat uses 24 authored poses per character; the original party side walk uses 16 drawn poses interpolated into 32-frame strides with alternating foot contacts and a lifted return step. Switch directions to check scale and scrub frames to inspect limbs and equipment. Standing idle uses planted feet and breathing. In-game stride speed follows distance travelled. <a href="world-poses.png">Player, companion and town-NPC proportions</a>. The current grounded walk uses planted steps and shoulder, elbow, wrist, hand, spine, head, hip, knee and ankle joints. Step length follows direction, character scale and cadence; hanging cloth moves separately. The original, previous cutout and previous jointed walks remain available for comparison. No server required.</p>
+<p>The gallery also includes 58 monster attack animations, including drakes, dragons, skeletons and story bosses. Choose All monsters, a monster family, or Everyone in the Characters menu below.</p>
+<button id="pause">Pause</button><label>Speed <input id="speed" type="range" min="0.5" max="2" value="1" step="0.25"></label>
+<label>Animation <select id="mode"><option value="combat">Combat</option><option value="walk">Walking - original</option><option value="walk_alternate">Walking - previous cutout</option><option value="walk_articulated">Walking - previous jointed legs</option><option value="walk_grounded">Walking - grounded (current)</option><option value="idle" selected>Standing idle</option></select></label>
+<label>Direction <select id="direction"><option>right</option><option>down_right</option><option>down</option><option>down_left</option><option>left</option><option>up_left</option><option>up</option><option>up_right</option></select></label>
+<p><label>Frame <input id="scrub" type="range" min="0" max="11" value="0" step="1"> <output id="number">1</output></label> Ă‚· <a href="walking-grounded.png">Grounded walking contact sheet</a> Ă‚· <a href="walking-grounded.tsv">Coverage audit</a> Ă‚· <a href="companion-facing.png">Companion facing check</a> Ă‚· <a href="articulated-review.png">Jointed movement review</a> Ă‚· <a href="arm-rig-review.png">Arm joints</a> Ă‚· <a href="diagonal-facing-review.png">Diagonal facing</a> &middot; <a href="grounded-cutouts/class_ranger-after.png">Ranger cutouts</a> &middot; <a href="grounded-cutouts/npc_calder-after.png">Calder cutouts</a></p>
+<p><label>Characters <select id="group"><option value="party">Players and companions</option><option value="town">Town NPCs</option><option value="monsters">All monsters</option><option value="bandits">Bandits</option><option value="goblins">Goblins</option><option value="orcs">Orcs</option><option value="beasts">Beasts</option><option value="all">Everyone</option></select></label></p>
+<p id="monster-note" hidden>Monster attacks use 12 poses and face left toward the player team. Choose an ability on each card to preview its VFX against the player target; buffs affect the monster itself. Uncheck Ability VFX for the full-size pose review. Shared sprite variants have their own named abilities in the menu. Standing idle shows the ready pose. <a href="monster-vfx/ability-audit.tsv">Ability and effect mapping</a>.</p>
+<div class="grid" id="gallery"></div>
+<p><a href="combat-poses.png">View every combat pose side by side</a>. These previews show the runtime character frames; in-game spell effects, hit flashes, and actor movement are added by the battle renderer.</p>
+</section>
+<section id="movement-panel" role="tabpanel" aria-labelledby="tab-movement" hidden>
+<p>Review grounded steps, body joints, cape collisions and hair together on one timeline.</p>
+<iframe id="movement-study-frame" title="Unified movement physics simulator" data-src="../movement-physics/index.html?v=calibration7"></iframe>
+<p><a href="../movement-physics/index.html">Open the simulator separately</a></p>
+</section>
+
+<section id="dialogue-panel" role="tabpanel" aria-labelledby="tab-dialogue" hidden>
+<iframe id="dialogue-study-frame" title="Dialogue animation: faces, gestures and attention turns" data-src="../dialogue-motion/index.html?embedded=1" style="display:block;box-sizing:border-box;width:100%;height:1100px;border:1px solid #364752;border-radius:10px"></iframe>
+</section>
+<script src="review-tabs.js"></script>
+<script src="world-roster.js"></script><script src="monster-vfx.js"></script><script src="monster-vfx-preview.js"></script><script>
+const root='../../../assets/characters/shared/animations/character-refresh/ready-v4/';
+const sprites=[
+ ['Knight','class_knight','attack'],['Mage','class_mage','cast'],['Ranger','class_ranger','shoot'],['Cleric','class_cleric','cast'],['Rogue','class_rogue','attack'],
+ ['Aria','npc_aria','shoot'],['Calder','npc_calder','attack'],['Cassia','npc_cassia','attack'],['Lyra','npc_lyra','cast'],['Maera','npc_maera','cast'],
+ ['Rafiq','npc_rafiq','attack'],['Samir','npc_samir','cast'],['Seraphine','npc_seraphine','attack'],['Vesper','npc_vesper','cast']];
+for(const name of (window.worldActors||[]))if(!sprites.some(s=>s[1]===name))sprites.push([name.replace(/^npc_/, '').replaceAll('_',' '),name,null]);
+const monsterFamilies={bandits:['bandit_cutthroat','bandit_archer','bandit_captain'],goblins:['goblin','goblin_scout','goblin_archer','goblin_trapper','goblin_skirmisher','goblin_shaman','hobgoblin_guard','goblin_warlord','goblin_king'],orcs:['orc','orc_raider','orc_berserker','orc_shaman','orc_shieldbearer'],beasts:['sheep','doe','crystal_hare','mountain_goat','wolf','stag','moss_stag','frost_wolf','snow_lynx','bramble_boar','stoneback_goat','ember_tortoise']};
+Object.assign(monsterFamilies,{
+ drakes:['marsh_drake','mountain_drake','red_dragon','elder_dragon'],
+ undead:['skeleton','wraith'],giants:['hill_giant','stone_giant','fire_giant','swamp_troll','frost_troll'],
+ creatures:['bat','crypt_bat','spider','glass_scorpion','ash_scorpion','sand_stalker','reed_serpent','river_eel'],
+ elementals:['slime','ice_golem','bog_beast','thornling','ember_imp'],
+ bosses:['void_knight','flame_herald','frost_witch','shadow_beast','demon_queen']
+});
+for(const [family,names] of Object.entries(monsterFamilies))for(const name of names)sprites.push([name.replaceAll('_',' '),name,'attack',family]);
+const monsterRoot='../../../assets/characters/monsters/animations/';
+const group=document.querySelector('#group');
+for(const [value,label] of Object.entries({drakes:'Drakes and dragons',undead:'Undead',giants:'Giants and trolls',creatures:'Crawlers, serpents and bats',elementals:'Elementals and plants',bosses:'Story bosses'}))group.add(new Option(label,value),group.querySelector('[value="all"]'));
+const mode=document.querySelector('#mode'),direction=document.querySelector('#direction'),scrub=document.querySelector('#scrub');
+const items=sprites.map(([title,name,action,family])=>{
+ const figure=document.createElement('figure'),canvas=document.createElement('canvas'),caption=document.createElement('figcaption');
+ canvas.width=320;canvas.height=320;canvas.setAttribute('aria-label',title+' animation');caption.textContent=title;
+ figure.append(canvas,caption);document.querySelector('#gallery').append(figure);
+ if(family){const link=document.createElement('a');link.href='../monster-attacks-2026-09-23/battle-'+name+'.png';link.textContent='View in battle';figure.append(link);}
+ const vfx=family?createMonsterVfxPreview(figure,name):null;
+ const image=new Image();image.onload=()=>{caption.textContent=title;};
+ image.onerror=()=>{caption.textContent=title+' Ă˘â‚¬â€ť could not load sprite sheet';};
+ return {name,action,family,image,figure,vfx,ctx:canvas.getContext('2d')};
+});
+let paused=false,elapsed=0,last=performance.now();
+function monstersOnly(){return group.value==='monsters'||Object.hasOwn(monsterFamilies,group.value);}
+function frameCount(){return monstersOnly()?mode.value==='idle'?1:12:mode.value.startsWith('walk')?32:24;}
+function refresh(){
+ const onlyMonsters=monstersOnly();
+ for(const option of mode.options)if(option.value.startsWith('walk'))option.disabled=onlyMonsters;
+ if(onlyMonsters&&mode.value.startsWith('walk'))mode.value='combat';
+ const walking=mode.value!=='combat';scrub.max=frameCount()-1;elapsed=0;scrub.value=0;paused=false;last=performance.now();document.querySelector('#pause').textContent='Pause';direction.disabled=!walking||onlyMonsters;
+ document.querySelector('#monster-note').hidden=!(onlyMonsters||group.value==='all');
+ for(const item of items){
+  const matches=group.value==='all'||(group.value==='party'&&!item.family&&!!item.action)||(group.value==='town'&&!item.family&&!item.action)||(group.value==='monsters'&&!!item.family)||item.family===group.value;
+  item.figure.hidden=!matches||(!walking&&!item.action)||(!!item.family&&mode.value.startsWith('walk'));
+  if(!item.figure.hidden)item.image.src=item.family?monsterRoot+item.name+(['skeleton','spider'].includes(item.name)?'_attack_v2_anim.png':'_attack_anim.png'):walking?mode.value+'/'+item.name+'_'+direction.value+'.png?v=cutout-depth4':root+item.name+'_combat_v4_'+item.action+'_anim.png';
+ }
+}
+mode.onchange=refresh;direction.onchange=refresh;group.onchange=()=>{if(group.value==='town'&&mode.value==='combat')mode.value='idle';if(monstersOnly())mode.value='combat';refresh();};refresh();
+scrub.oninput=()=>{paused=true;document.querySelector('#pause').textContent='Resume';};
+document.querySelector('#pause').onclick=()=>{paused=!paused;document.querySelector('#pause').textContent=paused?'Resume':'Pause';};
+function render(now){
+ if(document.getElementById("character-gallery").hidden){last=now;requestAnimationFrame(render);return;}
+ if(!paused)elapsed+=(now-last)*Number(document.querySelector('#speed').value);last=now;
+ const walking=mode.value!=='combat',count=frameCount(),duration=walking?(mode.value==='idle'?2000:1000*40/60):1800;
+ const frame=paused?Number(scrub.value):Math.min(count-1,Math.floor((elapsed%duration)/(walking?duration:1500)*count));
+ if(!paused)scrub.value=frame;document.querySelector('#number').textContent=frame+1;
+ for(const {image,ctx,figure,family,vfx} of items){if(figure.hidden)continue;
+  ctx.clearRect(0,0,320,320);ctx.fillStyle='#151e25';ctx.fillRect(0,0,320,320);
+  const baseline=walking&&!family?301:309;ctx.strokeStyle='#61705c';ctx.beginPath();ctx.moveTo(20,baseline);ctx.lineTo(300,baseline);ctx.stroke();
+  if(image.complete&&image.naturalWidth){ctx.imageSmoothingEnabled=false;const w=image.naturalWidth/(family?12:count),pose=family?(mode.value==='idle'?0:Math.min(11,Math.floor(frame*12/count))):frame;
+   if(vfx&&vfx.enabled.checked&&mode.value==='combat'){
+    const t=paused?Number(scrub.value)/Math.max(1,count-1):Math.min(.999,(elapsed%duration)/1500);
+    drawMonsterVfxPreview(ctx,image,vfx,t);continue;
+   }
+   if(walking&&!family)ctx.drawImage(image,pose*w,0,w,image.naturalHeight,16,94,288,216);
+   else ctx.drawImage(image,pose*w,0,w,image.naturalHeight,0,0,320,320);
+  }
+ }
+ requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+</script>
+</html>
+

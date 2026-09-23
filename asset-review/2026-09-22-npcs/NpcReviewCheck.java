@@ -15,7 +15,7 @@ public class NpcReviewCheck {
   Set<String> catalog=new TreeSet<>();for(Npc npc:GameData.NPCS)catalog.add(npc.sprite());
   for(String name:catalog){check(assets.hasSprite(name),"Missing NPC reference: "+name);visible(assets.spriteFit(name,96,128),name);}
   int statics=0,strips=0,frames=0;
-  try(var files=Files.walk(Path.of("assets/npcs"))){for(Path p:files.filter(f->f.toString().endsWith(".png")).toList()){
+  try(var files=Files.walk(Path.of("assets/characters/npcs/townsfolk"))){for(Path p:files.filter(f->f.toString().endsWith(".png")).toList()){
    String stem=p.getFileName().toString().replace(".png","");
    if(!stem.endsWith("_anim")){visible(assets.spriteFit(stem,43,58),stem);statics++;continue;}
    int split=stem.lastIndexOf('_',stem.length()-6);String name=stem.substring(0,split),action=stem.substring(split+1,stem.length()-5);

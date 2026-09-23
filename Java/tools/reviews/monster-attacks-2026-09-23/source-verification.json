@@ -1,0 +1,147 @@
+[
+    {
+        "name":  "bandit_cutthroat",
+        "sourceMatches":  true,
+        "sha256":  "9A9260CE569FE9FB3C8AEFD3A78AF8E71F4A65F73BBD3CC9E13D11CD5254D0B3"
+    },
+    {
+        "name":  "bandit_archer",
+        "sourceMatches":  true,
+        "sha256":  "0243F79E3816DEB8744EB5FD62E03B49A141684FB4F3B2E8F8ACAFCC51270942"
+    },
+    {
+        "name":  "goblin",
+        "sourceMatches":  true,
+        "sha256":  "E058DB6997C5EF4C6F8706F37699A480631E003517389A861B7BB93159D104E3"
+    },
+    {
+        "name":  "bandit_captain",
+        "sourceMatches":  true,
+        "sha256":  "89D071543AF9F6312DD9834613A428143AFE74A3945A09788CA9DED5BA6CD126"
+    },
+    {
+        "name":  "goblin_scout",
+        "sourceMatches":  true,
+        "sha256":  "C6730E0F3F2CF85AC22F8BD50A65DF12AECD9CED825186CF5C475AFEEE887C0D"
+    },
+    {
+        "name":  "goblin_archer",
+        "sourceMatches":  true,
+        "sha256":  "C0908D4A977CC851863BB9DBB0A6BEFEA3DBEE6A078D94B4A53420776C973330"
+    },
+    {
+        "name":  "goblin_trapper",
+        "sourceMatches":  true,
+        "sha256":  "B4668B6C6E29E21803C54783D4DFDBCD80F02A87ABE169367C8F1CA0749FC73E"
+    },
+    {
+        "name":  "goblin_skirmisher",
+        "sourceMatches":  true,
+        "sha256":  "29D13C5568A965941E92A3A8FB45B56EFA3A577340F34CBEEA363F5F16045173"
+    },
+    {
+        "name":  "goblin_shaman",
+        "sourceMatches":  true,
+        "sha256":  "41184B4E64639AECC4DBDCA80BF2926B2DD63D7395DFEA546353A0785940665F"
+    },
+    {
+        "name":  "hobgoblin_guard",
+        "sourceMatches":  true,
+        "sha256":  "E5A808A2735C5C321FEF4903A6FCDAB79FE2DF8F1C8A765EF6C8DE573EE37162"
+    },
+    {
+        "name":  "goblin_warlord",
+        "sourceMatches":  true,
+        "sha256":  "3F93A52873C252F1C5D4C3B32ED6C12C8C331C39B786BACDCF0623F4836D8C47"
+    },
+    {
+        "name":  "goblin_king",
+        "sourceMatches":  true,
+        "sha256":  "E411310A5FCD59D8405B3B566267042DB06E49A8E9BAEB0AA62872137A6EF385"
+    },
+    {
+        "name":  "orc",
+        "sourceMatches":  true,
+        "sha256":  "56FC18237034D4009FC315FB16716CC3C3704D94E7BA3BF1D35EC9863CBE7DC8"
+    },
+    {
+        "name":  "orc_raider",
+        "sourceMatches":  true,
+        "sha256":  "DBBF1297971E44B7E273E167573EC7BBE3155720A67FA010F029711ED56C8F85"
+    },
+    {
+        "name":  "orc_berserker",
+        "sourceMatches":  true,
+        "sha256":  "2D4F4C9AEA4A8F9A1EE83C4F8A2BD6DC5B303F8D343A31EB907B8CDF36E2CEC4"
+    },
+    {
+        "name":  "orc_shaman",
+        "sourceMatches":  true,
+        "sha256":  "E05ECF6DDB7BC707E5E147B8A4D945FB059932905FBCAF2F63BB42879B25F51F"
+    },
+    {
+        "name":  "orc_shieldbearer",
+        "sourceMatches":  true,
+        "sha256":  "DCE41D2AAD0B8C9984E213DA1A373F66263E43E0B73F1077F545671EDDA14D46"
+    },
+    {
+        "name":  "sheep",
+        "sourceMatches":  true,
+        "sha256":  "234382CE6E82D8A0ED24B56FC0CD2D55055EB4D2C65F187E60A4A30CE90BF9B7"
+    },
+    {
+        "name":  "doe",
+        "sourceMatches":  true,
+        "sha256":  "7A6A46964BA7CD6F02A2A52F5E839D75A5F33F445F834224D8234B829300C4AE"
+    },
+    {
+        "name":  "crystal_hare",
+        "sourceMatches":  true,
+        "sha256":  "E6FCD3CD5DFFBFB081AA2B0CB0627C2348EF0514B22A83381050C701A2E8A451"
+    },
+    {
+        "name":  "mountain_goat",
+        "sourceMatches":  true,
+        "sha256":  "BE78E0332C642E1699F9729B7166AE4B41191E39EDE66E346F489564EE3C9ACB"
+    },
+    {
+        "name":  "wolf",
+        "sourceMatches":  true,
+        "sha256":  "48E1F71358BD78868F8A7E24178EF8F5B79AFCFC5600997E49C84FCADE4D3527"
+    },
+    {
+        "name":  "stag",
+        "sourceMatches":  true,
+        "sha256":  "2020983C4C95C70A63AE21AEBD1EA6795C90FE0B8F3152B47BE7C6C8D3253A37"
+    },
+    {
+        "name":  "moss_stag",
+        "sourceMatches":  true,
+        "sha256":  "9C6180016D7E7DFAA2BA49532B16330109BDCB48D07C56D5C35AE0482DDA180E"
+    },
+    {
+        "name":  "frost_wolf",
+        "sourceMatches":  true,
+        "sha256":  "5B091F54378E88A6EB83DCE0DE0C918C3913409168BB55CB3AC47738FCADDE3A"
+    },
+    {
+        "name":  "snow_lynx",
+        "sourceMatches":  true,
+        "sha256":  "41242ADD7F078B36E3B63ADA7986D9A7EF1E7FE67DC095463E1F92A97115EF65"
+    },
+    {
+        "name":  "bramble_boar",
+        "sourceMatches":  true,
+        "sha256":  "5E4E9D736DA8230936746263D740CCCF341729BF77B84E8EF7B713CD8F0E9C1A"
+    },
+    {
+        "name":  "stoneback_goat",
+        "sourceMatches":  true,
+        "sha256":  "004E7661EDD4AB64A93175411ECF7932C7B9650F63C83AC420E3C7E2C27A0325"
+    },
+    {
+        "name":  "ember_tortoise",
+        "sourceMatches":  true,
+        "sha256":  "663E4564E38E2004646E47666DFB88779509BF24F9BAE4054B686315AA4A329F"
+    }
+]

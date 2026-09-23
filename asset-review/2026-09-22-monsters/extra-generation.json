@@ -1,14 +1,14 @@
 [
   {
     "name": "shadow_beast",
-    "target": "Java/assets/story/shadow_beast.png",
+    "target": "Java/assets/characters/npcs/story/shadow_beast.png",
     "prompt": "Repair this existing shadow-beast pixel-art game sprite. Its outer tentacle tips and claws were clipped by tight extraction. Restore only the missing tips of these existing tentacles and claws, giving the WHOLE silhouette clear 5% transparent padding. Remove any unrelated detached shard at far lower left. Preserve dark purple-black chitin, all glowing purple eyes including the central large eye, horns, spikes, four-limbed anatomy, pose and existing details. Remove bright green key spill while keeping purple magical light. Genuine RGBA alpha=0 exterior and negative spaces; opaque creature, no green background, no ground, shadow, glow backdrop, text or extra objects. Detailed pixel art consistent with reference, minimal changes.",
     "correction": "Fix framing ONLY. This creature's leftmost claws and rightmost claws are still clipped by the image border. Show the FULL creature with ALL claws and tentacle tips, reduced to occupy only 80% of canvas width and height, surrounded by a wide 10% EMPTY TRANSPARENT BORDER on every side. Restore the clipped claw tips. Preserve all other pixels/details, eyes, colors, anatomy and pose. No zoom-in, no crop. Actual RGBA transparency. No backdrop, no ground, no shadow. One complete sprite.",
     "hint": "Generated images are saved to C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978 as C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-6445ec22-9f92-41b1-8f34-3d158557f7b8.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
   },
   {
     "name": "crypt_bat",
-    "target": "Java/assets/monsters/crypt_bat.png",
+    "target": "Java/assets/characters/monsters/crypt_bat.png",
     "prompt": "Repair this crypt-bat sprite precisely. The upper-left wing tip is cut off by the left image border. Restore that complete wing tip and any clipped outer wing contour. Fit the WHOLE creature with 10% EMPTY TRANSPARENT BORDER on all sides. Preserve skeletal bat skull, orange eyes, ribcage, bony hands/feet, two pointed ears, purple wing membranes and intentional ragged holes. Same detailed pixel art, pose, scale proportions and palette; no redesign. Real RGBA transparent exterior and holes, opaque bones and wing membrane. Remove chroma fringe. No extra fragments, text, ground, shadows or backdrop.",
     "hint": "Generated images are saved to C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978 as C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-55b67ee6-c488-4add-84fe-3e7e6ae5b1b0.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
   }

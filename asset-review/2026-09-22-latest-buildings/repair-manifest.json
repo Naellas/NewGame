@@ -1,7 +1,7 @@
 [
   {
     "key": "rescue",
-    "target": "Java/assets/city/regional/regional_freehold_rescue_lodge.png",
+    "target": "Java/assets/environments/settlements/city/regional/regional_freehold_rescue_lodge.png",
     "before_sha256": "343b972f0a38372f5a481057195a561215dd535b537c407832d956e7f077255e",
     "after_sha256": "1a9fc3fc93f808df7b1cc9aac47c1a7ad9da782ad3cd2385385cf151c18d8211",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-01ee933f-e807-470d-b2a6-a76041e152b0.png",
@@ -20,7 +20,7 @@
   },
   {
     "key": "sun_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_sun_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_gate_vertical.png",
     "before_sha256": "785fc94fd278fb3f40d78f21ce8689b466bcb5a01e58e69bdc7a974e729e5fa9",
     "after_sha256": "97b0ad1240dc41506d995a31cae86742400c606ac2a2062b709ed58152e2737a",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-1856dfbd-0456-4021-bfee-db191fbad405.png",
@@ -39,7 +39,7 @@
   },
   {
     "key": "sun_end_tower",
-    "target": "Java/assets/city/walls/city_wall_sun_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_end_tower.png",
     "before_sha256": "6764a8b169fe1d03ac6e94a009a4c2fe5336ca4769a192131e198630115fb85c",
     "after_sha256": "bc5768c6603249f1107b92f44d3ceadb84a6acc2aaff8cf0db613f2e9d0927da",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-f9def15d-6cc8-4590-b5d3-e57dd89045f0.png",
@@ -58,7 +58,7 @@
   },
   {
     "key": "hearth_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_hearth_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_hearth_gate_vertical.png",
     "before_sha256": "d4bc25bab5d27b7989c0bcdf808a4dbc66788a65ddb45a443bd6b6f3cca8f224",
     "after_sha256": "acbb802ec33fc1318b5c295caa71b860a5def88fa476743ec39e930e9c621e65",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-9c6f3196-a0ee-41e0-8902-2864c5928472.png",
@@ -77,7 +77,7 @@
   },
   {
     "key": "hearth_end_tower",
-    "target": "Java/assets/city/walls/city_wall_hearth_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_hearth_end_tower.png",
     "before_sha256": "f4ea1b12c6d29ae49e2f25200e4e23664db318e867d9319d73157686c13cce22",
     "after_sha256": "b5fc444421e1bdcbd651e052a68232f08f0393bd376ae99b54e809ef651bf9b7",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-7c23567a-12ab-4fa2-9b54-fceb92f549b0.png",
@@ -96,7 +96,7 @@
   },
   {
     "key": "north_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_north_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_north_gate_vertical.png",
     "before_sha256": "2b607a6f069d8ffd367d073e3dcf6cc57eaff767dc1cfe2e2e24b635a1f2a503",
     "after_sha256": "4e02cdb60ed7df5073e03000a57db0720742650eef8697148b7ce322f905bbe7",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-1510ae6f-7671-4a4b-9df7-1df3b3b2668f.png",
@@ -115,7 +115,7 @@
   },
   {
     "key": "north_end_tower",
-    "target": "Java/assets/city/walls/city_wall_north_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_north_end_tower.png",
     "before_sha256": "4e890a4d10fca3880a3f1204be5d3de8c0b75bc3d83c813301d1704d899958a8",
     "after_sha256": "335f315d116b9827fda232b87692e3efbb122d1a888194d596c167f1d0ec7af6",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-3e1f6939-391b-4d54-9270-0ee42afd3498.png",
@@ -134,7 +134,7 @@
   },
   {
     "key": "fen_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_fen_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_fen_gate_vertical.png",
     "before_sha256": "afd2f6c138eb41bb9f6796fbe1f068ce6d98522bd17b593ae2a9431295f891bb",
     "after_sha256": "af0296f7f8f0c9ddda32ce0bcc2f2e6e81e1996e9f1d7b65854d7dca92864456",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-137320db-39a9-4a95-a208-9bd276b3b477.png",
@@ -153,7 +153,7 @@
   },
   {
     "key": "fen_end_tower",
-    "target": "Java/assets/city/walls/city_wall_fen_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_fen_end_tower.png",
     "before_sha256": "a5530d21427dfbdacb475e982f8e779760260c884cb138a7683f72f9a6cdad4d",
     "after_sha256": "a482b143485fea4ee1fe8fc5b35fef441ffdda22b224f3872e2e41034e747aff",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-10f03a83-0978-4692-9de0-7307d41143f9.png",
@@ -172,7 +172,7 @@
   },
   {
     "key": "freeholds_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_freeholds_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_gate_vertical.png",
     "before_sha256": "63b43d649095bb1fbd5078c1de4e26b37549906167ae4e6fc62662476ff293ba",
     "after_sha256": "50032bfe9fc424d85afcac20efd500e08be4ec90c20dc6a07a88748b3faa8a0b",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-7ce3d698-bdc5-4632-a010-55f8a112c13e.png",
@@ -191,7 +191,7 @@
   },
   {
     "key": "freeholds_end_tower",
-    "target": "Java/assets/city/walls/city_wall_freeholds_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_end_tower.png",
     "before_sha256": "f01f0beed5b672ca104330069abdaab1d7bf816147c9a2075768e2cf01c98c5a",
     "after_sha256": "292a341db17ca76dae93c661a5876a3c3e0fcfdd272281ae2565b4dbd1866785",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-20a6ba46-29d0-458a-9467-3b3f0eead004.png",
@@ -210,7 +210,7 @@
   },
   {
     "key": "sun_tower",
-    "target": "Java/assets/city/walls/city_wall_sun_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_tower.png",
     "before_sha256": "f8b3457be916d8666bafb36f71fe054be7e412f9398e91755d4053c291be01c2",
     "after_sha256": "98521787374ddf519525b8d450dd511263a24e06edad1103b3bc47a36b43ebe2",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-0cf4e499-9a3e-4527-93c4-a1d44405ffe1.png",
@@ -229,7 +229,7 @@
   },
   {
     "key": "sun_gate_horizontal",
-    "target": "Java/assets/city/walls/city_wall_sun_gate_horizontal.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_gate_horizontal.png",
     "before_sha256": "e3337d92b65bc0ca4a64e5949712540d58dd0d16f479c4f8ad9d4d0888069a10",
     "after_sha256": "6fbcf34c23d7918e693bc11f7347d43a453b184c5bf047f644bbeb5a879c6c74",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-73b5c3cf-fc32-49dc-b379-1b88b46b679c.png",

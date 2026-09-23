@@ -70,6 +70,11 @@ public final class WorldPropRenderer {
         java.awt.Rectangle placed = render.bounds();
         int px = placed.x;
         int py = placed.y;
+        if (prop.visualSlot() >= 0) {
+            // Tiny ground details reuse cached sprites and do not need per-prop shadows, veils or animation.
+            drawPropImage(g, asset, px, py, drawW, drawH, 1.0f);
+            return;
+        }
         if (isSoftGroundProp(asset)) {
             if (!PropPlacement.usesOffsets(state.world, state.currentMapId)) {
                 int seed = prop.x() * 928371 + prop.y() * 364479 + asset.hashCode();
@@ -244,6 +249,8 @@ public final class WorldPropRenderer {
     }
 
     public int propRenderSize(String asset, int logicalSize, int tileSize) {
+        if (SettlementSpriteScale.matches(asset))
+            return Math.max(1, Math.round(SettlementSpriteScale.size(asset) * tileSize / (float) GameConfig.TILE));
         int zoomSize = scaled(logicalSize);
         int tileSizeBased = Math.max(1, Math.round(logicalSize * tileSize / (float) GameConfig.TILE));
         int size = Math.max(zoomSize, tileSizeBased);
@@ -327,6 +334,14 @@ public final class WorldPropRenderer {
         }
         if (asset.startsWith("town_park_accent_")) {
             return Math.max(size, Math.round(tileSize * 1.72f));
+        }
+        boolean settlement = "city".equals(state.world.kind(state.currentMapId)) || "village".equals(state.world.kind(state.currentMapId));
+        if (settlement && !state.currentMapId.equals(com.alderfall.game.map.WorldMap.PLAYER_VILLAGE_ID)) {
+            if (asset.startsWith("city_prop_market_")) return Math.min(size, Math.round(tileSize * 1.05f));
+            if ((asset.startsWith("city_prop_") || asset.startsWith("village_prop_"))
+                    && (asset.contains("barrel") || asset.contains("crate") || asset.contains("basket")
+                    || asset.contains("flower_pot") || asset.contains("seedling") || asset.contains("grain_sack")))
+                return Math.min(size, Math.round(tileSize * .72f));
         }
         if (!isReadableOutdoorProp(asset)) {
             return size;

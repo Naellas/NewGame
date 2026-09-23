@@ -14,6 +14,18 @@ public final class NpcBackstories {
         if (npc == null) return null;
         String key = npc.recruitId() != null ? npc.recruitId() : npc.questId() == null ? "" : npc.questId();
         return switch (key) {
+            case "cairnvale_ore_assay" -> new Profile(
+                    "Miner Dorran. I work the Cairnspire seams and check the ore orders for Cairnvale's smiths.",
+                    "I began as a lamp runner. Now I assay the stockpiles and sign off on tool orders. The lower shaft stays sealed until the crew can prove it safe.",
+                    "I need someone to carry marked samples from the approach while I keep the assay furnace running. You can do that without entering the sealed workings.",
+                    "I once approved a hurried delivery full of poor iron. A broken tool injured a friend. I check every batch now, even when the buyer complains about the wait.",
+                    "Mind the sample trays. Similar-looking stone can produce very different iron.");
+            case "briarbridge_forged_seal" -> new Profile(
+                    "Magistrate Halven. I oversee Briarbridge's charter disputes and the accounts for its crossings.",
+                    "I heard small ferry disputes before taking this office. A missing payment can cost a household its boat long before a court calls it a serious crime.",
+                    "My seal appears on the disputed receipt. An independent witness should compare it with the register before I decide what the evidence means.",
+                    "It would be convenient to call the ferryman mistaken. It would also make the next complaint harder for an honest person to bring.",
+                    "Bring me what you can establish. We can leave the unanswered questions open.");
             case "aria" -> new Profile(
                     "I'm Aria Foxglove. I guide people along the western border paths. If you need directions, ask before you follow a ribbon tied to a branch.",
                     "I learned these routes carrying messages between villages. My sister learned them with me. "

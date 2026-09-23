@@ -8,7 +8,7 @@
   "archived_originals_verified": 300,
   "normalized_work_strips": [
     {
-      "path": "Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.png",
+      "path": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_hammer_anim.png",
       "before": [
         768,
         128
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "path": "Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.png",
+      "path": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_inspect_anim.png",
       "before": [
         768,
         128

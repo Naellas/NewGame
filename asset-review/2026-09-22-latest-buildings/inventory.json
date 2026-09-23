@@ -1,6 +1,6 @@
 [
   {
-    "path": "Java/assets/city/regional/regional_fen_bellhouse.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_fen_bellhouse.png",
     "group": "regional",
     "modified": "2026-09-22T04:46:44.056304",
     "size": [
@@ -26,7 +26,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_fen_reedworks.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_fen_reedworks.png",
     "group": "regional",
     "modified": "2026-09-22T04:47:13.031371",
     "size": [
@@ -52,7 +52,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_fen_stilt_house.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_fen_stilt_house.png",
     "group": "regional",
     "modified": "2026-09-22T04:06:01.400109",
     "size": [
@@ -78,7 +78,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_freehold_rescue_lodge.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_freehold_rescue_lodge.png",
     "group": "regional",
     "modified": "2026-09-22T04:48:03.845724",
     "size": [
@@ -104,7 +104,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_hearth_granary.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_hearth_granary.png",
     "group": "regional",
     "modified": "2026-09-22T04:42:42.915946",
     "size": [
@@ -130,7 +130,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_north_remembrance_hall.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_north_remembrance_hall.png",
     "group": "regional",
     "modified": "2026-09-22T04:43:58.107910",
     "size": [
@@ -156,7 +156,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_north_smokehouse.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_north_smokehouse.png",
     "group": "regional",
     "modified": "2026-09-22T04:44:22.767529",
     "size": [
@@ -182,7 +182,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_north_turf_house.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_north_turf_house.png",
     "group": "regional",
     "modified": "2026-09-22T04:04:52.721721",
     "size": [
@@ -208,7 +208,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_river_ferry_lodge.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_river_ferry_lodge.png",
     "group": "regional",
     "modified": "2026-09-22T04:43:30.907516",
     "size": [
@@ -234,7 +234,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_sun_caravanserai.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_sun_caravanserai.png",
     "group": "regional",
     "modified": "2026-09-22T04:45:59.308558",
     "size": [
@@ -260,7 +260,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_sun_cistern_house.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_sun_cistern_house.png",
     "group": "regional",
     "modified": "2026-09-22T04:45:03.639350",
     "size": [
@@ -286,7 +286,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/regional/regional_sun_courtyard_house.png",
+    "path": "Java/assets/environments/settlements/city/regional/regional_sun_courtyard_house.png",
     "group": "regional",
     "modified": "2026-09-22T04:05:29.438420",
     "size": [
@@ -312,7 +312,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_boundary_shrine.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_boundary_shrine.png",
     "group": "regional",
     "modified": "2026-09-22T03:23:45.078874",
     "size": [
@@ -339,7 +339,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_briarbridge_guest_abbey.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_briarbridge_guest_abbey.png",
     "group": "regional",
     "modified": "2026-09-22T03:36:00.961687",
     "size": [
@@ -365,7 +365,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_hearth_ward.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_hearth_ward.png",
     "group": "regional",
     "modified": "2026-09-22T03:28:19.130142",
     "size": [
@@ -391,7 +391,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_oathstead_hearth.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_oathstead_hearth.png",
     "group": "regional",
     "modified": "2026-09-22T03:22:14.024498",
     "size": [
@@ -417,7 +417,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_open_bough_gate.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_open_bough_gate.png",
     "group": "regional",
     "modified": "2026-09-22T04:13:38.901782",
     "size": [
@@ -443,7 +443,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_redcap_supply_shelter.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_redcap_supply_shelter.png",
     "group": "regional",
     "modified": "2026-09-22T03:44:58.667255",
     "size": [
@@ -469,7 +469,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_returning_seedhouse.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_returning_seedhouse.png",
     "group": "regional",
     "modified": "2026-09-22T03:23:02.713455",
     "size": [
@@ -496,7 +496,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_sealed_mirror_door.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_sealed_mirror_door.png",
     "group": "regional",
     "modified": "2026-09-22T04:15:04.891687",
     "size": [
@@ -522,7 +522,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_seedhouse.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_seedhouse.png",
     "group": "regional",
     "modified": "2026-09-22T03:23:22.371150",
     "size": [
@@ -548,7 +548,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/folklore/folklore_shared_oven.png",
+    "path": "Java/assets/environments/settlements/city/folklore/folklore_shared_oven.png",
     "group": "regional",
     "modified": "2026-09-22T03:22:50.245059",
     "size": [
@@ -574,7 +574,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/landmarks/city_landmark_archive_oath_spire.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/city_landmark_archive_oath_spire.png",
     "group": "regional",
     "modified": "2026-06-02T03:37:13.651488",
     "size": [
@@ -598,7 +598,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/landmarks/city_landmark_belltower_reed_chime.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/city_landmark_belltower_reed_chime.png",
     "group": "regional",
     "modified": "2026-06-02T03:37:19.719771",
     "size": [
@@ -622,7 +622,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/landmarks/city_landmark_highwall_iron_beacon.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/city_landmark_highwall_iron_beacon.png",
     "group": "regional",
     "modified": "2026-06-02T03:37:16.499182",
     "size": [
@@ -646,7 +646,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/landmarks/city_landmark_riverside_bridge_statue.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/city_landmark_riverside_bridge_statue.png",
     "group": "regional",
     "modified": "2026-06-02T03:37:10.828755",
     "size": [
@@ -670,7 +670,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/landmarks/city_landmark_sanctum_sun_obelisk.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/city_landmark_sanctum_sun_obelisk.png",
     "group": "regional",
     "modified": "2026-06-02T03:37:22.675347",
     "size": [
@@ -694,7 +694,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/landmarks/source/city_landmark_archive_oath_spire_imagegen_source.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/source/city_landmark_archive_oath_spire_imagegen_source.png",
     "group": "regional",
     "modified": "2026-06-02T03:33:04.278077",
     "size": [
@@ -718,7 +718,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/landmarks/source/city_landmark_belltower_reed_chime_imagegen_source.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/source/city_landmark_belltower_reed_chime_imagegen_source.png",
     "group": "regional",
     "modified": "2026-06-02T03:35:10.707603",
     "size": [
@@ -742,7 +742,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/landmarks/source/city_landmark_highwall_iron_beacon_imagegen_source.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/source/city_landmark_highwall_iron_beacon_imagegen_source.png",
     "group": "regional",
     "modified": "2026-06-02T03:34:05.888947",
     "size": [
@@ -766,7 +766,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/landmarks/source/city_landmark_riverside_bridge_statue_imagegen_source.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/source/city_landmark_riverside_bridge_statue_imagegen_source.png",
     "group": "regional",
     "modified": "2026-06-02T03:31:53.387360",
     "size": [
@@ -790,7 +790,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/landmarks/source/city_landmark_sanctum_sun_obelisk_imagegen_source.png",
+    "path": "Java/assets/environments/settlements/city/landmarks/source/city_landmark_sanctum_sun_obelisk_imagegen_source.png",
     "group": "regional",
     "modified": "2026-06-02T03:36:12.216707",
     "size": [
@@ -814,7 +814,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_archive_court_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_archive_court_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T05:47:09.613258",
     "size": [
@@ -840,7 +840,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_town_briarbridge_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_town_briarbridge_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:47:34.564678",
     "size": [
@@ -866,7 +866,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_town_embermarket_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_town_embermarket_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:51:18.672678",
     "size": [
@@ -892,7 +892,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_town_greyharbor_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_town_greyharbor_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:53:17.602661",
     "size": [
@@ -918,7 +918,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_town_ironvale_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_town_ironvale_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:48:30.521060",
     "size": [
@@ -944,7 +944,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_town_northwatch_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_town_northwatch_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:52:19.066502",
     "size": [
@@ -970,7 +970,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_town_reedwatch_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_town_reedwatch_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:49:25.411797",
     "size": [
@@ -996,7 +996,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_village_fen_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_village_fen_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T07:00:01.181234",
     "size": [
@@ -1022,7 +1022,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_village_freeholds_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_village_freeholds_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T07:01:03.357882",
     "size": [
@@ -1048,7 +1048,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_village_hearth_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_village_hearth_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:55:20.842658",
     "size": [
@@ -1074,7 +1074,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_village_north_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_village_north_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:57:04.157117",
     "size": [
@@ -1100,7 +1100,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_village_river_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_village_river_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:56:23.013974",
     "size": [
@@ -1126,7 +1126,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/overworld/city_overworld_village_sun_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/overworld/city_overworld_village_sun_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T06:59:02.561200",
     "size": [
@@ -1152,7 +1152,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/locations/location_dungeon_fortress_gate_imagegen.png",
+    "path": "Java/assets/environments/locations/location_dungeon_fortress_gate_imagegen.png",
     "group": "overworld",
     "modified": "2026-09-22T05:52:17.918042",
     "size": [
@@ -1179,7 +1179,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_archive_grand_college_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_archive_grand_college_imagegen.png",
     "group": "buildings",
     "modified": "2026-06-02T15:02:49.843723",
     "size": [
@@ -1205,7 +1205,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_belltower_chime_workshop_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_belltower_chime_workshop_imagegen.png",
     "group": "buildings",
     "modified": "2026-06-02T15:02:47.009992",
     "size": [
@@ -1231,7 +1231,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_civic_hall_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_civic_hall_imagegen.png",
     "group": "buildings",
     "modified": "2026-05-31T22:09:56.025030",
     "size": [
@@ -1257,7 +1257,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_highwall_forge_keep_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_highwall_forge_keep_imagegen.png",
     "group": "buildings",
     "modified": "2026-06-02T15:02:52.591748",
     "size": [
@@ -1283,7 +1283,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_house_gabled.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_house_gabled.png",
     "group": "buildings",
     "modified": "2026-05-26T05:21:15.819266",
     "size": [
@@ -1310,7 +1310,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_house_shop.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_house_shop.png",
     "group": "buildings",
     "modified": "2026-05-26T05:21:15.829273",
     "size": [
@@ -1337,7 +1337,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_house_tower.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_house_tower.png",
     "group": "buildings",
     "modified": "2026-05-26T05:21:15.824271",
     "size": [
@@ -1363,7 +1363,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_house_wide.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_house_wide.png",
     "group": "buildings",
     "modified": "2026-09-22T16:41:19.134587",
     "size": [
@@ -1390,7 +1390,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_inn_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_inn_imagegen.png",
     "group": "buildings",
     "modified": "2026-06-02T01:33:19.985918",
     "size": [
@@ -1416,7 +1416,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_riverside_tradehall_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_riverside_tradehall_imagegen.png",
     "group": "buildings",
     "modified": "2026-06-02T15:02:55.322707",
     "size": [
@@ -1442,7 +1442,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_sanctum_sun_alchemist_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_sanctum_sun_alchemist_imagegen.png",
     "group": "buildings",
     "modified": "2026-06-02T15:02:44.173487",
     "size": [
@@ -1468,7 +1468,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_stone_hall.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_stone_hall.png",
     "group": "buildings",
     "modified": "2026-09-22T16:43:47.891219",
     "size": [
@@ -1495,7 +1495,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_stone_shop.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_stone_shop.png",
     "group": "buildings",
     "modified": "2026-05-26T05:39:25.476846",
     "size": [
@@ -1522,7 +1522,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_stone_tower.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_stone_tower.png",
     "group": "buildings",
     "modified": "2026-05-26T05:39:25.469858",
     "size": [
@@ -1548,7 +1548,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_town_gabled.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_gabled.png",
     "group": "buildings",
     "modified": "2026-05-26T05:39:25.375331",
     "size": [
@@ -1576,7 +1576,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_town_manor.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_manor.png",
     "group": "buildings",
     "modified": "2026-09-22T16:42:55.839924",
     "size": [
@@ -1603,7 +1603,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_town_narrow.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_narrow.png",
     "group": "buildings",
     "modified": "2026-05-26T05:39:25.386338",
     "size": [
@@ -1630,7 +1630,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_town_shop.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_shop.png",
     "group": "buildings",
     "modified": "2026-05-26T05:39:25.390339",
     "size": [
@@ -1657,7 +1657,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_town_small.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_small.png",
     "group": "buildings",
     "modified": "2026-05-26T05:39:25.393331",
     "size": [
@@ -1684,7 +1684,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_town_tall.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_tall.png",
     "group": "buildings",
     "modified": "2026-05-26T05:39:25.382330",
     "size": [
@@ -1711,7 +1711,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/city/city_building_watchtower_imagegen.png",
+    "path": "Java/assets/environments/settlements/city/buildings/city/city_building_watchtower_imagegen.png",
     "group": "buildings",
     "modified": "2026-05-31T22:09:56.445300",
     "size": [
@@ -1737,7 +1737,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_cottage.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_cottage.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:40.171788",
     "size": [
@@ -1763,7 +1763,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_cottage_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_cottage_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:43.808369",
     "size": [
@@ -1787,7 +1787,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_cottage_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_cottage_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:53.060804",
     "size": [
@@ -1811,7 +1811,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_hall.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_hall.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:39.171461",
     "size": [
@@ -1835,7 +1835,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_hall_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_hall_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:47.254364",
     "size": [
@@ -1861,7 +1861,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_hall_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_hall_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:57.102424",
     "size": [
@@ -1885,7 +1885,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_row.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_row.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:39.938229",
     "size": [
@@ -1911,7 +1911,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_row_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_row_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:48.266988",
     "size": [
@@ -1935,7 +1935,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_row_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_row_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:58.000826",
     "size": [
@@ -1959,7 +1959,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_study.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_study.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:39.188979",
     "size": [
@@ -1983,7 +1983,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_study_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_study_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:47.744991",
     "size": [
@@ -2009,7 +2009,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_study_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_study_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:57.546957",
     "size": [
@@ -2033,7 +2033,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_warehouse.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_warehouse.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:39.243983",
     "size": [
@@ -2057,7 +2057,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/imagegen_city_workshop.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/imagegen_city_workshop.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:39.137439",
     "size": [
@@ -2081,7 +2081,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_apothecary.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_apothecary.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:29.696820",
     "size": [
@@ -2108,7 +2108,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_apothecary_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_apothecary_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:52.044588",
     "size": [
@@ -2132,7 +2132,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_apothecary_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_apothecary_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:04:00.923586",
     "size": [
@@ -2156,7 +2156,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_bakery.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_bakery.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:28.860176",
     "size": [
@@ -2183,7 +2183,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_bakery_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_bakery_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:51.493393",
     "size": [
@@ -2207,7 +2207,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_bakery_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_bakery_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:04:00.493768",
     "size": [
@@ -2231,7 +2231,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_blacksmith.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_blacksmith.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:28.015793",
     "size": [
@@ -2258,7 +2258,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_blacksmith_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_blacksmith_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:50.720709",
     "size": [
@@ -2282,7 +2282,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_blacksmith_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_blacksmith_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:04:00.075762",
     "size": [
@@ -2306,7 +2306,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_farmstead.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_farmstead.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:33.087754",
     "size": [
@@ -2333,7 +2333,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_farmstead_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_farmstead_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:46.211552",
     "size": [
@@ -2357,7 +2357,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_farmstead_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_farmstead_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:56.066597",
     "size": [
@@ -2381,7 +2381,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_fishing_hut.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_fishing_hut.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:30.526118",
     "size": [
@@ -2408,7 +2408,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_fishing_hut_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_fishing_hut_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:52.578053",
     "size": [
@@ -2432,7 +2432,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_fishing_hut_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_fishing_hut_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:04:01.284777",
     "size": [
@@ -2456,7 +2456,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_forestry_hut.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_forestry_hut.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:31.975409",
     "size": [
@@ -2483,7 +2483,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_forestry_hut_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_forestry_hut_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:44.744803",
     "size": [
@@ -2507,7 +2507,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_forestry_hut_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_forestry_hut_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:54.135035",
     "size": [
@@ -2531,7 +2531,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_garden.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_garden.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:39.709178",
     "size": [
@@ -2558,7 +2558,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_garden_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_garden_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:50.151169",
     "size": [
@@ -2582,7 +2582,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_garden_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_garden_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:59.633045",
     "size": [
@@ -2606,7 +2606,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_granary.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_granary.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:33.625646",
     "size": [
@@ -2633,7 +2633,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_granary_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_granary_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:48.756529",
     "size": [
@@ -2657,7 +2657,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_granary_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_granary_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:58.430319",
     "size": [
@@ -2681,7 +2681,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_hunting_camp.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_hunting_camp.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:32.473155",
     "size": [
@@ -2707,7 +2707,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_hunting_camp_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_hunting_camp_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:45.713934",
     "size": [
@@ -2731,7 +2731,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_hunting_camp_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_hunting_camp_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:55.423560",
     "size": [
@@ -2755,7 +2755,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_mine.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_mine.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:31.456033",
     "size": [
@@ -2781,7 +2781,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_mine_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_mine_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:45.233895",
     "size": [
@@ -2805,7 +2805,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_mine_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_mine_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:54.836345",
     "size": [
@@ -2829,7 +2829,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_shrine.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_shrine.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:34.524507",
     "size": [
@@ -2856,7 +2856,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_shrine_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_shrine_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:49.608319",
     "size": [
@@ -2880,7 +2880,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_shrine_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_shrine_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:59.183502",
     "size": [
@@ -2904,7 +2904,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_warehouse.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_warehouse.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:30.987528",
     "size": [
@@ -2931,7 +2931,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_warehouse_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_warehouse_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:44.286137",
     "size": [
@@ -2955,7 +2955,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_warehouse_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_warehouse_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:53.639716",
     "size": [
@@ -2979,7 +2979,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_watchtower.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_watchtower.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:34.078038",
     "size": [
@@ -3006,7 +3006,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_watchtower_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_watchtower_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:49.225824",
     "size": [
@@ -3030,7 +3030,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_watchtower_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_watchtower_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:58.809381",
     "size": [
@@ -3054,7 +3054,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_workshop.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_workshop.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:39.489579",
     "size": [
@@ -3081,7 +3081,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_workshop_lvl2.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_workshop_lvl2.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:46.659528",
     "size": [
@@ -3105,7 +3105,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/buildings/village/village_building_workshop_lvl3.png",
+    "path": "Java/assets/environments/settlements/city/buildings/village/village_building_workshop_lvl3.png",
     "group": "buildings",
     "modified": "2026-06-01T18:03:56.583477",
     "size": [
@@ -3129,7 +3129,7 @@
     "role": "older comparison / fallback"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_atlas.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_atlas.png",
     "group": "walls",
     "modified": "2026-09-22T16:01:04.000365",
     "size": [
@@ -3153,7 +3153,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_end_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_end_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.785788",
     "size": [
@@ -3177,7 +3177,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_gate_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_gate_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.728647",
     "size": [
@@ -3201,7 +3201,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_gate_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_gate_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.758169",
     "size": [
@@ -3225,7 +3225,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.642041",
     "size": [
@@ -3249,7 +3249,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_horizontal_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_horizontal_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.576602",
     "size": [
@@ -3273,7 +3273,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.699127",
     "size": [
@@ -3297,7 +3297,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.671108",
     "size": [
@@ -3321,7 +3321,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_fen_vertical_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_fen_vertical_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.584602",
     "size": [
@@ -3345,7 +3345,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_atlas.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_atlas.png",
     "group": "walls",
     "modified": "2026-09-22T16:02:28.386691",
     "size": [
@@ -3369,7 +3369,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_end_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_end_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.548843",
     "size": [
@@ -3393,7 +3393,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_gate_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_gate_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.494374",
     "size": [
@@ -3417,7 +3417,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_gate_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_gate_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.521894",
     "size": [
@@ -3441,7 +3441,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.410867",
     "size": [
@@ -3465,7 +3465,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_horizontal_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_horizontal_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.594603",
     "size": [
@@ -3489,7 +3489,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.466344",
     "size": [
@@ -3513,7 +3513,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.438808",
     "size": [
@@ -3537,7 +3537,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_freeholds_vertical_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_vertical_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.603614",
     "size": [
@@ -3561,7 +3561,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_atlas.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_atlas.png",
     "group": "walls",
     "modified": "2026-09-22T15:58:34.884612",
     "size": [
@@ -3585,7 +3585,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_end_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_end_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.158050",
     "size": [
@@ -3609,7 +3609,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_gate_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_gate_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.100834",
     "size": [
@@ -3633,7 +3633,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_gate_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_gate_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.128848",
     "size": [
@@ -3657,7 +3657,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.017172",
     "size": [
@@ -3681,7 +3681,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_horizontal_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_horizontal_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.517603",
     "size": [
@@ -3705,7 +3705,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.072716",
     "size": [
@@ -3729,7 +3729,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.044697",
     "size": [
@@ -3753,7 +3753,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_hearth_vertical_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_hearth_vertical_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.526603",
     "size": [
@@ -3777,7 +3777,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_atlas.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_atlas.png",
     "group": "walls",
     "modified": "2026-09-22T16:00:19.196624",
     "size": [
@@ -3801,7 +3801,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_end_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_end_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.970651",
     "size": [
@@ -3825,7 +3825,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_gate_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_gate_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.914927",
     "size": [
@@ -3849,7 +3849,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_gate_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_gate_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.943125",
     "size": [
@@ -3873,7 +3873,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.830902",
     "size": [
@@ -3897,7 +3897,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_horizontal_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_horizontal_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.536602",
     "size": [
@@ -3921,7 +3921,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.886941",
     "size": [
@@ -3945,7 +3945,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:27.858920",
     "size": [
@@ -3969,7 +3969,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_north_vertical_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_north_vertical_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.546604",
     "size": [
@@ -3993,7 +3993,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_atlas.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_atlas.png",
     "group": "walls",
     "modified": "2026-09-22T16:06:55.769511",
     "size": [
@@ -4017,7 +4017,7 @@
     "role": "source sheet"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_end_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_end_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.364800",
     "size": [
@@ -4041,7 +4041,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_gate_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_gate_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.302241",
     "size": [
@@ -4065,7 +4065,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_gate_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_gate_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.332766",
     "size": [
@@ -4089,7 +4089,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_horizontal.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_horizontal.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.209623",
     "size": [
@@ -4113,7 +4113,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_horizontal_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_horizontal_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.557611",
     "size": [
@@ -4137,7 +4137,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_tower.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_tower.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.271217",
     "size": [
@@ -4161,7 +4161,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_vertical.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_vertical.png",
     "group": "walls",
     "modified": "2026-09-22T16:07:28.239663",
     "size": [
@@ -4185,7 +4185,7 @@
     "role": "latest runtime candidate"
   },
   {
-    "path": "Java/assets/city/walls/city_wall_sun_vertical_seamless.png",
+    "path": "Java/assets/environments/settlements/city/walls/city_wall_sun_vertical_seamless.png",
     "group": "walls",
     "modified": "2026-09-22T16:55:20.566602",
     "size": [

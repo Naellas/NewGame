@@ -17,7 +17,7 @@ Named bandits reuse the existing family artwork: masked_trail_hunter uses bandit
 
 ## Animation support
 
-AssetStore now accepts optional `.framebounds` metadata defining a shared viewport within each animation cell. The skeleton strip uses this to retain consistent scale and foot placement despite the generated strip's transparent padding. Missing or invalid metadata falls back to the full cell. Format documentation is in `Java/assets/animations/README.md`.
+AssetStore now accepts optional `.framebounds` metadata defining a shared viewport within each animation cell. The skeleton strip uses this to retain consistent scale and foot placement despite the generated strip's transparent padding. Missing or invalid metadata falls back to the full cell. Format documentation is in `Java/assets/characters/shared/animations/README.md`.
 
 ## Verification and evidence
 

@@ -14,6 +14,10 @@ import java.util.Random;
 import java.util.Set;
 
 public final class GameState {
+    public static final int DEFAULT_ZOOM = 100;
+    public static final int MIN_ZOOM = 70;
+    public static final int MAX_ZOOM = 200;
+    public static final int ZOOM_STEP = 5;
     public final ChestSystem chests = new ChestSystem();
     public WorldProp activeChest;
 
@@ -29,7 +33,7 @@ public final class GameState {
 
     public static final int TICKS_PER_GAME_DAY = 7200;
     private static final int VILLAGE_PRODUCTION_TICKS = 900;
-    private static final int TICKS_PER_GAME_WEEK = TICKS_PER_GAME_DAY * 7;
+    private static final int SIDE_QUEST_REFRESH_TICKS = TICKS_PER_GAME_DAY * 8;
     private static final int VILLAGE_RECRUIT_RELATIONSHIP = 55;
     private static final int COMPANION_RECRUIT_RELATIONSHIP = 20;
     public static final int MIN_NPC_RELATIONSHIP = -100;
@@ -165,7 +169,7 @@ public final class GameState {
     private int activeDialogueRevealChars = Integer.MAX_VALUE;
     private long activeDialogueRevealStartedAtMs;
     private List<VillageRecruitOption> settlementRecruitOptions = List.of();
-    public int zoom = 100;
+    public int zoom = DEFAULT_ZOOM;
     public int worldTick;
     public int storyPage;
     public boolean worldMapKingdoms;
@@ -193,6 +197,7 @@ public final class GameState {
     public WorldProp lastGatheredProp;
     public int lastGatheredPropWorldTick = -1;
     private TravelBanterPrompt activeTravelBanter;
+    final PartyDialogue partyDialogue = new PartyDialogue();
     private final List<PendingCompanionComment> pendingCompanionComments = new ArrayList<>();
     private final Map<String, Integer> recentTravelBanterKeys = new LinkedHashMap<>();
     private AmbientNpcConversation activeTownConversation;
@@ -211,6 +216,7 @@ public final class GameState {
             quests.put(entry.getKey(), entry.getValue().copy());
         }
         ensureStarterRecipeUnlocks();
+        partyDialogue.install(this);
     }
 
     public void openMainMenu() {
@@ -270,6 +276,7 @@ public final class GameState {
     }
 
     public void chooseClass(String className) {
+        partyDialogue.reset();
         setPendingPlayerName(pendingPlayerName);
         if (pendingPlayerName.isBlank()) {
             pendingPlayerName = "Arin";
@@ -3141,12 +3148,13 @@ public final class GameState {
     }
 
     public void ensureWeeklyNpcQuests() {
-        int block = Math.floorDiv(worldTick, TICKS_PER_GAME_WEEK);
+        int block = Math.floorDiv(worldTick, SIDE_QUEST_REFRESH_TICKS);
         if (block == weeklyQuestBlock) {
             return;
         }
         weeklyQuestBlock = block;
         weeklyNpcQuestIds.clear();
+        Map<String, List<Npc>> candidatesByMap = new LinkedHashMap<>();
         for (Npc npc : weeklyQuestCandidates()) {
             if (npc.recruitId() != null) {
                 continue;
@@ -3155,12 +3163,21 @@ public final class GameState {
             if (authored != null && (authored.mainStoryQuest() || authored.companionQuest() || !authored.completed)) {
                 continue;
             }
-            String id = weeklyQuestId(npc, block);
-            quests.put(id, createWeeklyNpcQuest(npc, id, block));
-            weeklyNpcQuestIds.put(npcRelationshipKey(npc), id);
+            candidatesByMap.computeIfAbsent(npc.mapId(), key -> new ArrayList<>()).add(npc);
+        }
+        for (List<Npc> candidates : candidatesByMap.values()) {
+            // Keep local work available, but only half of eligible NPCs post each cycle.
+            int count = (candidates.size() + 1) / 2;
+            int offset = Math.floorMod(block, candidates.size());
+            for (int i = 0; i < count; i++) {
+                Npc npc = candidates.get((offset + i) % candidates.size());
+                String id = weeklyQuestId(npc, block);
+                quests.put(id, createWeeklyNpcQuest(npc, id, block));
+                weeklyNpcQuestIds.put(npcRelationshipKey(npc), id);
+            }
         }
         if (block > 0) {
-            status = "A new week begins. Fresh sidequests are posted across the settlements.";
+            status = "Fresh side quests are posted across the settlements.";
         }
     }
 
@@ -3186,203 +3203,20 @@ public final class GameState {
                 + npc.name().strip().toLowerCase().replaceAll("[^a-z0-9]+", "_");
     }
 
-    private static String weeklyLocation(int seed, int salt, String... kinds) {
-        if (kinds == null || kinds.length == 0) {
-            return "";
-        }
-        return kinds[Math.floorMod(seed / Math.max(1, salt) + salt * 37, kinds.length)];
-    }
-
-    private static int weeklyLocationIndex(int seed, int salt) {
-        return Math.floorMod(seed / Math.max(1, salt) + salt * 13, 6);
-    }
-
     private Quest createWeeklyNpcQuest(Npc npc, String id, int block) {
-        int seed = Math.abs(npcRelationshipKey(npc).hashCode() * 31 + block * 7919);
-        int template = Math.floorMod(seed, 16);
-        int rewardGold = 28 + Math.floorMod(seed / 7, 55);
-        int rewardXp = 22 + Math.floorMod(seed / 11, 48);
-        Npc missingTarget = weeklyQuestRelocationTarget(npc, seed);
-        Quest generated = switch (template) {
-            case 0 -> new Quest(id, "Roadside Trouble", "",
-                    "Goblin Scout", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.DEFEAT, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 41, "goblin_camp", "bandit_camp", "old_road_marker", "ruined_watchpost"),
-                    weeklyLocationIndex(seed, 43), "quest_trail_marker_post", "goblin_scout",
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 1 -> new Quest(id, "Market Errand", "",
-                    "Wheat Sheaf", 3, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.GATHER, WorldMap.OVERWORLD_ID, "farmland", 0, "location_farmland_wheat", null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 2 -> new Quest(id, "Old Marks", "",
-                    "Tombstone", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 47, "graveyard", "crypt", "abandoned_castle"),
-                    weeklyLocationIndex(seed, 49), "location_graveyard_tombstones", null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 3 -> new Quest(id, "Camp Smoke", "",
-                    "Campfire", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 53, "goblin_camp", "bandit_camp"),
-                    weeklyLocationIndex(seed, 55), "location_camp_fire", null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 4 -> new Quest(id, "Boundary Stones", "",
-                    "Ward Marker", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.VISIT, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 59, "graveyard", "forest_shrine", "ruined_watchpost", "old_road_marker"),
-                    weeklyLocationIndex(seed, 61), "quest_ward_marker", null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 5 -> new Quest(id, "Herbs Before Rain", "",
-                    "Salve Herb", 3, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.GATHER, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 67, "farmland", "hidden_grove", "forest_shrine"),
-                    weeklyLocationIndex(seed, 71), "quest_salve_herbs", null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 6 -> new Quest(id, "Missing by the Tree Line", "",
-                    "Trapped Traveler", 1, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.RESCUE, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 73, "hidden_grove", "forest_shrine", "cave_mouth", "old_road_marker"),
-                    weeklyLocationIndex(seed, 79), "quest_trail_marker_post", "wolf",
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 7 -> new Quest(id, "Hold the Storehouse", "",
-                    "Storehouse", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.DEFEND, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 83, "goblin_camp", "bandit_camp", "ruined_watchpost", "old_road_marker"),
-                    weeklyLocationIndex(seed, 89), "quest_watchpost_signal", "goblin",
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 8 -> new Quest(id, "Hidden Clue", "",
-                    "Hidden Clue", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.SEARCH, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 97, "farmland", "hidden_grove", "cave_mouth", "ruined_watchpost", "old_road_marker"),
-                    weeklyLocationIndex(seed, 101), "quest_cave_rune_cache", null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 9 -> new Quest(id, "Ask the Neighbors", "",
-                    "the split grain sack", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.ASK_AROUND, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 10 -> new Quest(id, "Plain Report", "",
-                    npc.name(), 1, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.REPORT, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), "");
-            case 11 -> new Quest(id, "Safe Passage", "",
-                    "Safe Road", 2, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.ESCORT, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 103, "old_road_marker", "ruined_watchpost", "hidden_grove", "cave_mouth"),
-                    weeklyLocationIndex(seed, 107), "quest_trail_marker_post", null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-            case 12 -> new Quest(id, "Sealed Packet", "",
-                    npc.name(), 1, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.DELIVER, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), "");
-            case 13 -> new Quest(id, "Hard Truth", "",
-                    "a difficult truth", 1, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.CHOICE, WorldMap.OVERWORLD_ID, null, 0, null, null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null, npcRelationshipKey(npc), id + "_choice");
-            case 14 -> new Quest(id, "Missing off the Road", "",
-                    missingTarget.name(), 1, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.TALK, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 109, "farmland", "hidden_grove", "old_road_marker", "forest_shrine"),
-                    weeklyLocationIndex(seed, 113), missingTarget.sprite(), null,
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null, rawNpcStateKey(missingTarget), "");
-            default -> new Quest(id, "Bad Tracks", "",
-                    "Mountain Goat", 3, rewardGold, rewardXp,
-                    Quest.ObjectiveKind.DEFEAT, WorldMap.OVERWORLD_ID,
-                    weeklyLocation(seed, 127, "cave_mouth", "ruined_watchpost", "old_road_marker", "hidden_grove"),
-                    weeklyLocationIndex(seed, 131), "quest_trail_marker_post", "mountain_goat",
-                    "",
-                    "",
-                    "",
-                    "",
-                    Quest.QuestType.SIDE, null, null);
-        };
-        return NpcQuestStories.refine(generated, npc, world);
-    }
-
-    private Npc weeklyQuestRelocationTarget(Npc giver, int seed) {
-        List<Npc> candidates = GameData.NPCS.stream()
-                .filter(npc -> !npc.equals(giver))
-                .filter(npc -> npc.mapId().equals(giver.mapId()))
-                .filter(npc -> npc.questId() == null)
-                .filter(npc -> npc.recruitId() == null)
-                .toList();
-        if (candidates.isEmpty()) {
-            candidates = GameData.NPCS.stream()
-                    .filter(npc -> !npc.equals(giver))
-                    .filter(npc -> npc.mapId().equals(giver.mapId()))
-                    .toList();
-        }
-        if (candidates.isEmpty()) {
-            return giver;
-        }
-        return candidates.get(Math.floorMod(seed / 29, candidates.size()));
+        return NpcQuestStories.refine(RegionalNpcQuests.create(npc, id, block, world), npc, world);
     }
 
     public String questGiverName(String questId) {
+        Quest shared = quests.get(questId);
+        if (shared != null && PartyDialogue.isShared(shared)) return PartyDialogue.pair(shared).names();
         Npc npc = questGiver(questId);
         return npc == null ? "the quest giver" : npc.name();
     }
 
     public String questReturnLocation(String questId) {
+        Quest shared = quests.get(questId);
+        if (shared != null && PartyDialogue.isShared(shared)) return "the traveling party";
         Npc npc = questGiver(questId);
         return npc == null ? "Unknown" : world.label(npc.mapId());
     }
@@ -4875,7 +4709,7 @@ public final class GameState {
     }
 
     public void setZoom(int zoom) {
-        this.zoom = Math.max(70, Math.min(150, zoom));
+        this.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
     }
 
     public void adjustZoom(int delta) {
@@ -5900,7 +5734,30 @@ public final class GameState {
         return moveExploreTo(playerX + dx, playerY + dy);
     }
 
+    /** Old saves may contain a position in a building whose footprint has since been corrected. */
+    public void recoverBlockedSettlementPosition() {
+        if (mode != GameMode.EXPLORE || !("city".equals(world.kind(currentMapId)) || "village".equals(world.kind(currentMapId)))
+                || !world.cityBuildingBlocksMovementAt(currentMapId, playerX, playerY)
+                || PropCollision.navigationAnchor(world, currentMapId, playerX, playerY) != null) return;
+        for (int radius = 1; radius <= 8; radius++) {
+            for (int dy = radius; dy >= -radius; dy--) for (int dx = -radius; dx <= radius; dx++) {
+                if (Math.abs(dx) + Math.abs(dy) != radius) continue;
+                int x = playerX + dx, y = playerY + dy;
+                if (world.transitionAt(currentMapId, x, y) != null) continue;
+                if (PropCollision.navigationAnchor(world, currentMapId, x, y) != null) {
+                    playerX = x; playerY = y; return;
+                }
+            }
+        }
+    }
+
     public boolean moveFreeExploreTo(double centerX, double centerY) {
+        var from = PropCollision.navigationAnchor(world, currentMapId, playerX, playerY);
+        if (from == null) return false;
+        return moveFreeExploreTo(from.x(), from.y(), centerX, centerY);
+    }
+
+    public boolean moveFreeExploreTo(double fromX, double fromY, double centerX, double centerY) {
         if (mode != GameMode.EXPLORE) {
             return false;
         }
@@ -5910,23 +5767,41 @@ public final class GameState {
         }
         int nx = (int) Math.floor(centerX);
         int ny = (int) Math.floor(centerY);
+        if (!PropCollision.canTravel(world, currentMapId, fromX, fromY, centerX, centerY)) {
+            // Enter authored doors when the player's leading edge reaches them, before its center clips the wall.
+            if (Math.hypot(centerX - fromX, centerY - fromY) <= 0.35) {
+                int touchX = (int) Math.floor(centerX + Math.signum(centerX - fromX) * PropCollision.PLAYER_RADIUS);
+                int touchY = (int) Math.floor(centerY + Math.signum(centerY - fromY) * PropCollision.PLAYER_RADIUS);
+                if (!world.isPassable(currentMapId, touchX, touchY)
+                        && (world.transitionAt(currentMapId, touchX, touchY) != null
+                        || world.cityBuildingEntryAt(currentMapId, touchX, touchY, playerX, playerY) != null)) {
+                    return moveExploreTo(touchX, touchY);
+                }
+            }
+            status = "Path blocked.";
+            return false;
+        }
         if (nx == playerX && ny == playerY) {
             return true;
         }
-        return moveExploreTo(nx, ny);
+        return moveExploreTo(nx, ny, true);
     }
 
     private boolean moveExploreTo(int nx, int ny) {
+        return moveExploreTo(nx, ny, false);
+    }
+
+    private boolean moveExploreTo(int nx, int ny, boolean continuous) {
         WorldTransition currentTransition = world.transitionAt(currentMapId, playerX, playerY);
         WorldTransition targetTransition = world.transitionAt(currentMapId, nx, ny);
-        if (Math.abs(nx - playerX) == 1 && Math.abs(ny - playerY) == 1
-                && !world.isPassable(currentMapId, nx, playerY)
-                && !world.isPassable(currentMapId, playerX, ny)
+        if (!continuous && Math.abs(nx - playerX) == 1 && Math.abs(ny - playerY) == 1
+                && (!world.isPassable(currentMapId, nx, playerY)
+                || !world.isPassable(currentMapId, playerX, ny))
                 && targetTransition == null) {
             status = "Path blocked.";
             return false;
         }
-        if (!world.isPassable(currentMapId, nx, ny)) {
+        if (!continuous && !world.isPassable(currentMapId, nx, ny)) {
             if (targetTransition != null) {
                 applyTransition(targetTransition);
                 return true;
@@ -5943,6 +5818,15 @@ public final class GameState {
             status = "Blocked by " + Terrain.name(world.tileAt(currentMapId, nx, ny)) + ".";
             return false;
         }
+        if (!continuous) {
+            var from = PropCollision.navigationAnchor(world, currentMapId, playerX, playerY);
+            var to = PropCollision.navigationAnchor(world, currentMapId, nx, ny);
+            if (from == null || to == null || !PropCollision.canTravel(world, currentMapId,
+                    from.x(), from.y(), to.x(), to.y())) {
+                status = "Path blocked.";
+                return false;
+            }
+        }
         DungeonMonsterRuntime dungeonMonster = dungeonMonsterAt(currentMapId, nx, ny);
         if (dungeonMonster != null) {
             playerX = nx;
@@ -5958,7 +5842,7 @@ public final class GameState {
             return true;
         }
         Npc npc = npcAt(currentMapId, nx, ny);
-        if (npc != null) {
+        if (npc != null && !residentsYieldToPlayer(currentMapId)) {
             status = npcDisplayName(npc) + " is there. Press E to talk.";
             return false;
         }
@@ -5967,6 +5851,7 @@ public final class GameState {
             status = blockingObjective.target() + " is there. Press E to engage.";
             return false;
         }
+        if (npc != null) yieldResidentToPlayer(npc, nx - playerX, ny - playerY);
         playerX = nx;
         playerY = ny;
         if (targetTransition != null) {
@@ -6083,9 +5968,25 @@ public final class GameState {
     }
 
     private void updateTravelBanter() {
+        if (mode != GameMode.EXPLORE) return;
+        if (partyDialogue.owns(activeTravelBanter)) {
+            if (!partyDialogue.valid(this)) {
+                partyDialogue.cancel();
+                activeTravelBanter = null;
+            } else if (worldTick >= activeTravelBanter.expiresAtTick()) {
+                // Expiring an offer never accepts it on the player's behalf.
+                partyDialogue.cancel();
+                activeTravelBanter = null;
+                nextTravelBanterTick = worldTick + 1300;
+            } else return;
+        }
         if (activeTravelBanter != null && worldTick >= activeTravelBanter.expiresAtTick()) {
             activeTravelBanter = null;
             nextTravelBanterTick = worldTick + 480 + random.nextInt(900);
+        }
+        if (activeTravelBanter == null) {
+            activeTravelBanter = partyDialogue.startPending(this);
+            if (activeTravelBanter != null) return;
         }
         if (activeTravelBanter == null && !pendingCompanionComments.isEmpty()) {
             showPendingCompanionComment();
@@ -6099,6 +6000,11 @@ public final class GameState {
             return;
         }
         if (random.nextDouble() > 0.018) {
+            return;
+        }
+        activeTravelBanter = partyDialogue.ambient(this);
+        if (activeTravelBanter != null) {
+            nextTravelBanterTick = worldTick + 1300;
             return;
         }
         Actor speaker = activeAllies().get(random.nextInt(activeAllies().size()));
@@ -6552,6 +6458,12 @@ public final class GameState {
         if (activeTravelBanter == null || optionIndex < 0 || optionIndex >= activeTravelBanter.options().size()) {
             return;
         }
+        if (partyDialogue.owns(activeTravelBanter)) {
+            activeTravelBanter = partyDialogue.reply(this, optionIndex);
+            nextTravelBanterTick = worldTick + 1300;
+            invalidateQuestObjectiveCache();
+            return;
+        }
         if (activeTravelBanter.tags().contains("banter_response")) {
             activeTravelBanter = null;
             nextTravelBanterTick = pendingCompanionComments.isEmpty()
@@ -6884,6 +6796,57 @@ public final class GameState {
             }
         }
         return null;
+    }
+
+    boolean residentsYieldToPlayer(String mapId) {
+        String kind = world.kind(mapId);
+        return "city".equals(kind) || "village".equals(kind) || "interior".equals(kind);
+    }
+
+    /** Friendly residents are soft obstacles. A safe sidestep is cosmetic, never required to pass. */
+    private void yieldResidentToPlayer(Npc npc, int playerDx, int playerDy) {
+        if (questNpc(npc)) return; // Scripted characters keep their authored position.
+        NpcRuntime runtime = runtimeFor(npc);
+        if (worldTick - runtime.moveStartTick < NpcMotion.MOVE_TICKS) return;
+        int dx = Integer.compare(playerDx, 0), dy = Integer.compare(playerDy, 0);
+        // Try sideways first so the resident does not keep retreating along the player's path.
+        int[][] directions = {{-dy, dx}, {dy, -dx}, {-dx, -dy}, {dx, dy},
+                {0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        for (int[] direction : directions) {
+            if (Math.abs(direction[0]) + Math.abs(direction[1]) != 1) continue;
+            if (direction[0] * dx + direction[1] * dy > 0) continue;
+            int x = runtime.x + direction[0], y = runtime.y + direction[1];
+            if ((x == playerX && y == playerY) || !world.isPassable(npc.mapId(), x, y)
+                    || world.transitionAt(npc.mapId(), x, y) != null
+                    || blockingQuestObjectiveAt(npc.mapId(), x, y) != null
+                    || npcAt(npc.mapId(), x, y) != null) continue;
+            boolean reserved = false;
+            for (Npc other : npcsForMap(npc.mapId())) {
+                if (other.equals(npc) || questNpc(other)) continue;
+                NpcRuntime otherRuntime = runtimeFor(other);
+                if (worldTick - otherRuntime.moveStartTick < NpcMotion.MOVE_TICKS
+                        && otherRuntime.fromX == x && otherRuntime.fromY == y) {
+                    reserved = true;
+                    break;
+                }
+            }
+            if (reserved || !PropCollision.canTravel(world, npc.mapId(), runtime.x + 0.5, runtime.y + 0.5,
+                    x + 0.5, y + 0.5)) continue;
+            runtime.fromX = runtime.x;
+            runtime.fromY = runtime.y;
+            runtime.x = x;
+            runtime.y = y;
+            runtime.facingDx = direction[0];
+            runtime.facingDy = direction[1];
+            runtime.moveStartTick = worldTick;
+            runtime.townPath = List.of();
+            runtime.pathIndex = 0;
+            runtime.routeDestination = null;
+            runtime.blockedAttempts = 0;
+            runtime.nextThinkTick = worldTick + NpcMotion.MOVE_TICKS + 90;
+            return;
+        }
+        // In a narrow corridor the player can squeeze past without displacing anyone.
     }
 
     public List<DungeonMonsterMotion> dungeonMonsterMotionsForMap(String mapId) {
@@ -7231,6 +7194,7 @@ public final class GameState {
         List<QuestObjective> objectives = new ArrayList<>();
         pruneQuestMonsterRuntime();
         for (Quest quest : quests.values()) {
+            if (PartyDialogue.isShared(quest)) continue;
             if (!quest.accepted || quest.completed) {
                 continue;
             }
@@ -7516,6 +7480,7 @@ public final class GameState {
         TilePoint first = null;
         for (int attempt = 0; attempt < 72; attempt++) {
             TilePoint candidate = world.objectivePoint(quest.activeObjectiveLocationKind(), quest.activeObjectiveLocationIndex(), variant + attempt, asset);
+            candidate = RegionalNpcQuests.accessiblePoint(world, quest, candidate, used);
             if (first == null) {
                 first = candidate;
             }
@@ -8233,7 +8198,9 @@ public final class GameState {
         }
         battle = null;
         mode = GameMode.EXPLORE;
-        if (!refreshPlayerVillageGrowth()) {
+        boolean villageChanged = refreshPlayerVillageGrowth();
+        ensureSafeBattleReturn();
+        if (!villageChanged) {
             status = world.describe(currentMapId, playerX, playerY);
         }
     }
@@ -8244,8 +8211,15 @@ public final class GameState {
         activeQuestMonster = null;
         demonQueenBattleActive = false;
         mode = GameMode.EXPLORE;
+        ensureSafeBattleReturn();
         invalidateQuestObjectiveCache();
         status = "Escaped from battle. " + world.describe(currentMapId, playerX, playerY);
+    }
+
+    private void ensureSafeBattleReturn() {
+        TilePoint safe = world.safePassablePoint(currentMapId, playerX, playerY);
+        playerX = safe.x();
+        playerY = safe.y();
     }
 
     public void applyTransition(WorldTransition transition) {
@@ -9254,6 +9228,8 @@ public final class GameState {
         }
         if (battle != null && battle.finished && battle.victory) {
             if (!battle.questRecorded) {
+                partyDialogue.victory(this, battle, activeDungeonMonster != null
+                        && activeDungeonMonster.boss && "dungeon".equals(world.kind(currentMapId)));
                 for (String defeatedName : battle.defeatedMonsterNames()) {
                     recordQuestProgress(defeatedName);
                 }
@@ -9441,6 +9417,7 @@ public final class GameState {
             String memoryText,
             boolean important
     ) {
+        partyDialogue.questEvent(this, eventId);
         if (activeAllies().isEmpty()) {
             return;
         }
@@ -9981,8 +9958,16 @@ public final class GameState {
         };
     }
 
+    void rememberSharedQuest(PartyDialogue.Pair pair, String title) {
+        String memory = "Defeated a dungeon leader with " + pair.names() + " during " + title + ".";
+        recordCompanionMemory(pair.first(), "shared_quest", memory);
+        recordCompanionMemory(pair.second(), "shared_quest", memory);
+        invalidateQuestObjectiveCache();
+    }
+
     private void recordQuestProgress(String defeatedTarget) {
         for (Quest quest : quests.values()) {
+            if (PartyDialogue.isShared(quest)) continue;
             if ((quest.mainStoryQuest() || quest.companionQuest())
                     && quest.activeObjectiveLocationKind() != null && !quest.activeObjectiveLocationKind().isBlank()
                     && !combatEncounterMatchesQuest(quest)) {
@@ -10196,6 +10181,11 @@ public final class GameState {
                 continue;
             }
             NpcRuntime runtime = runtimeFor(npc);
+            String mapKind = world.kind(currentMapId);
+            if ("city".equals(mapKind) || "village".equals(mapKind)) {
+                updateTownNpcMovement(npc, runtime, minutes, weather, day);
+                continue;
+            }
             AmbientNpcAi.Routine routine = AmbientNpcAi.routineFor(npc, world, currentMapId, minutes, weather, day);
             if (worldTick - runtime.moveStartTick < NpcMotion.MOVE_TICKS || worldTick < runtime.nextThinkTick) {
                 continue;
@@ -10227,6 +10217,111 @@ public final class GameState {
                 runtime.nextThinkTick = worldTick + routine.nextThinkDelay(random);
             }
         }
+    }
+
+    private void updateTownNpcMovement(Npc npc, NpcRuntime runtime, int minutes, WeatherCondition weather, int day) {
+        if (worldTick - runtime.moveStartTick < NpcMotion.MOVE_TICKS) return;
+        if (runtime.townRoutine == null || worldTick >= runtime.routineCheckTick) {
+            AmbientNpcAi.Routine routine = AmbientNpcAi.routineFor(npc, world, npc.mapId(), minutes, weather, day);
+            runtime.routineCheckTick = worldTick + 90;
+            if (!routine.equals(runtime.townRoutine)) {
+                boolean firstRoutine = runtime.townRoutine == null;
+                runtime.townRoutine = routine;
+                runtime.checkpoints = TownNpcNavigation.checkpoints(npc, world, routine);
+                runtime.checkpointIndex = 0;
+                runtime.townPath = List.of();
+                runtime.pathIndex = 0;
+                runtime.routeDestination = null;
+                runtime.blockedAttempts = 0;
+                if (!firstRoutine) runtime.nextThinkTick = worldTick;
+            }
+        }
+        if (worldTick < runtime.nextThinkTick) return;
+        AmbientNpcAi.Routine routine = runtime.townRoutine;
+        TilePoint position = new TilePoint(runtime.x, runtime.y);
+        TilePoint checkpoint = runtime.checkpoints.get(runtime.checkpointIndex);
+        if (position.equals(checkpoint) || position.equals(runtime.routeDestination)) {
+            runtime.checkpointIndex = (runtime.checkpointIndex + 1) % runtime.checkpoints.size();
+            runtime.townPath = List.of();
+            runtime.pathIndex = 0;
+            runtime.routeDestination = null;
+            runtime.blockedAttempts = 0;
+            // Complete a leg before pausing; never randomly reverse direction during travel.
+            runtime.nextThinkTick = worldTick + routine.nextThinkDelay(random);
+            return;
+        }
+        Set<TilePoint> occupied = new HashSet<>();
+        occupied.add(new TilePoint(playerX, playerY));
+        for (Npc other : npcsForMap(npc.mapId())) {
+            if (other.equals(npc)) continue;
+            occupied.add(npcPosition(other));
+            if (!questNpc(other)) {
+                NpcRuntime otherRuntime = runtimeFor(other);
+                if (worldTick - otherRuntime.moveStartTick < NpcMotion.MOVE_TICKS) {
+                    occupied.add(new TilePoint(otherRuntime.fromX, otherRuntime.fromY));
+                }
+            }
+        }
+        java.util.function.BiPredicate<Integer, Integer> walkable = (x, y) ->
+                world.isPassable(npc.mapId(), x, y) && !occupied.contains(new TilePoint(x, y))
+                        && world.transitionAt(npc.mapId(), x, y) == null
+                        && blockingQuestObjectiveAt(npc.mapId(), x, y) == null;
+        if (runtime.pathIndex < runtime.townPath.size()) {
+            TilePoint next = runtime.townPath.get(runtime.pathIndex);
+            if (!walkable.test(next.x(), next.y())) {
+                runtime.townPath = List.of();
+                runtime.pathIndex = 0;
+                // Briefly yield before replanning around another resident or the player.
+                runtime.nextThinkTick = worldTick + 15 + random.nextInt(20);
+                return;
+            }
+        }
+        if (runtime.pathIndex >= runtime.townPath.size()) {
+            runtime.townPath = TownNpcNavigation.path(world.width(npc.mapId()), world.height(npc.mapId()),
+                    position, checkpoint, walkable, (x, y) -> Terrain.roadLike(world.tileAt(npc.mapId(), x, y)));
+            runtime.pathIndex = 0;
+            runtime.routeDestination = checkpoint;
+            if (runtime.townPath.isEmpty() && runtime.blockedAttempts >= 2) {
+                // A busy shop or inaccessible interaction spot should not strand its visitors.
+                for (int radius = 1; radius <= 2 && runtime.townPath.isEmpty(); radius++) {
+                    for (int[] direction : new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}) {
+                        TilePoint nearby = new TilePoint(checkpoint.x() + direction[0] * radius,
+                                checkpoint.y() + direction[1] * radius);
+                        if (!walkable.test(nearby.x(), nearby.y())) continue;
+                        if (position.equals(nearby)) {
+                            runtime.routeDestination = nearby;
+                            runtime.nextThinkTick = worldTick + 1;
+                            return;
+                        }
+                        runtime.townPath = TownNpcNavigation.path(world.width(npc.mapId()), world.height(npc.mapId()),
+                                position, nearby, walkable, (x, y) -> Terrain.roadLike(world.tileAt(npc.mapId(), x, y)));
+                        if (!runtime.townPath.isEmpty()) {
+                            runtime.routeDestination = nearby;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (runtime.townPath.isEmpty()) {
+                runtime.routeDestination = null;
+                if (++runtime.blockedAttempts >= 3) {
+                    runtime.checkpointIndex = (runtime.checkpointIndex + 1) % runtime.checkpoints.size();
+                    runtime.blockedAttempts = 0;
+                }
+                runtime.nextThinkTick = worldTick + routine.nextThinkDelay(random);
+                return;
+            }
+        }
+        TilePoint next = runtime.townPath.get(runtime.pathIndex++);
+        runtime.fromX = runtime.x;
+        runtime.fromY = runtime.y;
+        runtime.facingDx = next.x() - runtime.x;
+        runtime.facingDy = next.y() - runtime.y;
+        runtime.x = next.x();
+        runtime.y = next.y();
+        runtime.moveStartTick = worldTick;
+        runtime.blockedAttempts = 0;
+        runtime.nextThinkTick = worldTick + NpcMotion.MOVE_TICKS;
     }
 
     private int npcMovePauseTicks(AmbientNpcAi.Routine routine) {
@@ -11035,6 +11130,14 @@ public final class GameState {
     }
 
     private static final class NpcRuntime {
+        AmbientNpcAi.Routine townRoutine;
+        int routineCheckTick;
+        List<TilePoint> checkpoints = List.of();
+        int checkpointIndex;
+        List<TilePoint> townPath = List.of();
+        TilePoint routeDestination;
+        int pathIndex;
+        int blockedAttempts;
         final int homeX;
         final int homeY;
         int x;

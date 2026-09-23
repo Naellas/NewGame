@@ -17,7 +17,7 @@ Normal room activation increases by eight percentage points. New encounters appe
 
 ## Artwork
 
-The built-in imagegen tool generated sixteen texture masters from the user's five visual references. Source: `assets/source/built-dungeons/terrain-atlas.png`. Exact prompt: `assets/source/built-dungeons/prompt.md`. Runtime assets: `assets/terrain/masonry_{prison,crypt,gothic,arcane}_{floor,gravel,face,roof}.png`. Reimport with `tools/import_built_dungeons.ps1`; this removes atlas gutters and the roof-cell's decorative cap before extraction. Props and harvestable node art reuse existing assets.
+The built-in imagegen tool generated sixteen texture masters from the user's five visual references. Source: `assets/source/built-dungeons/terrain-atlas.png`. Exact prompt: `assets/source/built-dungeons/prompt.md`. Runtime assets: `assets/environments/terrain/common/masonry_{prison,crypt,gothic,arcane}_{floor,gravel,face,roof}.png`. Reimport with `tools/assets/environments/import_built_dungeons.ps1`; this removes atlas gutters and the roof-cell's decorative cap before extraction. Props and harvestable node art reuse existing assets.
 
 ## Validation
 

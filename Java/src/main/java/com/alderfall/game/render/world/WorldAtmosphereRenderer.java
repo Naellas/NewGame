@@ -30,6 +30,8 @@ public final class WorldAtmosphereRenderer {
     private final Map<String, BufferedImage> particleSprites = new HashMap<>();
     private final WeatherLayerCacheStore weatherLayerCaches = new WeatherLayerCacheStore();
     private BufferedImage fogBuffer;
+    private int cameraX, cameraY;
+    private double cameraOffsetX, cameraOffsetY;
     private RenderContext context = new RenderContext(0, 1, 1, GameConfig.TILE, GameConfig.WIDTH - GameConfig.SIDEBAR_WIDTH, GameConfig.HEIGHT);
 
     public WorldAtmosphereRenderer(AssetStore assets, GameState state, WeatherSystem weather, RenderMetrics renderMetrics, Effects effects) {
@@ -42,6 +44,13 @@ public final class WorldAtmosphereRenderer {
 
     public void useContext(RenderContext context) {
         this.context = context;
+    }
+
+    public void useCamera(int tileX, int tileY, double offsetX, double offsetY) {
+        cameraX = tileX;
+        cameraY = tileY;
+        cameraOffsetX = offsetX;
+        cameraOffsetY = offsetY;
     }
 
     private WeatherQuality weatherQuality() {
@@ -247,7 +256,7 @@ public final class WorldAtmosphereRenderer {
                 });
             }
             case STORM -> {
-                tint(g, width, height, new Color(22, 30, 42), (float) (0.24f * intensity));
+                tint(g, width, height, new Color(22, 30, 42), (float) (0.14f * intensity));
                 drawRainVeil(g, width, height, true, intensity);
                 drawCachedPrecipitation(g, width, height, "storm", intensity, layer -> {
                     drawRain(layer, width, height, 650, true, intensity);
@@ -258,7 +267,7 @@ public final class WorldAtmosphereRenderer {
             case SNOW -> drawCachedPrecipitation(g, width, height, "snow", intensity,
                     layer -> drawSnow(layer, width, height, 70, false, intensity));
             case BLIZZARD -> {
-                tint(g, width, height, new Color(220, 232, 240), (float) (0.18f * intensity));
+                tint(g, width, height, new Color(220, 232, 240), (float) (0.065f * intensity));
                 drawCachedPrecipitation(g, width, height, "blizzard", intensity,
                         layer -> drawSnow(layer, width, height, 130, true, intensity));
             }
@@ -308,6 +317,11 @@ public final class WorldAtmosphereRenderer {
         if (intensity <= WEATHER_VISIBILITY_EPSILON) {
             return 1;
         }
+        // Independent particles must advance every frame. Translating a cached field
+        // makes every particle share one velocity and also moves ground impacts.
+        if (key.equals("rain") || key.equals("storm") || key.equals("snow") || key.equals("blizzard")) {
+            return 1;
+        }
         int baseInterval = switch (key) {
             case "rain", "storm" -> 4;
             case "snow", "blizzard", "dust" -> 3;
@@ -351,62 +365,101 @@ public final class WorldAtmosphereRenderer {
         g.fillRect(0, 0, width, height);
     }
 
+    // Hash each attribute independently: linear seeds produce visible diagonal grids.
+    private static double particleRandom(int index, int salt) {
+        int value = index * 0x9e3779b9 + salt * 0x85ebca6b;
+        value = (value ^ (value >>> 16)) * 0x7feb352d;
+        value = (value ^ (value >>> 15)) * 0x846ca68b;
+        return Integer.toUnsignedLong(value ^ (value >>> 16)) / 4294967296.0;
+    }
+
+    private int particleCount(int width, int height, int count) {
+        double quality = switch (weatherQuality()) {
+            case HIGH -> 1.0;
+            case BALANCED -> 0.8;
+            case PERFORMANCE -> 0.6;
+            case LOW_SPEC -> 0.4;
+        };
+        return Math.max(1, (int) Math.round(count * (width * (double) height / (1280.0 * 720.0)) * quality));
+    }
+
+    private static double wrapParticle(double position, double span) {
+        return position - Math.floor(position / span) * span;
+    }
+
     public void drawRain(Graphics2D g, int width, int height, int count, boolean heavy, double intensity) {
-        if (count <= 0 || intensity <= WEATHER_VISIBILITY_EPSILON) {
-            return;
+        if (count <= 0 || intensity <= WEATHER_VISIBILITY_EPSILON) return;
+        Graphics2D rain = (Graphics2D) g.create();
+        rain.setComposite(AlphaComposite.SrcOver);
+        rain.setStroke(new BasicStroke(1.0f));
+        double time = context.frame();
+        double wind = weather.windX() * (heavy ? 4.5 : 2.5);
+        for (int i = 0, n = particleCount(width, height, count); i < n; i++) {
+            double depth = particleRandom(i, 3);
+            double speed = (heavy ? 12 : 9) + depth * 9;
+            double vx = wind + (heavy ? 2.0 : 0.8);
+            double length = 6 + depth * (heavy ? 17 : 11);
+            int x = (int) Math.round(wrapParticle(particleRandom(i, 1) * (width + 64)
+                    + time * vx, width + 64) - 32);
+            int y = (int) Math.round(wrapParticle(particleRandom(i, 2) * (height + 64)
+                    + time * speed, height + 64) - 32);
+            rain.setColor(new Color(184, 207, 222, (int) ((35 + depth * 85) * intensity)));
+            rain.drawLine(x, y, x - (int) Math.round(vx * length / speed), y - (int) length);
         }
-        BufferedImage field = particleSprite(heavy ? "rain_field_heavy" : "rain_field");
-        double gust = Math.sin(context.frame() * 0.055) * 0.16 + Math.sin(context.frame() * 0.019 + 1.7) * 0.10;
-        int tileW = Math.max(1, scaled(512));
-        int tileH = Math.max(1, scaled(512));
-        int offsetX = Math.floorMod((int) Math.round(context.frame() * ((weather.windX() + gust) * (heavy ? 15.0 : 11.0) + (heavy ? 9.0 : 7.0))), tileW);
-        int offsetY = Math.floorMod(context.frame() * (heavy ? 30 : 23), tileH);
-        drawTiledWeatherSprite(g, field, width, height, tileW, tileH, offsetX, offsetY,
-                (float) ((heavy ? 0.74f : 0.62f) * intensity));
-        if (heavy) {
-            drawTiledWeatherSprite(g, field, width, height, tileW, tileH,
-                    offsetX + tileW / 3, offsetY + tileH / 2, (float) (0.32f * intensity));
-        }
+        rain.dispose();
     }
 
     public void drawRainVeil(Graphics2D g, int width, int height, boolean heavy, double intensity) {
-        BufferedImage sheet = particleSprite(heavy ? "rain_sheet_heavy" : "rain_sheet");
-        int tileW = Math.max(1, scaled(192));
-        int tileH = Math.max(1, scaled(192));
-        int offsetX = Math.floorMod((int) Math.round(context.frame() * (weather.windX() * 9.0 + 2.0)), tileW);
-        int offsetY = Math.floorMod(context.frame() * (heavy ? 18 : 13), tileH);
-        weatherLayerCaches.drawScrollingTile(g, sheet, width, height, weatherLayerKey(heavy ? "rain_veil_heavy" : "rain_veil"),
-                state.zoom, tileW, tileH, offsetX, offsetY, (float) ((heavy ? 0.30f : 0.22f) * intensity));
+        // A light atmospheric tint preserves terrain contrast without a tiled sheet.
+        tint(g, width, height, new Color(102, 126, 145), (float) ((heavy ? 0.045 : 0.018) * intensity));
     }
 
     public void drawRainSplashes(Graphics2D g, int width, int height, int count, boolean heavy, double intensity) {
-        if (count <= 0 || intensity <= WEATHER_VISIBILITY_EPSILON) {
-            return;
+        if (count <= 0 || intensity <= WEATHER_VISIBILITY_EPSILON) return;
+        Graphics2D splash = (Graphics2D) g.create();
+        splash.setComposite(AlphaComposite.SrcOver);
+        splash.setStroke(new BasicStroke(1.0f));
+        int tileSize = context.tileSize();
+        for (int sy = -1; sy <= height / tileSize + 1; sy++) {
+            for (int sx = -1; sx <= width / tileSize + 1; sx++) {
+                int wx = cameraX + sx, wy = cameraY + sy;
+                int seed = wx * 734287 ^ wy * 912931 ^ state.currentMapId.hashCode();
+                if (particleRandom(seed, 4) > (heavy ? 0.48 : 0.28)) continue;
+                if (!state.world.isPassable(state.currentMapId, wx, wy)) continue;
+                int cycle = 42 + (int) (particleRandom(seed, 5) * 55);
+                int age = Math.floorMod(context.frame() + (int) (particleRandom(seed, 6) * cycle), cycle);
+                if (age >= 9) continue;
+                int x = (int) Math.round((sx + 0.15 + particleRandom(seed, 7) * 0.7) * tileSize + cameraOffsetX);
+                int y = (int) Math.round((sy + 0.15 + particleRandom(seed, 8) * 0.7) * tileSize + cameraOffsetY);
+                int radius = 1 + age / 3;
+                splash.setColor(new Color(192, 213, 225, (int) ((1.0 - age / 9.0) * 80 * intensity)));
+                splash.drawLine(x - radius, y, x - 1, y + 1);
+                splash.drawLine(x + 1, y + 1, x + radius, y);
+            }
         }
-        BufferedImage splashField = particleSprite(heavy ? "rain_splash_field_heavy" : "rain_splash_field");
-        int tileW = Math.max(1, scaled(512));
-        int tileH = Math.max(1, scaled(256));
-        int offsetX = Math.floorMod((int) Math.round(context.frame() * weather.windX() * 4.0), tileW);
-        int offsetY = Math.floorMod(context.frame() * (heavy ? 5 : 3), tileH);
-        drawTiledWeatherSprite(g, splashField, width, height, tileW, tileH, offsetX, offsetY,
-                (float) ((heavy ? 0.42f : 0.30f) * intensity));
+        splash.dispose();
     }
 
     public void drawSnow(Graphics2D g, int width, int height, int count, boolean heavy, double intensity) {
-        if (count <= 0 || intensity <= WEATHER_VISIBILITY_EPSILON) {
-            return;
+        if (count <= 0 || intensity <= WEATHER_VISIBILITY_EPSILON) return;
+        Graphics2D snow = (Graphics2D) g.create();
+        snow.setComposite(AlphaComposite.SrcOver);
+        double time = context.frame();
+        for (int i = 0, n = particleCount(width, height, count * 2); i < n; i++) {
+            double depth = particleRandom(i, 13);
+            double phase = particleRandom(i, 14) * Math.PI * 2;
+            double speed = (heavy ? 1.6 : 0.45) + depth * (heavy ? 2.5 : 1.1);
+            double drift = weather.windX() * (heavy ? 3.2 : 0.8) + (heavy ? 1.4 : 0.15);
+            double sway = Math.sin(time * (0.012 + depth * 0.013) + phase) * (5 + depth * 13);
+            int x = (int) Math.round(wrapParticle(particleRandom(i, 11) * (width + 32)
+                    + time * drift * (0.6 + depth * 0.4) + sway, width + 32) - 16);
+            int y = (int) Math.round(wrapParticle(particleRandom(i, 12) * (height + 32)
+                    + time * speed, height + 32) - 16);
+            int size = depth < 0.5 ? 1 : depth < 0.92 ? 2 : 3;
+            snow.setColor(new Color(225, 234, 242, (int) ((70 + depth * 115) * intensity)));
+            snow.fillRect(x, y, size, size == 3 ? 2 : size);
         }
-        BufferedImage field = particleSprite(heavy ? "snow_field_heavy" : "snow_field");
-        int tileW = Math.max(1, scaled(512));
-        int tileH = Math.max(1, scaled(512));
-        int speed = heavy ? 4 : 2;
-        int drift = (int) Math.round(Math.sin(context.frame() * 0.04) * scaled(heavy ? 18 : 9));
-        int offsetX = Math.floorMod(drift + (int) Math.round(context.frame() * weather.windX() * 1.2), tileW);
-        int offsetY = Math.floorMod(context.frame() * speed, tileH);
-        drawTiledWeatherSprite(g, field, width, height, tileW, tileH, offsetX, offsetY,
-                (float) ((heavy ? 0.70f : 0.52f) * intensity));
-        drawTiledWeatherSprite(g, field, width, height, tileW, tileH,
-                offsetX + tileW / 2, offsetY + tileH / 3, (float) ((heavy ? 0.22f : 0.14f) * intensity));
+        snow.dispose();
     }
 
     public void drawFog(Graphics2D g, int width, int height) {
@@ -435,18 +488,17 @@ public final class WorldAtmosphereRenderer {
     }
 
     public void drawFogDirect(Graphics2D g, int width, int height) {
-        tint(g, width, height, new Color(190, 204, 196), 0.12f);
-        tint(g, width, height, new Color(228, 234, 226), 0.04f);
+        tint(g, width, height, new Color(190, 204, 206), 0.045f);
         drawFogWash(g, width, height);
         drawFogBands(g, width, height);
         drawGroundFog(g, width, height);
         drawFogWisps(g, width, height);
-        drawFogMotes(g, width, height);
+
     }
 
     public void drawDust(Graphics2D g, int width, int height) {
-        tint(g, width, height, new Color(175, 122, 64), 0.22f);
-        tint(g, width, height, new Color(235, 190, 111), 0.09f);
+        tint(g, width, height, new Color(175, 122, 64), 0.12f);
+        tint(g, width, height, new Color(235, 190, 111), 0.035f);
         drawSandVeil(g, width, height);
         drawSandVortices(g, width, height);
         drawSandStreaks(g, width, height);

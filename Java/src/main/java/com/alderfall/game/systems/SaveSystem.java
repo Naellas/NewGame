@@ -1512,6 +1512,7 @@ public final class SaveSystem {
     }
 
     private String readQuests(String value, GameState state) {
+        state.partyDialogue.reset();
         List<String> revisedInvestigations = new ArrayList<>();
         for (Quest quest : state.quests.values()) {
             quest.accepted = false;

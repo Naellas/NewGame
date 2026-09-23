@@ -19,6 +19,8 @@ public final class DialogueRenderer {
     private final AssetStore assets;
     private final GameState state;
     private final Effects effects;
+    private final DialogueFigureAnimation figureAnimation = new DialogueFigureAnimation();
+    private final long animationStartedAtNanos = System.nanoTime();
 
     public DialogueRenderer(AssetStore assets, GameState state, Effects effects) {
         this.assets = assets;
@@ -78,6 +80,12 @@ public final class DialogueRenderer {
     }
 
     private void drawCompanionDialog(Graphics2D g, Npc npc) {
+        DialogueLibrary.DialogueLine fullLine = state.activeNpcDialogLineParts();
+        DialogueLibrary.DialogueLine revealedLine = state.revealedActiveNpcDialogLineParts();
+        long animationMs = (System.nanoTime() - animationStartedAtNanos) / 1_000_000L;
+        int mouth = DialogueFigureAnimation.mouthPose(revealedLine.speech(),
+                revealedLine.speech().equals(fullLine.speech()), animationMs);
+        boolean speaking = !revealedLine.speech().isBlank() && !revealedLine.speech().equals(fullLine.speech());
         int stageW = effects.gameAreaWidth();
         String npcSprite = companionDialogueSprite(npc);
         Color npcAccent = companionAccent(npc);
@@ -86,8 +94,8 @@ public final class DialogueRenderer {
         int figureY = Math.max(8, effects.viewHeight() - figureH - 10);
         int npcX = Math.max(8, stageW / 7 - figureW / 2);
         int playerX = Math.min(stageW - figureW - 8, stageW - stageW / 7 - figureW / 2);
-        drawDialogueStandingSprite(g, npcSprite, state.npcDisplayName(npc), npcX, figureY, figureW, figureH, npcAccent, false);
-        drawDialogueStandingSprite(g, playerDialogueSprite(), state.player.name, playerX, figureY, figureW, figureH, playerDialogueAccent(), false);
+        drawDialogueStandingSprite(g, npcSprite, state.npcDisplayName(npc), npcX, figureY, figureW, figureH, npcAccent, false, animationMs, mouth, speaking, false, 1);
+        drawDialogueStandingSprite(g, playerDialogueSprite(), state.player.name, playerX, figureY, figureW, figureH, playerDialogueAccent(), false, animationMs, 0, false, speaking, -1);
 
         int panelW = Math.min(1080, stageW - 360);
         panelW = Math.max(720, Math.min(panelW, stageW - 48));
@@ -118,7 +126,7 @@ public final class DialogueRenderer {
 
         int dialogueBottom = drawCompanionDialogueLine(
                 g,
-                state.revealedActiveNpcDialogLineParts(),
+                revealedLine,
                 textX,
                 panelY + 124,
                 textW,
@@ -237,11 +245,11 @@ public final class DialogueRenderer {
         g.fillRoundRect(trackX, thumbY, 6, thumbH, 4, 4);
     }
 
-    private void drawDialogueStandingSprite(Graphics2D g, String sprite, String label, int x, int y, int w, int h, Color accent, boolean drawLabel) {
+    private void drawDialogueStandingSprite(Graphics2D g, String sprite, String label, int x, int y, int w, int h, Color accent, boolean drawLabel, long animationMs, int mouth, boolean speaking, boolean listening, int direction) {
         drawDialogueFigureGlow(g, x, y, w, h, accent);
         g.setColor(new Color(7, 9, 14, 90));
         g.fillOval(x + w / 6, y + h - 32, w * 2 / 3, 18);
-        g.drawImage(assets.spriteFit(sprite, w, h - 28), x, y, null);
+        figureAnimation.draw(g, assets.spriteFit(sprite, w, h - 28), sprite, x, y, animationMs, mouth, speaking, listening, direction);
         if (!drawLabel) {
             return;
         }
@@ -296,6 +304,12 @@ public final class DialogueRenderer {
         if (actor == null) {
             return null;
         }
+        String expanded = actor.sprite + "_combat_v4";
+        if (assets.hasSprite(expanded)) return expanded;
+        expanded = actor.sprite + "_combat_v3";
+        if (assets.hasSprite(expanded)) return expanded;
+        String refreshed = actor.sprite + "_combat_v2";
+        if (assets.hasSprite(refreshed)) return refreshed;
         String sprite = actor.sprite + "_battle_sprite";
         return assets.hasSprite(sprite) ? sprite : actor.worldSprite;
     }
@@ -656,26 +670,7 @@ public final class DialogueRenderer {
                 return spec.className();
             }
         }
-        if (npc.shopId() != null && GameData.SHOPS.containsKey(npc.shopId())) {
-            return GameData.SHOPS.get(npc.shopId()).name();
-        }
-        String text = (npc.name() + " " + npc.sprite() + " " + String.join(" ", npc.dialog())).toLowerCase();
-        if (text.contains("smith")) {
-            return "Smith";
-        }
-        if (text.contains("baker") || text.contains("cook")) {
-            return "Cook";
-        }
-        if (text.contains("guard") || text.contains("captain") || text.contains("warden")) {
-            return "Guard";
-        }
-        if (text.contains("scribe") || text.contains("archivist") || text.contains("apprentice")) {
-            return "Scholar";
-        }
-        if (text.contains("farmer") || text.contains("hedge") || text.contains("grove")) {
-            return "Forager";
-        }
-        return "Local resident";
+        return NpcIdentity.role(npc).label;
     }
 
     private String npcSkillSummary(Npc npc) {
@@ -712,23 +707,7 @@ public final class DialogueRenderer {
                 }
             }
         }
-        String role = npcRoleLabel(npc).toLowerCase();
-        if (role.contains("cook")) {
-            return "cook's tools, trail rations";
-        }
-        if (role.contains("smith")) {
-            return "hammer, tongs, work apron";
-        }
-        if (role.contains("guard")) {
-            return "watch cloak, sidearm";
-        }
-        if (role.contains("scholar")) {
-            return "ledger, ink kit";
-        }
-        if (role.contains("forager")) {
-            return "field knife, herb satchel";
-        }
-        return "travel cloak, belt pouch";
+        return NpcIdentity.role(npc).equipment;
     }
 
     private String itemList(Map<String, Integer> items, int limit) {

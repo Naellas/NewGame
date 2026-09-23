@@ -20,6 +20,24 @@ public final class MapArea {
     public final String kind;
     public final char[][] tiles;
     private long visualRevision = 1L;
+    private List<DestinationApproaches.Approach> destinationApproaches = List.of();
+    private final Map<TilePoint, Character> approachGround = new HashMap<>();
+    public List<DestinationApproaches.Approach> destinationApproaches() { return destinationApproaches; }
+    public void setDestinationApproaches(List<DestinationApproaches.Approach> approaches) {
+        destinationApproaches = List.copyOf(approaches); markVisualChange();
+    }
+    public char approachGroundAt(int x, int y, char fallback) {
+        return approachGround.getOrDefault(new TilePoint(x, y), fallback);
+    }
+    public void setApproachGround(TilePoint point, char ground) {
+        approachGround.put(point, ground); markVisualChange();
+    }
+    private List<NatureSiteGenerator.Site> natureSites = List.of();
+    public List<NatureSiteGenerator.Site> natureSites() { return natureSites; }
+    public void setNatureSites(List<NatureSiteGenerator.Site> sites) {
+        natureSites = List.copyOf(sites);
+        markVisualChange();
+    }
     public final Set<TilePoint> interiorRugs = new RevisionSet<>();
     public final Map<TilePoint, String> landmarks = new RevisionMap<>();
     public final List<WorldProp> props = new IndexedPropList();
@@ -98,7 +116,7 @@ public final class MapArea {
         if (!removeProp(prop)) {
             return null;
         }
-        WorldProp moved = new WorldProp(x, y, prop.asset(), prop.size());
+        WorldProp moved = new WorldProp(x, y, prop.asset(), prop.size(), prop.visualSlot());
         addProp(moved);
         return moved;
     }
@@ -108,7 +126,10 @@ public final class MapArea {
         if (matches == null || matches.isEmpty()) {
             return null;
         }
-        return matches.get(matches.size() - 1);
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            if (matches.get(i).visualSlot() < 0) return matches.get(i);
+        }
+        return null;
     }
 
     public List<WorldProp> propsAt(int x, int y) {
@@ -166,6 +187,7 @@ public final class MapArea {
 
     private void indexProp(WorldProp prop) {
         propsByTile.computeIfAbsent(new TilePoint(prop.x(), prop.y()), ignored -> new ArrayList<>()).add(prop);
+        if (prop.visualSlot() >= 0) markVisualChange();
     }
 
     private void unindexProp(WorldProp prop) {
@@ -175,6 +197,7 @@ public final class MapArea {
             return;
         }
         matches.remove(prop);
+        if (prop.visualSlot() >= 0) markVisualChange();
         if (matches.isEmpty()) {
             propsByTile.remove(point);
         }
@@ -214,6 +237,7 @@ public final class MapArea {
 
         @Override
         public void clear() {
+            if (orderedProps.stream().anyMatch(prop -> prop.visualSlot() >= 0)) markVisualChange();
             orderedProps.clear();
             propsByTile.clear();
         }

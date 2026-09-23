@@ -20,4 +20,4 @@ All replacements are native 48x48, fully opaque, and have identical opposite edg
 runtime regression test also rejects transparency, bright white/checker artifacts, or broken seams.
 The generated masters and exact prompt specification live in
 `Java/assets/source/dungeon-floor-replacements`; the deterministic importer lives at
-`Java/tools/import_dungeon_floor_replacements.ps1`.
+`Java/tools/assets/environments/import_dungeon_floor_replacements.ps1`.

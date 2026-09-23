@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alderfall  -  grounded movement concept</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#121b20;color:#eae4d5;font:16px system-ui,sans-serif}main{max-width:1260px;margin:42px auto;padding:0 24px}h1{font:38px Georgia;margin:10px 0}p{color:#aebdc0;line-height:1.6}.eyebrow{color:#94cbb6;font-size:12px;letter-spacing:2px;text-transform:uppercase}.controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:18px 0;border-block:1px solid #354246;margin:25px 0}button,select{background:#26353c;color:#f1eadb;border:1px solid #556971;border-radius:6px;padding:9px 14px;font:inherit;cursor:pointer}label{display:flex;align-items:center;gap:8px}input{accent-color:#93cbb4}.panels{display:grid;grid-template-columns:1fr 1fr;gap:20px}article{background:#1b282f;border:1px solid #35474d;border-radius:12px;overflow:hidden}article header{padding:20px 22px 0}h2{font-size:19px;margin:0}article p{font-size:14px;margin:6px 0 0}canvas{display:block;width:100%;height:auto;image-rendering:pixelated}.scrub{display:flex;gap:14px;align-items:center;margin:20px 0}.scrub input{flex:1}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:30px 0}.details strong{color:#c7e3d6}.details p{font-size:14px}a{color:#c6dca8}.note{border-left:3px solid #85996d;padding-left:16px;font-size:14px}#status{font-size:13px;color:#bad5c8;min-height:22px}@media(max-width:720px){.panels,.details{grid-template-columns:1fr}h1{font-size:30px}main{margin:24px auto}}
+</style>
+<main><p><a href="../movement-physics/index.html">Open the unified movement physics simulator</a></p>
+<div class="eyebrow">Echoes of Alderfall &middot; movement study</div>
+<h1>More weight in every step</h1>
+<p>Watch a planted boot against the same ground marker. Both panels cover the same distance at the same speed.</p>
+<div class="controls">
+ <button id="pause">Pause</button>
+ <label>Character <select id="actor"><option value="0">Mage</option><option value="1">Seraphine</option><option value="2">Knight</option></select></label>
+ <label>Cadence <select id="cadence"><option value="85">0.85x</option><option value="100" selected>1x</option><option value="120">1.2x</option></select></label>
+ <label>Playback <select id="playback"><option value="0.5" selected>Slow motion</option><option value="1">Normal preview</option></select></label>
+ <label><input id="contacts" type="checkbox" checked>Contact guides</label>
+ <label><input id="bones" type="checkbox">Skeleton</label>
+</div>
+<section class="panels">
+ <article><header><h2>Previous movement</h2><p>Earlier jointed walk, preserved for comparison.</p></header><canvas id="current" width="600" height="360" aria-label="Current walking movement"></canvas></article>
+ <article><header><h2>Grounded concept</h2><p>Planted feet, jointed hands, spine and stabilized head.</p></header><canvas id="proposed" width="600" height="360" aria-label="Proposed grounded walking movement"></canvas></article>
+</section>
+<div class="scrub"><label for="frame">Step through</label><input id="frame" type="range" min="0" max="31" value="0"><output id="number">1 / 32</output></div>
+<div id="status" role="status">Loading movement frames...</div>
+<div class="details">
+ <div><strong>Hold the contact</strong><p>A diamond marks touchdown. The boot stays with that ground position until it lifts. In the current version, the connecting line reveals sliding.</p></div>
+ <div><strong>Match the step</strong><p>Change cadence above. The concept takes shorter steps when stepping faster, while the distance travelled stays the same.</p></div>
+ <div><strong>Carry the weight</strong><p>The hips settle onto the supporting leg. Cloth follows slightly later, while the feet remain grounded.</p></div>
+</div>
+<p>Skeleton: amber/blue legs, green spine and head, pink wrists and hands. The current panel shows its existing leg rig; the concept adds the upper-body hierarchy. Hidden joints are shown through clothing for inspection.</p>
+<p class="note">Review-only prototype using existing character artwork. Timing is slowed for inspection; this illustrates the direction, not a finished animation system. Continuous side walking only - turns, slopes and stopping need a separate pass. The grounded system is now integrated in the game; review the full roster under Character animations, Walking - grounded.</p>
+<p><a href="cutout-review.png">Source and animated cutout review</a> &middot; <a href="mage-comparison.gif">Open the animated Mage comparison</a> &middot; <a href="README.md">Prototype notes</a></p>
+</main>
+<script src="preview-data.js?v=cutouts3"></script>
+<script>
+let studyActive=true;
+const $=id=>document.getElementById(id), images=new Map();
+let elapsed=0,last=performance.now(),paused=false;
+function picture(src){if(!images.has(src)){const im=new Image();im.src=src+'?v=cutouts3';images.set(src,im);}return images.get(src);}
+function selection(){const a=movementConcept.actors[Number($('actor').value)];return [a.current,a.proposed[$('cadence').value]];}
+function refresh(){elapsed=0;last=performance.now();$('frame').value=0;selection().forEach(s=>picture(s.src));}
+$('actor').onchange=refresh;$('cadence').onchange=refresh;
+$('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'Resume':'Pause';last=performance.now();};
+$('frame').oninput=()=>{paused=true;$('pause').textContent='Resume';elapsed=Number($('frame').value)/32*900/(Number($('cadence').value)/100);};
+function draw(id,spec,step){
+ const ctx=$(id).getContext('2d'),scale=1.9,ground=310,ox=300-96*scale,oy=ground-137*scale;
+ const cadence=Number($('cadence').value)/100,travel=movementConcept.distance/cadence,progress=step/32,f=((step%32)+32)%32;
+ ctx.clearRect(0,0,600,360);ctx.fillStyle='#17232a';ctx.fillRect(0,0,600,360);
+ ctx.fillStyle='#263734';ctx.fillRect(0,ground,600,50);
+ const scroll=progress*travel*scale;
+ ctx.strokeStyle='#64796b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,ground);ctx.lineTo(600,ground);ctx.stroke();
+ for(let x=-64;x<680;x+=64){const sx=x-scroll%64;ctx.strokeStyle='#405749';ctx.strokeRect(sx,ground+2,60,24);ctx.fillStyle='#708170';ctx.fillRect(sx+8,ground+9,3,2);}
+ ctx.fillStyle='#080f1266';ctx.beginPath();ctx.ellipse(300,ground+1,39,6,0,0,Math.PI*2);ctx.fill();
+ const im=picture(spec.src);if(!im.complete||!im.naturalWidth)return false;
+ ctx.imageSmoothingEnabled=false;ctx.drawImage(im,f*192,0,192,144,ox,oy,192*scale,144*scale);
+ for(let leg=0;leg<2;leg++){
+  const p=spec.poses[f][leg],color=leg===0?'#e4b270':'#8dcbd0';
+  if($('bones').checked){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ox+p[0]*scale,oy+p[1]*scale);ctx.lineTo(ox+p[2]*scale,oy+p[3]*scale);ctx.lineTo(ox+p[4]*scale,oy+p[5]*scale);ctx.stroke();for(let j=0;j<6;j+=2){ctx.beginPath();ctx.arc(ox+p[j]*scale,oy+p[j+1]*scale,2.5,0,Math.PI*2);ctx.fill();}}
+  const t=(f/32+leg*.5)%1;
+  if($('contacts').checked&&t<spec.stance){
+   const contactPhase=Math.floor(progress+leg*.5)-leg*.5;
+   const at=spec.poses[leg===0?0:16][leg];
+   const anchor=ox+(at[4]-(progress-contactPhase)*travel)*scale,foot=ox+p[4]*scale,y=ground+7+leg*7;
+   ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(anchor,y);ctx.lineTo(foot,y);ctx.stroke();
+   ctx.beginPath();ctx.moveTo(anchor,y-4);ctx.lineTo(anchor+4,y);ctx.lineTo(anchor,y+4);ctx.lineTo(anchor-4,y);ctx.closePath();ctx.fill();
+   ctx.beginPath();ctx.arc(foot,y,3,0,Math.PI*2);ctx.stroke();
+  }
+ }
+ if($('bones').checked&&spec.skeleton){
+  const joints=spec.skeleton[f];
+  const edges=[[0,1],[1,2],[2,3],[1,4],[4,5],[5,6],[6,7],[1,8],[8,9],[9,10],[10,11]];
+  ctx.strokeStyle='#bfe5ad';ctx.lineWidth=1.5;
+  for(const [a,b] of edges){ctx.beginPath();ctx.moveTo(ox+joints[a][0]*scale,oy+joints[a][1]*scale);ctx.lineTo(ox+joints[b][0]*scale,oy+joints[b][1]*scale);ctx.stroke();}
+  joints.forEach((p,i)=>{ctx.fillStyle=i===6||i===7||i===10||i===11?'#f1a5c8':'#bfe5ad';ctx.beginPath();ctx.arc(ox+p[0]*scale,oy+p[1]*scale,i===7||i===11?2:3,0,Math.PI*2);ctx.fill();});
+ }
+ return true;
+}
+function animate(now){
+ if(!paused&&studyActive)elapsed+=Math.min(100,now-last)*Number($('playback').value);last=now;
+ const step=Math.floor(elapsed/900*32*(Number($('cadence').value)/100)),f=step%32;
+ if(!paused)$('frame').value=f;$('number').value=`${f+1} / 32`;
+ const [a,b]=selection(),readyA=draw('current',a,step),readyB=draw('proposed',b,step);
+ $('status').textContent=readyA&&readyB?'Both panels use identical travel speed. Diamonds stay fixed to the ground.':'Loading movement frames...';
+ requestAnimationFrame(animate);
+}
+window.addEventListener('message',event=>{if(event.source===parent&&event.data?.type==='movement-study-active'){studyActive=!!event.data.active;last=performance.now();}});
+if(parent!==window){
+ const reportSize=()=>parent.postMessage({type:'movement-study-size',height:Math.ceil(document.querySelector('main').getBoundingClientRect().bottom+window.scrollY+42)},'*');
+ new ResizeObserver(reportSize).observe(document.querySelector('main'));
+ window.addEventListener('load',reportSize);
+}
+refresh();requestAnimationFrame(animate);
+</script>
+</html>

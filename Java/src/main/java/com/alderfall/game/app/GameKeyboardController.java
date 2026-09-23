@@ -421,8 +421,10 @@ final class GameKeyboardController extends KeyAdapter {
                 panel.state.cycleBattlePartyTarget(1);
             } else if (code == KeyEvent.VK_ENTER) {
                 panel.state.leaveFinishedBattle();
+                if (panel.state.mode == GameMode.EXPLORE) panel.syncPlayerAnimationToState();
             } else if (code == KeyEvent.VK_R && panel.state.battle != null && panel.state.battle.finished && !panel.state.battle.victory) {
                 panel.state.revive();
+                panel.syncPlayerAnimationToState();
             } else if (code == KeyEvent.VK_R) {
                 panel.state.battleRun();
             } else if (code == KeyEvent.VK_H) {

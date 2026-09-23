@@ -14,6 +14,7 @@ import com.alderfall.game.inventory.ItemRarity;
 import com.alderfall.game.map.WorldMap;
 import com.alderfall.game.map.WorldMapOverlayRenderer;
 import com.alderfall.game.map.WorldMapViewport;
+import com.alderfall.game.map.WorldMapLabels;
 import com.alderfall.game.render.WorldMapTerrainCache;
 import com.alderfall.game.render.battle.BattleVfxRenderer;
 import com.alderfall.game.render.world.TerrainFeatureRenderer;
@@ -128,6 +129,8 @@ public final class GamePanel extends JPanel {
     private final List<UiSlider> sliders = new ArrayList<>();
     private final List<TooltipZone> tooltipZones = new ArrayList<>();
     private boolean uiHidden;
+    private boolean vicinityExpanded;
+    private boolean sidebarStatusExpanded;
     boolean battleVfxDebug;
     private int frame;
     private int lastCamX;
@@ -144,6 +147,12 @@ public final class GamePanel extends JPanel {
     private double worldMapCenterX = WorldMap.START_POSITION.x() + 0.5;
     private double worldMapCenterY = WorldMap.START_POSITION.y() + 0.5;
     private int worldMapQuestFocusIndex;
+    private boolean worldMapTownLabels = true;
+    private boolean worldMapSiteLabels = true;
+    private boolean worldMapQuestLabels = true;
+    private boolean worldMapGrid;
+    private String worldMapFocusedQuest;
+
     private Point worldMapDragStart;
     private double worldMapDragStartCenterX;
     private double worldMapDragStartCenterY;
@@ -174,6 +183,8 @@ public final class GamePanel extends JPanel {
     private double freePlayerY = Double.NaN;
     private String followerTrailMapId = WorldMap.OVERWORLD_ID;
     private boolean playerLocomotionActive;
+    private final LocomotionClock playerGait = new LocomotionClock();
+    private final java.util.Map<String, LocomotionClock> npcGaits = new java.util.HashMap<>();
     private int playerLocomotionStartFrame = Integer.MIN_VALUE / 4;
     private int playerLocomotionStopFrame = Integer.MIN_VALUE / 4;
     private int playerIdleStartFrame;
@@ -190,9 +201,11 @@ public final class GamePanel extends JPanel {
     private int lastHeldMoveDx;
     private int lastHeldMoveDy;
     private final List<TilePoint> playerPath = new ArrayList<>();
+    private final java.util.ArrayDeque<PropCollision.Anchor> playerPathApproach = new java.util.ArrayDeque<>();
     private int playerPathIndex;
     private final List<FollowerTrailStep> playerTrail = new ArrayList<>();
     private final Map<String, FollowerVisualState> followerVisuals = new HashMap<>();
+    private final WorldDepthRenderer worldDepthRenderer = new WorldDepthRenderer();
     private final List<PartyFollowerRender> visiblePartyFollowers = new ArrayList<>();
     private final List<NpcRender> visibleNpcRenders = new ArrayList<>();
     private final List<WorldProp> nearbyWorldProps = new ArrayList<>();
@@ -282,6 +295,7 @@ public final class GamePanel extends JPanel {
         DIFFICULTY,
         VOLUME,
         ANIMATION,
+        WALK_ANIMATION,
         CAMERA
     }
 
@@ -420,6 +434,7 @@ public final class GamePanel extends JPanel {
         private int facingDx;
         private int facingDy = 1;
         private int walkTileStart;
+        private final LocomotionClock gait = new LocomotionClock();
         private boolean locomotionActive;
         private int locomotionStartFrame = Integer.MIN_VALUE / 4;
         private int locomotionStopFrame = Integer.MIN_VALUE / 4;
@@ -1538,6 +1553,7 @@ public final class GamePanel extends JPanel {
             }
             if (state.mode == GameMode.BATTLE && state.battle != null) {
                 state.tickBattle();
+                if (state.mode == GameMode.EXPLORE) syncPlayerAnimationToState();
             }
             audio.update(frame);
             syncStatusLog();
@@ -1756,41 +1772,20 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawTitleCast(Graphics2D g) {
-        int center = viewWidth() / 2;
-        int groundY = viewHeight() - 174;
-        drawTitleCharacter(g, "class_knight_model", center - 812, groundY - 272, 206, 292, 0.98f);
-        drawTitleCharacter(g, "class_cleric_model", center - 642, groundY - 236, 164, 238, 0.92f);
-        drawTitleCharacter(g, "class_rogue_model", center + 476, groundY - 232, 158, 232, 0.9f);
-        drawTitleCharacter(g, "class_ranger_model", center + 616, groundY - 250, 176, 250, 0.94f);
-        drawTitleCharacter(g, "class_mage_model", center + 768, groundY - 292, 218, 292, 1.0f);
-    }
-
-    private void drawTitleCharacter(Graphics2D g, String sprite, int x, int y, int w, int h, float alpha) {
-        Graphics2D cast = (Graphics2D) g.create();
-        cast.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        Composite oldComposite = cast.getComposite();
-        cast.setComposite(AlphaComposite.SrcOver.derive(0.34f * alpha));
-        cast.setColor(new Color(0, 0, 0));
-        cast.fillOval(x + w / 8, y + h - 20, w * 3 / 4, 32);
-        cast.setComposite(AlphaComposite.SrcOver.derive(alpha));
-        cast.drawImage(assets.spriteFit(sprite, w, h), x, y, null);
-        cast.setComposite(AlphaComposite.SrcOver.derive(0.18f * alpha));
-        cast.setColor(new Color(255, 229, 153));
-        cast.drawLine(x + w / 3, y + h - 8, x + w * 2 / 3, y + h - 8);
-        cast.setComposite(oldComposite);
-        cast.dispose();
+        TitleScene.cast(g, assets, viewWidth(), viewHeight());
+        TitleScene.foreground(g, viewWidth(), viewHeight(), frame);
     }
 
     private void drawMainMenu(Graphics2D g) {
         drawTitleBackground(g, true);
+        TitleScene.frame(g, 20, 20, viewWidth() - 40, viewHeight() - 40, true);
         int menuW = 340;
         int menuX = centeredX(menuW);
         int menuY = 286;
 
-        g.setColor(new Color(4, 7, 12, 96));
+        g.setColor(new Color(8, 19, 24, 220));
         g.fillRoundRect(menuX - 28, menuY - 26, menuW + 56, 358, 10, 10);
-        g.setColor(new Color(212, 184, 113, 76));
-        g.drawRoundRect(menuX - 28, menuY - 26, menuW + 56, 358, 10, 10);
+        TitleScene.frame(g, menuX - 28, menuY - 26, menuW + 56, 358, true);
 
         g.setFont(new Font("Serif", Font.BOLD, 60));
         g.setColor(new Color(3, 5, 10, 190));
@@ -1813,11 +1808,18 @@ public final class GamePanel extends JPanel {
         if (!hasSave) {
             g.setFont(new Font("SansSerif", Font.PLAIN, 13));
             g.setColor(new Color(165, 174, 193));
-            drawCenteredIn(g, "No saved adventures yet.", x, y + 196, w);
+            drawCenteredIn(g, "No saved adventures yet.", x, y + 189, w);
         }
         actionButton(g, x, y + 196, w, 46, "Settings", state::openSettings, new Color(74, 66, 93), new Color(124, 107, 155), true);
         actionButton(g, x, y + 262, 164, 46, "Fullscreen", fullscreenToggle, new Color(74, 67, 80), new Color(117, 107, 128), true);
         actionButton(g, x + 176, y + 262, 164, 46, "Exit", this::exitGame, new Color(91, 60, 60), new Color(165, 111, 98), true);
+
+        TitleScene.frame(g, x, y, w, 52, false);
+        TitleScene.frame(g, x, y + 62, w, 52, false);
+        TitleScene.frame(g, x, y + 124, w, 52, false);
+        TitleScene.frame(g, x, y + 196, w, 46, false);
+        TitleScene.frame(g, x, y + 262, 164, 46, false);
+        TitleScene.frame(g, x + 176, y + 262, 164, 46, false);
 
         g.setFont(new Font("SansSerif", Font.PLAIN, 13));
         g.setColor(new Color(174, 184, 199));
@@ -2003,6 +2005,7 @@ public final class GamePanel extends JPanel {
         rebuildWorldLights(camX, camY, visibleCols, visibleRows, tileSize);
         renderMetrics.sample("world.activeLights", activeWorldLightCount());
         setShadowWorldOffset(camX * (double) tileSize, camY * (double) tileSize);
+        worldDepthRenderer.begin(tileSize);
         long sceneryStarted = renderMetrics.start();
         drawFieldConnectors(worldGraphics, camX, camY);
         worldRenderer.drawGroundPropOverlays(worldGraphics, propContext, nearbyWorldProps);
@@ -2016,7 +2019,7 @@ public final class GamePanel extends JPanel {
         renderMetrics.record("world.scenery", sceneryStarted);
 
         long propDrawStarted = renderMetrics.start();
-        worldRenderer.drawVisibleProps(worldGraphics, propContext, nearbyWorldProps, visibleWorldProps);
+        worldRenderer.drawVisibleProps(worldGraphics, propContext, nearbyWorldProps, visibleWorldProps, worldDepthRenderer);
         renderMetrics.record("world.props", propDrawStarted);
         renderMetrics.sample("world.visibleProps", visibleWorldProps.size());
         roamingWorldEventLayer.draw(worldGraphics, propContext);
@@ -2037,7 +2040,8 @@ public final class GamePanel extends JPanel {
             int x = px + (tileSize - size) / 2;
             int y = py + tileSize - size - tileRelative(motion.boss() ? 8 : 5, tileSize);
             drawShadow(worldGraphics, px + tileRelative(6, tileSize), py + tileRelative(38, tileSize), tileRelative(motion.boss() ? 52 : 40, tileSize), tileRelative(10, tileSize));
-            worldGraphics.drawImage(assets.spriteFit(motion.spec().sprite(), size, size), x, y, null);
+            worldDepthRenderer.character(worldGraphics, new Rectangle(x, y, size, size),
+                    target -> target.drawImage(assets.spriteFit(motion.spec().sprite(), size, size), x, y, null));
             worldGraphics.setColor(motion.boss() ? new Color(228, 84, 72) : new Color(180, 216, 230));
             int marker = scaled(motion.boss() ? 9 : 6);
             worldGraphics.fillOval(px + tileSize - marker - scaled(7), py + scaled(3), marker, marker);
@@ -2062,7 +2066,8 @@ public final class GamePanel extends JPanel {
                 int px = (int) Math.round((nx - camX) * tileSize);
                 int py = (int) Math.round((ny - camY) * tileSize);
                 boolean moving = npcMoving(motion);
-                String npcWorldSprite = npc.sprite() + "_model";
+                String appearance = NpcIdentity.appearance(npc);
+                String npcWorldSprite = (assets.hasSprite(appearance + "_model_down") ? appearance : npc.sprite()) + "_model";
                 CharacterWorldScale npcScale = characterWorldScale(npcWorldSprite, false);
                 int npcW = tileRelative(npcScale.width(), tileSize);
                 int npcH = tileRelative(npcScale.height(), tileSize);
@@ -2072,7 +2077,9 @@ public final class GamePanel extends JPanel {
                 drawShadow(worldGraphics, px + tileRelative(24 - npcScale.shadowWidth() / 2, tileSize), py + tileRelative(40, tileSize), tileRelative(npcScale.shadowWidth(), tileSize), tileRelative(9, tileSize));
                 String choreAction = npcChoreAnimationLayer.actionFor(state, npc, moving, assets);
                 if (choreAction.isBlank()) {
-                    drawCharacterSprite(worldGraphics, npcWorldSprite, npcX, npcY, npcW, npcH, motion.facingDx(), motion.facingDy(), step);
+                    LocomotionClock.Selection pose = npcGaits.computeIfAbsent(state.npcRenderKey(npc), key -> new LocomotionClock()).selectAt(frame, nx, ny, state.config.walkAnimationSpeed);
+                    drawCharacterSprite(worldGraphics, npcWorldSprite, npcX, npcY, npcW, npcH, motion.facingDx(), motion.facingDy(),
+                            new CharacterAnimationSelection(pose.action(), pose.frame()));
                 } else {
                     drawCharacterActionSprite(worldGraphics, npcWorldSprite, choreAction, npcX, npcY, npcW, npcH);
                 }
@@ -2101,8 +2108,10 @@ public final class GamePanel extends JPanel {
                 if (npcQuest != null && !npcQuest.completed) {
                     drawNpcQuestMarker(worldGraphics, npcX + npcW / 2, npcY, npcQuest.ready() ? '?' : '!', npcQuest);
                 } else {
-                    worldGraphics.setColor(new Color(255, 245, 174));
-                    worldGraphics.fillOval(px + scaled(31), py + scaled(2) - (moving ? scaled(2) : 0), scaled(7), scaled(7));
+                    worldDepthRenderer.overlay(worldGraphics, target -> {
+                        target.setColor(new Color(255, 245, 174));
+                        target.fillOval(px + scaled(31), py + scaled(2) - (moving ? scaled(2) : 0), scaled(7), scaled(7));
+                    });
                 }
             }
         }
@@ -2118,6 +2127,10 @@ public final class GamePanel extends JPanel {
         int playerPx = (int) Math.round((playerX - camX) * tileSize);
         int playerPy = (int) Math.round((playerY - camY) * tileSize);
         CharacterWorldScale playerScale = characterWorldScale(state.player.worldSprite, true);
+        // Continuous movement coordinates are the ground contact point used by collision and paths.
+        int playerGroundShift = state.mode == GameMode.EXPLORE
+                ? tileSize / 2 - tileRelative(playerScale.footLift(), tileSize) : 0;
+        playerPy -= playerGroundShift;
         int playerW = tileRelative(playerScale.width(), tileSize);
         int playerH = tileRelative(playerScale.height(), tileSize);
         int[] heldDirection = heldMoveDirection();
@@ -2137,14 +2150,15 @@ public final class GamePanel extends JPanel {
                 playerTileMoving,
                 freeMoving || pathMoving
         );
-        int bob = playerTileMoving
+        int bob = WorldCharacterAnimation.supports(directionalSprite(state.player.worldSprite, playerFacingDx, playerFacingDy).sprite()) ? 0 : playerTileMoving
                 ? -(int) Math.round(Math.sin(moveProgress(frame - playerMoveStartFrame, playerMoveFrames()) * Math.PI) * tileRelative(2, tileSize))
                 : freeMoving || pathMoving
                 ? -(int) Math.round(Math.sin(frame * 0.42) * tileRelative(2, tileSize))
                 : 0;
         int playerXpx = playerPx + (tileSize - playerW) / 2;
         int playerYpx = playerPy + tileSize - playerH - tileRelative(playerScale.footLift(), tileSize) + bob;
-        terrainFootstepLayer.tick(state, playerX, playerY, locomotionActive, playerFacingDx, playerFacingDy);
+        terrainFootstepLayer.tick(state, playerX, playerY - playerGroundShift / (double) tileSize,
+                locomotionActive, playerFacingDx, playerFacingDy);
         terrainFootstepLayer.draw(worldGraphics, propContext);
         drawPlayerTravelEffects(worldGraphics, playerPx, playerPy);
         int shadowPulse = playerTileMoving
@@ -2156,6 +2170,7 @@ public final class GamePanel extends JPanel {
         drawCharacterSprite(worldGraphics, state.player.worldSprite, playerXpx, playerYpx, playerW, playerH,
                 playerFacingDx, playerFacingDy, playerAnimation);
         drawGatherToolSwing(worldGraphics, camX, camY, tileSize, playerPx, playerPy);
+        worldDepthRenderer.draw(worldGraphics);
         drawNearbyQuestPrompt(worldGraphics, camX, camY);
         if (weather.effectsVisibleOnCurrentMap()) {
             drawCloudLayer(worldGraphics, camX, camY);
@@ -2175,6 +2190,7 @@ public final class GamePanel extends JPanel {
         worldRenderer.drawVignette(g, gameAreaWidth(), viewHeight());
         renderMetrics.record("world.lighting", lightingStarted);
         long atmosphereStarted = renderMetrics.start();
+        worldAtmosphereRenderer.useCamera(camX, camY, cameraOffsetX, cameraOffsetY);
         drawWorldAtmosphere(g);
         renderMetrics.record("atmosphere", atmosphereStarted);
         drawEmissiveWorldLights(g, camX, camY, tileSize, cameraOffsetX, cameraOffsetY);
@@ -2237,19 +2253,26 @@ public final class GamePanel extends JPanel {
             int x = tilePx + (tileSize - size) / 2;
             int y = tilePy + tileSize - size - tileRelative(enemy.brute() ? 8 : 5, tileSize);
             drawShadow(g, tilePx + tileRelative(6, tileSize), tilePy + tileRelative(38, tileSize), tileRelative(enemy.brute() ? 52 : 40, tileSize), tileRelative(10, tileSize));
-            g.drawImage(assets.spriteFit(enemy.spec().sprite(), size, size), x, y, null);
+            worldDepthRenderer.character(g, new Rectangle(x, y, size, size),
+                    target -> target.drawImage(assets.spriteFit(enemy.spec().sprite(), size, size), x, y, null));
             int barW = Math.max(22, tileRelative(enemy.brute() ? 56 : 42, tileSize));
             int barH = Math.max(3, scaled(4));
             int barX = tilePx + tileSize / 2 - barW / 2;
             int barY = y - scaled(8);
-            g.setColor(new Color(18, 18, 22, 185));
-            g.fillRoundRect(barX, barY, barW, barH, barH, barH);
-            g.setColor(enemy.brute() ? new Color(233, 91, 76) : new Color(238, 177, 93));
-            g.fillRoundRect(barX, barY, (int) Math.round(barW * (enemy.hp() / (double) Math.max(1, enemy.maxHp()))), barH, barH, barH);
+            worldDepthRenderer.overlay(g, target -> {
+            target.setColor(new Color(18, 18, 22, 185));
+            target.fillRoundRect(barX, barY, barW, barH, barH, barH);
+            target.setColor(enemy.brute() ? new Color(233, 91, 76) : new Color(238, 177, 93));
+            target.fillRoundRect(barX, barY, (int) Math.round(barW * (enemy.hp() / (double) Math.max(1, enemy.maxHp()))), barH, barH, barH);
+            });
         }
     }
 
     private void drawNpcQuestMarker(Graphics2D g, int markerCenterX, int spriteTopY, char marker, Quest quest) {
+        if (worldDepthRenderer.collecting()) {
+            worldDepthRenderer.overlay(g, target -> drawNpcQuestMarker(target, markerCenterX, spriteTopY, marker, quest));
+            return;
+        }
         int radius = scaled(10);
         int bob = (int) Math.round(Math.sin(frame * 0.18) * scaled(2));
         int markerY = Math.max(scaled(2), spriteTopY - radius * 2 - scaled(7) - bob);
@@ -2534,7 +2557,9 @@ public final class GamePanel extends JPanel {
         int optionH = scaled(31);
         int optionGap = scaled(6);
         int tailH = scaled(14);
-        int height = scaled(58) + prompt.options().size() * optionH + Math.max(0, prompt.options().size() - 1) * optionGap;
+        int textRows = prompt.tags().contains("party_scene") ? 5 : 2;
+        int extraTextHeight = (textRows - 2) * lineHeight;
+        int height = scaled(58) + extraTextHeight + prompt.options().size() * optionH + Math.max(0, prompt.options().size() - 1) * optionGap;
         BubblePlacement placement = bubblePlacement(anchor, width, height, tailH);
 
         Graphics2D bubble = (Graphics2D) g.create();
@@ -2552,9 +2577,9 @@ public final class GamePanel extends JPanel {
         drawClippedString(bubble, prompt.speaker(), placement.x() + scaled(14), placement.y() + scaled(18), width - scaled(28));
         bubble.setFont(new Font("SansSerif", Font.PLAIN, scaled(12)));
         bubble.setColor(new Color(213, 222, 232));
-        drawWrapped(bubble, prompt.line(), placement.x() + scaled(14), placement.y() + scaled(38), width - scaled(28), lineHeight, 2);
+        drawWrapped(bubble, prompt.line(), placement.x() + scaled(14), placement.y() + scaled(38), width - scaled(28), lineHeight, textRows);
 
-        int optionY = placement.y() + scaled(60);
+        int optionY = placement.y() + scaled(60) + extraTextHeight;
         for (int i = 0; i < prompt.options().size(); i++) {
             int index = i;
             Rectangle bounds = new Rectangle(placement.x() + scaled(12), optionY, width - scaled(24), optionH);
@@ -2694,6 +2719,10 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawGatherToolSwing(Graphics2D g, int camX, int camY, int tileSize, int playerPx, int playerPy) {
+        if (worldDepthRenderer.collecting()) {
+            worldDepthRenderer.overlay(g, target -> drawGatherToolSwing(target, camX, camY, tileSize, playerPx, playerPy));
+            return;
+        }
         CraftingSystem.GatherCandidate candidate = state.activeGatherCandidate;
         if (!state.crafting.active() || candidate == null || !state.currentMapId.equals(state.activeGatherMapId)) {
             return;
@@ -2719,6 +2748,10 @@ public final class GamePanel extends JPanel {
 
     private void drawNpcGatherToolSwing(Graphics2D g, Npc npc, GameState.NpcMotion motion, int camX, int camY,
                                         int tileSize, int px, int py, boolean moving) {
+        if (worldDepthRenderer.collecting()) {
+            worldDepthRenderer.overlay(g, target -> drawNpcGatherToolSwing(target, npc, motion, camX, camY, tileSize, px, py, moving));
+            return;
+        }
         if (moving
                 || state.mode != GameMode.EXPLORE
                 || npc.job() == null
@@ -3444,7 +3477,7 @@ public final class GamePanel extends JPanel {
         int bestDistance = Integer.MAX_VALUE;
         for (TilePoint door : state.world.cityBuildingDoorTiles(building)) {
             TilePoint approach = new TilePoint(door.x(), door.y() + 1);
-            if (!Pathfinder.walkable(state, approach.x(), approach.y())) {
+            if (!Pathfinder.playerWalkable(state, approach.x(), approach.y())) {
                 continue;
             }
             List<TilePoint> path = approach.equals(start) ? List.of() : Pathfinder.findPath(state, start, approach);
@@ -3640,7 +3673,7 @@ public final class GamePanel extends JPanel {
         for (int[] direction : directions) {
             int x = partyTile.x() + direction[0];
             int y = partyTile.y() + direction[1];
-            if (!Pathfinder.walkable(state, x, y)) {
+            if (!Pathfinder.playerWalkable(state, x, y)) {
                 continue;
             }
             TilePoint candidate = new TilePoint(x, y);
@@ -3669,7 +3702,7 @@ public final class GamePanel extends JPanel {
         };
         for (int[] candidate : candidates) {
             TilePoint target = new TilePoint(portal.x() + candidate[0], portal.y() + candidate[1]);
-            if (!Pathfinder.walkable(state, target.x(), target.y())) {
+            if (!Pathfinder.playerWalkable(state, target.x(), target.y())) {
                 continue;
             }
             List<TilePoint> path = target.equals(start) ? List.of() : Pathfinder.findPath(state, start, target);
@@ -3753,7 +3786,7 @@ public final class GamePanel extends JPanel {
         for (int[] direction : directions) {
             int x = npcPosition.x() + direction[0];
             int y = npcPosition.y() + direction[1];
-            if (!Pathfinder.walkable(state, x, y)) {
+            if (!Pathfinder.playerWalkable(state, x, y)) {
                 continue;
             }
             TilePoint candidate = new TilePoint(x, y);
@@ -4490,6 +4523,24 @@ public final class GamePanel extends JPanel {
     private void drawCharacterSprite(Graphics2D g, String sprite, int x, int y, int width, int height, int facingDx, int facingDy,
                                      CharacterAnimationSelection selection) {
         DirectionalSprite directional = directionalSprite(sprite, facingDx, facingDy);
+        if(selection!=null&&selection.action().contains("grounded")) {
+            String action=selection.action();
+            int cadence=(int)Math.round(GameConfig.clampWalkAnimationSpeed(state.config.walkAnimationSpeed)*10);
+            int bodyHeight=characterWorldScale(sprite,sprite.startsWith("class_")).height();
+            String profile=cadence+"_"+bodyHeight;
+            if(facingDx!=0&&facingDy!=0&&!directional.sprite().matches(".*_model_(?:up|down)_(?:left|right)")) {
+                int rigDx=directional.flipHorizontal()?-facingDx:facingDx;
+                int directionCode=facingDy<0?(rigDx<0?3:5):(rigDx<0?1:7);
+                profile+="_"+directionCode;
+            }
+            action=action.startsWith("settle_")?"settle_grounded_"+profile+"_"+action.substring(action.lastIndexOf('_')+1):"walk_grounded_"+profile;
+            selection=new CharacterAnimationSelection(action,selection.frame());
+        }
+        if (WorldCharacterAnimation.supports(directional.sprite())) {
+            int canvasWidth = Math.max(width, (int) Math.ceil(height * WorldCharacterAnimation.WIDTH / (double) WorldCharacterAnimation.HEIGHT));
+            x -= (canvasWidth - width) / 2;
+            width = canvasWidth;
+        }
         boolean animated = selection != null
                 && selection.animated()
                 && assets.hasAnimatedSprite(directional.sprite(), selection.action());
@@ -4499,26 +4550,27 @@ public final class GamePanel extends JPanel {
         String shadowKey = "char:" + directional.sprite() + ":" + width + "x" + height + ":"
                 + (animated ? selection.action() + ":" + selection.frame() : "idle");
         drawCasterShadow(g, image, shadowKey, x, y, width, height, directional.flipHorizontal(), 0.42f);
-        Graphics2D spriteG = (Graphics2D) g.create();
-        spriteG.translate(x + width / 2.0, y + height);
-        if (directional.flipHorizontal()) {
-            spriteG.scale(-1.0, 1.0);
-        }
-        spriteG.drawImage(image, -width / 2, -height, width, height, null);
-        spriteG.dispose();
+        final int drawX = x, drawY = y, drawW = width;
+        worldDepthRenderer.character(g, new Rectangle(x, y, width, height), target -> {
+            Graphics2D spriteG = (Graphics2D) target.create();
+            spriteG.translate(drawX + drawW / 2.0, drawY + height);
+            if (directional.flipHorizontal()) spriteG.scale(-1.0, 1.0);
+            spriteG.drawImage(image, -drawW / 2, -height, drawW, height, null);
+            spriteG.dispose();
+        });
     }
 
     private void drawCharacterSprite(Graphics2D g, String sprite, int x, int y, int width, int height, int facingDx, int facingDy, int step) {
         CharacterAnimationSelection selection = step >= 0
                 ? new CharacterAnimationSelection("walk", step)
-                : CharacterAnimationSelection.staticPose();
+                : new CharacterAnimationSelection("idle", Math.floorMod(frame / 5, WorldCharacterAnimation.FRAMES));
         drawCharacterSprite(g, sprite, x, y, width, height, facingDx, facingDy, selection);
     }
 
     private void drawCharacterActionSprite(Graphics2D g, String sprite, String action, int x, int y, int width, int height) {
         DirectionalSprite directional = directionalSprite(sprite, 0, 1);
-        int actionW = Math.max(width, Math.round(width * 1.28f));
-        int actionH = Math.max(height, Math.round(height * 1.18f));
+        int actionW = Math.max(width, (int) Math.ceil(height * WorldCharacterAnimation.WIDTH / (double) WorldCharacterAnimation.HEIGHT));
+        int actionH = height;
         int frames = Math.max(1, assets.animatedSpriteFrameCount(directional.sprite(), action, actionW, actionH));
         int actionStep = Math.floorMod(frame / 8, frames);
         BufferedImage image = assets.animatedSpriteFit(directional.sprite(), action, actionW, actionH, actionStep);
@@ -4526,7 +4578,8 @@ public final class GamePanel extends JPanel {
         int drawX = x + width / 2 - actionW / 2;
         int drawY = y + height - actionH;
         drawCasterShadow(g, image, shadowKey, drawX, drawY, actionW, actionH, directional.flipHorizontal(), 0.42f);
-        g.drawImage(image, drawX, drawY, actionW, actionH, null);
+        worldDepthRenderer.character(g, new Rectangle(drawX, drawY, actionW, actionH),
+                target -> target.drawImage(image, drawX, drawY, actionW, actionH, null));
     }
 
     private int walkAnimationFrame(int elapsed, int duration) {
@@ -4570,6 +4623,10 @@ public final class GamePanel extends JPanel {
 
     private CharacterAnimationSelection playerAnimationSelection(String sprite, int width, int height,
                                                                  boolean defenseMoving, boolean tileMoving, boolean freeMoving) {
+        if (WorldCharacterAnimation.supports(directionalSprite(sprite, playerFacingDx, playerFacingDy).sprite())) {
+            LocomotionClock.Selection selection = playerGait.selectAt(frame, renderPlayerX(), renderPlayerY(), state.config.walkAnimationSpeed);
+            return new CharacterAnimationSelection(selection.action(), selection.frame());
+        }
         if (playerLocomotionActive) {
             CharacterAnimationSelection start = transitionAnimationSelection(
                     sprite, width, height, playerFacingDx, playerFacingDy, "start_walk", playerLocomotionStartFrame
@@ -4609,6 +4666,11 @@ public final class GamePanel extends JPanel {
 
     private CharacterAnimationSelection followerAnimationSelection(String sprite, int width, int height,
                                                                    int facingDx, int facingDy, FollowerVisualState visual) {
+        if (WorldCharacterAnimation.supports(directionalSprite(sprite, facingDx, facingDy).sprite())) {
+            double[] position = renderFollowerPosition(visual);
+            LocomotionClock.Selection selection = visual.gait.selectAt(frame + visual.idlePhaseSeed, position[0], position[1], state.config.walkAnimationSpeed);
+            return new CharacterAnimationSelection(selection.action(), selection.frame());
+        }
         if (visual.locomotionActive) {
             CharacterAnimationSelection start = transitionAnimationSelection(
                     sprite, width, height, facingDx, facingDy, "start_walk", visual.locomotionStartFrame
@@ -4799,9 +4861,16 @@ public final class GamePanel extends JPanel {
     }
 
     private void syncFreePlayerPositionToState() {
+        state.recoverBlockedSettlementPosition();
         freePlayerMapId = state.currentMapId;
         freePlayerX = state.playerX + 0.5;
         freePlayerY = state.playerY + 0.5;
+        var anchor = state.mode == GameMode.EXPLORE
+                ? PropCollision.navigationAnchor(state.world, state.currentMapId, state.playerX, state.playerY) : null;
+        if (anchor != null) {
+            freePlayerX = anchor.x();
+            freePlayerY = anchor.y();
+        }
     }
 
     private boolean exploreFreeMoving() {
@@ -4819,8 +4888,12 @@ public final class GamePanel extends JPanel {
             return false;
         }
         TilePoint target = playerPath.get(playerPathIndex);
-        double targetX = target.x() + 0.5;
-        double targetY = target.y() + 0.5;
+        var anchor = playerPathApproach.isEmpty()
+                ? PropCollision.navigationAnchor(state.world, state.currentMapId, target.x(), target.y())
+                : playerPathApproach.peekFirst();
+        if (anchor == null) return false;
+        double targetX = anchor.x();
+        double targetY = anchor.y();
         return Math.hypot(targetX - freePlayerX, targetY - freePlayerY) > 0.035;
     }
 
@@ -4864,15 +4937,28 @@ public final class GamePanel extends JPanel {
         }
         ensureFreePlayerPosition();
         TilePoint target = playerPath.get(playerPathIndex);
-        double targetX = target.x() + 0.5;
-        double targetY = target.y() + 0.5;
+        var anchor = playerPathApproach.isEmpty()
+                ? PropCollision.navigationAnchor(state.world, state.currentMapId, target.x(), target.y())
+                : playerPathApproach.peekFirst();
+        if (anchor == null) {
+            clearPlayerPath();
+            state.status = "Path blocked.";
+            return true;
+        }
+        double targetX = anchor.x();
+        double targetY = anchor.y();
         double dx = targetX - freePlayerX;
         double dy = targetY - freePlayerY;
         double distance = Math.hypot(dx, dy);
         if (distance <= 0.035) {
-            freePlayerX = targetX;
-            freePlayerY = targetY;
-            playerPathIndex++;
+            String mapBefore = state.currentMapId;
+            if (distance > 0.000001 && !tryMoveFreePlayer(targetX, targetY)) {
+                clearPlayerPath();
+                return true;
+            }
+            if (state.mode != GameMode.EXPLORE || !mapBefore.equals(state.currentMapId)) return true;
+            if (playerPathApproach.isEmpty()) playerPathIndex++;
+            else playerPathApproach.removeFirst();
             return true;
         }
         updatePlayerFacingFromVector(dx, dy);
@@ -4891,7 +4977,7 @@ public final class GamePanel extends JPanel {
         int tileBeforeY = state.playerY;
         double previousX = freePlayerX;
         double previousY = freePlayerY;
-        if (!state.moveFreeExploreTo(nextX, nextY)) {
+        if (!state.moveFreeExploreTo(previousX, previousY, nextX, nextY)) {
             return false;
         }
         if (state.mode != GameMode.EXPLORE || !state.currentMapId.equals(mapBefore)) {
@@ -5070,7 +5156,7 @@ public final class GamePanel extends JPanel {
             int frontY = (building.y2() - camY + 1) * ts;
             int seed = Math.abs((building.x1() + building.x2()) * 928371 + (building.y1() + building.y2()) * 364479 + building.palette() * 811);
             Rectangle hoverBounds = buildingScreenBounds(kind, building);
-            boolean hovered = hoverPoint != null && hoverBounds.contains(hoverPoint);
+            boolean hovered = buildingHitTest(building, hoverPoint);
             Color accent = currentSettlementAccentColor();
             String portraitAsset = buildingDisplayAsset(kind, building, seed);
             tooltipZones.add(new TooltipZone(
@@ -5098,32 +5184,21 @@ public final class GamePanel extends JPanel {
             int modules = buildingModuleCount(building);
             for (int index = 0; index < modules; index++) {
                 String asset = buildingSprite(building, seed, index);
-                boolean civic = List.of("hall", "guild", "barracks", "warehouse").contains(building.style());
-                boolean compactModule = List.of("guild", "house", "shop", "row").contains(building.style());
-                int minH = civic ? 108 : (compactModule ? 102 : 90);
-                int maxH = civic ? 166 : (compactModule ? 150 : 134);
-                int minW = civic ? 78 : (compactModule ? 72 : 58);
-                int maxW = civic ? 128 : (compactModule ? 122 : 104);
-                int targetH = Math.max(tileRelative(minH, ts),
-                        Math.min(tileRelative(maxH, ts), building.depth() * ts + tileRelative(civic ? 50 : 42, ts)));
-                int targetW = Math.max(tileRelative(minW, ts),
-                        Math.min(lotW / Math.max(1, modules) + tileRelative(civic ? 42 : 34, ts), tileRelative(maxW, ts)));
-                int centerX = lotX + (int) Math.round((index + 0.5) * lotW / modules);
-                int jitter = ((seed >> (index * 4)) & 7) - 3;
-                int drawX = centerX - targetW / 2 + jitter * ts / GameConfig.TILE;
-                int drawY = frontY - targetH - tileRelative(5, ts);
-                g.drawImage(assets.spriteFit(asset, targetW, targetH), drawX, drawY, null);
+                var visual = BuildingGeometry.moduleVisualBounds(building, index, ts);
+                int targetW = (int) visual.width, targetH = (int) visual.height;
+                int drawX = (int) visual.x - camX * ts, drawY = (int) visual.y - camY * ts;
+                worldDepthRenderer.scenery(g, frontY - tileRelative(5, ts), new Rectangle(drawX, drawY, targetW, targetH),
+                        target -> target.drawImage(assets.spriteFit(asset, targetW, targetH), drawX, drawY, null));
             }
 
             for (TilePoint door : state.world.cityBuildingDoorTiles(building)) {
                 drawBuildingDoorMarker(g, door, camX, camY, ts);
             }
 
-            if (building.width() >= 4) {
+            if (building.width() >= 4 && Math.floorMod(seed, 3) == 0) {
                 int lanternH = scaled(18);
                 int lanternW = scaled(10);
                 g.drawImage(assets.spriteFit("city_lantern", lanternW, lanternH), lotX + scaled(4), frontY - lanternH - scaled(20), null);
-                g.drawImage(assets.spriteFit("city_lantern", lanternW, lanternH), lotX + lotW - lanternW - scaled(4), frontY - lanternH - scaled(20), null);
             }
             if (hovered) {
                 drawBuildingHoverHighlight(g, kind, building, accent);
@@ -5137,11 +5212,25 @@ public final class GamePanel extends JPanel {
     }
 
     private Rectangle buildingScreenBounds(String kind, CityBuilding building) {
+        return buildingGroundBounds(building, lastCameraX, lastCameraY);
+    }
+
+    private Rectangle buildingGroundBounds(CityBuilding building, double camX, double camY) {
+        Rectangle bounds = null;
         int ts = tileSize();
-        if (usesStandaloneSettlementBuilding(kind, building)) {
-            return standaloneBuildingSpriteBounds(building, lastCameraX, lastCameraY, ts);
+        for (var base : state.world.buildingFootprints(state.currentMapId, building)) {
+            Rectangle part = new java.awt.geom.Rectangle2D.Double((base.x - camX) * ts,
+                    (base.y - camY) * ts, base.width * ts, base.height * ts).getBounds();
+            bounds = bounds == null ? part : bounds.union(part);
         }
-        return buildingVisualBounds(building, lastCameraX, lastCameraY, ts);
+        return bounds == null ? new Rectangle() : bounds;
+    }
+
+    private boolean buildingHitTest(CityBuilding building, Point point) {
+        if (point == null) return false;
+        double x = point.x / (double) tileSize() + lastCameraX;
+        double y = point.y / (double) tileSize() + lastCameraY;
+        return state.world.buildingFootprints(state.currentMapId, building).stream().anyMatch(base -> base.contains(x, y));
     }
 
     private Rectangle buildingVisualBounds(CityBuilding building, double camX, double camY, int ts) {
@@ -5170,7 +5259,7 @@ public final class GamePanel extends JPanel {
         List<CityBuilding> buildings = state.world.cityBuildings(state.currentMapId);
         for (int i = buildings.size() - 1; i >= 0; i--) {
             CityBuilding building = buildings.get(i);
-            if (buildingScreenBounds(state.world.kind(state.currentMapId), building).contains(point)) {
+            if (buildingHitTest(building, point)) {
                 return building;
             }
         }
@@ -5178,7 +5267,11 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawBuildingHoverHighlight(Graphics2D g, String kind, CityBuilding building, Color accent) {
-        Rectangle bounds = buildingWorldVisualBounds(kind, building);
+        if (worldDepthRenderer.collecting()) {
+            worldDepthRenderer.overlay(g, target -> drawBuildingHoverHighlight(target, kind, building, accent));
+            return;
+        }
+        Rectangle bounds = buildingGroundBounds(building, lastCamX, lastCamY);
         Composite oldComposite = g.getComposite();
         Stroke oldStroke = g.getStroke();
         Font oldFont = g.getFont();
@@ -5212,6 +5305,10 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawNpcHoverHighlight(Graphics2D g, Rectangle bounds, String label, Color accent) {
+        if (worldDepthRenderer.collecting()) {
+            worldDepthRenderer.overlay(g, target -> drawNpcHoverHighlight(target, bounds, label, accent));
+            return;
+        }
         Composite oldComposite = g.getComposite();
         Stroke oldStroke = g.getStroke();
         Font oldFont = g.getFont();
@@ -5418,25 +5515,7 @@ public final class GamePanel extends JPanel {
     }
 
     private boolean usesStandaloneSettlementBuilding(String kind, CityBuilding building) {
-        if (!RegionalSettlementIdentity.buildingAsset(state.currentMapId, building).isEmpty()) return true;
-        if (!WesternReachFolklore.buildingAsset(state.currentMapId, building).isEmpty()) return true;
-        if (isPlayerVillageBuilding(building)) {
-            return true;
-        }
-        if ("village".equals(kind) && VillageManager.isManagedBuildingStyle(building.style())) {
-            return true;
-        }
-        if (isStandaloneBusinessStyle(building.style())) {
-            return true;
-        }
-        return List.of("hall", "barracks", "inn", "arena", "mage_tower", "bell_tower", "sun_shrine", "river_hall")
-                .contains(building.style());
-    }
-
-    private boolean isStandaloneBusinessStyle(String style) {
-        return List.of("warehouse", "blacksmith", "bakery", "restaurant", "apothecary", "alchemist",
-                "forestry_hut", "farmstead", "fishing_hut", "workshop", "carpenter", "mine", "granary",
-                "watchtower", "shrine").contains(style);
+        return BuildingGeometry.standalone(state.currentMapId, kind, building);
     }
 
     private void drawStandaloneVillageBuilding(Graphics2D g, CityBuilding building, int camX, int camY, int ts) {
@@ -5447,86 +5526,14 @@ public final class GamePanel extends JPanel {
         g.setColor(new Color(10, 13, 14, 105));
         g.fillOval(layout.lotX() + scaled(6), layout.frontY() - scaled(13),
                 Math.max(scaled(24), layout.lotW() - scaled(12)), scaled(13));
-        g.drawImage(assets.spriteFit(asset, layout.drawW(), layout.drawH()), layout.drawX(), layout.drawY(), null);
+        worldDepthRenderer.scenery(g, layout.drawY() + layout.drawH(),
+                new Rectangle(layout.drawX(), layout.drawY(), layout.drawW(), layout.drawH()),
+                target -> target.drawImage(assets.spriteFit(asset, layout.drawW(), layout.drawH()), layout.drawX(), layout.drawY(), null));
         drawBuildingDoorMarker(g, layout.door(), camX, camY, ts);
     }
 
     private int[] standaloneBuildingTargetSize(CityBuilding building, int lotW, int ts) {
-        RegionalBuildingTypes.Type regional = RegionalBuildingTypes.type(state.currentMapId, building);
-        if (regional != null) {
-            int height = switch (regional) {
-                case REMEMBRANCE_HALL, BELLHOUSE -> 232;
-                case CARAVANSERAI, RESCUE_LODGE -> 210;
-                case GRANARY -> 188;
-                default -> 168;
-            };
-            return new int[]{Math.min(lotW + tileRelative(12, ts), tileRelative(204, ts)),
-                    Math.min(building.depth() * ts + tileRelative(136, ts), tileRelative(height, ts))};
-        }
-        if ("garden".equals(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(10, ts), tileRelative(144, ts)),
-                    Math.min(building.depth() * ts + tileRelative(18, ts), tileRelative(96, ts))
-            };
-        }
-        if (List.of("watchtower", "mage_tower", "bell_tower").contains(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(28, ts), tileRelative(176, ts)),
-                    Math.min(building.depth() * ts + tileRelative(112, ts), tileRelative(252, ts))
-            };
-        }
-        if ("barracks".equals(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(28, ts), tileRelative(178, ts)),
-                    Math.min(building.depth() * ts + tileRelative(72, ts), tileRelative(190, ts))
-            };
-        }
-        if (List.of("hall", "arena", "river_hall").contains(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(42, ts), tileRelative(232, ts)),
-                    Math.min(building.depth() * ts + tileRelative(80, ts), tileRelative(210, ts))
-            };
-        }
-        if (List.of("sun_shrine", "shrine").contains(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(48, ts), tileRelative(236, ts)),
-                    Math.min(building.depth() * ts + tileRelative(104, ts), tileRelative(230, ts))
-            };
-        }
-        if ("warehouse".equals(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(42, ts), tileRelative(220, ts)),
-                    Math.min(building.depth() * ts + tileRelative(74, ts), tileRelative(198, ts))
-            };
-        }
-        if (List.of("blacksmith", "workshop", "carpenter", "forestry_hut", "farmstead", "fishing_hut").contains(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(34, ts), tileRelative(190, ts)),
-                    Math.min(building.depth() * ts + tileRelative(62, ts), tileRelative(176, ts))
-            };
-        }
-        if (List.of("bakery", "restaurant", "apothecary", "alchemist", "granary").contains(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(28, ts), tileRelative(172, ts)),
-                    Math.min(building.depth() * ts + tileRelative(58, ts), tileRelative(164, ts))
-            };
-        }
-        if (List.of("inn", "guild").contains(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(32, ts), tileRelative(212, ts)),
-                    Math.min(building.depth() * ts + tileRelative(66, ts), tileRelative(188, ts))
-            };
-        }
-        if ("row".equals(building.style())) {
-            return new int[]{
-                    Math.min(lotW + tileRelative(30, ts), tileRelative(184, ts)),
-                    Math.min(building.depth() * ts + tileRelative(52, ts), tileRelative(158, ts))
-            };
-        }
-        return new int[]{
-                Math.min(lotW + tileRelative(12, ts), tileRelative(146, ts)),
-                Math.min(building.depth() * ts + tileRelative(36, ts), tileRelative(132, ts))
-        };
+        return BuildingGeometry.targetSize(state.currentMapId, building, lotW, ts);
     }
 
     private BuildingVisualLayout standaloneBuildingVisualLayout(CityBuilding building, double camX, double camY, int ts) {
@@ -5550,6 +5557,10 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawBuildingDoorMarker(Graphics2D g, TilePoint door, int camX, int camY, int ts) {
+        if (worldDepthRenderer.collecting()) {
+            worldDepthRenderer.overlay(g, target -> drawBuildingDoorMarker(target, door, camX, camY, ts));
+            return;
+        }
         if (door.x() < camX || door.x() >= camX + lastVisibleCols || door.y() < camY || door.y() >= camY + lastVisibleRows) {
             return;
         }
@@ -5564,15 +5575,7 @@ public final class GamePanel extends JPanel {
     }
 
     private int buildingModuleCount(CityBuilding building) {
-        boolean civic = List.of("hall", "guild", "barracks", "warehouse").contains(building.style());
-        if (civic) {
-            return Math.max(1, Math.min(3, (building.width() + 2) / 4));
-        }
-        int modules = Math.max(1, Math.min(building.width(), (building.width() + 1) / 2));
-        if ("row".equals(building.style()) && building.width() >= 6) {
-            modules = Math.min(4, modules);
-        }
-        return modules;
+        return BuildingGeometry.moduleCount(building);
     }
 
     private String buildingSprite(CityBuilding building, int seed, int index) {
@@ -5620,7 +5623,16 @@ public final class GamePanel extends JPanel {
         if (!currentMapAllowsSnowBuildingSprites()) {
             sprites = nonSnowBuildingSprites(sprites, building.style());
         }
-        return sprites[Math.floorMod(seed + building.palette() + index * 3, sprites.length)];
+        return sprites[Math.floorMod(buildingVariantIndex(building) + ("row".equals(building.style()) ? 0 : index), sprites.length)];
+    }
+
+    private int buildingVariantIndex(CityBuilding building) {
+        int ordinal = 0;
+        for (CityBuilding other : state.world.cityBuildings(state.currentMapId)) {
+            if (!other.style().equals(building.style())) continue;
+            if (other.y1() < building.y1() || other.y1() == building.y1() && other.x1() < building.x1()) ordinal++;
+        }
+        return ordinal + Math.floorMod(state.currentMapId.hashCode() + building.style().hashCode(), 97);
     }
 
     private String themedCityBuildingSprite(String style, CityBuilding building, int seed, int index) {
@@ -5628,7 +5640,7 @@ public final class GamePanel extends JPanel {
         if (sprites.length == 0 || !shouldUseThemedCityBuildingSprite(style, building, seed, index)) {
             return null;
         }
-        return sprites[Math.floorMod(seed + style.hashCode() + index * 5, sprites.length)];
+        return sprites[0];
     }
 
     private String[] themedCityBuildingSprites(String style) {
@@ -5655,23 +5667,22 @@ public final class GamePanel extends JPanel {
     }
 
     private boolean shouldUseThemedCityBuildingSprite(String style, CityBuilding building, int seed, int index) {
-        if (building == null) {
+        if (building == null || building.width() < 4 || building.depth() < 3) {
             return false;
         }
         boolean landmark = List.of("hall", "river_hall", "arena", "mage_tower", "bell_tower", "sun_shrine", "shrine")
                 .contains(style);
-        boolean large = building.width() >= 5 || building.depth() >= 4;
-        int roll = Math.floorMod(seed + building.key().hashCode() + index * 31, 100);
-        if (landmark) {
-            return large || roll < 48;
+        if (!landmark) return false;
+        // One grand silhouette per settlement; secondary institutions use ordinary civic architecture.
+        CityBuilding primary = null;
+        for (CityBuilding other : state.world.cityBuildings(state.currentMapId)) {
+            if (other.width() < 4 || other.depth() < 3 || themedCityBuildingSprites(other.style()).length == 0 || !List.of("hall", "river_hall", "arena",
+                    "mage_tower", "bell_tower", "sun_shrine", "shrine").contains(other.style())) continue;
+            if (primary == null || other.width() * other.depth() > primary.width() * primary.depth()
+                    || other.width() * other.depth() == primary.width() * primary.depth()
+                    && other.key().compareTo(primary.key()) < 0) primary = other;
         }
-        if (List.of("warehouse", "barracks", "guild", "restaurant", "blacksmith").contains(style)) {
-            return roll < 34;
-        }
-        if (List.of("apothecary", "alchemist", "workshop", "carpenter", "fishing_hut").contains(style)) {
-            return roll < 22 && large;
-        }
-        return false;
+        return building.equals(primary);
     }
 
     private String[] nonSnowBuildingSprites(String[] sprites, String style) {
@@ -5719,7 +5730,7 @@ public final class GamePanel extends JPanel {
                 && "city".equals(state.world.kind(state.currentMapId))) {
             List<String> citySprites = cityManagedBuildingSprites(style);
             if (!citySprites.isEmpty()) {
-                return citySprites.get(Math.floorMod(seed + fallbackBuilding.key().hashCode() + index * 7, citySprites.size()));
+                return citySprites.get(Math.floorMod(buildingVariantIndex(fallbackBuilding) + index, citySprites.size()));
             }
         }
         if (VillageManager.isManagedBuildingStyle(style)) {
@@ -5749,7 +5760,11 @@ public final class GamePanel extends JPanel {
             case "farmstead" -> List.of("village_building_farmstead", "village_building_garden", "city_building_town_gabled");
             case "fishing_hut" -> List.of("village_building_fishing_hut", "city_building_town_small", "city_building_town_shop");
             case "granary" -> List.of("village_building_granary", "village_building_warehouse", "city_building_town_small");
-            case "shrine" -> List.of("village_building_shrine", "city_building_civic_hall_imagegen");
+            case "shrine" -> List.of("village_building_shrine", "city_building_stone_hall");
+            case "hall", "river_hall" -> List.of("city_building_stone_hall", "city_building_town_manor", "city_building_civic_hall_imagegen");
+            case "inn", "restaurant" -> List.of("city_building_inn_imagegen", "city_building_town_manor", "city_building_town_shop");
+            case "workshop", "carpenter" -> List.of("village_building_workshop", "city_building_stone_shop", "city_building_town_shop");
+            case "alchemist" -> List.of("village_building_apothecary", "city_building_stone_shop");
             default -> List.of();
         };
     }
@@ -6106,7 +6121,7 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawMountainMassifOverlays(Graphics2D g, int camX, int camY) {
-        terrainFeatureRenderer.drawMountainMassifOverlays(g, camX, camY);
+        terrainFeatureRenderer.drawMountainMassifOverlays(g, camX, camY, worldDepthRenderer);
     }
 
     private void drawSettlementOverlays(Graphics2D g, int camX, int camY) {
@@ -6219,7 +6234,8 @@ public final class GamePanel extends JPanel {
         drawSettlementApron(g, settlement, px, py, drawSize);
         drawSettlementRoadApproaches(g, settlement, px, py, drawSize);
         drawShadow(g, px + drawSize / 5, py + drawSize - scaled(18), drawSize * 3 / 5, scaled(16));
-        g.drawImage(assets.spriteFit(asset, drawSize, drawSize), px, py, null);
+        worldDepthRenderer.scenery(g, py + drawSize - scaled(18), new Rectangle(px, py, drawSize, drawSize),
+                target -> target.drawImage(assets.spriteFit(asset, drawSize, drawSize), px, py, null));
         if (hoverPoint != null && hoverBounds.contains(hoverPoint)) {
             drawSettlementHoverHighlight(g, settlement, px, py, drawSize, accent);
         }
@@ -6250,6 +6266,10 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawSettlementHoverHighlight(Graphics2D g, WorldMap.SettlementSite settlement, int px, int py, int drawSize, Color edge) {
+        if (worldDepthRenderer.collecting()) {
+            worldDepthRenderer.overlay(g, target -> drawSettlementHoverHighlight(target, settlement, px, py, drawSize, edge));
+            return;
+        }
         Composite oldComposite = g.getComposite();
         Stroke oldStroke = g.getStroke();
         Font oldFont = g.getFont();
@@ -6693,13 +6713,12 @@ public final class GamePanel extends JPanel {
         int miniH = shortSidebar ? 104 : 138;
         int envH = shortSidebar ? 62 : 72;
         int posH = shortSidebar ? 44 : 54;
-        int fullscreenH = shortSidebar ? 24 : 28;
         int actionRowsH = buttonH * 4 + rowGap * 3;
         int travelY = y + 46;
-        int reservedBelowTravel = actionRowsH + miniH + envH + posH + fullscreenH + gap * 6;
-        int travelMax = shortSidebar ? 206 : 236;
-        int travelMin = Math.min(150, travelMax);
-        int travelH = clamp(logY - travelY - reservedBelowTravel, travelMin, travelMax);
+        int reservedBelowTravel = actionRowsH + buttonH + gap * 3
+                + (vicinityExpanded ? miniH + gap : 0)
+                + (sidebarStatusExpanded ? envH + posH + gap : 0);
+        int travelH = Math.max(150, logY - travelY - reservedBelowTravel);
         drawTravelPartyHud(g, x, travelY, contentW, travelH);
 
         int actionY = travelY + travelH + gap;
@@ -6711,33 +6730,39 @@ public final class GamePanel extends JPanel {
         sidebarButton(g, x, actionY + (buttonH + rowGap) * 2, halfW, buttonH, "Inventory", state::toggleInventory);
         sidebarButton(g, x + halfW + 8, actionY + (buttonH + rowGap) * 2, halfW, buttonH, "Village", state::toggleVillage);
         sidebarButton(g, x, actionY + (buttonH + rowGap) * 3, halfW, buttonH, "Raid", state::startDefenseRaid);
+        sidebarButton(g, x + halfW + 8, actionY + (buttonH + rowGap) * 3, halfW, buttonH, "Fullscreen", fullscreenToggle);
 
-        int miniY = actionY + actionRowsH + gap;
-        drawMiniMap(g, x, miniY, contentW, miniH);
+        int toggleY = actionY + actionRowsH + gap;
+        sidebarButton(g, x, toggleY, halfW, buttonH, (vicinityExpanded ? "- " : "+ ") + "Vicinity",
+                () -> vicinityExpanded = !vicinityExpanded);
+        sidebarButton(g, x + halfW + 8, toggleY, halfW, buttonH, (sidebarStatusExpanded ? "- " : "+ ") + "Status",
+                () -> sidebarStatusExpanded = !sidebarStatusExpanded);
+        int miniY = toggleY + buttonH + gap;
+        if (vicinityExpanded) {
+            drawMiniMap(g, x, miniY, contentW, miniH);
+        }
 
-        int envY = miniY + miniH + gap + (shortSidebar ? 0 : 2);
-        g.setFont(new Font("SansSerif", Font.BOLD, shortSidebar ? 14 : 16));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Environment", x, envY + 14);
-        g.setFont(new Font("SansSerif", Font.PLAIN, shortSidebar ? 12 : 14));
-        g.setColor(new Color(198, 202, 211));
-        int lineH = shortSidebar ? 16 : 19;
-        drawClippedString(g, "Day " + state.dayNumber() + "  " + state.timeLabel() + "  " + state.dayPhaseLabel(), x, envY + 14 + lineH, contentW);
-        drawClippedString(g, "Weather: " + state.weatherLabel() + " over " + Terrain.name(state.currentBiomeTile()), x, envY + 14 + lineH * 2, contentW);
-        drawClippedString(g, state.windLabel(), x, envY + 14 + lineH * 3, contentW);
+        if (sidebarStatusExpanded) {
+            int envY = miniY + (vicinityExpanded ? miniH + gap : 0);
+            g.setFont(new Font("SansSerif", Font.BOLD, shortSidebar ? 14 : 16));
+            g.setColor(new Color(230, 225, 206));
+            g.drawString("Environment", x, envY + 14);
+            g.setFont(new Font("SansSerif", Font.PLAIN, shortSidebar ? 12 : 14));
+            g.setColor(new Color(198, 202, 211));
+            int lineH = shortSidebar ? 16 : 19;
+            drawClippedString(g, "Day " + state.dayNumber() + "  " + state.timeLabel() + "  " + state.dayPhaseLabel(), x, envY + 14 + lineH, contentW);
+            drawClippedString(g, "Weather: " + state.weatherLabel() + " over " + Terrain.name(state.currentBiomeTile()), x, envY + 14 + lineH * 2, contentW);
+            drawClippedString(g, state.windLabel(), x, envY + 14 + lineH * 3, contentW);
 
-        int posY = envY + envH;
-        g.setFont(new Font("SansSerif", Font.BOLD, shortSidebar ? 14 : 16));
-        g.setColor(new Color(230, 225, 206));
-        g.drawString("Position", x, posY + 14);
-        g.setFont(new Font("SansSerif", Font.PLAIN, shortSidebar ? 12 : 14));
-        g.setColor(new Color(198, 202, 211));
-        drawClippedString(g, state.world.label(state.currentMapId), x, posY + 14 + lineH, contentW);
-        drawClippedString(g, state.playerX + ", " + state.playerY + "  " + Terrain.name(state.world.tileAt(state.currentMapId, state.playerX, state.playerY)), x, posY + 14 + lineH * 2, contentW);
+            int posY = envY + envH;
+            g.setFont(new Font("SansSerif", Font.BOLD, shortSidebar ? 14 : 16));
+            g.setColor(new Color(230, 225, 206));
+            g.drawString("Position", x, posY + 14);
+            g.setFont(new Font("SansSerif", Font.PLAIN, shortSidebar ? 12 : 14));
+            g.setColor(new Color(198, 202, 211));
+            drawClippedString(g, state.world.label(state.currentMapId), x, posY + 14 + lineH, contentW);
+            drawClippedString(g, state.playerX + ", " + state.playerY + "  " + Terrain.name(state.world.tileAt(state.currentMapId, state.playerX, state.playerY)), x, posY + 14 + lineH * 2, contentW);
 
-        int fullscreenY = posY + posH + gap;
-        if (fullscreenY + fullscreenH < logY - gap) {
-            sidebarButton(g, x + halfW + 8, fullscreenY, halfW, fullscreenH, "Fullscreen", fullscreenToggle);
         }
 
         drawStatusLog(g, left + 22, logY, GameConfig.SIDEBAR_WIDTH - 44, logH);
@@ -8325,7 +8350,11 @@ public final class GamePanel extends JPanel {
         g.drawRoundRect(x, y, w, h, 8, 8);
         if (battle.finished) {
             String label = battle.victory ? "Continue" : "Revive";
-            Runnable action = battle.victory ? state::leaveFinishedBattle : state::revive;
+            Runnable action = () -> {
+                if (battle.victory) state.leaveFinishedBattle();
+                else state.revive();
+                syncPlayerAnimationToState();
+            };
             Color fill = battle.victory ? new Color(66, 93, 49) : new Color(106, 61, 61);
             actionButton(g, x + 18, y + 26, 140, 40, label, action, fill, new Color(151, 177, 112), true);
             g.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -8501,15 +8530,18 @@ public final class GamePanel extends JPanel {
         int cardH = 86;
         String animationAction = battleActorAnimationAction(battle, actor);
         String actorSprite = battleActorSprite(actor);
+        boolean refreshedModel = actorSprite.matches(".*_combat_v[234]");
+        if (refreshedModel) spriteW = 210;
         boolean stripAnimating = battleActorUsesStrip(actor, actorSprite, animationAction);
         String renderedAction = stripAnimating ? animationAction : null;
-        int renderExtraH = stripAnimating && "cast".equals(animationAction) ? 86 : 0;
+        int renderExtraH = assets.hasAuthoredAnimation(actorSprite, animationAction)
+                && "cast".equals(animationAction) && !refreshedModel ? 86 : 0;
         int renderH = spriteH + renderExtraH;
         int lunge = active && !stripAnimating ? battle.playerLunge : 0;
         int shake = active && !stripAnimating ? battle.playerOffset : 0;
         int bob = actor.alive() && !stripAnimating ? (int) Math.round(Math.sin((frame + battle.partyMembers().indexOf(actor) * 8) * 0.18) * 3.0) : 0;
         BattleActorPose pose = battleRenderer.actorPose(battle, actor, false);
-        int drawX = slot[0] + lunge + shake + pose.xOffset();
+        int drawX = slot[0] - (spriteW - 150) / 2 + lunge + shake + pose.xOffset();
         int drawY = slot[1] + bob - (stripAnimating ? 0 : battle.castOffset(actor)) + pose.yOffset();
         int renderY = drawY - renderExtraH;
         if (actor.alive()) {
@@ -8773,15 +8805,17 @@ public final class GamePanel extends JPanel {
     }
 
     private BufferedImage battleActorImage(Battle battle, Actor actor, String sprite, String action, int width, int height) {
+        // Keep the same left-facing model and scale when returning to rest or receiving a hit.
+        if (MonsterAttackAnimations.supports(sprite) && assets.hasAuthoredAnimation(sprite, "attack")
+                && !assets.hasAuthoredAnimation(sprite, action)) {
+            return assets.animatedSpriteFit(sprite, "attack", width, height, 0);
+        }
         int frameCount = assets.animatedSpriteFrameCount(sprite, action, width, height);
         int animationFrame = battleActorAnimationFrame(battle, actor, frameCount);
         return assets.animatedSpriteFit(sprite, action, width, height, animationFrame);
     }
 
     private boolean battleActorUsesStrip(Actor actor, String sprite, String action) {
-        if ("class_mage_model".equals(sprite)) {
-            return false;
-        }
         return actor != null && assets.hasAnimatedSprite(sprite, action);
     }
 
@@ -8798,6 +8832,10 @@ public final class GamePanel extends JPanel {
         if (actor != animation.source) {
             return "idle";
         }
+        // Monster cycles include their own weapon, bow, or spell release. Elemental bites and
+        // damaging shield strikes must use these poses too, regardless of the effect's VFX label.
+        if (MonsterAttackAnimations.playsAttack(animation, actor)
+                && assets.hasAuthoredAnimation(actor.sprite, "attack")) return "attack";
         String kind = animation.effectKind == null ? "strike" : animation.effectKind;
         ClassAbilityVfx.Profile profile = animation.visualProfile();
         if (profile != null) {
@@ -8812,27 +8850,25 @@ public final class GamePanel extends JPanel {
         if ("item".equals(kind)) {
             return "item";
         }
-        if ("volley".equals(kind) || "pierce".equals(kind) || battleRenderer.isRangedClass(actor.className)) {
+        if ("volley".equals(kind) || "pierce".equals(kind)) {
             return "shoot";
         }
-        if (battleRenderer.physicalEffect(kind) || battleRenderer.isPhysicalClass(actor.className)) {
-            return "attack";
-        }
+        if (battleRenderer.physicalEffect(kind)) return "attack";
+        if (battleRenderer.magicalEffect(kind)) return "cast";
+        if (battleRenderer.isRangedClass(actor.className)) return "shoot";
+        if (battleRenderer.isPhysicalClass(actor.className)) return "attack";
         return "cast";
     }
 
     private int battleActorAnimationFrame(Battle battle, Actor actor, int frameCount) {
         frameCount = Math.max(1, frameCount);
+        if (actor != null && !actor.alive()) return 0;
         BattleActionAnimation animation = battle.activeAnimation();
         if (animation == null || actor == null || !animation.involves(actor)) {
             return frame / 8;
         }
-        double progress = switch (animation.stage()) {
-            case CAST -> animation.castProgress();
-            case TRAVEL -> animation.travelProgress();
-            case IMPACT -> animation.impactProgress();
-            case DONE -> 0.0;
-        };
+        if ("idle".equals(battleActorAnimationAction(battle, actor))) return frame / 8;
+        double progress = animation.actorPoseProgress(actor);
         return Math.min(frameCount - 1, Math.max(0, (int) Math.floor(progress * frameCount)));
     }
 
@@ -9363,8 +9399,10 @@ public final class GamePanel extends JPanel {
         g.fillRoundRect(x, y, w, h, 10, 10);
         g.setColor(new Color(133, 122, 91, 170));
         g.drawRoundRect(x, y, w, h, 10, 10);
-        int imageSize = Math.min(w - 22, h - 38);
-        g.drawImage(assets.sprite(npc.sprite(), imageSize), x + (w - imageSize) / 2, y + 10, null);
+        String portrait = NpcIdentity.portrait(npc);
+        g.drawImage(assets.hasSprite(portrait)
+                ? assets.spriteFit(portrait, w - 12, h - 30)
+                : assets.portrait(npc.sprite() + "_model_down", w - 12, h - 30), x + 6, y + 5, null);
         g.setFont(new Font("SansSerif", Font.BOLD, 12));
         g.setColor(new Color(244, 213, 141));
         drawCenteredIn(g, displayName, x, y + h - 14, w);
@@ -9380,11 +9418,11 @@ public final class GamePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.BOLD, 28));
         g.setColor(new Color(244, 239, 220));
         g.drawString("World Map", x + 32, y + 42);
-        int legendW = 184;
+        int legendW = 224;
         int gap = 20;
         int mapX = x + 24;
         int mapY = y + 64;
-        int mapW = Math.max(720, w - legendW - gap - 48);
+        int mapW = Math.max(320, w - legendW - gap - 48);
         int mapH = h - mapY - 24;
         worldMapViewport = updateWorldMapViewport(mapX, mapY, mapW, mapH);
         worldMapBounds = new Rectangle(mapX, mapY, mapW, mapH);
@@ -9398,19 +9436,18 @@ public final class GamePanel extends JPanel {
         renderMetrics.record("worldMap.terrain", terrainStarted);
         Shape oldClip = g.getClip();
         g.setClip(mapX, mapY, mapW, mapH);
-        WorldMapOverlayRenderer.drawGrid(g, worldMapViewport);
+        if (worldMapGrid) WorldMapOverlayRenderer.drawGrid(g, worldMapViewport);
+        WorldMapLabels placeLabels = new WorldMapLabels(worldMapViewport);
+        placeLabels.reserve(new Rectangle(mapX + 12, mapY + mapH - 36, 240, 24));
         if (state.worldMapKingdoms) {
-            WorldMapOverlayRenderer.drawKingdomLabels(g, worldMapViewport, state.world.kingdoms());
+            WorldMapOverlayRenderer.drawKingdomLabels(g, worldMapViewport, state.world.kingdoms(), placeLabels);
         }
-        List<Rectangle> placeLabels = new ArrayList<>();
         for (WorldMap.SettlementSite settlement : state.world.settlementSites()) {
             if (worldMapVisible(worldMapViewport, settlement.x(), settlement.y(), 8.0)) {
-                int dx = settlement.x() > worldMapViewport.worldX() + worldMapViewport.worldW() * 0.68 ? -78 : 12;
                 WorldMap.Kingdom kingdom = kingdomById(settlement.kingdomId());
                 boolean playerSettlement = state.world.isPlayerSettlement(settlement);
                 Rectangle markerBounds = WorldMapOverlayRenderer.drawSettlementMarker(
-                        g, worldMapViewport, settlement, kingdom, playerSettlement, dx, -9);
-                placeLabels.add(markerBounds);
+                        g, worldMapViewport, settlement, kingdom, playerSettlement, placeLabels, worldMapTownLabels);
                 Color markerColor = playerSettlement ? new Color(255, 226, 128)
                         : kingdom == null ? new Color(245, 214, 117) : new Color(kingdom.colorRgb());
                 tooltipZones.add(new TooltipZone(markerBounds, settlement.label(),
@@ -9419,7 +9456,7 @@ public final class GamePanel extends JPanel {
         }
         for (WorldMap.CampaignMarker site : state.world.campaignMarkers()) {
             if (!worldMapVisible(worldMapViewport, site.x(), site.y(), 0.0)) continue;
-            Rectangle bounds = WorldMapOverlayRenderer.drawCampaignMarker(g, worldMapViewport, site, placeLabels);
+            Rectangle bounds = WorldMapOverlayRenderer.drawCampaignMarker(g, worldMapViewport, site, placeLabels, worldMapSiteLabels);
             var place = StoryLocationCatalog.byId(site.id());
             tooltipZones.add(new TooltipZone(bounds, site.label(),
                     place.purpose() + "\n" + place.landmark() + "\n" + place.route()));
@@ -9432,18 +9469,34 @@ public final class GamePanel extends JPanel {
             TilePoint marker = worldMapObjectivePosition(objective);
             if (marker != null && showQuestObjective(objective)
                     && worldMapVisible(worldMapViewport, marker.x(), marker.y(), 6.0)) {
-                WorldMapOverlayRenderer.drawQuestMarker(g, worldMapViewport, objective.kind(), objective.markerLabel(),
-                        marker, objectiveColor(objective, 255), objective.mainStory(), objective.dungeonHazard());
+                Rectangle questBounds = WorldMapOverlayRenderer.drawQuestMarker(g, worldMapViewport, objective.kind(), objective.markerLabel(),
+                        marker, objectiveColor(objective, 255), objective.mainStory(), objective.dungeonHazard(), placeLabels, worldMapQuestLabels, objective.markerLabel().equals(worldMapFocusedQuest));
+                tooltipZones.add(new TooltipZone(questBounds, objective.markerLabel(),
+                        objective.title() + "\n" + objective.target() + "\nDestination: " + marker.x() + ", " + marker.y()));
             }
         }
-        if (WorldMap.OVERWORLD_ID.equals(state.currentMapId)) {
-            int px = worldMapScreenX(worldMapViewport, state.playerX + 0.5);
-            int py = worldMapScreenY(worldMapViewport, state.playerY + 0.5);
-            g.setColor(new Color(255, 245, 174));
-            g.fillOval(px - 5, py - 5, 10, 10);
-            g.setColor(Color.BLACK);
-            g.drawOval(px - 5, py - 5, 10, 10);
+        TilePoint playerPosition = currentWorldMapPosition();
+        int px = worldMapScreenX(worldMapViewport, playerPosition.x() + 0.5);
+        int py = worldMapScreenY(worldMapViewport, playerPosition.y() + 0.5);
+        g.setColor(new Color(20, 28, 32));
+        g.fillOval(px - 9, py - 9, 19, 19);
+        g.setColor(new Color(255, 245, 174));
+        g.fillOval(px - 5, py - 5, 11, 11);
+        g.drawOval(px - 8, py - 8, 17, 17);
+        placeLabels.reserve(new Rectangle(px - 10, py - 10, 21, 21));
+        placeLabels.add("You", px, py, new Color(255, 245, 174), 110);
+        for (WorldMapLabels.Placed label : placeLabels.draw(g)) {
+            TooltipZone source = tooltipZones.stream().filter(zone ->
+                    zone.title().equals(label.text()) || shortSettlementLabel(zone.title()).equals(label.text()))
+                    .findFirst().orElse(null);
+            tooltipZones.add(source == null ? new TooltipZone(label.bounds(), label.text(), label.text())
+                    : new TooltipZone(label.bounds(), source.title(), source.body(), source.icon(), source.accent()));
         }
+        g.setFont(new Font("SansSerif", Font.BOLD, 12));
+        g.setColor(new Color(13, 24, 30, 220));
+        g.fillRoundRect(mapX + 12, mapY + mapH - 36, 240, 24, 6, 6);
+        g.setColor(new Color(235, 226, 199));
+        g.drawString("NORTH ^   |   " + Math.round(worldMapViewport.worldW()) + " tiles across", mapX + 22, mapY + mapH - 19);
         g.setClip(oldClip);
         g.setColor(new Color(81, 88, 108));
         g.drawRect(mapX, mapY, mapW, mapH);
@@ -9451,8 +9504,8 @@ public final class GamePanel extends JPanel {
         actionButton(g, sideX, y + 18, 136, 30, state.worldMapKingdoms ? "Kingdoms On" : "Kingdoms Off",
                 state::toggleWorldMapKingdoms, new Color(57, 71, 102), new Color(110, 127, 160), true);
         drawWorldMapControls(g, sideX, y + 56, legendW);
-        WorldMapOverlayRenderer.drawLegend(g, sideX, y + 168, legendW,
-                state.worldMapKingdoms, state.world.kingdoms());
+        drawWorldMapFilters(g, sideX, y + 174, legendW);
+        WorldMapOverlayRenderer.drawCompactLegend(g, sideX, y + 440, legendW, h - 510);
         sidebarButton(g, sideX, y + h - 54, 116, 30, "Close", state::toggleWorldMap);
         renderMetrics.record("worldMap", worldMapStarted);
     }
@@ -9514,6 +9567,29 @@ public final class GamePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.PLAIN, 11));
         g.setColor(new Color(178, 184, 204));
         drawClippedString(g, "Wheel zooms, drag pans, click centers.", x, y + 101, width);
+    }
+
+    private void drawWorldMapFilters(Graphics2D g, int x, int y, int width) {
+        g.setFont(new Font("SansSerif", Font.BOLD, 15));
+        g.setColor(new Color(244, 239, 220));
+        g.drawString("Map labels", x, y);
+        mapFilterButton(g, x, y + 12, width, "Settlements", worldMapTownLabels, () -> worldMapTownLabels = !worldMapTownLabels);
+        mapFilterButton(g, x, y + 46, width, "Named sites", worldMapSiteLabels, () -> worldMapSiteLabels = !worldMapSiteLabels);
+        mapFilterButton(g, x, y + 80, width, "Quests", worldMapQuestLabels, () -> worldMapQuestLabels = !worldMapQuestLabels);
+        mapFilterButton(g, x, y + 114, width, "Grid", worldMapGrid, () -> worldMapGrid = !worldMapGrid);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g.setColor(new Color(190, 200, 205));
+        drawWrapped(g, "Hover markers for details. Crowded labels appear as you zoom in.", x, y + 168, width, 17, 3);
+        if (worldMapFocusedQuest != null) {
+            g.setColor(new Color(245, 214, 117));
+            drawWrapped(g, worldMapFocusedQuest, x, y + 223, width, 17, 2);
+        }
+    }
+
+    private void mapFilterButton(Graphics2D g, int x, int y, int width, String title, boolean enabled, Runnable action) {
+        actionButton(g, x, y, width - 12, 28, title + (enabled ? "  On" : "  Off"), action,
+                enabled ? new Color(49, 76, 73) : new Color(30, 37, 46),
+                enabled ? new Color(115, 161, 135) : new Color(77, 91, 106), true);
     }
 
     void adjustWorldMapZoom(int direction) {
@@ -9579,6 +9655,8 @@ public final class GamePanel extends JPanel {
             return;
         }
         worldMapQuestFocusIndex++;
+        worldMapFocusedQuest = objective.markerLabel();
+        worldMapQuestLabels = true;
         if (worldMapZoom < 2.5) {
             worldMapZoom = 2.5;
         }
@@ -9808,6 +9886,8 @@ public final class GamePanel extends JPanel {
                 drawChoiceRow(g, left, y + 230, "Speed", movementSpeed().label, this::previousMovementSpeed, this::nextMovementSpeed);
                 drawCameraSmoothingRow(g, left, y + 282);
                 drawToggleRow(g, left, y + 334, "Look-Ahead", state.config.cameraLookAhead, this::toggleCameraLookAhead);
+                drawSettingsHeading(g, x + 540, y + 154, "Walking Animations");
+                drawWalkAnimationSpeedRow(g, x + 540, y + 178);
             }
             case AUDIO -> {
                 drawSettingsHeading(g, left, y + 154, "Volume");
@@ -9890,6 +9970,32 @@ public final class GamePanel extends JPanel {
         if (value == state.config.combatAnimationSpeed) return;
         state.config.combatAnimationSpeed = value;
         if (state.battle != null) state.battle.setAnimationSpeed(value);
+        saveSettings();
+    }
+
+    private void drawWalkAnimationSpeedRow(Graphics2D g, int x, int y) {
+        g.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        g.setColor(new Color(220, 224, 232));
+        g.drawString("Walk animation", x, y + 22);
+        Rectangle track = new Rectangle(x + 142, y + 8, 150, 10);
+        Rectangle bounds = new Rectangle(x + 136, y - 2, 162, 32);
+        registerSlider(bounds, track, SliderKind.WALK_ANIMATION, "walk_speed");
+        drawSliderTrack(g, track, (state.config.walkAnimationSpeed - 0.5) / 1.5,
+                sliderHovered(bounds), sliderActive(SliderKind.WALK_ANIMATION, "walk_speed"), 11);
+        g.setColor(new Color(220, 224, 232));
+        g.drawString(String.format(java.util.Locale.ROOT, "%.1fx", state.config.walkAnimationSpeed), x + 306, y + 22);
+        actionButton(g, x + 280, y + 52, 64, 30, "Reset", () -> setWalkAnimationSpeed(1.0),
+                new Color(35, 39, 54), new Color(86, 98, 128), true);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g.setColor(new Color(165, 174, 193));
+        g.drawString("0.5x slow  /  1x normal  /  2x fast", x, y + 43);
+        wrap(g, "Preferred stepping speed. Grounded walking limits long strides (at least 0.9x sideways). Travel speed stays the same.", x, y + 105, 350, 18);
+    }
+
+    private void setWalkAnimationSpeed(double speed) {
+        double value = GameConfig.clampWalkAnimationSpeed(Math.round(speed * 10) / 10.0);
+        if (value == state.config.walkAnimationSpeed) return;
+        state.config.walkAnimationSpeed = value;
         saveSettings();
     }
 
@@ -10195,14 +10301,18 @@ public final class GamePanel extends JPanel {
 
     private void updateViewportTransform() {
         double scale = getHeight() / (double) GameConfig.HEIGHT;
+        boolean title = state.mode == GameMode.MAIN_MENU;
+        if (title && getWidth() > 0) {
+            scale = Math.min(scale, getWidth() / 1280.0);
+        }
         if (!Double.isFinite(scale) || scale <= 0.0) {
             scale = 1.0;
         }
         renderScaleX = scale;
         renderScaleY = scale;
-        renderWidth = Math.max(GameConfig.WIDTH, (int) Math.ceil(getWidth() / scale));
+        renderWidth = Math.max(title ? 1280 : GameConfig.WIDTH, (int) Math.ceil(getWidth() / scale));
         renderOffsetX = 0;
-        renderOffsetY = 0;
+        renderOffsetY = title ? Math.max(0, (getHeight() - (int) Math.round(GameConfig.HEIGHT * scale)) / 2) : 0;
     }
 
     private Point logicalPoint(MouseEvent event) {
@@ -10220,6 +10330,7 @@ public final class GamePanel extends JPanel {
 
     private void clearPlayerPath() {
         playerPath.clear();
+        playerPathApproach.clear();
         playerPathIndex = 0;
         playerPathDestination = null;
     }
@@ -10227,6 +10338,16 @@ public final class GamePanel extends JPanel {
     private void setPlayerPath(List<TilePoint> path, TilePoint destination) {
         ensureFreePlayerPosition();
         playerPath.clear();
+        playerPathApproach.clear();
+        if (state.mode == GameMode.EXPLORE && !path.isEmpty()) {
+            var first = path.get(0);
+            var anchor = PropCollision.navigationAnchor(state.world, state.currentMapId, first.x(), first.y());
+            if (anchor != null && !PropCollision.canTravel(state.world, state.currentMapId,
+                    freePlayerX, freePlayerY, anchor.x(), anchor.y())) {
+                playerPathApproach.addAll(PropCollision.localRoute(state.world, state.currentMapId,
+                        new PropCollision.Anchor(freePlayerX, freePlayerY), anchor));
+            }
+        }
         playerPath.addAll(path);
         playerPathIndex = 0;
         playerPathDestination = destination;
@@ -10680,6 +10801,8 @@ public final class GamePanel extends JPanel {
         followerVisuals.clear();
         visiblePartyFollowers.clear();
         playerLocomotionActive = false;
+        playerGait.reset();
+        npcGaits.clear();
         playerLocomotionStartFrame = Integer.MIN_VALUE / 4;
         playerLocomotionStopFrame = Integer.MIN_VALUE / 4;
         playerIdleStartFrame = frame;
@@ -11160,6 +11283,7 @@ public final class GamePanel extends JPanel {
             case VOLUME -> setVolumeSetting(activeSlider.key(), (int) Math.round(fraction * 100));
             case CAMERA -> setCameraSmoothing((int) Math.round(fraction * 100));
             case ANIMATION -> setAnimationSpeed(0.5 + fraction * 2.5);
+            case WALK_ANIMATION -> setWalkAnimationSpeed(0.5 + fraction * 1.5);
         }
     }
 
@@ -11669,8 +11793,11 @@ public final class GamePanel extends JPanel {
                 return;
             }
             if (state.mode != GameMode.MAIN_MENU && state.mode != GameMode.CLASS_SELECT && state.mode != GameMode.PAUSE_MENU) {
-                state.adjustZoom(event.getWheelRotation() < 0 ? 10 : -10);
-                repaint();
+                int direction = Double.compare(event.getPreciseWheelRotation(), 0.0);
+                if (direction != 0) {
+                    state.adjustZoom(direction < 0 ? GameState.ZOOM_STEP : -GameState.ZOOM_STEP);
+                    repaint();
+                }
             }
         }
 

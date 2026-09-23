@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "legacy_families": {
+    "player": "characters/player",
+    "companions": "characters/companions",
+    "npcs": "characters/npcs/townsfolk",
+    "story": "characters/npcs/story",
+    "monsters": "characters/monsters",
+    "animations": "characters/shared/animations",
+    "city": "environments/settlements/city",
+    "player_village": "environments/settlements/player_village",
+    "terrain": "environments/terrain/common",
+    "road": "environments/terrain/roads",
+    "interiors": "environments/interiors",
+    "locations": "environments/locations",
+    "battle": "environments/battle",
+    "deco": "environments/props/nature",
+    "weather": "effects/weather",
+    "grass": "environments/terrain/biomes/grass",
+    "forest": "environments/terrain/biomes/forest",
+    "desert": "environments/terrain/biomes/desert",
+    "marsh": "environments/terrain/biomes/marsh",
+    "mountain": "environments/terrain/biomes/mountain",
+    "tundra": "environments/terrain/biomes/tundra",
+    "badlands": "environments/terrain/biomes/badlands",
+    "beach": "environments/terrain/biomes/beach",
+    "water": "environments/terrain/biomes/water"
+  }
+}

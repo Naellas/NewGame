@@ -1,0 +1,3 @@
+PASS: shared characters/index.html in headless Chrome.
+58 monster cards have ability selectors; all 32 VFX strips load at 3840x160.
+Every ability option can be selected and rendered; drake family filtering and shared scrubbing pass.

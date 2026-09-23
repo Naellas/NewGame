@@ -9,8 +9,8 @@ items = []
 for name in names:
     for direction, opposite in [('left', 'right'), ('right', 'left')]:
         for folder, suffix in [('', ''), ('animations/', '_walk_anim')]:
-            target = Path(f'Java/assets/npcs/{folder}npc_{name}_model_{direction}{suffix}.png')
-            source = r/'before'/f'Java/assets/npcs/{folder}npc_{name}_model_{opposite}{suffix}.png'
+            target = Path(f'Java/assets/characters/npcs/townsfolk/{folder}npc_{name}_model_{direction}{suffix}.png')
+            source = r/'before'/f'Java/assets/characters/npcs/townsfolk/{folder}npc_{name}_model_{opposite}{suffix}.png'
             before = r/'before'/target
             assert digest(target) in (digest(before), digest(source)), f'Concurrent change: {target}'
             if suffix:

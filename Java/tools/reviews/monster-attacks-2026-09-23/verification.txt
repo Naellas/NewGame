@@ -1,0 +1,1 @@
+PASS: 58 strips, 696 frames, 80 catalog entries; transparent margins, varied poses, three display sizes, runtime attack selection, buff exclusion and playback timing.

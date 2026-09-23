@@ -1,0 +1,13 @@
+# Monster attack animations
+
+58 twelve-frame attack strips cover all 80 monster catalog entries. The initial 29 bandit, goblin, orc and beast cycles are joined by 29 drake, dragon, undead, giant, troll, crawler, serpent, elemental, plant and story-boss cycles. Named variants reuse their existing sprite references.
+
+Open [the shared character review](../characters/index.html) to play, pause, or scrub all cycles, with family filters. Each card links to an actual battle-renderer capture. `poses-0.png` through `poses-7.png` show ready, wind-up, release, and recovery poses on a neutral background. The original standalone gallery retains the initial 29 cycles.
+
+All enemies face screen-left toward the player formation. The bandit archer atlas is mirrored during import. Incorrect goblin scout/archer facing was regenerated. Combat uses the new ready frame between actions, keeping the same facing and scale instead of returning to an older static model. Damage actions use these cycles even when their effects are classified as frost, magic, piercing, or a shield strike. Buff/defend actions keep their existing selection rules. Authored bow and shaman cycles include their shooting/casting motions within the `attack` strip.
+
+Runtime assets: `Java/assets/characters/monsters/animations/<sprite>_attack_anim.png`, with explicit `.frames` metadata. Each cell is 256 x 256; twelve cells form a 3072 x 256 strip. Skeleton and spider use sibling `_attack_v2_anim` files; the loader selects these new cycles while preserving their legacy strips. Overworld static sprites are unchanged.
+
+Accepted source atlases: `Java/assets/source/monster-attacks-2026-09-23/`. Artwork was generated with the built-in image_gen tool. The final prompt sets are recorded in [prompts.json](prompts.json) and [expansion-prompts.json](expansion-prompts.json). Import uses connected alpha components rather than fixed grid crops, a shared scale per cycle, fixed foot baseline, and removal of near-pure segmentation markers. Detached low-alpha export residue is excluded. The importer rejects missing or merged poses and refuses to overwrite strips unless `--replace` is passed.
+
+From `Java/`, regenerate one strip with `java tools/assets/monsters/ImportMonsterAttacks.java --replace goblin`. Run `com.alderfall.game.MonsterAttackAnimationTest` against compiled game classes for the asset and runtime checks. Validation covers frame counts, transparent margins, nonblank distinct poses, three display sizes, actual GamePanel selection for physical/ranged/elemental/shield damage, rest-pose consistency, buff exclusion, and monotonic playback at 0.5x, 1x, and 3x speed. See [verification.txt](verification.txt).

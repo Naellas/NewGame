@@ -16,6 +16,7 @@ public final class QuestLogRenderer {
     private final AssetStore assets;
     private final GameState state;
     private final Effects effects;
+    private int travelPartyPage;
 
     public QuestLogRenderer(AssetStore assets, GameState state, Effects effects) {
         this.assets = assets;
@@ -491,7 +492,8 @@ public final class QuestLogRenderer {
         }
 
         int chipX = x + 10;
-        int chipY = buttonY + buttonH * 2 + buttonGap + 4;
+        int abilityRows = Math.max(1, (visible + columns - 1) / columns);
+        int chipY = buttonY + abilityRows * (buttonH + buttonGap);
         for (String effect : List.of("travel_speed", "gather_focus", "encounter_ward", "encounter_lure", "battle_advantage")) {
             int remaining = state.worldAbilityRemaining(effect);
             if (remaining <= 0) {
@@ -512,20 +514,30 @@ public final class QuestLogRenderer {
             chipX += chipW + 6;
         }
 
-        int memberY = chipY + 26;
-        int memberAreaH = Math.max(72, y + h - memberY - 10);
-        int members = Math.max(1, party.size());
+        int memberY = chipY + (chipX > x + 10 ? 26 : 0);
+        int memberAreaH = Math.max(32, y + h - memberY - 10);
         int memberGap = 6;
-        int memberCols = members == 1 ? 1 : 2;
-        int memberRows = (members + memberCols - 1) / memberCols;
-        int memberW = (w - 20 - memberGap * (memberCols - 1)) / memberCols;
-        int memberH = Math.max(32, (memberAreaH - memberGap * (memberRows - 1)) / memberRows);
-        for (int i = 0; i < party.size(); i++) {
-            Actor actor = party.get(i);
-            int col = i % memberCols;
-            int row = i / memberCols;
-            int memberX = x + 10 + col * (memberW + memberGap);
-            drawTravelPartyMember(g, actor, memberX, memberY + row * (memberH + memberGap), memberW, memberH, members == 1);
+        boolean paged = party.size() * 70 - memberGap > memberAreaH;
+        if (paged) memberAreaH = Math.max(32, memberAreaH - 30);
+        int capacity = Math.max(1, (memberAreaH + memberGap) / 70);
+        int pages = (party.size() + capacity - 1) / capacity;
+        travelPartyPage = Math.min(travelPartyPage, pages - 1);
+        int first = travelPartyPage * capacity;
+        int rows = Math.min(capacity, party.size() - first);
+        int memberH = Math.min(180, (memberAreaH - memberGap * (rows - 1)) / rows);
+        for (int row = 0; row < rows; row++) {
+            drawTravelPartyMember(g, party.get(first + row), x + 10,
+                    memberY + row * (memberH + memberGap), w - 20, memberH);
+        }
+        if (paged) {
+            int pageY = y + h - 34;
+            effects.actionButton(g, x + 10, pageY, 70, 24, "Previous",
+                    () -> travelPartyPage--, new Color(35, 43, 58), new Color(82, 92, 116), travelPartyPage > 0);
+            effects.actionButton(g, x + w - 80, pageY, 70, 24, "Next",
+                    () -> travelPartyPage++, new Color(35, 43, 58), new Color(82, 92, 116), travelPartyPage < pages - 1);
+            g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            g.setColor(new Color(198, 202, 211));
+            effects.drawCenteredIn(g, (travelPartyPage + 1) + " / " + pages, x + 80, pageY + 16, w - 160);
         }
     }
 
@@ -581,26 +593,25 @@ public final class QuestLogRenderer {
         };
     }
 
-    private void drawTravelPartyMember(Graphics2D g, Actor actor, int x, int y, int w, int h, boolean large) {
+    private void drawTravelPartyMember(Graphics2D g, Actor actor, int x, int y, int w, int h) {
         Rectangle bounds = new Rectangle(x, y, w, h);
-        boolean compact = !large && h < 44;
         g.setColor(new Color(24, 28, 38, 232));
         g.fillRoundRect(x, y, w, h, 8, 8);
         g.setColor(new Color(82, 92, 116));
         g.drawRoundRect(x, y, w, h, 8, 8);
         effects.addPartyPortraitZone(bounds, actor);
-        int portraitW = large ? Math.min(76, Math.max(50, w / 3)) : compact ? Math.min(42, Math.max(34, w / 3 + 4)) : Math.min(54, Math.max(42, w / 3 + 8));
-        int portraitH = Math.max(compact ? 28 : 36, h + (large ? 4 : compact ? -4 : 4));
-        int portraitY = y + Math.max(2, h - portraitH - 2);
-        g.drawImage(assets.spriteFit(dialoguePortraitSprite(actor), portraitW, portraitH), x + 4, portraitY, null);
+        int portraitW = Math.min(w / 2, Math.max(70, h));
+        int portraitH = Math.max(1, h - 8);
+        g.drawImage(assets.portrait(dialoguePortraitSprite(actor), portraitW, portraitH), x + 4, y + 4, null);
         int textX = x + portraitW + 10;
         int textW = Math.max(34, w - portraitW - 16);
-        g.setFont(new Font("SansSerif", Font.BOLD, large ? 12 : compact ? 9 : 10));
+        g.setFont(new Font("SansSerif", Font.BOLD, 13));
         g.setColor(new Color(235, 236, 240));
-        effects.drawClippedString(g, actor.name, textX, y + (large ? 18 : compact ? 13 : 14), textW);
-        int barY = y + (large ? 28 : compact ? 18 : 20);
-        int barH = large ? 9 : compact ? 6 : 8;
-        int barGap = large ? 14 : compact ? 9 : 13;
+        int textY = y + Math.max(17, (h - 42) / 2);
+        effects.drawClippedString(g, actor.name, textX, textY, textW);
+        int barY = textY + 10;
+        int barH = 8;
+        int barGap = 14;
         drawMiniResourceBar(g, textX, barY, textW, barH, actor.hp, actor.maxHp, new Color(205, 85, 101));
         drawMiniResourceBar(g, textX, barY + barGap, textW, barH, actor.mp, actor.maxMp, new Color(91, 137, 214));
         effects.addTooltip(bounds, actor.name, partyMemberTooltip(actor),
@@ -721,6 +732,7 @@ public final class QuestLogRenderer {
     }
 
     private String questObjectiveDetail(Quest quest) {
+        if (PartyDialogue.isShared(quest)) return quest.description;
         if (quest.completed) {
             return "Finished with " + state.questGiverName(quest.id) + ". The reward has been claimed.";
         }
@@ -746,6 +758,7 @@ public final class QuestLogRenderer {
     }
 
     private String questLocationHint(Quest quest) {
+        if (PartyDialogue.isShared(quest)) return "Choose any dungeon. Both named companions must take part in its boss battle.";
         if (quest.ready()) {
             return "Return to " + state.questGiverName(quest.id) + " in " + state.questReturnLocation(quest.id) + ".";
         }
@@ -763,6 +776,7 @@ public final class QuestLogRenderer {
     }
 
     private String questGiverDetail(Quest quest) {
+        if (PartyDialogue.isShared(quest)) return PartyDialogue.pair(quest).names() + ". Shared expedition; rewards are granted on victory.";
         String giver = state.questGiverName(quest.id);
         String location = state.questReturnLocation(quest.id);
         String type = quest.mainStoryQuest() ? "Main story contact"

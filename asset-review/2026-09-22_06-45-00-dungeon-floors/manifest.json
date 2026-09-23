@@ -1,34 +1,34 @@
 [
   {
-    "originalPath": "Java/assets/terrain/dungeon_crypt_floor.png",
+    "originalPath": "Java/assets/environments/terrain/common/dungeon_crypt_floor.png",
     "archivedFile": "dungeon_crypt_floor.png",
     "originalSha256": "9D7FB23A27CDBB0A954261C10DFE00B4C0265AE4813665F956FE9F0368B2DD40",
     "replacementFile": "replacement_dungeon_crypt_floor.png",
     "replacementSha256": "94079D22723686F55AD96D8167C4FD10946E6D69D274280A2C0F3A1BBE01F385"
   },
   {
-    "originalPath": "Java/assets/terrain/dungeon_moss_floor.png",
+    "originalPath": "Java/assets/environments/terrain/common/dungeon_moss_floor.png",
     "archivedFile": "dungeon_moss_floor.png",
     "originalSha256": "FEB61A957ED00DFED551AD6E209C447159B0A074AE770C4251DC88E0271C828A",
     "replacementFile": "replacement_dungeon_moss_floor.png",
     "replacementSha256": "61DA38DE32676781B2F0124437B30D9C480294C689EACF90B9C6656A00A251EF"
   },
   {
-    "originalPath": "Java/assets/terrain/dungeon_rubble_floor.png",
+    "originalPath": "Java/assets/environments/terrain/common/dungeon_rubble_floor.png",
     "archivedFile": "dungeon_rubble_floor.png",
     "originalSha256": "EEF3BAA82F23DC0ACD5318156670CF3D5C7791C8BB9CDD85D6172BED5DEFB3C1",
     "replacementFile": "replacement_dungeon_rubble_floor.png",
     "replacementSha256": "13B7D64F54A6CA6C82DB23B9645647D9BBCD42E130C6EA57CF7B9DDC723DBF05"
   },
   {
-    "originalPath": "Java/assets/terrain/dungeon_torch_floor.png",
+    "originalPath": "Java/assets/environments/terrain/common/dungeon_torch_floor.png",
     "archivedFile": "dungeon_torch_floor.png",
     "originalSha256": "F0B3B3251FE0B7B9B7856C2397A949EFD96DD3F5C4F1FE06889D437E368F48FF",
     "replacementFile": "replacement_dungeon_torch_floor.png",
     "replacementSha256": "8B597AFE5951A767C5FCF1E53845C3F8DDFE74F01E21D2C326CF8267E68EEBBC"
   },
   {
-    "originalPath": "Java/assets/terrain/dungeon_boss_sigil_floor.png",
+    "originalPath": "Java/assets/environments/terrain/common/dungeon_boss_sigil_floor.png",
     "archivedFile": "dungeon_boss_sigil_floor.png",
     "originalSha256": "264EF3D6D966A0DBE5BC37B9CE7B047633454923E10B72600DB427E911946915",
     "replacementFile": "replacement_dungeon_boss_sigil_floor.png",

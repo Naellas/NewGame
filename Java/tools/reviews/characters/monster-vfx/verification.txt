@@ -1,0 +1,1 @@
+PASS: 58 sprites, 165 catalog and boss ability mappings, 32 existing animated VFX presentations; self-buffs and assets verified.

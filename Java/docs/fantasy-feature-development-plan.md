@@ -425,11 +425,11 @@ Workflow:
 3. Slice/normalize with `Java/tools`.
 4. Run fringe cleanup where needed.
 5. Add assets under the closest existing folder:
-   - character animation subfolders such as `Java/assets/player/classes/mage/animations`,
-     `Java/assets/companions/aria/animations`, or `Java/assets/npcs/animations`
+   - character animation subfolders such as `Java/assets/characters/player/classes/mage/animations`,
+     `Java/assets/characters/companions/aria/animations`, or `Java/assets/characters/npcs/townsfolk/animations`
    - `Java/assets/effects`
-   - `Java/assets/interiors`
-   - `Java/assets/locations`
+   - `Java/assets/environments/interiors`
+   - `Java/assets/environments/locations`
    - biome folders such as `forest`, `desert`, `tundra`, `water`, `terrain`
 6. Add asset keys to the relevant content registry.
 7. Verify in-game at 1x and current zoom levels.
@@ -599,7 +599,7 @@ Start with the minimum visible assets needed for the vertical slice.
    - `cracked_wardling.png`
 
 2. Place assets in likely folders:
-   - location props: `Java/assets/locations` if present, otherwise the closest existing location/props folder.
+   - location props: `Java/assets/environments/locations` if present, otherwise the closest existing location/props folder.
    - village props: `Java/assets/village` or existing village prop folder.
    - effects: `Java/assets/effects`.
    - NPC/monster animation sheets: the owner domain's `animations` folder.
@@ -607,7 +607,7 @@ Start with the minimum visible assets needed for the vertical slice.
 3. If generated sheets need slicing, run the relevant existing tool from `Java/`:
 
    ```powershell
-   python tools/regenerate_universal_assets.py --verify
+   python tools/assets/regenerate_universal_assets.py --verify
    ```
 
 4. Keep any rough preview files clearly named with `_preview` or outside runtime folders.

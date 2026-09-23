@@ -1,5 +1,8 @@
 package com.alderfall.game.map;
 
+import com.alderfall.game.BuildingGeometry;
+import com.alderfall.game.PropCollision;
+
 import com.alderfall.game.InteriorStyle;
 import com.alderfall.game.InteriorFurnishings;
 import com.alderfall.game.StoryLocationCatalog;
@@ -65,6 +68,7 @@ public final class WorldMap {
     private final Map<String, MapArea> maps = new LinkedHashMap<>();
     private final Map<String, WorldTransition> transitions = new HashMap<>();
     private final Map<String, List<CityBuilding>> cityBuildings = new HashMap<>();
+    private final Map<String, Map<CityBuilding, List<java.awt.geom.Rectangle2D.Double>>> buildingFootprintCache = new HashMap<>();
     private final Map<String, List<Npc>> interiorNpcs = new HashMap<>();
     private final List<WorldProp> playerVillageProps = new ArrayList<>();
     private final Set<String> removedPlayerVillageProps = new HashSet<>();
@@ -87,9 +91,12 @@ public final class WorldMap {
         addStoryInvestigationSites();
         addCampaignPlaces();
         addWesternAbbeyGrounds();
+        NatureSiteGenerator.populate(this, groveSeed);
+        DestinationApproaches.populate(this, groveSeed);
         for (SettlementSite site : settlementSites) {
             MapArea settlement = area(site.id());
             List<Npc> residents = RegionalSettlementGenerator.populate(this, settlement);
+            SettlementDressing.refine(this, settlement);
             if (!residents.isEmpty()) {
                 List<Npc> combined = new ArrayList<>(npcs(site.id()));
                 combined.addAll(residents);
@@ -365,11 +372,17 @@ public final class WorldMap {
         if (cityBuildingBlocksMovementAt(mapId, x, y)) {
             return false;
         }
+        return isGroundPassable(mapId, x, y);
+    }
+
+    public boolean isGroundPassable(String mapId, int x, int y) {
+        MapArea area = area(mapId);
+        if (area == null || x < 0 || y < 0 || x >= area.width() || y >= area.height()) return false;
         if (worldPropBlocksMovementAt(area, x, y)) {
             return false;
         }
         char tile = area.tileAt(x, y);
-        if (Terrain.passable(tile)) {
+        if (Terrain.passable(tile) || tile == 'h' && cityBuildingAt(mapId, x, y) != null) {
             return true;
         }
         return tile == 'k' && isOpenInteriorFurnitureTile(area, x, y);
@@ -1681,15 +1694,15 @@ public final class WorldMap {
         return safePassablePoint(PLAYER_VILLAGE_ID, x, y);
     }
 
-    private TilePoint safePassablePoint(String mapId, int x, int y) {
+    public TilePoint safePassablePoint(String mapId, int x, int y) {
         int width = width(mapId);
         int height = height(mapId);
         x = Math.max(0, Math.min(Math.max(0, width - 1), x));
         y = Math.max(0, Math.min(Math.max(0, height - 1), y));
-        if (isPassable(mapId, x, y)) {
+        if (safeReturnPoint(mapId, x, y)) {
             return new TilePoint(x, y);
         }
-        int limit = Math.max(width, height);
+        int limit = width + height;
         for (int radius = 1; radius <= limit; radius++) {
             for (int dy = -radius; dy <= radius; dy++) {
                 for (int dx = -radius; dx <= radius; dx++) {
@@ -1698,13 +1711,26 @@ public final class WorldMap {
                     }
                     int nx = x + dx;
                     int ny = y + dy;
-                    if (nx >= 0 && ny >= 0 && nx < width && ny < height && isPassable(mapId, nx, ny)) {
+                    if (nx >= 0 && ny >= 0 && nx < width && ny < height && safeReturnPoint(mapId, nx, ny)) {
                         return new TilePoint(nx, ny);
                     }
                 }
             }
         }
-        return new TilePoint(0, 0);
+        throw new IllegalStateException("No safe return point in " + mapId);
+    }
+
+    private boolean safeReturnPoint(String mapId, int x, int y) {
+        if (!isPassable(mapId, x, y) || transitionAt(mapId, x, y) != null
+                || !PropCollision.clear(this, mapId, x + 0.5, y + 0.5)) return false;
+        for (int direction = 0; direction < 4; direction++) {
+            int nx = x + (direction == 0 ? 1 : direction == 1 ? -1 : 0);
+            int ny = y + (direction == 2 ? 1 : direction == 3 ? -1 : 0);
+            if (isPassable(mapId, nx, ny) && transitionAt(mapId, nx, ny) == null
+                    && PropCollision.clear(this, mapId, nx + 0.5, ny + 0.5)
+                    && PropCollision.canTravel(this, mapId, x + 0.5, y + 0.5, nx + 0.5, ny + 0.5)) return true;
+        }
+        return false;
     }
 
     private boolean isEmptyPlayerVillageInterior(String sourceMapId, CityBuilding building) {
@@ -1880,43 +1906,25 @@ public final class WorldMap {
         return hash == Integer.MIN_VALUE ? 0 : Math.abs(hash);
     }
 
+    public List<java.awt.geom.Rectangle2D.Double> buildingFootprints(String mapId, CityBuilding building) {
+        return buildingFootprintCache.computeIfAbsent(mapId, key -> new HashMap<>())
+                .computeIfAbsent(building, key -> BuildingGeometry.footprints(this, mapId, building));
+    }
+
     public boolean cityBuildingBlocksMovementAt(String mapId, int x, int y) {
-        CityBuilding building = cityBuildingAt(mapId, x, y);
-        if (building == null) {
-            return false;
+        double r = PropCollision.PLAYER_RADIUS;
+        for (CityBuilding building : cityBuildings(mapId)) {
+            if (x < building.x1() - 2 || x > building.x2() + 2 || y < building.y1() - 1 || y > building.y2() + 1) continue;
+            for (var base : buildingFootprints(mapId, building)) {
+                if (base.intersects(x + .5 - r, y + .5 - r, r * 2, r * 2)) return true;
+            }
         }
-        if (PLAYER_VILLAGE_ID.equals(mapId) && isPlayerVillageBuilding(building)) {
-            return playerVillageBuildingBlocksMovement(building, x, y);
-        }
-        return true;
+        return false;
     }
 
     private boolean isPlayerVillageBuilding(CityBuilding building) {
         return building.key() != null && building.key().startsWith("player_")
                 && VillageManager.isManagedBuildingStyle(building.style());
-    }
-
-    private boolean playerVillageBuildingBlocksMovement(CityBuilding building, int x, int y) {
-        if (cityBuildingDoorTiles(building).contains(new TilePoint(x, y))) {
-            return true;
-        }
-        int inset = playerVillageBuildingSideInset(building);
-        int left = Math.min(building.x2(), building.x1() + inset);
-        int right = Math.max(left, building.x2() - inset);
-        return x >= left && x <= right && y >= building.y1() && y <= building.y2();
-    }
-
-    private int playerVillageBuildingSideInset(CityBuilding building) {
-        if (List.of("garden", "shrine", "watchtower").contains(building.style())) {
-            return 0;
-        }
-        if (building.width() >= 6) {
-            return 2;
-        }
-        if (building.width() >= 4) {
-            return 1;
-        }
-        return 0;
     }
 
     public List<TilePoint> cityBuildingDoorTiles(CityBuilding building) {
@@ -5807,6 +5815,11 @@ public final class WorldMap {
                 if (roll < chance) {
                     int patchSeed = hash(x / 5, y / 5, salt + tile * 97 + area.id.hashCode());
                     String asset = decorationFor(area, tile, x, y, roll, patchSeed);
+                    // Reserve most eye-catching scenery for composed sites and authored landmarks.
+                    boolean focalDecoration = asset.contains("shrine") || asset.contains("rune")
+                            || asset.contains("cairn") || asset.contains("stone_stack") || asset.contains("fairy_pool")
+                            || asset.contains("blue_mushroom_ring") || asset.contains("blooming_cactus");
+                    if (focalDecoration && Math.floorMod(hash(x, y, salt + 99173), 100) < 65) continue;
                     if (isTallProp(asset) && shouldThinTallProp(tile, asset, tallProps, x, y, roll)) {
                         asset = lowDecorationFor(area, tile, x, y, roll + 31, patchSeed);
                     }
@@ -5831,6 +5844,58 @@ public final class WorldMap {
         }
         addResourceNodeProps(area, salt, occupiedProps, tallProps);
         addSoftBiomeProps(area, salt, occupiedProps);
+        addQuarterTileDetails(area, salt);
+    }
+
+    private void addQuarterTileDetails(MapArea area, int salt) {
+        if (!OVERWORLD_ID.equals(area.id) && !"village".equals(area.kind)) return;
+        if (PLAYER_VILLAGE_ID.equals(area.id) || area.id.startsWith("editor_")) return;
+        for (int y = 2; y < area.height() - 2; y++) for (int x = 2; x < area.width() - 2; x++) {
+            char ground = area.tileAt(x, y);
+            if (NatureSiteGenerator.biome(ground) == null) continue;
+            if (area.propAt(x, y) != null || area.landmarks.containsKey(new TilePoint(x, y))) continue;
+            boolean clear = true;
+            for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++) {
+                if (area.tileAt(x + dx, y + dy) != ground) clear = false;
+            }
+            if (!clear) continue;
+            // Overlapping, offset patches produce rounded clumps rather than visible square blocks.
+            double patchStrength = 0;
+            int patchSeed = hash(x / 6, y / 6, salt + 713 + area.id.hashCode());
+            for (int cy = y / 6 - 1; cy <= y / 6 + 1; cy++) {
+                for (int cx = x / 6 - 1; cx <= x / 6 + 1; cx++) {
+                    int seed = hash(cx, cy, salt + 713 + area.id.hashCode());
+                    if (Math.floorMod(seed, 100) < 35) continue;
+                    double centerX = cx * 6 + 1 + Math.floorMod(seed / 101, 400) / 100.0;
+                    double centerY = cy * 6 + 1 + Math.floorMod(seed / 401, 400) / 100.0;
+                    double radius = 3.0 + Math.floorMod(seed / 1601, 180) / 100.0;
+                    double stretch = 0.8 + Math.floorMod(seed / 3203, 40) / 100.0;
+                    double distance = Math.hypot(x + 0.5 - centerX, (y + 0.5 - centerY) / stretch);
+                    double t = Math.max(0, 1 - distance / radius);
+                    double strength = t * t * (3 - 2 * t);
+                    if (strength > patchStrength) {
+                        patchStrength = strength;
+                        patchSeed = seed;
+                    }
+                }
+            }
+            String[] assets = new String[8];
+            String biome = NatureSiteGenerator.biome(ground);
+            for (int i = 0; i < 8; i++) assets[i] = "deco_ground_" + biome + "_" + (i + 1);
+            int baseline = switch (ground) { case 'g' -> 400; case 'f', 'v' -> 280; default -> 160; };
+            int chance = baseline + (int) (patchStrength * 570);
+            int dominantAsset = Math.floorMod(patchSeed, assets.length);
+            // Empty slots are intentional. Small ground details never acquire collision or resource identity.
+            for (int slot = 0; slot < 4; slot++) {
+                int roll = Math.floorMod(hash(x, y, salt + slot * 1709 + 937), 1000);
+                if (roll >= chance) continue;
+                int variety = Math.floorMod(hash(x, y, salt + slot * 2081 + 1237), 100);
+                int asset = patchStrength > 0.15 && variety < 55 ? dominantAsset : variety % assets.length;
+                // Leaf piles are occasional accents; the forest floor is mostly moss, fern and twigs.
+                if (ground == 'f' && asset < 4 && variety < 75) asset = 4 + variety % 4;
+                area.addProp(new WorldProp(x, y, assets[asset], 14 + roll % 9, slot));
+            }
+        }
     }
 
     private void addResourceNodeProps(MapArea area, int salt, boolean[][] occupiedProps, boolean[][] tallProps) {
@@ -6089,7 +6154,7 @@ public final class WorldMap {
         if (roadDistance <= 1 && tile != 'm') {
             chance += 18;
         }
-        return Math.min(310, chance);
+        return Math.min(310, chance) * (tile == 'w' || tile == '~' ? 100 : 40) / 100;
     }
 
     private String softDecorationFor(MapArea area, char tile, int x, int y, int roll, int patchSeed) {
@@ -6536,8 +6601,14 @@ public final class WorldMap {
         }
         candidates.removeIf(candidate -> isDisallowedOutdoorProp(candidate.asset()));
         return candidates.stream()
-                .max(Comparator.comparingInt(CityPropCandidate::score)
-                        .thenComparing(CityPropCandidate::asset))
+                .filter(candidate -> !SettlementDressing.lamp(candidate.asset()))
+                .min(Comparator.comparingDouble(candidate -> {
+                    long repeats = area.propsInBounds(x - 4, y - 4, x + 4, y + 4).stream()
+                            .filter(p -> p.asset().equals(candidate.asset())).count();
+                    double weight = Math.max(1, candidate.score() / (1.0 + repeats * 3));
+                    double random = (Math.floorMod(hash(x, y, candidate.asset().hashCode() ^ area.id.hashCode()), 100000) + 1) / 100001.0;
+                    return -Math.log(random) / weight;
+                }))
                 .orElse(null);
     }
 

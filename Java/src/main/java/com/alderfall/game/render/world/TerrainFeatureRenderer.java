@@ -89,37 +89,8 @@ public final class TerrainFeatureRenderer {
     }
 
     public void drawSettlementSurfaceSeams(Graphics2D g, int camX, int camY) {
-        String kind = state.world.kind(state.currentMapId);
-        if (!"city".equals(kind)) {
-            return;
-        }
-        int ts = tileSize();
-        int seam = Math.max(2, tileRelative("city".equals(kind) ? 8 : 6, ts));
-        Composite oldComposite = g.getComposite();
-        g.setComposite(AlphaComposite.SrcOver);
-        for (int sy = 0; sy < context.visibleRows(); sy++) {
-            for (int sx = 0; sx < context.visibleCols(); sx++) {
-                int wx = camX + sx;
-                int wy = camY + sy;
-                char tile = state.world.tileAt(state.currentMapId, wx, wy);
-                if (!isSettlementSurface(tile)) {
-                    continue;
-                }
-                int px = sx * ts;
-                int py = sy * ts;
-                char east = state.world.tileAt(state.currentMapId, wx + 1, wy);
-                if (isSameSettlementSurfaceBand(tile, east)) {
-                    g.setColor(settlementSurfaceSeamColor(tile, east));
-                    g.fillRect(px + ts - seam / 2, py, seam, ts);
-                }
-                char south = state.world.tileAt(state.currentMapId, wx, wy + 1);
-                if (isSameSettlementSurfaceBand(tile, south)) {
-                    g.setColor(settlementSurfaceSeamColor(tile, south));
-                    g.fillRect(px, py + ts - seam / 2, ts, seam);
-                }
-            }
-        }
-        g.setComposite(oldComposite);
+        // Outdoor settlements now share the continuous ground compositor. The old seam rectangles
+        // would repaint a tile grid over its road shoulders and courts.
     }
 
     private boolean isSettlementSurface(char tile) {
@@ -451,7 +422,7 @@ public final class TerrainFeatureRenderer {
     public void drawRoadConnectors(Graphics2D g, int camX, int camY) {
         int ts = tileSize();
         String mapKind = state.world.kind(state.currentMapId);
-        boolean layeredRoads = "village".equals(mapKind) || "overworld".equals(mapKind);
+        boolean layeredRoads = "village".equals(mapKind) || "overworld".equals(mapKind) || "city".equals(mapKind);
         boolean texturedRoads = isTexturedRoadMap(mapKind) && !layeredRoads;
         for (int sy = 0; sy < context.visibleRows(); sy++) {
             for (int sx = 0; sx < context.visibleCols(); sx++) {
@@ -1217,6 +1188,10 @@ public final class TerrainFeatureRenderer {
     }
 
     public void drawMountainMassifOverlays(Graphics2D g, int camX, int camY) {
+        drawMountainMassifOverlays(g, camX, camY, null);
+    }
+
+    public void drawMountainMassifOverlays(Graphics2D g, int camX, int camY, WorldDepthRenderer depth) {
         if (!WorldMap.OVERWORLD_ID.equals(state.currentMapId)) {
             return;
         }
@@ -1241,7 +1216,9 @@ public final class TerrainFeatureRenderer {
             int px = (anchor.x() - camX) * ts + ts / 2 - drawSize / 2 + jitterX;
             int py = (anchor.y() - camY) * ts + ts - drawSize + scaled(8) + jitterY;
             effects.drawShadow(g, px + drawSize / 5, py + drawSize - scaled(15), drawSize * 3 / 5, scaled(12));
-            g.drawImage(assets.spriteFit("mountain_massif", drawSize, drawSize), px, py, null);
+            if (depth == null) g.drawImage(assets.spriteFit("mountain_massif", drawSize, drawSize), px, py, null);
+            else depth.scenery(g, py + drawSize - scaled(8), new java.awt.Rectangle(px, py, drawSize, drawSize),
+                    target -> target.drawImage(assets.spriteFit("mountain_massif", drawSize, drawSize), px, py, null));
         }
     }
 

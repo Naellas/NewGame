@@ -35,4 +35,4 @@ Short samples generated for choosing biome music direction. These do not replace
 - `zone_water__pulse.wav` - zone_water, Pulse: travel groove with a steadier bass and brighter arpeggio motion; 84 BPM, 11.4s sample
 - `zone_water__glass.wav` - zone_water, Glass: glassy, spacious variation with bell tones and slow shimmer; 61 BPM, 15.7s sample
 
-Generated with `python tools/musicgen.py --sample-pack`.
+Generated with `python tools/audio/musicgen.py --sample-pack`.

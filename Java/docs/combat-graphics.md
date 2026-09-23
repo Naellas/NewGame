@@ -10,7 +10,7 @@ Outdoor scenes cover grassland plains, woodland clearings, desert flats, frostfi
 
 Caves inherit the dungeon profile's exterior biome: temperate limestone, forest roots, desert sandstone, glacier ice, marsh shale, volcanic basalt, coastal sea cave or mountain quartz. Dungeon themes take priority: crypts use burial chambers, sewers use maintenance platforms, and castles/prisons use the stone hall. Unknown dungeon profiles retain their fallback. Beach and submerged-sand tiles participate in exterior-biome detection.
 
-Selection occurs once when the battle is created, checks map bounds and does not consume combat RNG. Artwork was generated using built-in image_gen. PNGs and exact prompts are in `assets/battle/`; see `environment-refresh-prompts.md` for this pass and `combat-background-prompts.md` for the earlier transitions.
+Selection occurs once when the battle is created, checks map bounds and does not consume combat RNG. Artwork was generated using built-in image_gen. PNGs and exact prompts are in `assets/environments/battle/`; see `environment-refresh-prompts.md` for this pass and `combat-background-prompts.md` for the earlier transitions.
 
 Run `com.alderfall.game.BattleSceneryTest` for biome mapping, road selection, dungeon precedence and asset decoding/cover checks.
 

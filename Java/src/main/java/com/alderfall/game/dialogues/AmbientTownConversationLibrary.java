@@ -186,6 +186,16 @@ final class AmbientTownConversationLibrary {
                 case HERBALIST -> Role.HERBALIST;
             };
         }
+        if (npc.recruitId() == null) return switch (NpcIdentity.role(npc)) {
+            case FARMER -> Role.FARMER;
+            case MINER -> Role.SMITH;
+            case TRADER -> Role.MERCHANT;
+            case ARTISAN -> Role.WORKER;
+            case SCHOLAR, NOBLE -> Role.SCHOLAR;
+            case GUARD -> Role.GUARD;
+            case HEALER -> Role.HEALER;
+            case COOK -> Role.COOK;
+        };
         if (npc.shopId() != null && GameData.SHOPS.containsKey(npc.shopId())) {
             String shopName = GameData.SHOPS.get(npc.shopId()).name().toLowerCase(Locale.ROOT);
             if (shopName.contains("smith") || shopName.contains("forge")) {

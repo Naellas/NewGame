@@ -51,7 +51,7 @@ Smithing, tailoring, carpentry, armorcraft, alchemy, and jewellery have separate
 
 Versioned `part1~` and `gear1~` item keys encode the blueprint, material choices, and workmanship. Existing inventory/equipment save serialization preserves these without a new save format. Final stats resolve from the catalog, so future balance changes will also affect saved assembled gear. Output is fixed at task start, preventing skill gains during the timer from changing the advertised result. Assembly never receives legacy batch-output bonuses.
 
-Validation: `AssemblyCraftingTest` covers material comparisons, workmanship, optional drops, invalid slots, resource accounting, XP, all blueprints, malformed keys, and existing save serialization. `AssemblyWorkshopTest` covers navigation, rendering, workstation enforcement, and assembling through the game UI. It can write previews using `java -cp out com.alderfall.game.AssemblyWorkshopTest out/workshop`.
+Validation: `AssemblyCraftingTest` covers material comparisons, workmanship, optional drops, invalid slots, resource accounting, XP, all blueprints, malformed keys, and existing save serialization. `AssemblyWorkshopTest` covers navigation, rendering, workstation enforcement, and assembling through the game UI. It can write previews using `java -cp temp/checks/classes com.alderfall.game.AssemblyWorkshopTest out/workshop`.
 
 `CraftingCalculationTest` checks exact job/attribute arithmetic, difficulty, attribute caps, profession gates, refinement paths, and reverse coverage of the crafting material registry. `ItemAppearanceTest` verifies category/material/quality artwork.
 

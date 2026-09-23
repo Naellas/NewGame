@@ -1,6 +1,6 @@
 [
   {
-    "path": "Java/assets/locations/town_park_accent_green.png",
+    "path": "Java/assets/environments/locations/town_park_accent_green.png",
     "mode": "magenta",
     "source_size": [
       449,
@@ -22,7 +22,7 @@
     "passed": true
   },
   {
-    "path": "Java/assets/locations/town_park_accent_snow.png",
+    "path": "Java/assets/environments/locations/town_park_accent_snow.png",
     "mode": "magenta",
     "source_size": [
       423,
@@ -44,7 +44,7 @@
     "passed": false
   },
   {
-    "path": "Java/assets/locations/town_park_accent_desert.png",
+    "path": "Java/assets/environments/locations/town_park_accent_desert.png",
     "mode": "magenta",
     "source_size": [
       453,
@@ -66,7 +66,7 @@
     "passed": true
   },
   {
-    "path": "Java/assets/locations/town_park_accent_marsh.png",
+    "path": "Java/assets/environments/locations/town_park_accent_marsh.png",
     "mode": "magenta",
     "source_size": [
       413,
@@ -88,7 +88,7 @@
     "passed": true
   },
   {
-    "path": "Java/assets/locations/town_park_accent_city.png",
+    "path": "Java/assets/environments/locations/town_park_accent_city.png",
     "mode": "magenta",
     "source_size": [
       419,

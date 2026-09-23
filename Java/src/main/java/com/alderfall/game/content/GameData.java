@@ -403,6 +403,25 @@ public final class GameData {
     );
 
     public static final Map<String, Quest> QUESTS = QuestNarrative.refine(Map.ofEntries(
+            quest("cairnvale_ore_assay", "Iron for the Winter Tools", "Collect three marked iron samples outside Cairnspire Mine and bring them back to Miner Dorran in Cairnvale.", "Iron Assay Sample", 3, 92, 68,
+                    Quest.ObjectiveKind.GATHER, "cave_mouth", 5, "deco_ore_iron_vein", null,
+                    "Dorran: The winter tool order needs sound iron. Collect three samples from the marked seams outside Cairnspire Mine; I will assay them before anyone reopens the shaft.",
+                    "Dorran: Three marked samples from the mine approach. Leave the sealed lower shaft alone; this is an assay, not a rescue.",
+                    "Dorran: Those are the samples I need. Bring them here and we can settle the order.",
+                    "Dorran: Good grain in this iron. The smiths can use the stockpile for winter tools. Here is your delivery pay."),
+            stagedSideQuest("briarbridge_forged_seal", "A Borrowed Signet", "Compare a disputed toll receipt with Briarbridge's charter register, then report the forgery to Magistrate Halven.", 110, 85, List.of(
+                    questStageOnMap("briarbridge_receipt", "Examine the Disputed Receipt", "Disputed Toll Receipt", 1, Quest.ObjectiveKind.SEARCH,
+                            "town_briarbridge", "story", 0, "quest_document_bundle", null, "", "",
+                            "Halven: A ferryman paid a toll bearing my seal, but no payment reached the bridge fund. Examine the marked receipt here in Briarbridge before we accuse anyone.",
+                            "Halven: Start with the marked receipt in town. Look at the impression, not merely the signature.",
+                            "The seal has a split branch beneath the bridge crest. The ink is fresh, but the wax impression was copied from an older stamp.",
+                            "Halven: A damaged stamp is evidence. Now compare it with the register."),
+                    questStageOnMap("briarbridge_register", "Compare the Charter Register", "Bridge Charter Register", 1, Quest.ObjectiveKind.SEARCH,
+                            "town_briarbridge", "story", 1, "quest_document_bundle", null, "", "",
+                            "Halven: The marked charter register records retired seals. Check whether the split branch belonged to a stamp withdrawn from service.",
+                            "Halven: Compare the retired stamp entry with the receipt, then report to me.",
+                            "The register records that stamp as destroyed last winter. Someone is collecting tolls with a copy; the ferryman's receipt is forged.",
+                            "Halven: That establishes the fraud, though not the culprit. I will suspend that seal, repay the ferryman, and open a formal inquiry. You have earned your fee."))),
             quest("slime_help", "Marla's Remedy", "Clear three Bog Slimes from the road marshes.", "Bog Slime", 3, 35, 24),
             quest("crypt_lights", "Lights in the Crypt", "Defeat two Restless Skeletons below the old stone dungeon.", "Restless Skeleton", 2, 60, 42),
             quest("orc_siege", "Siege Warning", "Break the raider vanguard by defeating one Orc Brute.", "Orc Brute", 1, 95, 70),
@@ -2729,6 +2748,14 @@ public final class GameData {
     );
 
     public static final List<Npc> NPCS = List.of(
+            new Npc("village_cairnvale", "Miner Dorran", "npc_blacksmith", 16, 13, List.of(
+                    "I count lamps before ore sacks. A missed delivery costs coin; a missing miner costs a family.",
+                    "The winter tools need iron. Bring me samples from the mine approach so I can test the stock before the smiths pay for it."
+            ), "cairnvale_ore_assay", null),
+            new Npc("town_briarbridge", "Magistrate Halven", "npc_citizen_man", 17, 11, List.of(
+                    "A fine cloak does not make my seal honest. Records and witnesses do.",
+                    "Someone charged a ferryman under my name. Help me examine the receipt and charter register before rumor becomes a verdict."
+            ), "briarbridge_forged_seal", null),
             new Npc("city_riverside", "Marla", "npc_marla", 17, 11, List.of(
                     "I was a field medic before Riverside had walls.",
                     "The marsh fever is back, and the slimes carry it along the herb road.",

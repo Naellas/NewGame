@@ -1,0 +1,1122 @@
+[
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/AlternateWalkingTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/AlternateWalkingTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ArmSkeletonTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/ArmSkeletonTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ArticulatedWalkingTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/ArticulatedWalkingTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/AssemblyCraftingTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/AssemblyCraftingTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/AssemblyWorkshopTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/AssemblyWorkshopTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/BattleBackdropPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/BattleBackdropPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/BattleDefeatTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/BattleDefeatTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/BattleReturnTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/BattleReturnTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/BattleSceneryTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/BattleSceneryTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/BridgeRenderingTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/BridgeRenderingTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/BuildingCollisionTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/BuildingCollisionTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/BuiltDungeonPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/BuiltDungeonPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CampaignPlacePreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/CampaignPlacePreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CavernPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/CavernPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CavernTerrainTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CavernTerrainTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CharacterAnimationAudit.java",
+    "destination": "Java/src/testSupport/java/com/alderfall/game/diagnostics/CharacterAnimationAudit.java",
+    "reason": "Shared roster/audit support used by tests and reviews"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CharacterAnimationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CharacterAnimationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ChestSystemTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/ChestSystemTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CombatGraphicsTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CombatGraphicsTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CombatMusicTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CombatMusicTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CompanionDialogueQaExport.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/CompanionDialogueQaExport.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CompanionFacingReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/CompanionFacingReview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CompanionQuestSegmentTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CompanionQuestSegmentTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CraftingAppearanceTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CraftingAppearanceTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CraftingCalculationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CraftingCalculationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/CreativeCraftingTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/CreativeCraftingTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DebugMetrics.java",
+    "destination": "Java/src/main/java/com/alderfall/game/rendering/DebugMetrics.java",
+    "reason": "Runtime metrics helper; retain in main"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DestinationApproachesTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/DestinationApproachesTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DialogueAnimationLayersTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/DialogueAnimationLayersTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DialogueAnimationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/DialogueAnimationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DialogueMotionReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/DialogueMotionReview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DialoguePlaceAudit.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/DialoguePlaceAudit.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DialoguePoseTrackTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/DialoguePoseTrackTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DungeonExteriorPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/DungeonExteriorPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/DungeonPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/DungeonPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/FolkloreWorldTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/FolkloreWorldTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/GameDiagnostics.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/GameDiagnostics.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/GroundDetailBatchTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/GroundDetailBatchTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/GroundedCutoutReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/GroundedCutoutReview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/GroundedCutoutTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/GroundedCutoutTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/GroundedGameRenderTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/GroundedGameRenderTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/GroundedWalkingTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/GroundedWalkingTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/HearthlandsWorldTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/HearthlandsWorldTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/InteriorDesignPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/InteriorDesignPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/InteriorFurnishingsTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/InteriorFurnishingsTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/InteriorLayoutTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/InteriorLayoutTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/InteriorPlacementTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/InteriorPlacementTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/InteriorRenderTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/InteriorRenderTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ItemAppearanceTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/ItemAppearanceTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ItemBrowserTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/ItemBrowserTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/LayeredTerrainPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/LayeredTerrainPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/LayeredTerrainTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/LayeredTerrainTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/LocationEncounterTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/LocationEncounterTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/LocationIdentityPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/LocationIdentityPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/LocomotionTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/LocomotionTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/MainStoryDialogueTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/MainStoryDialogueTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ModularDungeonPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/ModularDungeonPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/MonsterAttackAnimationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/MonsterAttackAnimationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/MonsterVfxReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/MonsterVfxReview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/MusicRegionTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/MusicRegionTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/NaturalTerrainVariantTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/NaturalTerrainVariantTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/NatureSpacesTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/NatureSpacesTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/NpcQuestStoryTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/NpcQuestStoryTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/NpcVisualReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/NpcVisualReview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/NpcYieldTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/NpcYieldTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/PartyDialogueTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/PartyDialogueTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/PropPlacementTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/PropPlacementTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/QuestNarrativeTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/QuestNarrativeTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/RegionalBuildingsTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/RegionalBuildingsTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/RegionalNpcTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/RegionalNpcTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/RegionalSettlementTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/RegionalSettlementTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/RenderBenchmark.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/RenderBenchmark.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/RenderCacheTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/RenderCacheTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ResourceArtworkPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/ResourceArtworkPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ResourceEconomyTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/ResourceEconomyTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/RoadSurfaceTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/RoadSurfaceTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/SettlementCompositionTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/SettlementCompositionTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/SettlementSpriteScaleTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/SettlementSpriteScaleTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/SideStrideReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/SideStrideReview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/SkillTreeAudit.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/SkillTreeAudit.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/SmokeTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/SmokeTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/StoryLocationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/StoryLocationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/SubtileCollisionTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/SubtileCollisionTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/TextileMaterialsTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/TextileMaterialsTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/TownNpcNavigationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/TownNpcNavigationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/VillageTerrainPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/VillageTerrainPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/VillageTerrainTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/VillageTerrainTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WalkAnimationSpeedTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/WalkAnimationSpeedTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WalkingStrideTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/WalkingStrideTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WeatherVfxPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/WeatherVfxPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WesternReachWorldTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/WesternReachWorldTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WorldDepthRenderTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/WorldDepthRenderTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WorldGenerationPreview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/WorldGenerationPreview.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WorldMapReviewTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/WorldMapReviewTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/WorldPoseTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/diagnostics/WorldPoseTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/diagnostics/ZoomRenderBenchmark.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/ZoomRenderBenchmark.java",
+    "reason": "Developer audit, benchmark or visual exporter"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/map/BuiltDungeonEcologyTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/map/BuiltDungeonEcologyTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/map/CavernEcologyTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/map/CavernEcologyTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/map/DungeonExteriorTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/map/DungeonExteriorTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/map/DungeonGenerationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/map/DungeonGenerationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/map/ModularDungeonAssetsTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/map/ModularDungeonAssetsTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/map/OverworldLocationBlueprintTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/map/OverworldLocationBlueprintTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/map/WorldGenerationTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/map/WorldGenerationTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/src/main/java/com/alderfall/game/render/world/InteriorLightTest.java",
+    "destination": "Java/src/test/java/com/alderfall/game/render/world/InteriorLightTest.java",
+    "reason": "Assertion-based diagnostic"
+  },
+  {
+    "source": "Java/tools/asset_paths.py",
+    "destination": "Java/tools/assets/shared/asset_paths.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/audit_flora_edges.py",
+    "destination": "Java/tools/checks/audit_flora_edges.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/audit_resource_art.py",
+    "destination": "Java/tools/checks/audit_resource_art.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/check_repository_hygiene.py",
+    "destination": "Java/tools/checks/check_repository_hygiene.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/check_review_site.py",
+    "destination": "Java/tools/checks/check_review_site.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/create_class_dialogue_assets.py",
+    "destination": "Java/tools/assets/characters/create_class_dialogue_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/create_companion_battle_assets.py",
+    "destination": "Java/tools/assets/characters/create_companion_battle_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/create_dialogue_npc_assets.py",
+    "destination": "Java/tools/assets/characters/create_dialogue_npc_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/create_special_npc_assets.py",
+    "destination": "Java/tools/assets/characters/create_special_npc_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/create_story_dialogue_npc_assets.py",
+    "destination": "Java/tools/assets/characters/create_story_dialogue_npc_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/DestinationApproachReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/DestinationApproachReview.java",
+    "reason": "Game-dependent visual exporter"
+  },
+  {
+    "source": "Java/tools/extract_beach_assets.py",
+    "destination": "Java/tools/assets/environments/extract_beach_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_city_key_assets.py",
+    "destination": "Java/archive/pending-deletion/retired-tools-2026-09-23/files/Java/tools/extract_city_key_assets.py",
+    "reason": "Old city-sheet heuristic extractor; no active callers found; current city refresh uses import_city_refinement_assets and ImportSettlementRefresh."
+  },
+  {
+    "source": "Java/tools/extract_city_tilesheet.py",
+    "destination": "Java/archive/pending-deletion/retired-tools-2026-09-23/files/Java/tools/extract_city_tilesheet.py",
+    "reason": "Old grid-slice city extractor; no active callers found; grid-slice candidates already quarantined; retained for historical regeneration."
+  },
+  {
+    "source": "Java/tools/extract_directional_character_assets.py",
+    "destination": "Java/tools/assets/characters/extract_directional_character_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_goblin_monster_assets.py",
+    "destination": "Java/tools/assets/monsters/extract_goblin_monster_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_interior_assets.py",
+    "destination": "Java/tools/assets/environments/extract_interior_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_interior_extra_props.py",
+    "destination": "Java/tools/assets/environments/extract_interior_extra_props.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_interior_seamless_tiles.py",
+    "destination": "Java/tools/assets/environments/extract_interior_seamless_tiles.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_interior_tiles.py",
+    "destination": "Java/tools/assets/environments/extract_interior_tiles.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_interior_wall_decor.py",
+    "destination": "Java/tools/assets/environments/extract_interior_wall_decor.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_interior_wall_orientations.py",
+    "destination": "Java/tools/assets/environments/extract_interior_wall_orientations.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_item_icon_sheets.py",
+    "destination": "Java/tools/assets/items/extract_item_icon_sheets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_location_assets.py",
+    "destination": "Java/tools/assets/environments/extract_location_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_mage_directional_assets.py",
+    "destination": "Java/tools/assets/characters/extract_mage_directional_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_monster_expansion_assets.py",
+    "destination": "Java/tools/assets/monsters/extract_monster_expansion_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_new_npc_class_assets.py",
+    "destination": "Java/tools/assets/characters/extract_new_npc_class_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_npc_variation_assets.py",
+    "destination": "Java/tools/assets/characters/extract_npc_variation_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_player_village_growth_assets.py",
+    "destination": "Java/tools/assets/environments/extract_player_village_growth_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/extract_sheet_assets.py",
+    "destination": "Java/tools/assets/extract_sheet_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_assets.py",
+    "destination": "Java/tools/assets/generate_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_biome_decorations.py",
+    "destination": "Java/tools/assets/environments/generate_biome_decorations.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_character_movement_state_animations.py",
+    "destination": "Java/tools/assets/characters/generate_character_movement_state_animations.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_cloud_assets.py",
+    "destination": "Java/tools/assets/environments/generate_cloud_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_dungeon_tiles.py",
+    "destination": "Java/tools/assets/environments/generate_dungeon_tiles.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_field_connectors.py",
+    "destination": "Java/tools/assets/environments/generate_field_connectors.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_forest_mesh_assets.py",
+    "destination": "Java/tools/assets/environments/generate_forest_mesh_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_monster_assets.py",
+    "destination": "Java/tools/assets/monsters/generate_monster_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_npc_assets.py",
+    "destination": "Java/tools/assets/characters/generate_npc_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_overworld_fidelity_assets.py",
+    "destination": "Java/tools/assets/environments/generate_overworld_fidelity_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_overworld_settlement_assets.py",
+    "destination": "Java/tools/assets/environments/generate_overworld_settlement_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_player_model_assets.py",
+    "destination": "Java/tools/assets/environments/generate_player_model_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_prototype_battle_animations.py",
+    "destination": "Java/archive/pending-deletion/retired-tools-2026-09-23/files/Java/tools/generate_prototype_battle_animations.py",
+    "reason": "Six-frame prototype battle generator; no active callers found; current character and monster attacks use authored importers. Runtime fallback art is retained."
+  },
+  {
+    "source": "Java/tools/generate_quest_objective_assets.py",
+    "destination": "Java/tools/assets/environments/generate_quest_objective_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_road_autotiles.py",
+    "destination": "Java/tools/assets/environments/generate_road_autotiles.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_settlement_scene_assets.py",
+    "destination": "Java/tools/assets/environments/generate_settlement_scene_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/generate_village_management_assets.py",
+    "destination": "Java/tools/assets/environments/generate_village_management_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_built_dungeons.ps1",
+    "destination": "Java/tools/assets/environments/import_built_dungeons.ps1",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_city_refinement_assets.py",
+    "destination": "Java/tools/assets/environments/import_city_refinement_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_dungeon_floor_replacements.ps1",
+    "destination": "Java/tools/assets/environments/import_dungeon_floor_replacements.ps1",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_dungeon_overworld_props.py",
+    "destination": "Java/tools/assets/environments/import_dungeon_overworld_props.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_household_expansion.py",
+    "destination": "Java/tools/assets/environments/import_household_expansion.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_action_strip.py",
+    "destination": "Java/tools/assets/characters/import_imagegen_action_strip.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_castle_dungeon_assets.py",
+    "destination": "Java/tools/assets/environments/import_imagegen_castle_dungeon_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_cave_dungeon_tiles.py",
+    "destination": "Java/tools/assets/environments/import_imagegen_cave_dungeon_tiles.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_companion_directionals.py",
+    "destination": "Java/tools/assets/characters/import_imagegen_companion_directionals.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_companion_walk_cycles.py",
+    "destination": "Java/tools/assets/characters/import_imagegen_companion_walk_cycles.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_inn_interior_assets.py",
+    "destination": "Java/tools/assets/environments/import_imagegen_inn_interior_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_modular_seating_assets.py",
+    "destination": "Java/tools/assets/environments/import_imagegen_modular_seating_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_imagegen_npc_walk_cycles.py",
+    "destination": "Java/tools/assets/characters/import_imagegen_npc_walk_cycles.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_modular_dungeon_assets.ps1",
+    "destination": "Java/tools/assets/environments/import_modular_dungeon_assets.ps1",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_regional_caverns.ps1",
+    "destination": "Java/tools/assets/environments/import_regional_caverns.ps1",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_resource_art.ps1",
+    "destination": "Java/tools/assets/items/import_resource_art.ps1",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_town_portals.py",
+    "destination": "Java/tools/assets/environments/import_town_portals.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/import_water_imagegen_props.py",
+    "destination": "Java/tools/assets/environments/import_water_imagegen_props.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ImportCharacterPass.java",
+    "destination": "Java/tools/assets/characters/ImportCharacterPass.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ImportCharacterSheets.java",
+    "destination": "Java/tools/assets/characters/ImportCharacterSheets.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ImportCleanFlora.java",
+    "destination": "Java/tools/assets/environments/ImportCleanFlora.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ImportMonsterAttacks.java",
+    "destination": "Java/tools/assets/monsters/ImportMonsterAttacks.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ImportNatureSheets.java",
+    "destination": "Java/tools/assets/environments/ImportNatureSheets.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ImportRegionalNpcs.java",
+    "destination": "Java/tools/assets/characters/ImportRegionalNpcs.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ImportSettlementRefresh.java",
+    "destination": "Java/tools/assets/environments/ImportSettlementRefresh.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/make_directional_reference_sheets.py",
+    "destination": "Java/tools/assets/characters/make_directional_reference_sheets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/music_score.py",
+    "destination": "Java/tools/audio/music_score.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/musicgen.py",
+    "destination": "Java/tools/audio/musicgen.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/NamedNpcPortraits.java",
+    "destination": "Java/tools/assets/characters/NamedNpcPortraits.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/NatureSpaceReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/NatureSpaceReview.java",
+    "reason": "Game-dependent visual exporter"
+  },
+  {
+    "source": "Java/tools/normalize_npc_portraits.py",
+    "destination": "Java/tools/assets/characters/normalize_npc_portraits.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/process_mage_cast_animation_sheet.py",
+    "destination": "Java/tools/assets/characters/process_mage_cast_animation_sheet.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/process_walk15_animations.py",
+    "destination": "Java/tools/assets/characters/process_walk15_animations.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/recolor_mage_down_blue_eyes.py",
+    "destination": "Java/tools/assets/characters/recolor_mage_down_blue_eyes.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/regenerate_character_walk_animations.py",
+    "destination": "Java/tools/assets/characters/regenerate_character_walk_animations.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/regenerate_universal_assets.py",
+    "destination": "Java/tools/assets/regenerate_universal_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/ReviewCharacterPass.java",
+    "destination": "Java/tools/assets/characters/ReviewCharacterPass.java",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/RowHitboxReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/RowHitboxReview.java",
+    "reason": "Game-dependent visual exporter"
+  },
+  {
+    "source": "Java/tools/SettlementCompositionReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/SettlementCompositionReview.java",
+    "reason": "Game-dependent visual exporter"
+  },
+  {
+    "source": "Java/tools/slice_imagegen_village_assets.py",
+    "destination": "Java/tools/assets/environments/slice_imagegen_village_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/slice_resource_props.py",
+    "destination": "Java/tools/assets/items/slice_resource_props.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/test_music_score.py",
+    "destination": "Java/tools/tests/test_music_score.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/test_repository_hygiene.py",
+    "destination": "Java/tools/tests/test_repository_hygiene.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/test_repository_reviews.py",
+    "destination": "Java/tools/tests/test_repository_reviews.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/test_universal_cutout.py",
+    "destination": "Java/tools/tests/test_universal_cutout.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/test_universal_cutout_real_sheets.py",
+    "destination": "Java/tools/tests/test_universal_cutout_real_sheets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/TitleMenuReview.java",
+    "destination": "Java/src/review/java/com/alderfall/game/diagnostics/TitleMenuReview.java",
+    "reason": "Game-dependent visual exporter"
+  },
+  {
+    "source": "Java/tools/universal_cutout.py",
+    "destination": "Java/tools/assets/shared/universal_cutout.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/tools/verify_universal_cutout_assets.py",
+    "destination": "Java/tools/checks/verify_universal_cutout_assets.py",
+    "reason": "Tool responsibility grouping"
+  },
+  {
+    "source": "Java/assets/player",
+    "destination": "Java/assets/characters/player",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/companions",
+    "destination": "Java/assets/characters/companions",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/npcs",
+    "destination": "Java/assets/characters/npcs/townsfolk",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/story",
+    "destination": "Java/assets/characters/npcs/story",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/monsters",
+    "destination": "Java/assets/characters/monsters",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/animations",
+    "destination": "Java/assets/characters/shared/animations",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/city",
+    "destination": "Java/assets/environments/settlements/city",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/player_village",
+    "destination": "Java/assets/environments/settlements/player_village",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/terrain",
+    "destination": "Java/assets/environments/terrain/common",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/road",
+    "destination": "Java/assets/environments/terrain/roads",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/interiors",
+    "destination": "Java/assets/environments/interiors",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/locations",
+    "destination": "Java/assets/environments/locations",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/battle",
+    "destination": "Java/assets/environments/battle",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/deco",
+    "destination": "Java/assets/environments/props/nature",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/weather",
+    "destination": "Java/assets/effects/weather",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/grass",
+    "destination": "Java/assets/environments/terrain/biomes/grass",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/forest",
+    "destination": "Java/assets/environments/terrain/biomes/forest",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/desert",
+    "destination": "Java/assets/environments/terrain/biomes/desert",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/marsh",
+    "destination": "Java/assets/environments/terrain/biomes/marsh",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/mountain",
+    "destination": "Java/assets/environments/terrain/biomes/mountain",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/tundra",
+    "destination": "Java/assets/environments/terrain/biomes/tundra",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/badlands",
+    "destination": "Java/assets/environments/terrain/biomes/badlands",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/beach",
+    "destination": "Java/assets/environments/terrain/biomes/beach",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  },
+  {
+    "source": "Java/assets/water",
+    "destination": "Java/assets/environments/terrain/biomes/water",
+    "reason": "Asset family grouping; preserve all filenames and sidecars"
+  }
+]

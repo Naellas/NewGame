@@ -5,7 +5,7 @@ root=Path.cwd(); out=root/'asset-review/2026-09-22-monsters';out.mkdir(exist_ok=
 source=(root/'Java/src/main/java/com/alderfall/game/content/GameData.java').read_text()
 used=set(re.findall(r'monster\("[^"]+",\s*"[^"]+",\s*"[^"]+",\s*"([^"]+)"',source))
 rows=[]
-for p in sorted((root/'Java/assets/monsters').glob('*.png'),key=lambda p:p.stat().st_mtime):
+for p in sorted((root/'Java/assets/characters/monsters').glob('*.png'),key=lambda p:p.stat().st_mtime):
  im=Image.open(p).convert('RGBA');a=im.getchannel('A');bbox=a.point(lambda v:255 if v>8 else 0).getbbox()
  rows.append(dict(path=p.relative_to(root).as_posix(),stem=p.stem,used=p.stem in used,modified=datetime.datetime.fromtimestamp(p.stat().st_mtime).isoformat(),sha256=hashlib.sha256(p.read_bytes()).hexdigest(),size=im.size,bbox=bbox))
 (out/'inventory.json').write_text(json.dumps(rows,indent=2))

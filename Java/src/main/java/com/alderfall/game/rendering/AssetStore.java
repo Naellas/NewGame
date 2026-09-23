@@ -15,10 +15,16 @@ public final class AssetStore {
     private final Path assetsRoot;
     private final AssetCatalog catalog;
     private final Map<String, BufferedImage> cache = new HashMap<>();
+    private final Map<String,BufferedImage> groundedFrames=new java.util.LinkedHashMap<>(256,.75f,true) {
+        @Override protected boolean removeEldestEntry(Map.Entry<String,BufferedImage> e){return size()>512;}
+    };
     private final Map<String, BufferedImage> sourceCache = new HashMap<>();
     private final Map<String, BufferedImage> croppedSourceCache = new HashMap<>();
     private final Map<String, Integer> animationMetadataCache = new HashMap<>();
     private final Map<String, java.awt.Rectangle> animationViewportCache = new HashMap<>();
+    private final Map<String, WorldCharacterAnimation> worldAnimations = new java.util.LinkedHashMap<>(128,.75f,true) {
+        @Override protected boolean removeEldestEntry(Map.Entry<String,WorldCharacterAnimation> e){return size()>128;}
+    };
 
     public AssetStore(Path assetsRoot) {
         this.assetsRoot = assetsRoot;
@@ -34,12 +40,13 @@ public final class AssetStore {
     }
 
     public BufferedImage spriteFit(String name, int width, int height) {
+        if (WorldCharacterAnimation.supports(name) && hasSprite(name)) return worldFrame(name, null, width, height, 0);
         String key = "fit:" + name + ":" + width + "x" + height;
         BufferedImage cached = cache.get(key);
         if (cached != null) {
             return cached;
         }
-        BufferedImage source = croppedSource(name);
+        BufferedImage source = name.matches(".*_combat_v[234]") ? loadSource(name) : croppedSource(name);
         BufferedImage fitted = fit(source, width, height, pixelated(name));
         cache.put(key, fitted);
         return fitted;
@@ -50,6 +57,20 @@ public final class AssetStore {
             return catalog.findAsset(TextileMaterialSprites.ATLAS) != null;
         if (name.startsWith(ItemAppearance.PREFIX)) return catalog.findAsset(ItemAppearance.atlasName(name)) != null;
         return catalog.findAsset(name) != null;
+    }
+
+    /** Tight head-and-shoulders crop, preserving the character artwork's pixel edges. */
+    public BufferedImage portrait(String name, int width, int height) {
+        String identity = name.replaceFirst("_(?:model|dialogue|combat).*$", "");
+        if (hasSprite(identity + "_portrait")) return spriteFit(identity + "_portrait", width, height);
+        String key = "portrait:" + name + ":" + width + "x" + height;
+        return cache.computeIfAbsent(key, ignored -> {
+            BufferedImage source = croppedSource(name);
+            int cropH = Math.max(1, (int) Math.round(source.getHeight() * 0.28));
+            int cropW = Math.min(source.getWidth(), Math.max(1, (int) Math.round(cropH * width / (double) height)));
+            BufferedImage upperBody = source.getSubimage((source.getWidth() - cropW) / 2, 0, cropW, cropH);
+            return fit(upperBody, width, height, true);
+        });
     }
 
     public Set<String> assetNames() {
@@ -81,11 +102,22 @@ public final class AssetStore {
     }
 
     public BufferedImage animatedSpriteFit(String name, String action, int width, int height, int frame) {
+        if (WorldCharacterAnimation.supports(name) && WorldCharacterAnimation.action(action) && hasSprite(name))
+            return worldFrame(name, action, width, height, frame);
         if (action == null || action.isBlank()) {
             return spriteFit(name, width, height);
         }
-        String sheetName = name + "_" + action + "_anim";
+        String sheetName = MonsterAttackAnimations.sheetName(name, action);
         if (catalog.findAsset(sheetName) == null) {
+            if (CharacterMotion.supports(name, action) && hasSprite(name)) {
+                int selected = Math.floorMod(frame, CharacterMotion.FRAMES);
+                String key = "motion:" + name + ":" + action + ":" + width + "x" + height + ":" + selected;
+                BufferedImage cached = cache.get(key);
+                if (cached != null) return cached;
+                BufferedImage motion = CharacterMotion.frame(spriteFit(name, width, height), action, selected);
+                cache.put(key, motion);
+                return motion;
+            }
             return spriteFit(name, width, height);
         }
         BufferedImage sheet = loadSource(sheetName);
@@ -104,9 +136,8 @@ public final class AssetStore {
         if (viewport.width <= sourceWidth && viewport.x + viewport.width <= sourceWidth) {
             source = source.getSubimage(viewport.x, viewport.y, viewport.width, viewport.height);
         }
-        if (usesMovementFit(action)) {
-            source = cropTransparent(source);
-        }
+        // All poses use one viewport. Per-frame trimming erased foot lift and changed body scale.
+        if (WorldCharacterAnimation.supports(name)) source = WorldCharacterAnimation.actionPose(name, source);
         BufferedImage fitted = fit(source, width, height, pixelated(name));
         cache.put(key, fitted);
         return fitted;
@@ -140,9 +171,11 @@ public final class AssetStore {
         if (action == null || action.isBlank()) {
             return 1;
         }
-        String sheetName = name + "_" + action + "_anim";
+        if (WorldCharacterAnimation.supports(name) && WorldCharacterAnimation.action(action) && hasSprite(name))
+            return WorldCharacterAnimation.frameCount(action);
+        String sheetName = MonsterAttackAnimations.sheetName(name, action);
         if (catalog.findAsset(sheetName) == null) {
-            return 1;
+            return CharacterMotion.supports(name, action) && hasSprite(name) ? CharacterMotion.FRAMES : 1;
         }
         BufferedImage sheet = loadSource(sheetName);
         return animationFrameCount(sheetName, sheet, width, height);
@@ -152,7 +185,81 @@ public final class AssetStore {
         if (action == null || action.isBlank()) {
             return false;
         }
-        return catalog.findAsset(name + "_" + action + "_anim") != null;
+        return (WorldCharacterAnimation.supports(name) && WorldCharacterAnimation.action(action) && hasSprite(name))
+                || catalog.findAsset(MonsterAttackAnimations.sheetName(name, action)) != null
+                || (CharacterMotion.supports(name, action) && hasSprite(name));
+    }
+
+    public boolean hasAuthoredAnimation(String name, String action) {
+        return action != null && !action.isBlank() && catalog.findAsset(MonsterAttackAnimations.sheetName(name, action)) != null;
+    }
+
+    private BufferedImage worldFrame(String name, String action, int width, int height, int frame) {
+        int selected = Math.floorMod(frame, WorldCharacterAnimation.frameCount(action));
+        Map<String,BufferedImage> frameCache=action!=null&&action.contains("grounded")?groundedFrames:cache;
+        String key = "world-motion:" + name + ":" + action + ":" + width + "x" + height + ":" + selected;
+        BufferedImage existing = frameCache.get(key);
+        if (existing != null) return existing;
+        WorldCharacterAnimation sequence = worldAnimations.get(name);
+        if (sequence == null) {
+            String sourceName = worldDirectionSource(name);
+            BufferedImage still = loadSource(sourceName);
+            String sheetName = sourceName + "_walk_anim";
+            // Use the original adult standing model for players and town residents.
+            // The v3 player walk atlas introduced oversized heads and a permanent stride pose.
+            boolean hasSheet = WorldCharacterAnimation.companion(sourceName) && catalog.findAsset(sheetName) != null;
+            boolean side = name.endsWith("_left") || name.endsWith("_right");
+            String expanded = name.replaceFirst("_model_.*$", "_model_right_walk_v4_anim");
+            boolean authoredSide = side && catalog.findAsset(expanded) != null;
+            if (authoredSide) { sheetName = expanded; hasSheet = true; }
+            BufferedImage sheet = hasSheet ? loadSource(sheetName) : still;
+            int count = hasSheet ? animationFrameCount(sheetName, sheet, still.getWidth(), still.getHeight()) : 1;
+            if (mirroredWorldDirection(name)) still = flipCells(still, 1);
+            if (authoredSide) {
+                if (name.endsWith("_left")) sheet = flipCells(sheet, count);
+            } else if (mirroredWorldDirection(name)) {
+                sheet = flipCells(sheet, count);
+            }
+            sequence = new WorldCharacterAnimation(name, still, sheet, count, sheetName.endsWith("_walk_v4_anim"));
+            worldAnimations.put(name, sequence);
+        }
+        BufferedImage fitted = fit(sequence.frame(action, selected), width, height, true);
+        frameCache.put(key, fitted);
+        return fitted;
+    }
+
+    private String worldDirectionSource(String name) {
+        // Reviewed diagonal stills: these rear quarter views were labelled backwards.
+        if (name.matches("(?:class_(?:knight|mage|ranger|cleric|rogue)|npc_(?:aria|cassia))_model_up_(?:left|right)"))
+            return name.endsWith("_left") ? name.substring(0, name.length() - 4) + "right"
+                    : name.substring(0, name.length() - 5) + "left";
+        // These standing side views were labelled backwards. The v4 walking atlas
+        // is already correct and is selected independently above.
+        for (String actor : new String[]{"npc_rafiq", "npc_samir", "npc_vesper"}) {
+            if (name.equals(actor + "_model_right")) return actor + "_model_left";
+            if (name.equals(actor + "_model_left")) return actor + "_model_right";
+        }
+        if (name.equals("npc_rafiq_model_down_right")) return "npc_rafiq_model_down_left";
+        if (name.equals("npc_vesper_model_up_right")) return "npc_vesper_model_up_left";
+        // These imports have reversed/inconsistent side-facing rows. Use the verified
+        // left-facing 'right' row and mirror its cells for screen-right (not the whole strip).
+        for (String actor : new String[]{"npc_calder", "npc_lyra", "npc_maera"}) {
+            if (name.equals(actor + "_model_left")) return actor + "_model_right";
+        }
+        return name;
+    }
+
+    private boolean mirroredWorldDirection(String name) {
+        return name.matches("npc_(?:calder|lyra|maera)_model_right")
+                || name.matches("(?:class_(?:knight|mage|ranger|cleric|rogue)|npc_(?:aria|cassia|seraphine))_model_down_right")
+                || name.equals("npc_rafiq_model_down_right") || name.equals("npc_vesper_model_up_right");
+    }
+
+    private BufferedImage flipCells(BufferedImage source, int count) {
+        BufferedImage result = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = result.createGraphics(); int w = source.getWidth() / count, h = source.getHeight();
+        for (int i = 0; i < count; i++) g.drawImage(source, (i + 1) * w, 0, i * w, h, i * w, 0, (i + 1) * w, h, null);
+        g.dispose(); return result;
     }
 
     public BufferedImage image(String name, int width, int height) {
@@ -345,13 +452,6 @@ public final class AssetStore {
         return source.getSubimage(minX, minY, maxX - minX + 1, maxY - minY + 1);
     }
 
-    private boolean usesMovementFit(String action) {
-        return switch (action) {
-            case "walk", "start_walk", "stop_walk", "idle" -> true;
-            default -> false;
-        };
-    }
-
     private int inferHorizontalFrameCount(BufferedImage sheet, double targetAspect) {
         int best = 1;
         double bestScore = Double.MAX_VALUE;
@@ -382,7 +482,23 @@ public final class AssetStore {
             Path asset = catalog.findAsset(sheetName);
             if (asset == null) return full;
             Path metadata = asset.resolveSibling(sheetName + ".framebounds");
-            if (!Files.exists(metadata)) return full;
+            if (!Files.exists(metadata)) {
+                boolean movement = sheetName.matches(".*_(walk|start_walk|stop_walk|idle)_anim");
+                if (!movement) return full;
+                BufferedImage sheet = loadSource(sheetName);
+                int minX = width, minY = height, maxX = -1, maxY = -1;
+                for (int x = 0; x + width <= sheet.getWidth(); x += width) {
+                    for (int py = 0; py < height; py++) {
+                        for (int px = 0; px < width; px++) {
+                            if ((sheet.getRGB(x + px, py) >>> 24) > 12) {
+                                minX = Math.min(minX, px); minY = Math.min(minY, py);
+                                maxX = Math.max(maxX, px); maxY = Math.max(maxY, py);
+                            }
+                        }
+                    }
+                }
+                return maxX < minX ? full : new java.awt.Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
+            }
             try {
                 String[] parts = Files.readString(metadata).strip().split("\\s+");
                 if (parts.length != 4) return full;
@@ -411,7 +527,7 @@ public final class AssetStore {
         Path asset = catalog.findAsset(sheetName);
         Path path = asset == null ? null : asset.resolveSibling(sheetName + ".frames");
         if (path == null || !Files.exists(path)) {
-            path = assetsRoot.resolve("animations").resolve(sheetName + ".frames");
+            path = assetsRoot.resolve("characters/shared/animations").resolve(sheetName + ".frames");
         }
         if (!Files.exists(path)) {
             animationMetadataCache.put(sheetName, -1);

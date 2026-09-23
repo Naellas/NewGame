@@ -1,7 +1,7 @@
 [
   {
     "key": "cobble",
-    "target": "Java/assets/city/terrain/city_cobble.png",
+    "target": "Java/assets/environments/settlements/city/terrain/city_cobble.png",
     "request": "This active terrain tile contains dark blue sprite-sheet gutters on its bottom/right edges. Regenerate a seamless square cobblestone ground tile: cool neutral gray irregular worn rounded stone setts with fine charcoal mortar gaps, occasional muted beige stones, consistent overhead light. Preserve its dense small-scale medieval pixel-art stone texture. Fill the ENTIRE canvas edge to edge with ground texture, no gutter or border, no large objects, no vegetation, no perspective horizon, no transparent pixels. Opposite edges should tile naturally; do not outline the tile boundary. Square PNG.",
     "prompt": "Use case: precise-object-edit. This active terrain tile contains dark blue sprite-sheet gutters on its bottom/right edges. Regenerate a seamless square cobblestone ground tile: cool neutral gray irregular worn rounded stone setts with fine charcoal mortar gaps, occasional muted beige stones, consistent overhead light. Preserve its dense small-scale medieval pixel-art stone texture. Fill the ENTIRE canvas edge to edge with ground texture, no gutter or border, no large objects, no vegetation, no perspective horizon, no transparent pixels. Opposite edges should tile naturally; do not outline the tile boundary. Square PNG. Final reference is style only; retain restrained game palette, not photorealism.",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-b4d888a0-34d9-4a00-813a-169417f4cb24.png",
@@ -9,7 +9,7 @@
   },
   {
     "key": "barrel_stack",
-    "target": "Java/assets/city/props/city/city_prop_barrel_stack.png",
+    "target": "Java/assets/environments/settlements/city/props/city/city_prop_barrel_stack.png",
     "request": "The first image is incorrectly a wooden crate, but this live asset must represent a BARREL STACK as its gameplay name specifies. Regenerate as three medium wooden storage barrels in a compact stable pyramid, two at base and one on top. Warm oak curved staves, dark iron hoops, closed circular wooden lids. Complete bottoms, no cropped edges. Match the pixel-art shading and slightly elevated front view of the latest style reference. Transparent RGBA background, no ground rectangle, no halo, no text, all barrels opaque, center with 6% clear margin.",
     "prompt": "Use case: precise-object-edit. The first image is incorrectly a wooden crate, but this live asset must represent a BARREL STACK as its gameplay name specifies. Regenerate as three medium wooden storage barrels in a compact stable pyramid, two at base and one on top. Warm oak curved staves, dark iron hoops, closed circular wooden lids. Complete bottoms, no cropped edges. Match the pixel-art shading and slightly elevated front view of the latest style reference. Transparent RGBA background, no ground rectangle, no halo, no text, all barrels opaque, center with 6% clear margin. Final reference is style only; retain restrained game palette, not photorealism.",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-07639267-c36f-4cb3-ba65-637f7d342615.png",
@@ -17,7 +17,7 @@
   },
   {
     "key": "crate_prop",
-    "target": "Java/assets/city/props/city/city_prop_crate.png",
+    "target": "Java/assets/environments/settlements/city/props/city/city_prop_crate.png",
     "request": "The first image is incorrectly an open barrel, but the live asset must depict a CRATE as its game label specifies. Regenerate as one squat closed square wooden shipping crate, three-quarter elevated front view showing a little top and right side, warm brown oak planks, diagonal braced front, small dark iron nails. Match latest reference's crisp medieval pixel-art detailing. No barrel, no open lid, no multiple crates. True RGBA transparency around object, opaque complete wooden panels, no matte/fringe/drop shadow/ground tile, all edges intact, center with 6% clear margin.",
     "prompt": "Use case: precise-object-edit. The first image is incorrectly an open barrel, but the live asset must depict a CRATE as its game label specifies. Regenerate as one squat closed square wooden shipping crate, three-quarter elevated front view showing a little top and right side, warm brown oak planks, diagonal braced front, small dark iron nails. Match latest reference's crisp medieval pixel-art detailing. No barrel, no open lid, no multiple crates. True RGBA transparency around object, opaque complete wooden panels, no matte/fringe/drop shadow/ground tile, all edges intact, center with 6% clear margin. Final reference is style only; retain restrained game palette, not photorealism.",
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-bf926739-8e03-4f30-835b-8b1d8be3362b.png",

@@ -1,6 +1,6 @@
 [
   {
-    "path": "Java/assets/monsters/goblin.png",
+    "path": "Java/assets/characters/monsters/goblin.png",
     "stem": "goblin",
     "used": true,
     "modified": "2026-05-26T15:52:01.311119",
@@ -17,7 +17,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/bat.png",
+    "path": "Java/assets/characters/monsters/bat.png",
     "stem": "bat",
     "used": true,
     "modified": "2026-05-26T15:52:01.389185",
@@ -34,7 +34,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/orc.png",
+    "path": "Java/assets/characters/monsters/orc.png",
     "stem": "orc",
     "used": true,
     "modified": "2026-05-26T15:52:04.208075",
@@ -51,7 +51,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/frost_wolf.png",
+    "path": "Java/assets/characters/monsters/frost_wolf.png",
     "stem": "frost_wolf",
     "used": true,
     "modified": "2026-05-31T04:39:27.867446",
@@ -68,7 +68,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/reed_serpent.png",
+    "path": "Java/assets/characters/monsters/reed_serpent.png",
     "stem": "reed_serpent",
     "used": true,
     "modified": "2026-05-31T04:39:27.996887",
@@ -85,7 +85,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/glass_scorpion.png",
+    "path": "Java/assets/characters/monsters/glass_scorpion.png",
     "stem": "glass_scorpion",
     "used": true,
     "modified": "2026-05-31T04:39:28.101629",
@@ -102,7 +102,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/stoneback_goat.png",
+    "path": "Java/assets/characters/monsters/stoneback_goat.png",
     "stem": "stoneback_goat",
     "used": true,
     "modified": "2026-05-31T04:39:28.246614",
@@ -119,7 +119,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/moss_stag.png",
+    "path": "Java/assets/characters/monsters/moss_stag.png",
     "stem": "moss_stag",
     "used": true,
     "modified": "2026-05-31T04:39:28.356923",
@@ -136,7 +136,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/river_eel.png",
+    "path": "Java/assets/characters/monsters/river_eel.png",
     "stem": "river_eel",
     "used": true,
     "modified": "2026-05-31T04:39:28.474802",
@@ -153,7 +153,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/ash_scorpion.png",
+    "path": "Java/assets/characters/monsters/ash_scorpion.png",
     "stem": "ash_scorpion",
     "used": true,
     "modified": "2026-05-31T04:39:28.588589",
@@ -170,7 +170,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/crypt_bat.png",
+    "path": "Java/assets/characters/monsters/crypt_bat.png",
     "stem": "crypt_bat",
     "used": true,
     "modified": "2026-05-31T04:39:28.681553",
@@ -187,7 +187,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/sheep.png",
+    "path": "Java/assets/characters/monsters/sheep.png",
     "stem": "sheep",
     "used": true,
     "modified": "2026-06-01T02:19:19.278373",
@@ -204,7 +204,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/doe.png",
+    "path": "Java/assets/characters/monsters/doe.png",
     "stem": "doe",
     "used": true,
     "modified": "2026-06-01T02:19:19.299916",
@@ -221,7 +221,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/mountain_goat.png",
+    "path": "Java/assets/characters/monsters/mountain_goat.png",
     "stem": "mountain_goat",
     "used": true,
     "modified": "2026-06-01T02:19:19.331438",
@@ -238,7 +238,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/stag.png",
+    "path": "Java/assets/characters/monsters/stag.png",
     "stem": "stag",
     "used": true,
     "modified": "2026-06-01T02:19:19.356448",
@@ -255,7 +255,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/crystal_hare.png",
+    "path": "Java/assets/characters/monsters/crystal_hare.png",
     "stem": "crystal_hare",
     "used": true,
     "modified": "2026-06-01T02:19:19.377971",
@@ -272,7 +272,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/bramble_boar.png",
+    "path": "Java/assets/characters/monsters/bramble_boar.png",
     "stem": "bramble_boar",
     "used": true,
     "modified": "2026-06-01T02:19:19.406583",
@@ -289,7 +289,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/snow_lynx.png",
+    "path": "Java/assets/characters/monsters/snow_lynx.png",
     "stem": "snow_lynx",
     "used": true,
     "modified": "2026-06-01T02:19:19.436540",
@@ -306,7 +306,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/ember_tortoise.png",
+    "path": "Java/assets/characters/monsters/ember_tortoise.png",
     "stem": "ember_tortoise",
     "used": true,
     "modified": "2026-06-01T02:19:19.467575",
@@ -323,7 +323,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/slime.png",
+    "path": "Java/assets/characters/monsters/slime.png",
     "stem": "slime",
     "used": true,
     "modified": "2026-06-01T18:02:49.106266",
@@ -340,7 +340,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/wolf.png",
+    "path": "Java/assets/characters/monsters/wolf.png",
     "stem": "wolf",
     "used": true,
     "modified": "2026-06-01T18:02:49.884880",
@@ -357,7 +357,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/skeleton.png",
+    "path": "Java/assets/characters/monsters/skeleton.png",
     "stem": "skeleton",
     "used": true,
     "modified": "2026-06-01T18:02:50.769690",
@@ -374,7 +374,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/thornling.png",
+    "path": "Java/assets/characters/monsters/thornling.png",
     "stem": "thornling",
     "used": true,
     "modified": "2026-06-01T18:02:51.784445",
@@ -391,7 +391,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/sand_stalker.png",
+    "path": "Java/assets/characters/monsters/sand_stalker.png",
     "stem": "sand_stalker",
     "used": true,
     "modified": "2026-06-01T18:02:52.724109",
@@ -408,7 +408,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/ice_golem.png",
+    "path": "Java/assets/characters/monsters/ice_golem.png",
     "stem": "ice_golem",
     "used": true,
     "modified": "2026-06-01T18:02:53.289483",
@@ -425,7 +425,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/bog_beast.png",
+    "path": "Java/assets/characters/monsters/bog_beast.png",
     "stem": "bog_beast",
     "used": true,
     "modified": "2026-06-01T18:02:54.163491",
@@ -442,7 +442,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/ember_imp.png",
+    "path": "Java/assets/characters/monsters/ember_imp.png",
     "stem": "ember_imp",
     "used": true,
     "modified": "2026-06-01T18:02:55.103561",
@@ -459,7 +459,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/spider.png",
+    "path": "Java/assets/characters/monsters/spider.png",
     "stem": "spider",
     "used": true,
     "modified": "2026-06-01T18:02:56.104124",
@@ -476,7 +476,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/wraith.png",
+    "path": "Java/assets/characters/monsters/wraith.png",
     "stem": "wraith",
     "used": true,
     "modified": "2026-06-01T18:02:56.994945",
@@ -493,7 +493,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/goblin_scout.png",
+    "path": "Java/assets/characters/monsters/goblin_scout.png",
     "stem": "goblin_scout",
     "used": true,
     "modified": "2026-06-01T18:04:08.446309",
@@ -510,7 +510,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/goblin_archer.png",
+    "path": "Java/assets/characters/monsters/goblin_archer.png",
     "stem": "goblin_archer",
     "used": true,
     "modified": "2026-06-01T18:04:09.321101",
@@ -527,7 +527,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/goblin_trapper.png",
+    "path": "Java/assets/characters/monsters/goblin_trapper.png",
     "stem": "goblin_trapper",
     "used": true,
     "modified": "2026-06-01T18:04:10.266343",
@@ -544,7 +544,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/goblin_skirmisher.png",
+    "path": "Java/assets/characters/monsters/goblin_skirmisher.png",
     "stem": "goblin_skirmisher",
     "used": true,
     "modified": "2026-06-01T18:04:11.101017",
@@ -561,7 +561,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/goblin_shaman.png",
+    "path": "Java/assets/characters/monsters/goblin_shaman.png",
     "stem": "goblin_shaman",
     "used": true,
     "modified": "2026-06-01T18:04:11.974204",
@@ -578,7 +578,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/hobgoblin_guard.png",
+    "path": "Java/assets/characters/monsters/hobgoblin_guard.png",
     "stem": "hobgoblin_guard",
     "used": true,
     "modified": "2026-06-01T18:04:12.969019",
@@ -595,7 +595,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/goblin_warlord.png",
+    "path": "Java/assets/characters/monsters/goblin_warlord.png",
     "stem": "goblin_warlord",
     "used": true,
     "modified": "2026-06-01T18:04:13.966578",
@@ -612,7 +612,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/goblin_king.png",
+    "path": "Java/assets/characters/monsters/goblin_king.png",
     "stem": "goblin_king",
     "used": true,
     "modified": "2026-06-01T18:04:15.363655",
@@ -629,7 +629,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/red_dragon.png",
+    "path": "Java/assets/characters/monsters/red_dragon.png",
     "stem": "red_dragon",
     "used": true,
     "modified": "2026-06-01T18:04:16.240805",
@@ -646,7 +646,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/mountain_drake.png",
+    "path": "Java/assets/characters/monsters/mountain_drake.png",
     "stem": "mountain_drake",
     "used": true,
     "modified": "2026-06-01T18:04:17.336713",
@@ -663,7 +663,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/marsh_drake.png",
+    "path": "Java/assets/characters/monsters/marsh_drake.png",
     "stem": "marsh_drake",
     "used": true,
     "modified": "2026-06-01T18:04:18.364255",
@@ -680,7 +680,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/bandit_cutthroat.png",
+    "path": "Java/assets/characters/monsters/bandit_cutthroat.png",
     "stem": "bandit_cutthroat",
     "used": true,
     "modified": "2026-06-01T18:04:19.160029",
@@ -697,7 +697,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/bandit_archer.png",
+    "path": "Java/assets/characters/monsters/bandit_archer.png",
     "stem": "bandit_archer",
     "used": true,
     "modified": "2026-06-01T18:04:19.757217",
@@ -714,7 +714,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/bandit_captain.png",
+    "path": "Java/assets/characters/monsters/bandit_captain.png",
     "stem": "bandit_captain",
     "used": true,
     "modified": "2026-06-01T18:04:20.428998",
@@ -731,7 +731,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/orc_raider.png",
+    "path": "Java/assets/characters/monsters/orc_raider.png",
     "stem": "orc_raider",
     "used": true,
     "modified": "2026-06-01T18:04:21.094055",
@@ -748,7 +748,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/orc_berserker.png",
+    "path": "Java/assets/characters/monsters/orc_berserker.png",
     "stem": "orc_berserker",
     "used": true,
     "modified": "2026-06-01T18:04:21.671861",
@@ -765,7 +765,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/orc_shaman.png",
+    "path": "Java/assets/characters/monsters/orc_shaman.png",
     "stem": "orc_shaman",
     "used": true,
     "modified": "2026-06-01T18:04:22.272013",
@@ -782,7 +782,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/orc_shieldbearer.png",
+    "path": "Java/assets/characters/monsters/orc_shieldbearer.png",
     "stem": "orc_shieldbearer",
     "used": true,
     "modified": "2026-06-01T18:04:22.980089",
@@ -799,7 +799,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/swamp_troll.png",
+    "path": "Java/assets/characters/monsters/swamp_troll.png",
     "stem": "swamp_troll",
     "used": true,
     "modified": "2026-06-01T18:04:23.728387",
@@ -816,7 +816,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/frost_troll.png",
+    "path": "Java/assets/characters/monsters/frost_troll.png",
     "stem": "frost_troll",
     "used": true,
     "modified": "2026-06-01T18:04:24.411285",
@@ -833,7 +833,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/hill_giant.png",
+    "path": "Java/assets/characters/monsters/hill_giant.png",
     "stem": "hill_giant",
     "used": true,
     "modified": "2026-06-01T18:04:24.937241",
@@ -850,7 +850,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/stone_giant.png",
+    "path": "Java/assets/characters/monsters/stone_giant.png",
     "stem": "stone_giant",
     "used": true,
     "modified": "2026-06-01T18:04:25.529617",
@@ -867,7 +867,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/fire_giant.png",
+    "path": "Java/assets/characters/monsters/fire_giant.png",
     "stem": "fire_giant",
     "used": true,
     "modified": "2026-06-01T18:04:26.136853",
@@ -884,7 +884,7 @@
     ]
   },
   {
-    "path": "Java/assets/monsters/elder_dragon.png",
+    "path": "Java/assets/characters/monsters/elder_dragon.png",
     "stem": "elder_dragon",
     "used": true,
     "modified": "2026-06-01T18:04:26.700028",
@@ -901,7 +901,7 @@
     ]
   },
   {
-    "path": "Java/assets/story/demon_queen.png",
+    "path": "Java/assets/characters/npcs/story/demon_queen.png",
     "stem": "demon_queen",
     "used": true,
     "modified": "2026-06-03T02:37:09.610803",
@@ -918,7 +918,7 @@
     ]
   },
   {
-    "path": "Java/assets/story/flame_herald.png",
+    "path": "Java/assets/characters/npcs/story/flame_herald.png",
     "stem": "flame_herald",
     "used": true,
     "modified": "2026-06-03T02:37:09.734512",
@@ -935,7 +935,7 @@
     ]
   },
   {
-    "path": "Java/assets/story/frost_witch.png",
+    "path": "Java/assets/characters/npcs/story/frost_witch.png",
     "stem": "frost_witch",
     "used": true,
     "modified": "2026-06-03T02:37:09.867983",
@@ -952,7 +952,7 @@
     ]
   },
   {
-    "path": "Java/assets/story/shadow_beast.png",
+    "path": "Java/assets/characters/npcs/story/shadow_beast.png",
     "stem": "shadow_beast",
     "used": true,
     "modified": "2026-06-03T02:37:10.003367",
@@ -969,7 +969,7 @@
     ]
   },
   {
-    "path": "Java/assets/story/void_knight.png",
+    "path": "Java/assets/characters/npcs/story/void_knight.png",
     "stem": "void_knight",
     "used": true,
     "modified": "2026-06-03T02:37:10.554970",

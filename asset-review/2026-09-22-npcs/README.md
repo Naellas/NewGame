@@ -1,6 +1,6 @@
 # NPC sprite review — 2026-09-22
 
-Refreshed six older NPC sets and corrected mislabeled directions in seven others. The review covers the 21 legacy NPC sets in `Java/assets/npcs`; the newer companion artwork supplied a style reference. No unused assets were removed or relocated.
+Refreshed six older NPC sets and corrected mislabeled directions in seven others. The review covers the 21 legacy NPC sets in `Java/assets/characters/npcs/townsfolk`; the newer companion artwork supplied a style reference. No unused assets were removed or relocated.
 
 ## Updated artwork
 
@@ -29,7 +29,7 @@ In total, 90 PNG files changed: 62 regenerated assets and 28 direction correctio
 
 Artwork was generated with the built-in imagegen tool using existing identities and the newer Calder sprite as a style reference. The [accepted prompt set and source locations](generation.json) and [initial draft prompts](draft-generation.json) are retained. The importer only extracts, fits and packages generated art; it does not recolor or apply background-key removal. It finds transparent gutters and uses the renderer's alpha threshold for bounding boxes, avoiding clipped extremities and unstable placement caused by faint transparent pixels.
 
-Live assets are in `Java/assets/npcs/` and its `animations/` subfolder. Accepted generated masters are in `Java/assets/source/npc-refresh-2026-09-22/`. These paths are relative to the project root. A byte-exact snapshot of the original NPC folder is preserved under `before/Java/assets/npcs/` here. No project asset depends on a file outside the workspace.
+Live assets are in `Java/assets/characters/npcs/townsfolk/` and its `animations/` subfolder. Accepted generated masters are in `Java/assets/source/npc-refresh-2026-09-22/`. These paths are relative to the project root. A byte-exact snapshot of the original NPC folder is preserved under `before/Java/assets/characters/npcs/townsfolk/` here. No project asset depends on a file outside the workspace.
 
 ## Validation
 

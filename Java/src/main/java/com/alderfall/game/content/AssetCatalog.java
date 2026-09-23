@@ -12,10 +12,16 @@ import java.util.stream.Stream;
 
 final class AssetCatalog {
     private static final String[] FOLDERS = {
-            "terrain", "player", "monsters", "npcs", "companions", "items", "city", "road", "battle", "weather",
-            "player_village",
-            "grass", "forest", "desert", "marsh", "mountain", "tundra", "badlands", "beach", "water", "locations",
-            "deco", "effects", "interiors", "story", "animations"
+            "environments/terrain/common", "characters/player", "characters/monsters",
+            "characters/npcs/townsfolk", "characters/companions", "items",
+            "environments/settlements/city", "environments/terrain/roads", "environments/battle",
+            "environments/settlements/player_village",
+            "environments/terrain/biomes/grass", "environments/terrain/biomes/forest",
+            "environments/terrain/biomes/desert", "environments/terrain/biomes/marsh",
+            "environments/terrain/biomes/mountain", "environments/terrain/biomes/tundra",
+            "environments/terrain/biomes/badlands", "environments/terrain/biomes/beach",
+            "environments/terrain/biomes/water", "environments/locations",
+            "environments/props/nature", "effects", "environments/interiors", "characters/npcs/story", "characters/shared/animations"
     };
 
     private final Path assetsRoot;
@@ -61,7 +67,7 @@ final class AssetCatalog {
 
     private Path preferredAsset(String name) {
         if ("mountain_massif".equals(name)) {
-            Path path = assetsRoot.resolve("mountain").resolve(name + ".png");
+            Path path = assetsRoot.resolve("environments/terrain/biomes/mountain").resolve(name + ".png");
             if (Files.exists(path)) {
                 return path;
             }

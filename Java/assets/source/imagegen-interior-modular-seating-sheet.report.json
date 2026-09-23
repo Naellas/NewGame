@@ -1,7 +1,7 @@
 [
   {
     "name": "interior_table_h_left",
-    "path": "assets/interiors/props/modular_seating/interior_table_h_left.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_table_h_left.png",
     "footprint": [
       96,
       48
@@ -21,7 +21,7 @@
   },
   {
     "name": "interior_table_h_middle",
-    "path": "assets/interiors/props/modular_seating/interior_table_h_middle.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_table_h_middle.png",
     "footprint": [
       96,
       48
@@ -41,7 +41,7 @@
   },
   {
     "name": "interior_table_h_right",
-    "path": "assets/interiors/props/modular_seating/interior_table_h_right.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_table_h_right.png",
     "footprint": [
       96,
       48
@@ -61,7 +61,7 @@
   },
   {
     "name": "interior_bench_h",
-    "path": "assets/interiors/props/modular_seating/interior_bench_h.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_bench_h.png",
     "footprint": [
       96,
       48
@@ -81,7 +81,7 @@
   },
   {
     "name": "interior_banquet_table_h",
-    "path": "assets/interiors/props/modular_seating/interior_banquet_table_h.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_banquet_table_h.png",
     "footprint": [
       96,
       48
@@ -101,7 +101,7 @@
   },
   {
     "name": "interior_stool_table_h",
-    "path": "assets/interiors/props/modular_seating/interior_stool_table_h.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_stool_table_h.png",
     "footprint": [
       96,
       48
@@ -121,7 +121,7 @@
   },
   {
     "name": "interior_study_desk_h",
-    "path": "assets/interiors/props/modular_seating/interior_study_desk_h.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_study_desk_h.png",
     "footprint": [
       96,
       48
@@ -141,7 +141,7 @@
   },
   {
     "name": "interior_counter_corner_h",
-    "path": "assets/interiors/props/modular_seating/interior_counter_corner_h.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_counter_corner_h.png",
     "footprint": [
       96,
       48
@@ -161,7 +161,7 @@
   },
   {
     "name": "interior_table_v_top",
-    "path": "assets/interiors/props/modular_seating/interior_table_v_top.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_table_v_top.png",
     "footprint": [
       48,
       96
@@ -181,7 +181,7 @@
   },
   {
     "name": "interior_table_v_middle",
-    "path": "assets/interiors/props/modular_seating/interior_table_v_middle.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_table_v_middle.png",
     "footprint": [
       48,
       96
@@ -201,7 +201,7 @@
   },
   {
     "name": "interior_table_v_bottom",
-    "path": "assets/interiors/props/modular_seating/interior_table_v_bottom.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_table_v_bottom.png",
     "footprint": [
       48,
       96
@@ -221,7 +221,7 @@
   },
   {
     "name": "interior_bench_v",
-    "path": "assets/interiors/props/modular_seating/interior_bench_v.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_bench_v.png",
     "footprint": [
       48,
       96
@@ -241,7 +241,7 @@
   },
   {
     "name": "interior_chair_north_alt",
-    "path": "assets/interiors/props/modular_seating/interior_chair_north_alt.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_chair_north_alt.png",
     "footprint": [
       48,
       48
@@ -261,7 +261,7 @@
   },
   {
     "name": "interior_chair_south_alt",
-    "path": "assets/interiors/props/modular_seating/interior_chair_south_alt.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_chair_south_alt.png",
     "footprint": [
       48,
       48
@@ -281,7 +281,7 @@
   },
   {
     "name": "interior_chair_east_alt",
-    "path": "assets/interiors/props/modular_seating/interior_chair_east_alt.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_chair_east_alt.png",
     "footprint": [
       48,
       48
@@ -301,7 +301,7 @@
   },
   {
     "name": "interior_chair_west_alt",
-    "path": "assets/interiors/props/modular_seating/interior_chair_west_alt.png",
+    "path": "assets/environments/interiors/props/modular_seating/interior_chair_west_alt.png",
     "footprint": [
       48,
       48

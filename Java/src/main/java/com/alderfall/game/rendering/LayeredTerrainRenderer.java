@@ -283,7 +283,7 @@ final class LayeredTerrainRenderer {
                     }
                 }
                 if (hasRoadSurface && waterAlpha < 0.55) {
-                    RoadCoverage road = roadCoverage(roadMaterials, tx, ty, x, y);
+                    RoadCoverage road = roadCoverage(roadMaterials, pavingMaterials, tx, ty, x, y);
                     if (road.coverage > 0.001) {
                         int[] roadTexture = materialTextures.get(road.material);
                         int roadRgb = roadTexture[sampleIndex(roadTexture, u, v)];
@@ -354,14 +354,18 @@ final class LayeredTerrainRenderer {
     }
 
     /** Rounded capsules join neighboring road nodes, producing continuous lanes without tile-shaped shoulders. */
-    private static RoadCoverage roadCoverage(char[][] roads, int tx, int ty, double x, double y) {
+    private static RoadCoverage roadCoverage(char[][] roads, char[][] paving, int tx, int ty, double x, double y) {
         double best = 0;
         char material = 0;
         for (int gy = 0; gy < 3; gy++) {
             for (int gx = 0; gx < 3; gx++) {
                 char road = roads[gy][gx];
                 if (!RoadSurface.isMaterial(road)) continue;
-                if (!hasRoadNeighbor(roads, gx, gy)) continue;
+                boolean touchesCourt = gx > 0 && RoadSurface.isPaving(paving[gy][gx - 1])
+                        || gx < 2 && RoadSurface.isPaving(paving[gy][gx + 1])
+                        || gy > 0 && RoadSurface.isPaving(paving[gy - 1][gx])
+                        || gy < 2 && RoadSurface.isPaving(paving[gy + 1][gx]);
+                if (!hasRoadNeighbor(roads, gx, gy) && !touchesCourt) continue;
                 double cx = tx + gx - 0.5;
                 double cy = ty + gy - 0.5;
                 double radius = RoadSurface.stone(road) ? 0.41 : 0.36;
@@ -374,6 +378,16 @@ final class LayeredTerrainRenderer {
                 if (gy < 2 && RoadSurface.isMaterial(roads[gy + 1][gx])) {
                     double segment = segmentDistance(x, y, cx, cy, cx, cy + 1);
                     coverage = Math.max(coverage, roadEdgeCoverage(segment, radius, x, y));
+                }
+                // Join short entrance spurs to the court edge, including otherwise isolated road nodes.
+                if (touchesCourt) {
+                    for (int direction = 0; direction < 4; direction++) {
+                        int dx = direction == 0 ? -1 : direction == 1 ? 1 : 0;
+                        int dy = direction == 2 ? -1 : direction == 3 ? 1 : 0;
+                        int nx = gx + dx, ny = gy + dy;
+                        if (nx >= 0 && ny >= 0 && nx < 3 && ny < 3 && RoadSurface.isPaving(paving[ny][nx]))
+                            coverage = Math.max(coverage, roadEdgeCoverage(segmentDistance(x, y, cx, cy, cx + dx, cy + dy), radius, x, y));
+                    }
                 }
                 if (coverage > best) {
                     best = coverage;

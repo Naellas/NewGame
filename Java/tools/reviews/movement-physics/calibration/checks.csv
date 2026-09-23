@@ -1,0 +1,1017 @@
+actor,direction,source,status,poses_checked,physics_status,flags
+class_cleric,down,class_cleric_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_cleric,down_left,class_cleric_model_down_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+class_cleric,left,class_cleric_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_cleric,up_left,class_cleric_model_up_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+class_cleric,up,class_cleric_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+class_cleric,up_right,class_cleric_model_up_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+class_cleric,right,class_cleric_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_cleric,down_right,class_cleric_model_down_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+class_knight,down,class_knight_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+class_knight,down_left,class_knight_model_down_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+class_knight,left,class_knight_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+class_knight,up_left,class_knight_model_up_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+class_knight,up,class_knight_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+class_knight,up_right,class_knight_model_up_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+class_knight,right,class_knight_model_right,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans
+class_knight,down_right,class_knight_model_down_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+class_mage,down,class_mage_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_mage,down_left,class_mage_model_down_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; covered anatomy inferred
+class_mage,left,class_mage_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_mage,up_left,class_mage_model_up_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_mage,up,class_mage_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_mage,up_right,class_mage_model_up_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_mage,right,class_mage_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+class_mage,down_right,class_mage_model_down_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; covered anatomy inferred
+class_ranger,down,class_ranger_model_down,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+class_ranger,down_left,class_ranger_model_down_left,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+class_ranger,left,class_ranger_model_left,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+class_ranger,up_left,class_ranger_model_up_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; covered anatomy inferred
+class_ranger,up,class_ranger_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; covered anatomy inferred
+class_ranger,up_right,class_ranger_model_up_right,checks-pass,96,checks-pass,5/5 contour landmarks visible; covered anatomy inferred
+class_ranger,right,class_ranger_model_right,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans
+class_ranger,down_right,class_ranger_model_down_right,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans
+class_rogue,down,class_rogue_model_down,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+class_rogue,down_left,class_rogue_model_down_left,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+class_rogue,left,class_rogue_model_left,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+class_rogue,up_left,class_rogue_model_up_left,checks-pass,96,checks-pass,3/5 contour landmarks visible; covered anatomy inferred
+class_rogue,up,class_rogue_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; covered anatomy inferred
+class_rogue,up_right,class_rogue_model_up_right,checks-pass,96,checks-pass,4/5 contour landmarks visible; covered anatomy inferred
+class_rogue,right,class_rogue_model_right,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+class_rogue,down_right,class_rogue_model_down_right,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans
+npc_aria,down,npc_aria_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_aria,down_left,npc_aria_model_down_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_aria,left,npc_aria_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_aria,up_left,npc_aria_model_up_left,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_aria,up,npc_aria_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_aria,up_right,npc_aria_model_up_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_aria,right,npc_aria_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_aria,down_right,npc_aria_model_down_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_baker,down,npc_baker_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_baker,down_left,npc_baker_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_baker,left,npc_baker_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_baker,up_left,npc_baker_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_baker,up,npc_baker_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_baker,up_right,npc_baker_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_baker,right,npc_baker_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_baker,down_right,npc_baker_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred; carrying grip retained
+npc_bartender,down,npc_bartender_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_bartender,down_left,npc_bartender_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_bartender,left,npc_bartender_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_bartender,up_left,npc_bartender_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_bartender,up,npc_bartender_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_bartender,up_right,npc_bartender_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; carrying grip retained; no visible contour evidence; authored cutouts needed
+npc_bartender,right,npc_bartender_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; carrying grip retained; no visible contour evidence; authored cutouts needed
+npc_bartender,down_right,npc_bartender_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; carrying grip retained; no visible contour evidence; authored cutouts needed
+npc_blacksmith,down,npc_blacksmith_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_blacksmith,down_left,npc_blacksmith_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans; carrying grip retained
+npc_blacksmith,left,npc_blacksmith_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans; carrying grip retained
+npc_blacksmith,up_left,npc_blacksmith_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans; carrying grip retained
+npc_blacksmith,up,npc_blacksmith_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans; carrying grip retained
+npc_blacksmith,up_right,npc_blacksmith_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_blacksmith,right,npc_blacksmith_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_blacksmith,down_right,npc_blacksmith_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_calder,down,npc_calder_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_calder,down_left,npc_calder_model_down_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_calder,left,npc_calder_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_calder,up_left,npc_calder_model_up_left,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans; carrying grip retained
+npc_calder,up,npc_calder_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_calder,up_right,npc_calder_model_up_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; carrying grip retained
+npc_calder,right,npc_calder_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_calder,down_right,npc_calder_model_down_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans; carrying grip retained
+npc_cassia,down,npc_cassia_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_cassia,down_left,npc_cassia_model_down_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_cassia,left,npc_cassia_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_cassia,up_left,npc_cassia_model_up_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_cassia,up,npc_cassia_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_cassia,up_right,npc_cassia_model_up_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_cassia,right,npc_cassia_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_cassia,down_right,npc_cassia_model_down_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_citizen_man,down,npc_citizen_man_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_citizen_man,down_left,npc_citizen_man_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_citizen_man,left,npc_citizen_man_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_citizen_man,up_left,npc_citizen_man_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_citizen_man,up,npc_citizen_man_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_citizen_man,up_right,npc_citizen_man_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_citizen_man,right,npc_citizen_man_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_citizen_man,down_right,npc_citizen_man_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_citizen_woman,down,npc_citizen_woman_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_citizen_woman,down_left,npc_citizen_woman_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_citizen_woman,left,npc_citizen_woman_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_citizen_woman,up_left,npc_citizen_woman_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_citizen_woman,up,npc_citizen_woman_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_citizen_woman,up_right,npc_citizen_woman_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_citizen_woman,right,npc_citizen_woman_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_citizen_woman,down_right,npc_citizen_woman_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_elowen,down,npc_elowen_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_elowen,down_left,npc_elowen_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_elowen,left,npc_elowen_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_elowen,up_left,npc_elowen_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_elowen,up,npc_elowen_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_elowen,up_right,npc_elowen_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_elowen,right,npc_elowen_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_elowen,down_right,npc_elowen_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_garruk,down,npc_garruk_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_garruk,down_left,npc_garruk_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_garruk,left,npc_garruk_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_garruk,up_left,npc_garruk_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_garruk,up,npc_garruk_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_garruk,up_right,npc_garruk_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_garruk,right,npc_garruk_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_garruk,down_right,npc_garruk_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_innkeeper,down,npc_innkeeper_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_innkeeper,down_left,npc_innkeeper_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_innkeeper,left,npc_innkeeper_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_innkeeper,up_left,npc_innkeeper_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_innkeeper,up,npc_innkeeper_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_innkeeper,up_right,npc_innkeeper_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_innkeeper,right,npc_innkeeper_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_innkeeper,down_right,npc_innkeeper_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_kael,down,npc_kael_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_kael,down_left,npc_kael_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_kael,left,npc_kael_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_kael,up_left,npc_kael_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_kael,up,npc_kael_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_kael,up_right,npc_kael_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_kael,right,npc_kael_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_kael,down_right,npc_kael_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_liora,down,npc_liora_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_liora,down_left,npc_liora_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_liora,left,npc_liora_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_liora,up_left,npc_liora_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_liora,up,npc_liora_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_liora,up_right,npc_liora_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_liora,right,npc_liora_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_liora,down_right,npc_liora_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_lyra,down,npc_lyra_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_lyra,down_left,npc_lyra_model_down_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_lyra,left,npc_lyra_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_lyra,up_left,npc_lyra_model_up_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_lyra,up,npc_lyra_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_lyra,up_right,npc_lyra_model_up_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_lyra,right,npc_lyra_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_lyra,down_right,npc_lyra_model_down_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_maera,down,npc_maera_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_maera,down_left,npc_maera_model_down_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_maera,left,npc_maera_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_maera,up_left,npc_maera_model_up_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_maera,up,npc_maera_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_maera,up_right,npc_maera_model_up_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_maera,right,npc_maera_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_maera,down_right,npc_maera_model_down_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_marla,down,npc_marla_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_marla,down_left,npc_marla_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_marla,left,npc_marla_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_marla,up_left,npc_marla_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_marla,up,npc_marla_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_marla,up_right,npc_marla_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_marla,right,npc_marla_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_marla,down_right,npc_marla_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_merchant,down,npc_merchant_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_merchant,down_left,npc_merchant_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_merchant,left,npc_merchant_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_merchant,up_left,npc_merchant_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_merchant,up,npc_merchant_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_merchant,up_right,npc_merchant_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_merchant,right,npc_merchant_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_merchant,down_right,npc_merchant_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_mira_sunwarden,down,npc_mira_sunwarden_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_mira_sunwarden,down_left,npc_mira_sunwarden_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_mira_sunwarden,left,npc_mira_sunwarden_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_mira_sunwarden,up_left,npc_mira_sunwarden_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_mira_sunwarden,up,npc_mira_sunwarden_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_mira_sunwarden,up_right,npc_mira_sunwarden_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_mira_sunwarden,right,npc_mira_sunwarden_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_mira_sunwarden,down_right,npc_mira_sunwarden_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_nyx,down,npc_nyx_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_nyx,down_left,npc_nyx_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_nyx,left,npc_nyx_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_nyx,up_left,npc_nyx_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_nyx,up,npc_nyx_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_nyx,up_right,npc_nyx_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_nyx,right,npc_nyx_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_nyx,down_right,npc_nyx_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_orin,down,npc_orin_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_orin,down_left,npc_orin_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_orin,left,npc_orin_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_orin,up_left,npc_orin_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_orin,up,npc_orin_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_orin,up_right,npc_orin_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_orin,right,npc_orin_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_orin,down_right,npc_orin_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_quartermaster,down,npc_quartermaster_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_quartermaster,down_left,npc_quartermaster_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_quartermaster,left,npc_quartermaster_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_quartermaster,up_left,npc_quartermaster_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_quartermaster,up,npc_quartermaster_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_quartermaster,up_right,npc_quartermaster_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_quartermaster,right,npc_quartermaster_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_quartermaster,down_right,npc_quartermaster_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_rafiq,down,npc_rafiq_model_down,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans
+npc_rafiq,down_left,npc_rafiq_model_down_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_rafiq,left,npc_rafiq_model_left,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+npc_rafiq,up_left,npc_rafiq_model_up_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_rafiq,up,npc_rafiq_model_up,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans
+npc_rafiq,up_right,npc_rafiq_model_up_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_rafiq,right,npc_rafiq_model_right,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+npc_rafiq,down_right,npc_rafiq_model_down_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,down,npc_regional_desert_artisan_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,down_left,npc_regional_desert_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,left,npc_regional_desert_artisan_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,up_left,npc_regional_desert_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,up,npc_regional_desert_artisan_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,up_right,npc_regional_desert_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,right,npc_regional_desert_artisan_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_f,down_right,npc_regional_desert_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_m,down,npc_regional_desert_artisan_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_m,down_left,npc_regional_desert_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_artisan_m,left,npc_regional_desert_artisan_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_artisan_m,up_left,npc_regional_desert_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_artisan_m,up,npc_regional_desert_artisan_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_desert_artisan_m,up_right,npc_regional_desert_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_artisan_m,right,npc_regional_desert_artisan_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_artisan_m,down_right,npc_regional_desert_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_farmer_f,down,npc_regional_desert_farmer_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_f,down_left,npc_regional_desert_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_f,left,npc_regional_desert_farmer_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_f,up_left,npc_regional_desert_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_f,up,npc_regional_desert_farmer_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_f,up_right,npc_regional_desert_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_f,right,npc_regional_desert_farmer_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_f,down_right,npc_regional_desert_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,down,npc_regional_desert_farmer_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,down_left,npc_regional_desert_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,left,npc_regional_desert_farmer_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,up_left,npc_regional_desert_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,up,npc_regional_desert_farmer_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,up_right,npc_regional_desert_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,right,npc_regional_desert_farmer_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_farmer_m,down_right,npc_regional_desert_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,down,npc_regional_desert_guard_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,down_left,npc_regional_desert_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,left,npc_regional_desert_guard_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,up_left,npc_regional_desert_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,up,npc_regional_desert_guard_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,up_right,npc_regional_desert_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,right,npc_regional_desert_guard_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_f,down_right,npc_regional_desert_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,down,npc_regional_desert_guard_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,down_left,npc_regional_desert_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,left,npc_regional_desert_guard_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,up_left,npc_regional_desert_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,up,npc_regional_desert_guard_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,up_right,npc_regional_desert_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,right,npc_regional_desert_guard_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_guard_m,down_right,npc_regional_desert_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_healer_f,down,npc_regional_desert_healer_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_f,down_left,npc_regional_desert_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_f,left,npc_regional_desert_healer_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_f,up_left,npc_regional_desert_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_f,up,npc_regional_desert_healer_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_f,up_right,npc_regional_desert_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_f,right,npc_regional_desert_healer_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_f,down_right,npc_regional_desert_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,down,npc_regional_desert_healer_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,down_left,npc_regional_desert_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,left,npc_regional_desert_healer_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,up_left,npc_regional_desert_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,up,npc_regional_desert_healer_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,up_right,npc_regional_desert_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,right,npc_regional_desert_healer_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_healer_m,down_right,npc_regional_desert_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_miner_f,down,npc_regional_desert_miner_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_f,down_left,npc_regional_desert_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_miner_f,left,npc_regional_desert_miner_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_miner_f,up_left,npc_regional_desert_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_miner_f,up,npc_regional_desert_miner_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_f,up_right,npc_regional_desert_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_f,right,npc_regional_desert_miner_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_f,down_right,npc_regional_desert_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,down,npc_regional_desert_miner_m_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,down_left,npc_regional_desert_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,left,npc_regional_desert_miner_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,up_left,npc_regional_desert_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,up,npc_regional_desert_miner_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,up_right,npc_regional_desert_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,right,npc_regional_desert_miner_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_miner_m,down_right,npc_regional_desert_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_noble_f,down,npc_regional_desert_noble_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_f,down_left,npc_regional_desert_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_f,left,npc_regional_desert_noble_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_f,up_left,npc_regional_desert_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_f,up,npc_regional_desert_noble_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_f,up_right,npc_regional_desert_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_f,right,npc_regional_desert_noble_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_f,down_right,npc_regional_desert_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,down,npc_regional_desert_noble_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,down_left,npc_regional_desert_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,left,npc_regional_desert_noble_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,up_left,npc_regional_desert_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,up,npc_regional_desert_noble_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,up_right,npc_regional_desert_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,right,npc_regional_desert_noble_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_noble_m,down_right,npc_regional_desert_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,down,npc_regional_desert_scholar_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,down_left,npc_regional_desert_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,left,npc_regional_desert_scholar_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,up_left,npc_regional_desert_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,up,npc_regional_desert_scholar_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,up_right,npc_regional_desert_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,right,npc_regional_desert_scholar_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_f,down_right,npc_regional_desert_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,down,npc_regional_desert_scholar_m_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,down_left,npc_regional_desert_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,left,npc_regional_desert_scholar_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,up_left,npc_regional_desert_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,up,npc_regional_desert_scholar_m_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,up_right,npc_regional_desert_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,right,npc_regional_desert_scholar_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_scholar_m,down_right,npc_regional_desert_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_desert_trader_f,down,npc_regional_desert_trader_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_f,down_left,npc_regional_desert_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_f,left,npc_regional_desert_trader_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_f,up_left,npc_regional_desert_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_f,up,npc_regional_desert_trader_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_f,up_right,npc_regional_desert_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_trader_f,right,npc_regional_desert_trader_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_trader_f,down_right,npc_regional_desert_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_trader_m,down,npc_regional_desert_trader_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_m,down_left,npc_regional_desert_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_m,left,npc_regional_desert_trader_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_m,up_left,npc_regional_desert_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_m,up,npc_regional_desert_trader_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_desert_trader_m,up_right,npc_regional_desert_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_trader_m,right,npc_regional_desert_trader_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_desert_trader_m,down_right,npc_regional_desert_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_artisan_f,down,npc_regional_highland_artisan_f_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_f,down_left,npc_regional_highland_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_f,left,npc_regional_highland_artisan_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_f,up_left,npc_regional_highland_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_f,up,npc_regional_highland_artisan_f_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_f,up_right,npc_regional_highland_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_f,right,npc_regional_highland_artisan_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_f,down_right,npc_regional_highland_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,down,npc_regional_highland_artisan_m_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,down_left,npc_regional_highland_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,left,npc_regional_highland_artisan_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,up_left,npc_regional_highland_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,up,npc_regional_highland_artisan_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,up_right,npc_regional_highland_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,right,npc_regional_highland_artisan_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_artisan_m,down_right,npc_regional_highland_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_f,down,npc_regional_highland_farmer_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_f,down_left,npc_regional_highland_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_f,left,npc_regional_highland_farmer_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_f,up_left,npc_regional_highland_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_f,up,npc_regional_highland_farmer_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_f,up_right,npc_regional_highland_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_f,right,npc_regional_highland_farmer_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_f,down_right,npc_regional_highland_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_farmer_m,down,npc_regional_highland_farmer_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_m,down_left,npc_regional_highland_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_m,left,npc_regional_highland_farmer_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_m,up_left,npc_regional_highland_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_m,up,npc_regional_highland_farmer_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_m,up_right,npc_regional_highland_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_m,right,npc_regional_highland_farmer_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_farmer_m,down_right,npc_regional_highland_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,down,npc_regional_highland_guard_f_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,down_left,npc_regional_highland_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,left,npc_regional_highland_guard_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,up_left,npc_regional_highland_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,up,npc_regional_highland_guard_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,up_right,npc_regional_highland_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,right,npc_regional_highland_guard_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_f,down_right,npc_regional_highland_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,down,npc_regional_highland_guard_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,down_left,npc_regional_highland_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,left,npc_regional_highland_guard_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,up_left,npc_regional_highland_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,up,npc_regional_highland_guard_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,up_right,npc_regional_highland_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,right,npc_regional_highland_guard_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_highland_guard_m,down_right,npc_regional_highland_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_highland_healer_f,down,npc_regional_highland_healer_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_f,down_left,npc_regional_highland_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_f,left,npc_regional_highland_healer_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_f,up_left,npc_regional_highland_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_f,up,npc_regional_highland_healer_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_f,up_right,npc_regional_highland_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_f,right,npc_regional_highland_healer_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_f,down_right,npc_regional_highland_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,down,npc_regional_highland_healer_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,down_left,npc_regional_highland_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,left,npc_regional_highland_healer_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,up_left,npc_regional_highland_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,up,npc_regional_highland_healer_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,up_right,npc_regional_highland_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,right,npc_regional_highland_healer_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_healer_m,down_right,npc_regional_highland_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_miner_f,down,npc_regional_highland_miner_f_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_highland_miner_f,down_left,npc_regional_highland_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_miner_f,left,npc_regional_highland_miner_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_miner_f,up_left,npc_regional_highland_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_miner_f,up,npc_regional_highland_miner_f_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_highland_miner_f,up_right,npc_regional_highland_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_f,right,npc_regional_highland_miner_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_f,down_right,npc_regional_highland_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_m,down,npc_regional_highland_miner_m_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_highland_miner_m,down_left,npc_regional_highland_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_m,left,npc_regional_highland_miner_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_m,up_left,npc_regional_highland_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_m,up,npc_regional_highland_miner_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_highland_miner_m,up_right,npc_regional_highland_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_m,right,npc_regional_highland_miner_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_miner_m,down_right,npc_regional_highland_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_highland_noble_f,down,npc_regional_highland_noble_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_f,down_left,npc_regional_highland_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_f,left,npc_regional_highland_noble_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_f,up_left,npc_regional_highland_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_f,up,npc_regional_highland_noble_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_f,up_right,npc_regional_highland_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_f,right,npc_regional_highland_noble_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_f,down_right,npc_regional_highland_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,down,npc_regional_highland_noble_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,down_left,npc_regional_highland_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,left,npc_regional_highland_noble_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,up_left,npc_regional_highland_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,up,npc_regional_highland_noble_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,up_right,npc_regional_highland_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,right,npc_regional_highland_noble_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_noble_m,down_right,npc_regional_highland_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,down,npc_regional_highland_scholar_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,down_left,npc_regional_highland_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,left,npc_regional_highland_scholar_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,up_left,npc_regional_highland_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,up,npc_regional_highland_scholar_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,up_right,npc_regional_highland_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,right,npc_regional_highland_scholar_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_f,down_right,npc_regional_highland_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,down,npc_regional_highland_scholar_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,down_left,npc_regional_highland_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,left,npc_regional_highland_scholar_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,up_left,npc_regional_highland_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,up,npc_regional_highland_scholar_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,up_right,npc_regional_highland_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,right,npc_regional_highland_scholar_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_scholar_m,down_right,npc_regional_highland_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_highland_trader_f,down,npc_regional_highland_trader_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_f,down_left,npc_regional_highland_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_f,left,npc_regional_highland_trader_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_f,up_left,npc_regional_highland_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_f,up,npc_regional_highland_trader_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_f,up_right,npc_regional_highland_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_f,right,npc_regional_highland_trader_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_f,down_right,npc_regional_highland_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,down,npc_regional_highland_trader_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,down_left,npc_regional_highland_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,left,npc_regional_highland_trader_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,up_left,npc_regional_highland_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,up,npc_regional_highland_trader_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,up_right,npc_regional_highland_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,right,npc_regional_highland_trader_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_highland_trader_m,down_right,npc_regional_highland_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,down,npc_regional_marsh_artisan_f_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,down_left,npc_regional_marsh_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,left,npc_regional_marsh_artisan_f_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,up_left,npc_regional_marsh_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,up,npc_regional_marsh_artisan_f_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,up_right,npc_regional_marsh_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,right,npc_regional_marsh_artisan_f_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_f,down_right,npc_regional_marsh_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_m,down,npc_regional_marsh_artisan_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_m,down_left,npc_regional_marsh_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_marsh_artisan_m,left,npc_regional_marsh_artisan_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_marsh_artisan_m,up_left,npc_regional_marsh_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_marsh_artisan_m,up,npc_regional_marsh_artisan_m_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_m,up_right,npc_regional_marsh_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_m,right,npc_regional_marsh_artisan_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_artisan_m,down_right,npc_regional_marsh_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,down,npc_regional_marsh_farmer_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,down_left,npc_regional_marsh_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,left,npc_regional_marsh_farmer_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,up_left,npc_regional_marsh_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,up,npc_regional_marsh_farmer_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,up_right,npc_regional_marsh_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,right,npc_regional_marsh_farmer_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_f,down_right,npc_regional_marsh_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,down,npc_regional_marsh_farmer_m_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,down_left,npc_regional_marsh_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,left,npc_regional_marsh_farmer_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,up_left,npc_regional_marsh_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,up,npc_regional_marsh_farmer_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,up_right,npc_regional_marsh_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,right,npc_regional_marsh_farmer_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_farmer_m,down_right,npc_regional_marsh_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,down,npc_regional_marsh_guard_f_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,down_left,npc_regional_marsh_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,left,npc_regional_marsh_guard_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,up_left,npc_regional_marsh_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,up,npc_regional_marsh_guard_f_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,up_right,npc_regional_marsh_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,right,npc_regional_marsh_guard_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_f,down_right,npc_regional_marsh_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,down,npc_regional_marsh_guard_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,down_left,npc_regional_marsh_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,left,npc_regional_marsh_guard_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,up_left,npc_regional_marsh_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,up,npc_regional_marsh_guard_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,up_right,npc_regional_marsh_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,right,npc_regional_marsh_guard_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_marsh_guard_m,down_right,npc_regional_marsh_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_marsh_healer_f,down,npc_regional_marsh_healer_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_f,down_left,npc_regional_marsh_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_f,left,npc_regional_marsh_healer_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_f,up_left,npc_regional_marsh_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_f,up,npc_regional_marsh_healer_f_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_f,up_right,npc_regional_marsh_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_f,right,npc_regional_marsh_healer_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_f,down_right,npc_regional_marsh_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,down,npc_regional_marsh_healer_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,down_left,npc_regional_marsh_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,left,npc_regional_marsh_healer_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,up_left,npc_regional_marsh_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,up,npc_regional_marsh_healer_m_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,up_right,npc_regional_marsh_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,right,npc_regional_marsh_healer_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_healer_m,down_right,npc_regional_marsh_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_miner_f,down,npc_regional_marsh_miner_f_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_f,down_left,npc_regional_marsh_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_f,left,npc_regional_marsh_miner_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_f,up_left,npc_regional_marsh_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_f,up,npc_regional_marsh_miner_f_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_f,up_right,npc_regional_marsh_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_f,right,npc_regional_marsh_miner_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_f,down_right,npc_regional_marsh_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,down,npc_regional_marsh_miner_m_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,down_left,npc_regional_marsh_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,left,npc_regional_marsh_miner_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,up_left,npc_regional_marsh_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,up,npc_regional_marsh_miner_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,up_right,npc_regional_marsh_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,right,npc_regional_marsh_miner_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_miner_m,down_right,npc_regional_marsh_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_noble_f,down,npc_regional_marsh_noble_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_f,down_left,npc_regional_marsh_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_f,left,npc_regional_marsh_noble_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_f,up_left,npc_regional_marsh_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_f,up,npc_regional_marsh_noble_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_f,up_right,npc_regional_marsh_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_f,right,npc_regional_marsh_noble_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_f,down_right,npc_regional_marsh_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,down,npc_regional_marsh_noble_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,down_left,npc_regional_marsh_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,left,npc_regional_marsh_noble_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,up_left,npc_regional_marsh_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,up,npc_regional_marsh_noble_m_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,up_right,npc_regional_marsh_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,right,npc_regional_marsh_noble_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_noble_m,down_right,npc_regional_marsh_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,down,npc_regional_marsh_scholar_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,down_left,npc_regional_marsh_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,left,npc_regional_marsh_scholar_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,up_left,npc_regional_marsh_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,up,npc_regional_marsh_scholar_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,up_right,npc_regional_marsh_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,right,npc_regional_marsh_scholar_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_f,down_right,npc_regional_marsh_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,down,npc_regional_marsh_scholar_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,down_left,npc_regional_marsh_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,left,npc_regional_marsh_scholar_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,up_left,npc_regional_marsh_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,up,npc_regional_marsh_scholar_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,up_right,npc_regional_marsh_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,right,npc_regional_marsh_scholar_m_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_scholar_m,down_right,npc_regional_marsh_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_marsh_trader_f,down,npc_regional_marsh_trader_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_f,down_left,npc_regional_marsh_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_f,left,npc_regional_marsh_trader_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_f,up_left,npc_regional_marsh_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_f,up,npc_regional_marsh_trader_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_f,up_right,npc_regional_marsh_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_f,right,npc_regional_marsh_trader_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_f,down_right,npc_regional_marsh_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,down,npc_regional_marsh_trader_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,down_left,npc_regional_marsh_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,left,npc_regional_marsh_trader_m_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,up_left,npc_regional_marsh_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,up,npc_regional_marsh_trader_m_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,up_right,npc_regional_marsh_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,right,npc_regional_marsh_trader_m_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_marsh_trader_m,down_right,npc_regional_marsh_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_regional_north_artisan_f,down,npc_regional_north_artisan_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_artisan_f,down_left,npc_regional_north_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_f,left,npc_regional_north_artisan_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_f,up_left,npc_regional_north_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_f,up,npc_regional_north_artisan_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_artisan_f,up_right,npc_regional_north_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_f,right,npc_regional_north_artisan_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_f,down_right,npc_regional_north_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_m,down,npc_regional_north_artisan_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_artisan_m,down_left,npc_regional_north_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_m,left,npc_regional_north_artisan_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_m,up_left,npc_regional_north_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_m,up,npc_regional_north_artisan_m_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_north_artisan_m,up_right,npc_regional_north_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_m,right,npc_regional_north_artisan_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_artisan_m,down_right,npc_regional_north_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_f,down,npc_regional_north_farmer_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_farmer_f,down_left,npc_regional_north_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_f,left,npc_regional_north_farmer_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_f,up_left,npc_regional_north_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_f,up,npc_regional_north_farmer_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_farmer_f,up_right,npc_regional_north_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_f,right,npc_regional_north_farmer_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_f,down_right,npc_regional_north_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_m,down,npc_regional_north_farmer_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_north_farmer_m,down_left,npc_regional_north_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_m,left,npc_regional_north_farmer_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_m,up_left,npc_regional_north_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_m,up,npc_regional_north_farmer_m_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_north_farmer_m,up_right,npc_regional_north_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_m,right,npc_regional_north_farmer_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_farmer_m,down_right,npc_regional_north_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_guard_f,down,npc_regional_north_guard_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_guard_f,down_left,npc_regional_north_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_f,left,npc_regional_north_guard_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_f,up_left,npc_regional_north_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_f,up,npc_regional_north_guard_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_guard_f,up_right,npc_regional_north_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_f,right,npc_regional_north_guard_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_f,down_right,npc_regional_north_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,down,npc_regional_north_guard_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,down_left,npc_regional_north_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,left,npc_regional_north_guard_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,up_left,npc_regional_north_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,up,npc_regional_north_guard_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,up_right,npc_regional_north_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,right,npc_regional_north_guard_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_north_guard_m,down_right,npc_regional_north_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_north_healer_f,down,npc_regional_north_healer_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_f,down_left,npc_regional_north_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_f,left,npc_regional_north_healer_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_f,up_left,npc_regional_north_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_f,up,npc_regional_north_healer_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_f,up_right,npc_regional_north_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_f,right,npc_regional_north_healer_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_f,down_right,npc_regional_north_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,down,npc_regional_north_healer_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,down_left,npc_regional_north_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,left,npc_regional_north_healer_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,up_left,npc_regional_north_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,up,npc_regional_north_healer_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,up_right,npc_regional_north_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,right,npc_regional_north_healer_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_healer_m,down_right,npc_regional_north_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_miner_f,down,npc_regional_north_miner_f_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_north_miner_f,down_left,npc_regional_north_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_f,left,npc_regional_north_miner_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_f,up_left,npc_regional_north_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_f,up,npc_regional_north_miner_f_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_north_miner_f,up_right,npc_regional_north_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_f,right,npc_regional_north_miner_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_f,down_right,npc_regional_north_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_m,down,npc_regional_north_miner_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_north_miner_m,down_left,npc_regional_north_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_m,left,npc_regional_north_miner_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_m,up_left,npc_regional_north_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_m,up,npc_regional_north_miner_m_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_north_miner_m,up_right,npc_regional_north_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_m,right,npc_regional_north_miner_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_miner_m,down_right,npc_regional_north_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_noble_f,down,npc_regional_north_noble_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_f,down_left,npc_regional_north_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_f,left,npc_regional_north_noble_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_f,up_left,npc_regional_north_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_f,up,npc_regional_north_noble_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_f,up_right,npc_regional_north_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_f,right,npc_regional_north_noble_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_f,down_right,npc_regional_north_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,down,npc_regional_north_noble_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,down_left,npc_regional_north_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,left,npc_regional_north_noble_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,up_left,npc_regional_north_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,up,npc_regional_north_noble_m_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,up_right,npc_regional_north_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,right,npc_regional_north_noble_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_noble_m,down_right,npc_regional_north_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,down,npc_regional_north_scholar_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,down_left,npc_regional_north_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,left,npc_regional_north_scholar_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,up_left,npc_regional_north_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,up,npc_regional_north_scholar_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,up_right,npc_regional_north_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,right,npc_regional_north_scholar_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_f,down_right,npc_regional_north_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,down,npc_regional_north_scholar_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,down_left,npc_regional_north_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,left,npc_regional_north_scholar_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,up_left,npc_regional_north_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,up,npc_regional_north_scholar_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,up_right,npc_regional_north_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,right,npc_regional_north_scholar_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_scholar_m,down_right,npc_regional_north_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_north_trader_f,down,npc_regional_north_trader_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_trader_f,down_left,npc_regional_north_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_f,left,npc_regional_north_trader_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_f,up_left,npc_regional_north_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_f,up,npc_regional_north_trader_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_trader_f,up_right,npc_regional_north_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_f,right,npc_regional_north_trader_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_f,down_right,npc_regional_north_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_m,down,npc_regional_north_trader_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_trader_m,down_left,npc_regional_north_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_m,left,npc_regional_north_trader_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_m,up_left,npc_regional_north_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_m,up,npc_regional_north_trader_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_north_trader_m,up_right,npc_regional_north_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_m,right,npc_regional_north_trader_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_north_trader_m,down_right,npc_regional_north_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_artisan_f,down,npc_regional_temperate_artisan_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_f,down_left,npc_regional_temperate_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_f,left,npc_regional_temperate_artisan_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_f,up_left,npc_regional_temperate_artisan_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_f,up,npc_regional_temperate_artisan_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_f,up_right,npc_regional_temperate_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_f,right,npc_regional_temperate_artisan_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_f,down_right,npc_regional_temperate_artisan_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_m,down,npc_regional_temperate_artisan_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_m,down_left,npc_regional_temperate_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_artisan_m,left,npc_regional_temperate_artisan_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_artisan_m,up_left,npc_regional_temperate_artisan_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_artisan_m,up,npc_regional_temperate_artisan_m_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_temperate_artisan_m,up_right,npc_regional_temperate_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_artisan_m,right,npc_regional_temperate_artisan_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_artisan_m,down_right,npc_regional_temperate_artisan_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,down,npc_regional_temperate_farmer_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,down_left,npc_regional_temperate_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,left,npc_regional_temperate_farmer_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,up_left,npc_regional_temperate_farmer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,up,npc_regional_temperate_farmer_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,up_right,npc_regional_temperate_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,right,npc_regional_temperate_farmer_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_f,down_right,npc_regional_temperate_farmer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_m,down,npc_regional_temperate_farmer_m_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_temperate_farmer_m,down_left,npc_regional_temperate_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_m,left,npc_regional_temperate_farmer_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_m,up_left,npc_regional_temperate_farmer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_m,up,npc_regional_temperate_farmer_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_temperate_farmer_m,up_right,npc_regional_temperate_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_m,right,npc_regional_temperate_farmer_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_farmer_m,down_right,npc_regional_temperate_farmer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_guard_f,down,npc_regional_temperate_guard_f_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_f,down_left,npc_regional_temperate_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_f,left,npc_regional_temperate_guard_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_f,up_left,npc_regional_temperate_guard_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_f,up,npc_regional_temperate_guard_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_f,up_right,npc_regional_temperate_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_f,right,npc_regional_temperate_guard_f_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_f,down_right,npc_regional_temperate_guard_f_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,down,npc_regional_temperate_guard_m_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,down_left,npc_regional_temperate_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,left,npc_regional_temperate_guard_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,up_left,npc_regional_temperate_guard_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,up,npc_regional_temperate_guard_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,up_right,npc_regional_temperate_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,right,npc_regional_temperate_guard_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_regional_temperate_guard_m,down_right,npc_regional_temperate_guard_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans
+npc_regional_temperate_healer_f,down,npc_regional_temperate_healer_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_f,down_left,npc_regional_temperate_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_f,left,npc_regional_temperate_healer_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_f,up_left,npc_regional_temperate_healer_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_f,up,npc_regional_temperate_healer_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_f,up_right,npc_regional_temperate_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_f,right,npc_regional_temperate_healer_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_f,down_right,npc_regional_temperate_healer_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,down,npc_regional_temperate_healer_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,down_left,npc_regional_temperate_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,left,npc_regional_temperate_healer_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,up_left,npc_regional_temperate_healer_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,up,npc_regional_temperate_healer_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,up_right,npc_regional_temperate_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,right,npc_regional_temperate_healer_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_healer_m,down_right,npc_regional_temperate_healer_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_miner_f,down,npc_regional_temperate_miner_f_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_temperate_miner_f,down_left,npc_regional_temperate_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_miner_f,left,npc_regional_temperate_miner_f_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_miner_f,up_left,npc_regional_temperate_miner_f_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_regional_temperate_miner_f,up,npc_regional_temperate_miner_f_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_temperate_miner_f,up_right,npc_regional_temperate_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_f,right,npc_regional_temperate_miner_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_f,down_right,npc_regional_temperate_miner_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_m,down,npc_regional_temperate_miner_m_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_temperate_miner_m,down_left,npc_regional_temperate_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_m,left,npc_regional_temperate_miner_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_m,up_left,npc_regional_temperate_miner_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_m,up,npc_regional_temperate_miner_m_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_regional_temperate_miner_m,up_right,npc_regional_temperate_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_m,right,npc_regional_temperate_miner_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_miner_m,down_right,npc_regional_temperate_miner_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_noble_f,down,npc_regional_temperate_noble_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_f,down_left,npc_regional_temperate_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_f,left,npc_regional_temperate_noble_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_f,up_left,npc_regional_temperate_noble_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_f,up,npc_regional_temperate_noble_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_f,up_right,npc_regional_temperate_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_f,right,npc_regional_temperate_noble_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_f,down_right,npc_regional_temperate_noble_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,down,npc_regional_temperate_noble_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,down_left,npc_regional_temperate_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,left,npc_regional_temperate_noble_m_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,up_left,npc_regional_temperate_noble_m_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,up,npc_regional_temperate_noble_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,up_right,npc_regional_temperate_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,right,npc_regional_temperate_noble_m_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_noble_m,down_right,npc_regional_temperate_noble_m_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,down,npc_regional_temperate_scholar_f_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,down_left,npc_regional_temperate_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,left,npc_regional_temperate_scholar_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,up_left,npc_regional_temperate_scholar_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,up,npc_regional_temperate_scholar_f_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,up_right,npc_regional_temperate_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,right,npc_regional_temperate_scholar_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_f,down_right,npc_regional_temperate_scholar_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,down,npc_regional_temperate_scholar_m_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,down_left,npc_regional_temperate_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,left,npc_regional_temperate_scholar_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,up_left,npc_regional_temperate_scholar_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,up,npc_regional_temperate_scholar_m_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,up_right,npc_regional_temperate_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,right,npc_regional_temperate_scholar_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_scholar_m,down_right,npc_regional_temperate_scholar_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; covered anatomy inferred
+npc_regional_temperate_trader_f,down,npc_regional_temperate_trader_f_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_trader_f,down_left,npc_regional_temperate_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_f,left,npc_regional_temperate_trader_f_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_f,up_left,npc_regional_temperate_trader_f_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_f,up,npc_regional_temperate_trader_f_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_trader_f,up_right,npc_regional_temperate_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_f,right,npc_regional_temperate_trader_f_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_f,down_right,npc_regional_temperate_trader_f_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_m,down,npc_regional_temperate_trader_m_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_trader_m,down_left,npc_regional_temperate_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_m,left,npc_regional_temperate_trader_m_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_m,up_left,npc_regional_temperate_trader_m_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_m,up,npc_regional_temperate_trader_m_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_regional_temperate_trader_m,up_right,npc_regional_temperate_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_m,right,npc_regional_temperate_trader_m_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_regional_temperate_trader_m,down_right,npc_regional_temperate_trader_m_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_ren,down,npc_ren_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_ren,down_left,npc_ren_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_ren,left,npc_ren_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_ren,up_left,npc_ren_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_ren,up,npc_ren_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_ren,up_right,npc_ren_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_ren,right,npc_ren_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_ren,down_right,npc_ren_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_rowan,down,npc_rowan_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_rowan,down_left,npc_rowan_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_rowan,left,npc_rowan_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_rowan,up_left,npc_rowan_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_rowan,up,npc_rowan_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_rowan,up_right,npc_rowan_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_rowan,right,npc_rowan_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_rowan,down_right,npc_rowan_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_sable,down,npc_sable_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_sable,down_left,npc_sable_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_sable,left,npc_sable_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_sable,up_left,npc_sable_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_sable,up,npc_sable_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_sable,up_right,npc_sable_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_sable,right,npc_sable_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_sable,down_right,npc_sable_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_samir,down,npc_samir_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_samir,down_left,npc_samir_model_down_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_samir,left,npc_samir_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_samir,up_left,npc_samir_model_up_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_samir,up,npc_samir_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_samir,up_right,npc_samir_model_up_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans
+npc_samir,right,npc_samir_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_samir,down_right,npc_samir_model_down_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_seraphine,down,npc_seraphine_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans; hair chain disabled until directional mask review
+npc_seraphine,down_left,npc_seraphine_model_down_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; hair chain disabled until directional mask review
+npc_seraphine,left,npc_seraphine_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; hair chain disabled until directional mask review
+npc_seraphine,up_left,npc_seraphine_model_up_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans; hair chain disabled until directional mask review
+npc_seraphine,up,npc_seraphine_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; hair chain disabled until directional mask review
+npc_seraphine,up_right,npc_seraphine_model_up_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans; hair chain disabled until directional mask review
+npc_seraphine,right,npc_seraphine_model_right,checks-pass,96,checks-pass,5/5 contour landmarks visible; source row spans
+npc_seraphine,down_right,npc_seraphine_model_down_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans; hair chain disabled until directional mask review
+npc_story_ash_scribe_damar,down,npc_story_ash_scribe_damar_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_ash_scribe_damar,down_left,npc_story_ash_scribe_damar_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_ash_scribe_damar,left,npc_story_ash_scribe_damar_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_ash_scribe_damar,up_left,npc_story_ash_scribe_damar_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_ash_scribe_damar,up,npc_story_ash_scribe_damar_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_ash_scribe_damar,up_right,npc_story_ash_scribe_damar_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_ash_scribe_damar,right,npc_story_ash_scribe_damar_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_ash_scribe_damar,down_right,npc_story_ash_scribe_damar_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,down,npc_story_bellwright_nessa_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,down_left,npc_story_bellwright_nessa_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,left,npc_story_bellwright_nessa_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,up_left,npc_story_bellwright_nessa_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,up,npc_story_bellwright_nessa_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,up_right,npc_story_bellwright_nessa_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,right,npc_story_bellwright_nessa_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_bellwright_nessa,down_right,npc_story_bellwright_nessa_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,down,npc_story_captain_elric_snowrest_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,down_left,npc_story_captain_elric_snowrest_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,left,npc_story_captain_elric_snowrest_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,up_left,npc_story_captain_elric_snowrest_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,up,npc_story_captain_elric_snowrest_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,up_right,npc_story_captain_elric_snowrest_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,right,npc_story_captain_elric_snowrest_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_captain_elric_snowrest,down_right,npc_story_captain_elric_snowrest_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,down,npc_story_elder_rowan_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,down_left,npc_story_elder_rowan_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,left,npc_story_elder_rowan_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,up_left,npc_story_elder_rowan_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,up,npc_story_elder_rowan_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,up_right,npc_story_elder_rowan_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,right,npc_story_elder_rowan_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_elder_rowan,down_right,npc_story_elder_rowan_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,down,npc_story_gravekeeper_hollis_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,down_left,npc_story_gravekeeper_hollis_model_left,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,left,npc_story_gravekeeper_hollis_model_left,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,up_left,npc_story_gravekeeper_hollis_model_left,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,up,npc_story_gravekeeper_hollis_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,up_right,npc_story_gravekeeper_hollis_model_right,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,right,npc_story_gravekeeper_hollis_model_right,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_gravekeeper_hollis,down_right,npc_story_gravekeeper_hollis_model_right,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_maelis,down,npc_story_maelis_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_maelis,down_left,npc_story_maelis_model_left,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_maelis,left,npc_story_maelis_model_left,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_maelis,up_left,npc_story_maelis_model_left,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_maelis,up,npc_story_maelis_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_maelis,up_right,npc_story_maelis_model_right,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_maelis,right,npc_story_maelis_model_right,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_story_maelis,down_right,npc_story_maelis_model_right,checks-pass,96,checks-pass,directional art fallback; 3/5 contour landmarks visible; source row spans
+npc_story_mirella,down,npc_story_mirella_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_mirella,down_left,npc_story_mirella_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_mirella,left,npc_story_mirella_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_mirella,up_left,npc_story_mirella_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_mirella,up,npc_story_mirella_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_mirella,up_right,npc_story_mirella_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_mirella,right,npc_story_mirella_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_mirella,down_right,npc_story_mirella_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_odrick,down,npc_story_odrick_model_down,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_odrick,down_left,npc_story_odrick_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_odrick,left,npc_story_odrick_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_odrick,up_left,npc_story_odrick_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_odrick,up,npc_story_odrick_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_odrick,up_right,npc_story_odrick_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_odrick,right,npc_story_odrick_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_story_odrick,down_right,npc_story_odrick_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_story_selene,down,npc_story_selene_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_selene,down_left,npc_story_selene_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_selene,left,npc_story_selene_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_selene,up_left,npc_story_selene_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_selene,up,npc_story_selene_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_selene,up_right,npc_story_selene_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_selene,right,npc_story_selene_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_selene,down_right,npc_story_selene_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,down,npc_story_solari_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,down_left,npc_story_solari_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,left,npc_story_solari_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,up_left,npc_story_solari_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,up,npc_story_solari_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,up_right,npc_story_solari_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,right,npc_story_solari_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_solari,down_right,npc_story_solari_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,down,npc_story_vaelthara_model_down,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,down_left,npc_story_vaelthara_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,left,npc_story_vaelthara_model_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,up_left,npc_story_vaelthara_model_left,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,up,npc_story_vaelthara_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,up_right,npc_story_vaelthara_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,right,npc_story_vaelthara_model_right,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_vaelthara,down_right,npc_story_vaelthara_model_right,checks-pass,96,checks-pass,directional art fallback; 0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_story_ysra,down,npc_story_ysra_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_ysra,down_left,npc_story_ysra_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_ysra,left,npc_story_ysra_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_ysra,up_left,npc_story_ysra_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_ysra,up,npc_story_ysra_model_up,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_ysra,up_right,npc_story_ysra_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_story_ysra,right,npc_story_ysra_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_story_ysra,down_right,npc_story_ysra_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_torin,down,npc_torin_model_down,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_torin,down_left,npc_torin_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_torin,left,npc_torin_model_left,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_torin,up_left,npc_torin_model_left,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_torin,up,npc_torin_model_up,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_torin,up_right,npc_torin_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_torin,right,npc_torin_model_right,checks-pass,96,checks-pass,2/5 contour landmarks visible; source row spans
+npc_torin,down_right,npc_torin_model_right,checks-pass,96,checks-pass,directional art fallback; 2/5 contour landmarks visible; source row spans
+npc_vesper,down,npc_vesper_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vesper,down_left,npc_vesper_model_down_left,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_vesper,left,npc_vesper_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vesper,up_left,npc_vesper_model_up_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vesper,up,npc_vesper_model_up,checks-pass,96,checks-pass,0/5 contour landmarks visible; source row spans; no visible contour evidence; authored cutouts needed
+npc_vesper,up_right,npc_vesper_model_up_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vesper,right,npc_vesper_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vesper,down_right,npc_vesper_model_down_right,checks-pass,96,checks-pass,4/5 contour landmarks visible; source row spans
+npc_vexa,down,npc_vexa_model_down,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vexa,down_left,npc_vexa_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_vexa,left,npc_vexa_model_left,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vexa,up_left,npc_vexa_model_left,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_vexa,up,npc_vexa_model_up,checks-pass,96,checks-pass,3/5 contour landmarks visible; source row spans
+npc_vexa,up_right,npc_vexa_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans
+npc_vexa,right,npc_vexa_model_right,checks-pass,96,checks-pass,1/5 contour landmarks visible; source row spans
+npc_vexa,down_right,npc_vexa_model_right,checks-pass,96,checks-pass,directional art fallback; 1/5 contour landmarks visible; source row spans

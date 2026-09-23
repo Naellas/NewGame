@@ -26,7 +26,7 @@ final class Pathfinder {
     }
 
     static TilePoint nearestTarget(GameState state, int targetX, int targetY) {
-        if (walkable(state, targetX, targetY)) {
+        if (playerWalkable(state, targetX, targetY)) {
             return new TilePoint(targetX, targetY);
         }
         TilePoint best = null;
@@ -36,7 +36,7 @@ final class Pathfinder {
             for (int y = targetY - radius; y <= targetY + radius; y++) {
                 for (int x = targetX - radius; x <= targetX + radius; x++) {
                     int targetDistance = Math.abs(x - targetX) + Math.abs(y - targetY);
-                    if (targetDistance != radius || !walkable(state, x, y)) {
+                    if (targetDistance != radius || !playerWalkable(state, x, y)) {
                         continue;
                     }
                     int playerDistance = Math.abs(x - state.playerX) + Math.abs(y - state.playerY);
@@ -67,6 +67,8 @@ final class Pathfinder {
             return new ArrayList<>();
         }
         int cells = width * height;
+        PropCollision.Anchor[] anchors = new PropCollision.Anchor[cells];
+        boolean[] checkedAnchors = new boolean[cells];
         PriorityQueue<PathNode> frontier = new PriorityQueue<>(Comparator.comparingInt(PathNode::priority));
         int[] cameFrom = new int[cells];
         int[] costSoFar = new int[cells];
@@ -88,7 +90,8 @@ final class Pathfinder {
             for (int[] direction : DIRECTIONS) {
                 int nx = currentNode.x() + direction[0];
                 int ny = currentNode.y() + direction[1];
-                if (!inBounds(nx, ny, width, height) || !canStep(state, currentNode.x(), currentNode.y(), nx, ny)) {
+                if (!inBounds(nx, ny, width, height) || !canStep(state, currentNode.x(), currentNode.y(), nx, ny,
+                        anchors, checkedAnchors, width)) {
                     continue;
                 }
                 int nextIndex = index(nx, ny, width);
@@ -115,30 +118,48 @@ final class Pathfinder {
     }
 
     static boolean walkable(GameState state, int x, int y) {
+        return playerWalkable(state, x, y) && state.npcAt(state.currentMapId, x, y) == null;
+    }
+
+    static boolean playerWalkable(GameState state, int x, int y) {
         return x >= 0
                 && y >= 0
                 && x < state.world.width(state.currentMapId)
                 && y < state.world.height(state.currentMapId)
-                && state.world.isPassable(state.currentMapId, x, y)
-                && state.npcAt(state.currentMapId, x, y) == null
+                && PropCollision.navigationAnchor(state.world, state.currentMapId, x, y) != null
+                && (state.residentsYieldToPlayer(state.currentMapId) || state.npcAt(state.currentMapId, x, y) == null)
                 && state.blockingQuestObjectiveAt(state.currentMapId, x, y) == null;
     }
 
-    private static boolean canStep(GameState state, int fromX, int fromY, int toX, int toY) {
-        if (!walkable(state, toX, toY)) {
-            return false;
+    private static boolean canStep(GameState state, int fromX, int fromY, int toX, int toY,
+                                   PropCollision.Anchor[] anchors, boolean[] checked, int width) {
+        if ((!state.residentsYieldToPlayer(state.currentMapId) && state.npcAt(state.currentMapId, toX, toY) != null)
+                || state.blockingQuestObjectiveAt(state.currentMapId, toX, toY) != null) return false;
+        var from = anchor(state, fromX, fromY, anchors, checked, width);
+        var to = anchor(state, toX, toY, anchors, checked, width);
+        if (from == null || to == null) return false;
+        if (fromX != toX && fromY != toY
+                && (!playerWalkable(state, toX, fromY) || !playerWalkable(state, fromX, toY))) return false;
+        return PropCollision.canTravel(state.world, state.currentMapId, from.x(), from.y(), to.x(), to.y());
+    }
+
+    private static PropCollision.Anchor anchor(GameState state, int x, int y,
+                                               PropCollision.Anchor[] anchors, boolean[] checked, int width) {
+        int i = index(x, y, width);
+        if (!checked[i]) {
+            anchors[i] = PropCollision.navigationAnchor(state.world, state.currentMapId, x, y);
+            checked[i] = true;
         }
-        if (Math.abs(toX - fromX) == 1 && Math.abs(toY - fromY) == 1) {
-            return walkable(state, toX, fromY) || walkable(state, fromX, toY);
-        }
-        return true;
+        return anchors[i];
     }
 
     private static int movementCost(GameState state, int fromX, int fromY, int toX, int toY) {
         int cost = Terrain.roadLike(state.world.tileAt(state.currentMapId, toX, toY)) ? ROAD_TILE_COST : NORMAL_TILE_COST;
         if (Math.abs(toX - fromX) == 1 && Math.abs(toY - fromY) == 1) {
-            return cost * DIAGONAL_COST_MULTIPLIER / 100;
+            cost = cost * DIAGONAL_COST_MULTIPLIER / 100;
         }
+        // Prefer space around people, but never declare a doorway unreachable just because of a resident.
+        if (state.npcAt(state.currentMapId, toX, toY) != null) cost += 180;
         return cost;
     }
 

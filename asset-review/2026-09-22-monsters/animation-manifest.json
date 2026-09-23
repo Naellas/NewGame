@@ -1,5 +1,5 @@
 {
-  "target": "Java/assets/monsters/animations/skeleton_attack_anim.png",
+  "target": "Java/assets/characters/monsters/animations/skeleton_attack_anim.png",
   "before_sha256": "75a7883c17d86f6644e8115af503369fd24f03ae1bbaeffef458aeb2b706bb89",
   "after_sha256": "e71d3e5d66be7381db059310b8bf0e1ab44970c3e5b6209cfef77f7de7dd6c9c",
   "frames": 6,

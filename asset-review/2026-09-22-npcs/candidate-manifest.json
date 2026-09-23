@@ -1,529 +1,529 @@
 [
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_down_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_down_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_down_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_down_walk_anim.png",
     "before_sha256": "90c0ad96349d5a4157a2ad82f1f2079c91be6a810bae69516df30e96c3e13d64",
     "after_sha256": "f6a2b77aa7af5a1b03c1316d22c27d8fa69e1cdd979d9cb2ded29ccc4e2d8647"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_down_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_down_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_down_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_down_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_bartender_model_down.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_bartender_model_down.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_bartender_model_down.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_bartender_model_down.png",
     "before_sha256": "c02b1bde445f6f7e893e7e2847243dec711691d99ee2aa7f49f1ad933b9def2e",
     "after_sha256": "dd3caed6a55266864877b7c1a592795ab11d44a4f2786f27aa2a15e372975926"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_left_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_left_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_left_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_left_walk_anim.png",
     "before_sha256": "c3b3664275f8589fa2028cf19ded6a75d4345e36167297cb2cf20e732bb7d790",
     "after_sha256": "cd9095bd2023f8ca586f5a21c6a839a34b665c20a0951d15de23152d5afcbff0"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_left_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_left_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_left_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_left_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_bartender_model_left.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_bartender_model_left.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_bartender_model_left.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_bartender_model_left.png",
     "before_sha256": "443fd00a5f654ace062b3289a337a3839f4e3ff54c2009be16b87b5b8904660e",
     "after_sha256": "c3208b85de4ff682218f328eb2cea15b76028b148690e2ac51e75844550e94bb"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_right_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_right_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_right_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_right_walk_anim.png",
     "before_sha256": "10874cdc813ac131920bf3e4525bc7b645e939e0c36bbf52ccd232920b5f80e1",
     "after_sha256": "ba2480b5deee25feda3ddaa8d12ff64ae5ad64a169836abe269ef8458e4d4978"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_right_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_right_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_right_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_right_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_bartender_model_right.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_bartender_model_right.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_bartender_model_right.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_bartender_model_right.png",
     "before_sha256": "3de6ef7c8614d1c92fa02029b1836b5768697c28071aa7a3383f43c58ef4a68c",
     "after_sha256": "e15cd0c9f633fc04dd73ef983dc81b19c594c34884814fdfe4bfe6ec58b0c318"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_up_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_up_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_up_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_up_walk_anim.png",
     "before_sha256": "d696e1b01ceb8ce8afb3eb9f00db182e7585182bf0c41478fdf4b0f83c160b67",
     "after_sha256": "dfda9c2350c39aaa1f8f8157333583a4b8d33d3c9d66b1d05d4a3a6fe8af81ae"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_bartender_model_up_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_bartender_model_up_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_up_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_bartender_model_up_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_bartender_model_up.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_bartender_model_up.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_bartender_model_up.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_bartender_model_up.png",
     "before_sha256": "5b105eabd7dd666a424caf9c8e72013aac0c8cfbe17437ecd89ee3a11ac576e0",
     "after_sha256": "d97e4d08530fbff040be970d356579c69d3507e638e1c0e1965f4a317e3f2863"
   },
   {
-    "target": "Java/assets/npcs/npc_bartender_model.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_bartender_model.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_bartender_model.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_bartender_model.png",
     "before_sha256": "c02b1bde445f6f7e893e7e2847243dec711691d99ee2aa7f49f1ad933b9def2e",
     "after_sha256": "dd3caed6a55266864877b7c1a592795ab11d44a4f2786f27aa2a15e372975926"
   },
   {
-    "target": "Java/assets/npcs/npc_bartender.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_bartender.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_bartender.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_bartender.png",
     "before_sha256": "fcccda968694031da5212cbcd94e16c46ef2f1e1bd5775563110395de63dd0e7",
     "after_sha256": "9eff1dd86bc5e5c177149b8f28a71933c2850ea7343bcd60b98021acb324429c"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_down_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_down_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_walk_anim.png",
     "before_sha256": "42a8a30e0bbbe93a8adc2506997f23fc054241e0c0fffdf5d4b603da32141425",
     "after_sha256": "0ad2845eb12b115be4f3e0ab00c4a2d44adee95de5e0161748e68e7dac412f08"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_down_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_down_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_blacksmith_model_down.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_blacksmith_model_down.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_down.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_down.png",
     "before_sha256": "853f77d7b5429bd4f876814df20d8342aa3a99e159e5985319512d35c20a3de7",
     "after_sha256": "26428db9f705a1420fd4fce79217b9f76c2e9057fff67405b20c827e954266a3"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_left_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_left_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_left_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_left_walk_anim.png",
     "before_sha256": "0dea6f06dffd6d3d79f9ccacce910c9766ef876ec1add71eddaf5ca616f6a5e0",
     "after_sha256": "e5aa567cca723534111406c46165c532d76a1cd87e30603c9b2b3902f3a5394e"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_left_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_left_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_left_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_left_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_blacksmith_model_left.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_blacksmith_model_left.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_left.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_left.png",
     "before_sha256": "abea00b91c279aac91eb2a0f75561eff69ac16b3e1b1115f4c27a31fcb6c2109",
     "after_sha256": "5399c1be7199815e3198322d4385e84d7ff5e1e322e6e0154db7abd6a9ab049a"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_right_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_right_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_right_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_right_walk_anim.png",
     "before_sha256": "1cab4081934d9d84800c6a57a7439e60531e569884b438db54245f8ecab868aa",
     "after_sha256": "03ccb457a5340eb87d184f181dd4a30508ffcb480ca2f29df9c1f7c3769acf1b"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_right_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_right_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_right_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_right_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_blacksmith_model_right.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_blacksmith_model_right.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_right.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_right.png",
     "before_sha256": "a658bc8f823c60b0dadfea5c2f370ca47b93943dbf68305821799d8ea977823b",
     "after_sha256": "407544ae35ad71749e1cf759ebcca8da6849a59a42773290a6ee5624c8adb83b"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_up_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_up_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_up_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_up_walk_anim.png",
     "before_sha256": "1e3d07dcf553b19f569e69212d64b42d53823592c1cf3c0c49eec99cc7a59bad",
     "after_sha256": "70c18f8875ea8fc0b027eef5101cc90b6d2517f314a23384fbdbe0a831d9ee87"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_up_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_up_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_up_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_up_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_blacksmith_model_up.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_blacksmith_model_up.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_up.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_blacksmith_model_up.png",
     "before_sha256": "564e9183bb481a8b8bebc61ca143b248302135635548abaee026dcf8d5c29f50",
     "after_sha256": "f44e61ffb435c45f337df035780c55df4f5ca8f8c6b108e8ded5dbb7ea3094f5"
   },
   {
-    "target": "Java/assets/npcs/npc_blacksmith_model.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_blacksmith_model.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_blacksmith_model.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_blacksmith_model.png",
     "before_sha256": "853f77d7b5429bd4f876814df20d8342aa3a99e159e5985319512d35c20a3de7",
     "after_sha256": "26428db9f705a1420fd4fce79217b9f76c2e9057fff67405b20c827e954266a3"
   },
   {
-    "target": "Java/assets/npcs/npc_blacksmith.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_blacksmith.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_blacksmith.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_blacksmith.png",
     "before_sha256": "45844cf6f58c926d782c81fe42d69e8af5166e3306f288f4b8e6669c5cacf7b1",
     "after_sha256": "bf2b328d121b00316cbab94550debd3cf70f9d030717d1589fce55ec17be3e50"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_down_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_down_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_down_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_down_walk_anim.png",
     "before_sha256": "be371f1de489c5f4f459abcad2e83c12a41381b83c625cf168b482356218b891",
     "after_sha256": "aa8e03a98c3f0931ebeff722f19479dc69c7b8277725dbc9ae454c8b62435c02"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_down_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_down_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_down_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_down_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_man_model_down.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_man_model_down.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_down.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_down.png",
     "before_sha256": "c76665cf8c853db59273c56ea62c816208f5eb392f1286aeb850476735ebf5fd",
     "after_sha256": "7afec4b62f55847637d71a7ac4ee9bdae0d381ebfeadf1bf9efd239e405bc724"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_left_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_left_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_left_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_left_walk_anim.png",
     "before_sha256": "d051f28950ddc70b08b3f179c8b33964c490201d99db04f7f6027acad2dad581",
     "after_sha256": "bc0fb129dac91f913472205394b737a8af4eb0cc2070fec6efc127001de96a0c"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_left_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_left_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_left_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_left_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_man_model_left.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_man_model_left.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_left.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_left.png",
     "before_sha256": "e02555c76ae73a5f3c8feb8cba569fff431d59075fc1c1df8727d8330e875020",
     "after_sha256": "0e0c08f8d356ca1040eee99b055f839ee71a70b18beaaefe5cd9f266bf66cec0"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_right_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_right_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_right_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_right_walk_anim.png",
     "before_sha256": "342eb94026368b4439f7f182b597def9b2b0c775b02ded59fb531a07d04d7336",
     "after_sha256": "4b05884f7fcb081c117643c8acbee773392abe24307ca79a9a7142180224e77c"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_right_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_right_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_right_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_right_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_man_model_right.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_man_model_right.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_right.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_right.png",
     "before_sha256": "bcb2c9ef3f0415a80f33109542050c0219843ac1b9a702fd510fea982845c529",
     "after_sha256": "d4c6b4022f69326935b391631431ccdb3d898a1d7e72beb68a807e00a5b53bd5"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_up_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_up_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_up_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_up_walk_anim.png",
     "before_sha256": "62ec0577186fd94a5860ece39af082466112f9ff4511db868673f2f6a30e3da5",
     "after_sha256": "5d8408afff2f67079b28d64069c9edc3c0f6df75b1714ff75b8a1dc6feb905b7"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_man_model_up_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_man_model_up_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_up_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_man_model_up_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_man_model_up.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_man_model_up.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_up.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_man_model_up.png",
     "before_sha256": "13608833b148b7e8625ac9dbb18471a5f72126c40e1022f5f97cdf758646b48d",
     "after_sha256": "7940f32cf3bc8436d5855d8910a40226284050a60ab70d486c5475aac70e9d5d"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_man_model.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_man_model.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_man_model.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_man_model.png",
     "before_sha256": "c76665cf8c853db59273c56ea62c816208f5eb392f1286aeb850476735ebf5fd",
     "after_sha256": "7afec4b62f55847637d71a7ac4ee9bdae0d381ebfeadf1bf9efd239e405bc724"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_man.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_man.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_man.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_man.png",
     "before_sha256": "88b4ce40678d653c44fd583618fa1f4ab7a213148b16ffb7bb986b337a697eb2",
     "after_sha256": "5684867761b8bfebb74f4c1f5f245d77bc64bb71c249e0a14229bc2a4dce5bb4"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_down_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_down_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_down_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_down_walk_anim.png",
     "before_sha256": "3042ee4db1654edbc3033bba22074040bbd20524dd9de10f2d98a57ac6516021",
     "after_sha256": "ab583aa21303b0c1006ccb37eda3c8503ca348a2c3d5a470cf2b37d07c1e7b8a"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_down_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_down_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_down_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_down_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_woman_model_down.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_woman_model_down.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_down.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_down.png",
     "before_sha256": "368b916a25a39788be152621be3ad8dcb3774986cb17d18a496be2a03c1a8e44",
     "after_sha256": "f41d04ddffaef3c81a851533bc27dd63d36242a000a92b6a6278615945a7ad91"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_left_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_left_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_left_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_left_walk_anim.png",
     "before_sha256": "3a26e1a7addfa727318307e7c97d92c6374b17749e1b5ffafe844e2afb49b087",
     "after_sha256": "5582ae41281fcaf9e668874c77753417b65bce0217174f12b72b9eb77747724c"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_left_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_left_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_left_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_left_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_woman_model_left.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_woman_model_left.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_left.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_left.png",
     "before_sha256": "05b8999117f86a84bdbe510a3440e3cb4e81650b4392a02d7d3188016ddab691",
     "after_sha256": "6c24a423fc5e36434bd0d29e9419087495747fd0276dfadd158993c656364920"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_right_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_right_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_right_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_right_walk_anim.png",
     "before_sha256": "d334fdf1deb287151c0db188cecd2ed222e83e5fc3354448b5b46b2bd66c72e9",
     "after_sha256": "6a68d9b08255d81e351a8887c41663c5f6e9c1ad404a791e2c3f161c2db1a69b"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_right_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_right_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_right_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_right_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_woman_model_right.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_woman_model_right.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_right.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_right.png",
     "before_sha256": "e04740d07fa20feb857e0fe7bf382a534b5e72b2cc21fe5a4e9874a60b2fd708",
     "after_sha256": "4bbba8e7578bbb4974f2d4943bf93c2970118f1dc29d30f9d5509d7d0baf79ab"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_up_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_up_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_up_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_up_walk_anim.png",
     "before_sha256": "41a61b3f3bf349b10b76df34223eec8cbaaa75872332def8de21233e10f28e5f",
     "after_sha256": "363c31993445e88c3837a40f3ae8e831ec4e24f4d0211dab04a874ef83d9a989"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_citizen_woman_model_up_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_citizen_woman_model_up_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_up_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_citizen_woman_model_up_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_woman_model_up.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_woman_model_up.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_up.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model_up.png",
     "before_sha256": "f726a3a2ef5f8c96bdee012b12b0e174b5d0c0f3382599288180dcd58ebb3053",
     "after_sha256": "042a126c6ca84c24ccbd28a3e6b433fca61919af4eafece3e29e646946bd9b92"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_woman_model.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_woman_model.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_woman_model.png",
     "before_sha256": "368b916a25a39788be152621be3ad8dcb3774986cb17d18a496be2a03c1a8e44",
     "after_sha256": "f41d04ddffaef3c81a851533bc27dd63d36242a000a92b6a6278615945a7ad91"
   },
   {
-    "target": "Java/assets/npcs/npc_citizen_woman.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_citizen_woman.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_citizen_woman.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_citizen_woman.png",
     "before_sha256": "abc6ed35d105d7a132e1d9afca162eef4034814554fb4af652d5b9bb29e09816",
     "after_sha256": "e35cb07feba4268ae13174f152043125ff47325a0c679230509c9b4a930d360f"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_down_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_down_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_walk_anim.png",
     "before_sha256": "e0acc9f4dfa554ef6cec1424b53b2b6b8d16a9c5901822b5d5a817fd7d61f9cd",
     "after_sha256": "61c1f1f16c5b47eff18263303ba103fe70264877b6de8f7bd8854a42b00f4790"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_down_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_down_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_merchant_model_down.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_merchant_model_down.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_merchant_model_down.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_merchant_model_down.png",
     "before_sha256": "06edd0801b4c4a986e41fb28577b67e994e1c7c8db78d547dfb27376445fc6eb",
     "after_sha256": "c052440580bd8d9c02ec78e49f596c117cb880e8ddc2320beac6dce91e6502ae"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_left_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_left_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_left_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_left_walk_anim.png",
     "before_sha256": "28756f62a8348278d4d5654cef0a1ce08edee70c174d1c84cdf1b803a0bdd194",
     "after_sha256": "62dca759165caf70ff38ef454e8876553d330669d1abf7731f6aad6e2f4a1147"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_left_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_left_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_left_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_left_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_merchant_model_left.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_merchant_model_left.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_merchant_model_left.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_merchant_model_left.png",
     "before_sha256": "b2f1944448e95c69d7922c6fe8eab73e1a01c9d1901b9bdd5b6ddf9103e53c2b",
     "after_sha256": "9005f0111e8608733fc42f32fe53e8cba546043624ed9a881c2bcc4b1bad1075"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_right_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_right_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_right_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_right_walk_anim.png",
     "before_sha256": "4a7031a6c9be7042dc690147c3a71f98fb6d8b864257807050ca8101593adc20",
     "after_sha256": "14d249dcd4d33ea68e3e2050262022f5a8b5798c4deb5fb5fa46c4db5a3fdba4"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_right_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_right_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_right_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_right_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_merchant_model_right.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_merchant_model_right.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_merchant_model_right.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_merchant_model_right.png",
     "before_sha256": "658b339bd8167b2fa806cb8956608b75fc1e1cda2b2fb11f134308751080d665",
     "after_sha256": "39066e60c32ebd4fa8d2caf277a9b9f4a130eaf0b129cd9836c000a929f2b156"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_up_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_up_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_up_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_up_walk_anim.png",
     "before_sha256": "5f56e56122bdede2515681a28e37f19cea7838a46d00339fa92d1b843af8de27",
     "after_sha256": "ab2305174de58df99a625582fe98ab200bbc7c89128bec9f966fb80334090aa3"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_up_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_up_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_up_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_up_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_merchant_model_up.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_merchant_model_up.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_merchant_model_up.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_merchant_model_up.png",
     "before_sha256": "eea96382b5c5b9795effcc9510e22d3c2793b66ec65d4ff9d84644be31ac1f8c",
     "after_sha256": "23fa13b808c16ffd725d74c93295ac0e2d8627fe6a3f846619357f5f9041431f"
   },
   {
-    "target": "Java/assets/npcs/npc_merchant_model.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_merchant_model.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_merchant_model.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_merchant_model.png",
     "before_sha256": "06edd0801b4c4a986e41fb28577b67e994e1c7c8db78d547dfb27376445fc6eb",
     "after_sha256": "c052440580bd8d9c02ec78e49f596c117cb880e8ddc2320beac6dce91e6502ae"
   },
   {
-    "target": "Java/assets/npcs/npc_merchant.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_merchant.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_merchant.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_merchant.png",
     "before_sha256": "d5a72a9804e1d1b582a1bb792a3b84630df72545dd5cadcefcc9a0bd16422be0",
     "after_sha256": "474521ffbfbec308176fadee63f9118ec41c09a62aa62f78cde2a46043613f60"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_down_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_down_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_down_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_down_walk_anim.png",
     "before_sha256": "8bdeb087e54a2942217e717ee54c76fbd43c4949bb8de67dc5cc374138d676c3",
     "after_sha256": "36883bf147fc26bb9a211e70ce3f9b5ea37931e5946106a0726399234ff2a5d0"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_down_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_down_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_down_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_down_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_orin_model_down.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_orin_model_down.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_orin_model_down.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_orin_model_down.png",
     "before_sha256": "7bb9de459b29d70914159c69404689fc7cb2170b22054591c9eb6cc59164cf27",
     "after_sha256": "ff5c7c32ba496012e34add91ecbf62fbd58d297e83ac90e6cf19b2ffabddac60"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_left_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_left_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_left_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_left_walk_anim.png",
     "before_sha256": "62c0b602d5789eb5c76566c95e2a532f9cf2da6af068d84ffaa52fb3e025fb9f",
     "after_sha256": "095339ef75505cb3737da29447b865b83e6fb14292da6b5f28cce2325cd4acb1"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_left_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_left_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_left_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_left_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_orin_model_left.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_orin_model_left.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_orin_model_left.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_orin_model_left.png",
     "before_sha256": "fd33c4321ec3a050e8ab82f4072ac14af66429c52bcd186fe647423570c7b8ea",
     "after_sha256": "95789a7b8ee268d93eb62ec9b8128d885af9ed34d5d6f8efe3db45db05e116f4"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_right_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_right_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_right_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_right_walk_anim.png",
     "before_sha256": "3c4bd70bfe6c3f239f93398b79f245de2e5ffef84032fe25431e91b3c3173f20",
     "after_sha256": "fbc966260b0142c666d13b15d7576ee5c926a88c5b96d767babb4ee56fb3a760"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_right_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_right_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_right_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_right_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_orin_model_right.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_orin_model_right.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_orin_model_right.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_orin_model_right.png",
     "before_sha256": "e8b58f116be5fba9f041e75d0b1a583566c2f3acb0c3ce7f783cb66ad0d32deb",
     "after_sha256": "5f0f1802e343cbbcb39a0fd4416393145c5ac249e67f6d691ae9439eda5c8225"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_up_walk_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_up_walk_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_up_walk_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_up_walk_anim.png",
     "before_sha256": "9b40fe78d3c0b366a5ff86d60400ebc64e56e6aa6f1abe5cf589d38a9507ec14",
     "after_sha256": "e8081935868459dfc8594284710524cbf2dd66c3dd8c94b7846b9c1d7ca88910"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_orin_model_up_walk_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_orin_model_up_walk_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_up_walk_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_orin_model_up_walk_anim.frames",
     "before_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f",
     "after_sha256": "e0c18a6a8d48da87994c100bbb324c758d413e95f0fa5135bd0738a692b4d56f"
   },
   {
-    "target": "Java/assets/npcs/npc_orin_model_up.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_orin_model_up.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_orin_model_up.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_orin_model_up.png",
     "before_sha256": "233c4f12b7120024a141cd7d8feb37997543a52178e06a1ea125ff67a7177fec",
     "after_sha256": "2d158c8f7cba89db825253a3cc81dafc9721f121dfa59d566f4af9ff060b269c"
   },
   {
-    "target": "Java/assets/npcs/npc_orin_model.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_orin_model.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_orin_model.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_orin_model.png",
     "before_sha256": "7bb9de459b29d70914159c69404689fc7cb2170b22054591c9eb6cc59164cf27",
     "after_sha256": "ff5c7c32ba496012e34add91ecbf62fbd58d297e83ac90e6cf19b2ffabddac60"
   },
   {
-    "target": "Java/assets/npcs/npc_orin.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/npc_orin.png",
+    "target": "Java/assets/characters/npcs/townsfolk/npc_orin.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/npc_orin.png",
     "before_sha256": "17bb945a61efbdb1b4e705723b7424267e6d212dcee7fbb2c3166a76512483ed",
     "after_sha256": "77d4b93a9f817af20602c2b1a039d57ebe083d2caefef425fee17e060b285376"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_hammer_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_hammer_anim.png",
     "before_sha256": "e003b768f0af22119825ad07d4819aa17e167132c2010443344ce82e0d11efd4",
     "after_sha256": "e2085cbef6cb1736e97d6c25d9e6462d21b0bff51344efae3291387d8b7e82ed"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_blacksmith_model_down_hammer_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_hammer_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_blacksmith_model_down_hammer_anim.frames",
     "before_sha256": "06e9d52c1720fca412803e3b07c4b228ff113e303f4c7ab94665319d832bbfb7",
     "after_sha256": "92961e9752250efa971147344b22295db32d7b75e940e0971e5fb34f21d0bc67"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.png",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.png",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_inspect_anim.png",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_inspect_anim.png",
     "before_sha256": "021a36ed049a9b9cac778084d2ebb930c61fa2976ec31ab7fb6f8985aea4ce8f",
     "after_sha256": "ca956dabe5a010c95e74c6a86b8498df1f54297fb7ac7cff1f225b8f96270d07"
   },
   {
-    "target": "Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.frames",
-    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/npcs/animations/npc_merchant_model_down_inspect_anim.frames",
+    "target": "Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_inspect_anim.frames",
+    "candidate": "asset-review/2026-09-22-npcs/candidates/Java/assets/characters/npcs/townsfolk/animations/npc_merchant_model_down_inspect_anim.frames",
     "before_sha256": "06e9d52c1720fca412803e3b07c4b228ff113e303f4c7ab94665319d832bbfb7",
     "after_sha256": "92961e9752250efa971147344b22295db32d7b75e940e0971e5fb34f21d0bc67"
   }

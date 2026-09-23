@@ -1,0 +1,1 @@
+window.movementProfileCoverage={actors:127,directions:1016,sources:564,pilots:3};

@@ -1,0 +1,29 @@
+{
+  "reason": "Pre-existing duplicate asset IDs captured during the path-only structure migration; no new ambiguities permitted.",
+  "duplicates": {
+    "npc_aria_battle_source": [
+      "characters/companions/aria/sources/npc_aria_battle_source.png",
+      "characters/companions/sources/npc_aria_battle_source.png"
+    ],
+    "cleric": [
+      "characters/shared/animations/character-refresh/sources-v3/cleric.png",
+      "characters/shared/animations/character-refresh/walk-sources/cleric.png"
+    ],
+    "knight": [
+      "characters/shared/animations/character-refresh/sources-v3/knight.png",
+      "characters/shared/animations/character-refresh/walk-sources/knight.png"
+    ],
+    "mage": [
+      "characters/shared/animations/character-refresh/sources-v3/mage.png",
+      "characters/shared/animations/character-refresh/walk-sources/mage.png"
+    ],
+    "ranger": [
+      "characters/shared/animations/character-refresh/sources-v3/ranger.png",
+      "characters/shared/animations/character-refresh/walk-sources/ranger.png"
+    ],
+    "rogue": [
+      "characters/shared/animations/character-refresh/sources-v3/rogue.png",
+      "characters/shared/animations/character-refresh/walk-sources/rogue.png"
+    ]
+  }
+}

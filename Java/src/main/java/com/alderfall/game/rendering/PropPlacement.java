@@ -18,6 +18,12 @@ public final class PropPlacement {
         Kind kind = kind(prop.asset());
         if (kind == Kind.FIXED) return FIXED;
         int seed = prop.x() * 73428767 ^ prop.y() * 912931 ^ prop.asset().hashCode() ^ mapId.hashCode();
+        if (prop.visualSlot() >= 0) {
+            int slot = prop.visualSlot();
+            return new Placement(0.25 + (slot % 2) * 0.5 + (random(seed) - 0.5) * 0.12,
+                    0.25 + (slot / 2) * 0.5 + (random(seed ^ 0x51ed270b) - 0.5) * 0.12,
+                    0.82 + (int) (random(seed ^ 0x6d2b79f5) * 4) * 0.06, kind);
+        }
         // A bounded root footprint prevents neighboring tile rows from collapsing into each other.
         double radius = kind == Kind.TREE ? 0.23 : kind == Kind.COVER ? 0.14 : 0.20;
         double minX = radius, maxX = 1 - radius;
@@ -52,6 +58,7 @@ public final class PropPlacement {
     }
 
     private static Kind classify(String asset) {
+        if (asset.startsWith("deco_ground_")) return Kind.COVER;
         if (asset.equals("location_camp_crates") || asset.equals("location_camp_barrels")) return Kind.CLUTTER;
         if (!asset.startsWith("deco_")) return Kind.FIXED;
         // Authored landmarks and repeated construction pieces must retain their alignment and size.
@@ -59,11 +66,11 @@ public final class PropPlacement {
                 "camp", "bridge", "charter", "bell", "altar", "gate", "wall", "fence", "elder", "ward"}) {
             if (asset.contains(word)) return Kind.FIXED;
         }
-        for (String word : new String[]{"rock", "stone", "boulder", "crystal", "log", "stump", "woodpile"}) {
+        for (String word : new String[]{"rock", "stone", "boulder", "crystal", "_ore", "log", "stump", "woodpile"}) {
             if (asset.contains(word)) return Kind.ROCK;
         }
         if (asset.contains("root")) return Kind.COVER;
-        if (asset.contains("tree") || asset.contains("pine") || asset.contains("willow")) return Kind.TREE;
+        if (asset.contains("tree") || asset.contains("pine") || asset.contains("willow") || asset.contains("palm")) return Kind.TREE;
         for (String word : new String[]{"soft_", "grass", "flower", "bloom", "fern", "bush", "mushroom",
                 "reed", "cattail", "plant", "lily", "duckweed", "floating", "weed", "leaf", "scrub", "pebble", "moss"}) {
             if (asset.contains(word)) return Kind.COVER;

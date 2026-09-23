@@ -504,7 +504,7 @@ public final class Battle {
         introStyleLabel = styleLabel == null ? "" : styleLabel.trim();
         introEncounterLine = encounterLine == null ? "" : encounterLine.trim();
         introPartyBark = partyBark == null ? "" : partyBark.trim();
-        boolean hasIntroText = !introStyleLabel.isBlank() || !introEncounterLine.isBlank() || !introPartyBark.isBlank();
+        boolean hasIntroText = !finished && (!introStyleLabel.isBlank() || !introEncounterLine.isBlank() || !introPartyBark.isBlank());
         introTotalTicks = hasIntroText ? INTRO_TOTAL_TICKS : 0;
         introTimer = introTotalTicks;
     }
@@ -568,6 +568,11 @@ public final class Battle {
     }
 
     public void tick() {
+        // Events can damage the party before combat or while no action is running.
+        // Resolve that state even when there is no living actor to take a turn.
+        if (!finished && actionAnimation == null && checkFinished()) {
+            introTimer = 0;
+        }
         if (introTimer > 0) {
             introTimer--;
             return;
@@ -1216,6 +1221,8 @@ public final class Battle {
                 () -> resolveMonsterAbility(foe, ability, target),
                 () -> afterEnemyAction(foe)
         );
+        if (actionAnimation != null && actionAnimation.source == foe && actionAnimation.frame() == 0)
+            actionAnimation.configureMonsterVisual(ability.name(), MonsterAbilityVfx.forAbility(foe.sprite, ability));
     }
 
     private void resolvePartyAttack(Actor actor, Actor target, AttackStyle style) {
@@ -2132,7 +2139,7 @@ public final class Battle {
         }
     }
 
-    private boolean isBossSpec(GameData.MonsterSpec spec) {
+    public static boolean isBossSpec(GameData.MonsterSpec spec) {
         String key = spec.key();
         return key.equals("goblin_king")
                 || key.equals("red_dragon")
@@ -2383,7 +2390,7 @@ public final class Battle {
         if (livingParty().isEmpty()) {
             finished = true;
             victory = false;
-            addLog("Your party falls. Press R to revive at Oakhaven.");
+            addLog("Your party falls. Press R to revive at Oathstead Camp.");
             return true;
         }
         return false;
@@ -2483,8 +2490,11 @@ public final class Battle {
     }
 
     private void beginActivePartyTurn() {
+        if (checkFinished()) {
+            return;
+        }
         Actor actor = activeActor();
-        if (actor == null || checkFinished()) {
+        if (actor == null) {
             return;
         }
         partyTargetExplicit = false;
@@ -2644,6 +2654,8 @@ public final class Battle {
             return false;
         }
         actionAnimation = new BattleActionAnimation(source, target, visualTargets, visualMode, kind, castFrames, travelFrames, impactFrames, animationSpeed);
+        if (enemies.contains(source)) actionAnimation.configureMonsterVisual(source == target ? "Guard" : "Basic attack",
+                source == target ? new MonsterAbilityVfx.Profile("fx_shield", MonsterAbilityVfx.Motion.SELF) : MonsterAbilityVfx.basic(source.sprite));
         if (partyMembers.contains(source)) {
             String mode = switch (kind) {
                 case "strike" -> "basic";

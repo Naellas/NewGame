@@ -44,6 +44,13 @@ public final class BattleVfxRenderer {
                 : animation.visualMode;
         Graphics2D fx = (Graphics2D) g.create();
         fx.clipRect(panelX, panelY, panelW, panelH - 170);
+        if (animation != null && animation.monsterVisual() != null) {
+            int phase = animation.stage() == BattleActionAnimation.Stage.CAST ? 0 : animation.stage() == BattleActionAnimation.Stage.TRAVEL ? 1 : 2;
+            double progress = phase == 0 ? animation.castProgress() : phase == 1 ? animation.travelProgress() : animation.impactProgress();
+            for (int[] recipient : visualTargets) MonsterAbilityVfx.draw(fx, assets, animation.monsterVisual(), source, recipient, phase, progress);
+            fx.dispose();
+            return;
+        }
         fx.setStroke(new BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (animation != null && animation.stage() == BattleActionAnimation.Stage.CAST) {
             if (impactArt.has(animation.visualProfile()))
@@ -844,7 +851,7 @@ public final class BattleVfxRenderer {
         return Math.atan2(target[1] - source[1], target[0] - source[0]);
     }
 
-    private double nativeEffectForwardAngle(String sprite) {
+    public static double nativeEffectForwardAngle(String sprite) {
         return switch (sprite) {
             // Directional sprites are calibrated to the angle their "head" points at rest.
             case "fx_arrow" -> Math.toRadians(-30);

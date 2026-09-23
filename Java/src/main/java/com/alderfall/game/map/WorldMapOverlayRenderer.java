@@ -59,14 +59,14 @@ public final class WorldMapOverlayRenderer {
         }
     }
 
-    public static void drawKingdomLabels(Graphics2D g, WorldMapViewport viewport, List<WorldMap.Kingdom> kingdoms) {
+    public static void drawKingdomLabels(Graphics2D g, WorldMapViewport viewport, List<WorldMap.Kingdom> kingdoms, WorldMapLabels labels) {
         for (WorldMap.Kingdom kingdom : kingdoms) {
             if (!visible(viewport, kingdom.centerX(), kingdom.centerY(), 12.0)) {
                 continue;
             }
             int px = screenX(viewport, kingdom.centerX() + 0.5);
             int py = screenY(viewport, kingdom.centerY() + 0.5);
-            drawMapLabel(g, kingdom.name(), px - 36, py, new Color(245, 246, 236));
+            labels.add(kingdom.name(), px, py, new Color(245, 246, 236), 0);
         }
     }
 
@@ -76,7 +76,7 @@ public final class WorldMapOverlayRenderer {
 
     public static Rectangle drawSettlementMarker(Graphics2D g, WorldMapViewport viewport,
                                                  WorldMap.SettlementSite settlement, WorldMap.Kingdom kingdom,
-                                                 boolean playerSettlement, int labelDx, int labelDy) {
+                                                 boolean playerSettlement, WorldMapLabels labels, boolean showLabel) {
         int px = screenX(viewport, settlement.x() + 0.5);
         int py = screenY(viewport, settlement.y() + 0.5);
         Color color = playerSettlement ? new Color(255, 226, 128)
@@ -95,8 +95,10 @@ public final class WorldMapOverlayRenderer {
         } else {
             g.drawRect(px - 5, py - 5, 11, 11);
         }
-        drawMapLabel(g, shortSettlementLabel(settlement.label()), px + labelDx, py + labelDy, color);
-        return new Rectangle(Math.min(px - 8, px + labelDx - 8), Math.min(py - 16, py + labelDy - 18), 150, 28);
+        Rectangle bounds = new Rectangle(px - 8, py - 8, 17, 17);
+        labels.reserve(bounds);
+        if (showLabel) labels.add(shortSettlementLabel(settlement.label()), px, py, color, playerSettlement ? 70 : 50);
+        return bounds;
     }
 
     public static void drawMapMarker(Graphics2D g, WorldMapViewport viewport, int wx, int wy,
@@ -110,7 +112,7 @@ public final class WorldMapOverlayRenderer {
 
     /** Keep every site icon visible; omit crowded text until zoom/hover makes room. */
     public static Rectangle drawCampaignMarker(Graphics2D g, WorldMapViewport viewport,
-                                                WorldMap.CampaignMarker site, List<Rectangle> occupied) {
+                                                WorldMap.CampaignMarker site, WorldMapLabels labels, boolean showLabel) {
         int px = screenX(viewport, site.x() + 0.5);
         int py = screenY(viewport, site.y() + 0.5);
         g.setColor(new Color(10, 15, 20));
@@ -122,34 +124,22 @@ public final class WorldMapOverlayRenderer {
             g.drawRect(px - 3, py - 3, 6, 6);
         }
         Rectangle bounds = new Rectangle(px - 7, py - 7, 15, 15);
-        g.setFont(new Font("SansSerif", Font.BOLD, 11));
-        int width = g.getFontMetrics().stringWidth(site.label()) + 8;
-        Rectangle map = new Rectangle(viewport.screenX(), viewport.screenY(), viewport.screenW(), viewport.screenH());
-        for (int dy : new int[]{10, -25, 27, -42, 44, -59}) {
-            boolean placed = false;
-            for (int dx : new int[]{10, -width - 10}) {
-                Rectangle label = new Rectangle(px + dx, py + dy, width, 16);
-                if (!map.contains(label) || occupied.stream().anyMatch(r -> r.intersects(label))) continue;
-                g.setColor(new Color(9, 13, 20, 220));
-                g.fillRoundRect(label.x, label.y, label.width, label.height, 5, 5);
-                g.setColor(new Color(245, 214, 117));
-                g.drawLine(px, py, dx > 0 ? label.x : label.x + label.width, label.y + 8);
-                g.drawString(site.label(), label.x + 4, label.y + 12);
-                occupied.add(label);
-                bounds = bounds.union(label);
-                placed = true;
-                break;
-            }
-            if (placed) break;
-        }
+        labels.reserve(bounds);
+        if (showLabel) labels.add(site.label(), px, py, new Color(245, 214, 117), 20);
         return bounds;
     }
 
-    public static void drawQuestMarker(Graphics2D g, WorldMapViewport viewport, Quest.ObjectiveKind kind,
+    public static Rectangle drawQuestMarker(Graphics2D g, WorldMapViewport viewport, Quest.ObjectiveKind kind,
                                        String title, TilePoint marker, Color color,
-                                       boolean mainStory, boolean dungeonHazard) {
+                                       boolean mainStory, boolean dungeonHazard, WorldMapLabels labels, boolean showLabel, boolean focused) {
         int px = screenX(viewport, marker.x() + 0.5);
         int py = screenY(viewport, marker.y() + 0.5);
+        if (focused) {
+            g.setColor(new Color(255, 223, 118, 75));
+            g.fillOval(px - 17, py - 17, 35, 35);
+            g.setColor(new Color(255, 223, 118));
+            g.drawOval(px - 14, py - 14, 29, 29);
+        }
         if (dungeonHazard) {
             drawSkull(g, px, py - 18);
         }
@@ -181,7 +171,10 @@ public final class WorldMapOverlayRenderer {
         };
         FontMetrics metrics = g.getFontMetrics();
         g.drawString(glyph, px - metrics.stringWidth(glyph) / 2, py + 3);
-        drawMapLabel(g, title, px + 13, py - 10, new Color(245, 246, 236));
+        Rectangle bounds = new Rectangle(px - 9, py - (dungeonHazard ? 26 : 10), 19, dungeonHazard ? 38 : 22);
+        labels.reserve(bounds);
+        if (showLabel) labels.add(title, px, py, new Color(245, 246, 236), focused ? 120 : mainStory ? 100 : 90);
+        return bounds;
     }
 
     private static void drawSkull(Graphics2D g, int cx, int cy) {
@@ -194,6 +187,24 @@ public final class WorldMapOverlayRenderer {
         g.fillOval(cx - 4, cy - 2, 3, 3);
         g.fillOval(cx + 1, cy - 2, 3, 3);
         g.drawLine(cx - 3, cy + 5, cx + 3, cy + 5);
+    }
+
+    public static void drawCompactLegend(Graphics2D g, int x, int y, int width, int height) {
+        if (height < 70) return;
+        g.setFont(new Font("SansSerif", Font.BOLD, 15));
+        g.setColor(new Color(244, 239, 220));
+        g.drawString("Legend", x, y);
+        drawLegendQuest(g, x, y + 26, new Color(112, 220, 128), "Provision");
+        drawLegendQuest(g, x + width / 2, y + 26, new Color(203, 157, 232), "Talk");
+        drawLegendQuest(g, x, y + 50, new Color(233, 89, 83), "Battle");
+        drawLegendPlayer(g, x + width / 2, y + 50, "You");
+        if (height < 190) return;
+        char[] tiles = {'g', 'f', 's', 'n', 'v', 'b', 'P', 'm', 'w'};
+        String[] names = {"Meadow", "Oldwood", "Sunsteppe", "Frostfield", "Marsh", "Badlands", "Beach", "Mountain", "Water"};
+        for (int i = 0; i < tiles.length; i++) {
+            drawLegendSwatch(g, x + (i % 2) * width / 2, y + 82 + (i / 2) * 23,
+                    width / 2, com.alderfall.game.render.WorldMapTerrainCache.terrainColor(tiles[i]), names[i]);
+        }
     }
 
     public static void drawLegend(Graphics2D g, int x, int y, int width,

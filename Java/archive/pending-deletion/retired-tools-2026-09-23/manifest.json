@@ -1,0 +1,26 @@
+[
+  {
+    "path": "Java/tools/extract_city_key_assets.py",
+    "reason": "Old city-sheet heuristic extractor; no active callers found; current city refresh uses import_city_refinement_assets and ImportSettlementRefresh.",
+    "replacement": null,
+    "bytes": 14599,
+    "sha256": "b50132dd721ed9079d1b8794f707a1886d034b33c3206256614ecbffdf9bd2cf",
+    "last_commit_date": "2026-05-26"
+  },
+  {
+    "path": "Java/tools/extract_city_tilesheet.py",
+    "reason": "Old grid-slice city extractor; no active callers found; grid-slice candidates already quarantined; retained for historical regeneration.",
+    "replacement": null,
+    "bytes": 9954,
+    "sha256": "e203619b12970985f82fa74d31ade5d838b9d41ce801ccf010c92cbea5240e5b",
+    "last_commit_date": "2026-05-26"
+  },
+  {
+    "path": "Java/tools/generate_prototype_battle_animations.py",
+    "reason": "Six-frame prototype battle generator; no active callers found; current character and monster attacks use authored importers. Runtime fallback art is retained.",
+    "replacement": null,
+    "bytes": 7938,
+    "sha256": "c451e39335cd05d07692c0204c6d547941c674282db04404a4a98b4b98adbfb5",
+    "last_commit_date": "2026-06-04"
+  }
+]

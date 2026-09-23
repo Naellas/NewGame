@@ -1,8 +1,8 @@
 {
   "replacements": [
     {
-      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/buildings/city/city_roof_detail.png",
-      "original_runtime_path": "Java/assets/city/buildings/city/city_roof_detail.png",
+      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/environments/settlements/city/buildings/city/city_roof_detail.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/buildings/city/city_roof_detail.png",
       "before_sha256": "b3638e8ba4c21307e2bb7ec0c6fde960f859ac4113984b30834252af5acf3a1a",
       "after_sha256": "374fb79cf645a4e8ee8f1c4b3f1a80a61cb3742d33c2ca55412550c970b4ae0c",
       "size": [
@@ -21,8 +21,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/buildings/city/city_house_front.png",
-      "original_runtime_path": "Java/assets/city/buildings/city/city_house_front.png",
+      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/environments/settlements/city/buildings/city/city_house_front.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/buildings/city/city_house_front.png",
       "before_sha256": "3441cabf958c10764073a56e638a638c90ff73eb3df2692ac9724ed4d00f2059",
       "after_sha256": "8ce137a18af2d98a7f35c213520d9dcd3c31af0f8dc74b1a6234ecc9a70407fd",
       "size": [
@@ -41,8 +41,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "Java/assets/city/buildings/city/city_building_house_wide.png",
-      "original_runtime_path": "Java/assets/city/buildings/city/city_building_house_wide.png",
+      "path": "Java/assets/environments/settlements/city/buildings/city/city_building_house_wide.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/buildings/city/city_building_house_wide.png",
       "before_sha256": "c3a16f5bf004dbc645a0b39bb447c19ad84e2e090df9ddd8146744e9ca9a4d07",
       "after_sha256": "8ce137a18af2d98a7f35c213520d9dcd3c31af0f8dc74b1a6234ecc9a70407fd",
       "size": [
@@ -61,8 +61,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/structures/city_wall_gate.png",
-      "original_runtime_path": "Java/assets/city/structures/city_wall_gate.png",
+      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/environments/settlements/city/structures/city_wall_gate.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/structures/city_wall_gate.png",
       "before_sha256": "b6435cf8039cab01560bee85b0b34d22ea24c24dacc2529d3e5942657c301b31",
       "after_sha256": "8ed3b87aae9ec851a80d45bb4ce16ea3af1502e41b7f96ed8d3c94361339e3f6",
       "size": [
@@ -81,8 +81,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "Java/assets/city/buildings/city/city_building_town_manor.png",
-      "original_runtime_path": "Java/assets/city/buildings/city/city_building_town_manor.png",
+      "path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_manor.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/buildings/city/city_building_town_manor.png",
       "before_sha256": "c6fc4810b6253e6700823c46e08f2b37d0b1d23006bd74ed62036a59958b618a",
       "after_sha256": "6fd1b8dffcc77411fe9ebdc42206c69f2cefd383c450aeeb58350a9fe3a969b5",
       "size": [
@@ -101,8 +101,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "Java/assets/city/buildings/city/city_building_stone_hall.png",
-      "original_runtime_path": "Java/assets/city/buildings/city/city_building_stone_hall.png",
+      "path": "Java/assets/environments/settlements/city/buildings/city/city_building_stone_hall.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/buildings/city/city_building_stone_hall.png",
       "before_sha256": "35e47271202acb5f31c5783e244d1b9774f9e789a75a1ee8cb682b9c91d24b82",
       "after_sha256": "9cbab622703d2dc074195dc9891fe8e728ae56c59fa7aa0f01294b049879517b",
       "size": [
@@ -121,8 +121,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/city/props/city/city_prop_source_crate_tall.png",
-      "original_runtime_path": "Java/assets/city/props/city/city_prop_source_crate_tall.png",
+      "path": "asset-review/2026-09-22-sprite-integrity/unused/Java/assets/environments/settlements/city/props/city/city_prop_source_crate_tall.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/props/city/city_prop_source_crate_tall.png",
       "before_sha256": "63b77c9a5f629b939e8cd8bce71f449fd95bfd31ec120a7a5fff7391cdf08fda",
       "after_sha256": "5d30d59afd5ad82f0dd942f08abaf24a7d19c6a60760a1740155347ec137a268",
       "size": [
@@ -141,8 +141,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "Java/assets/city/props/village/village_prop_well.png",
-      "original_runtime_path": "Java/assets/city/props/village/village_prop_well.png",
+      "path": "Java/assets/environments/settlements/city/props/village/village_prop_well.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/props/village/village_prop_well.png",
       "before_sha256": "2a647dc7652fcde2265d445db3a371f3f10cd3f7cd97618cf04034e0517fb56e",
       "after_sha256": "fc67e86cc88b0625b40095798e045071b247ce8e81aecd2d0b0ed73913d96d01",
       "size": [
@@ -161,8 +161,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "Java/assets/city/terrain/city_cobble.png",
-      "original_runtime_path": "Java/assets/city/terrain/city_cobble.png",
+      "path": "Java/assets/environments/settlements/city/terrain/city_cobble.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/terrain/city_cobble.png",
       "before_sha256": "1d4f65bd137061030526c079b694ee21031605e09ed560379afeda56f3d53136",
       "after_sha256": "8093a45158daf7ce4dae6027ca040a3e3d78d40bb61973ce14306b20c316b0bc",
       "size": [
@@ -181,8 +181,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "Java/assets/city/props/city/city_prop_barrel_stack.png",
-      "original_runtime_path": "Java/assets/city/props/city/city_prop_barrel_stack.png",
+      "path": "Java/assets/environments/settlements/city/props/city/city_prop_barrel_stack.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/props/city/city_prop_barrel_stack.png",
       "before_sha256": "40bea0d2028576e759414a3bf74994c0a9a84726928d74be57e2528eaad046a8",
       "after_sha256": "c47b52ebe3c0fa08c48265cffe5c1ce3b65ed03cd105a9a7782e40d739ecb010",
       "size": [
@@ -201,8 +201,8 @@
       "verified_exact_generated_alpha": true
     },
     {
-      "path": "Java/assets/city/props/city/city_prop_crate.png",
-      "original_runtime_path": "Java/assets/city/props/city/city_prop_crate.png",
+      "path": "Java/assets/environments/settlements/city/props/city/city_prop_crate.png",
+      "original_runtime_path": "Java/assets/environments/settlements/city/props/city/city_prop_crate.png",
       "before_sha256": "90deff2ccb09a2de6511ac9826b4fa62d0c3770bce50bc4fe170a494b8be66df",
       "after_sha256": "42bc0910df19d6612ce09dda8deb9e440bd03860405c6672d81f729606182020",
       "size": [

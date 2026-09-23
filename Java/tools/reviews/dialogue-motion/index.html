@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dialogue motion review</title>
+<style>
+body{font:16px system-ui;color:#e2e8e4;background:#121c20;margin:0 auto;padding:24px;max-width:1100px}a{color:#a9dbbd}h1{font-size:28px}p{line-height:1.5}button,select,input{font:inherit}button,select{background:#24343c;color:inherit;border:1px solid #647d89;border-radius:5px;padding:7px}label{display:inline-flex;align-items:center;gap:8px;margin:8px 16px 8px 0}.views{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:#263339;border:1px solid #51616a;border-radius:8px;padding:12px;text-align:center}canvas{width:100%;max-width:480px;image-rendering:auto;background:repeating-conic-gradient(#303b3f 0% 25%,#354146 0% 50%) 50%/24px 24px}#phase{color:#b1dfbf}input[type=range]{width:min(480px,65vw)}.note{color:#b1bfc5;font-size:14px}@media(max-width:600px){body{padding:12px}.views{gap:6px}.card{padding:4px}}
+body.embedded{padding:12px}body.embedded h1,body.embedded .review-back{display:none}
+</style>
+<h1>Dialogue: lips, gestures and attention</h1>
+<p><span class="review-back"><a href="../characters/index.html#dialogue-motion">Back to character review</a>. </span>These frames come from the game renderer. Compare painted lips, neck and shoulder motion, equipment edges and foot contact. All 26 dialogue figures are included.</p>
+<label>Character <select id="actor" aria-label="Character"></select></label>
+<label>View <select id="view"><option value="body">Full dialogue figure</option><option value="face">Face close-up</option></select></label>
+<label>Speed <select id="speed"><option value="1">Normal</option><option value="0.5">Half speed</option><option value="0.25">Quarter speed</option></select></label>
+<label><input id="guides" type="checkbox">Source rig guides</label>
+<label><input id="physics" type="checkbox" checked>Secondary physics</label>
+<p id="rig-status" class="note"></p>
+<p><button id="play">Pause</button> <button id="back" aria-label="Previous frame">−1 frame</button> <button id="next" aria-label="Next frame">+1 frame</button> <label>Frame <input id="frame" type="range" min="0" max="95" value="0"><output id="number">1 / 96</output></label></p>
+<p id="phase" aria-live="polite"></p>
+<div class="views"><div class="card"><h2>Original artwork</h2><canvas id="original" width="480" height="440"></canvas></div><div class="card"><h2>Runtime animation</h2><canvas id="motion" width="480" height="440"></canvas></div></div>
+<p class="note">Rotation keyframes at 24 fps in this preview; the game interpolates on every repaint. Head and shoulders pivot at the neck and waist, with no independent sideways head offset. Four-second sample: settle → speech → listening → settle. Player figures listen while the NPC speaks. The sample restarts at frame 1; use frame stepping to inspect transitions. Breathing, blinking and sway continue independently of speech. Aria, Vesper and Mage have calibrated free-hand gestures and secondary attachments; held grips stay fixed. Hair/cloth use pinned spring chains like the movement-physics study. The whole figure shifts around planted feet. Aria and Vesper have separate left/right breast springs with clothing-specific limits; long capes and robes have their own chains. The physics toggle keeps the same gesture rig. Source rig guides show lip anchors, attachment regions, foot pins and body/leg colliders. Capsules limit new crossings without disturbing painted overlaps. This is bounded 2D motion, not a cloth collision mesh.</p>
+<script src="roster.js"></script><script>
+const $=id=>document.getElementById(id),actor=$('actor'),view=$('view'),slider=$('frame');
+const embedded=window.parent!==window && new URLSearchParams(location.search).get('embedded')==='1';
+let active=true;
+if(embedded){
+ document.body.classList.add('embedded');
+ let reportedHeight=0;
+ const reportSize=()=>{const height=Math.ceil(document.body.getBoundingClientRect().height);if(height!==reportedHeight){reportedHeight=height;parent.postMessage({type:'movement-study-size',height},'*')}};
+ new ResizeObserver(reportSize).observe(document.body);
+ window.addEventListener('message',event=>{if(event.source===parent&&event.data?.type==='movement-study-active'){active=Boolean(event.data.active);last=0;if(active)reportSize()}});
+}
+for(const r of dialogueRoster){const o=document.createElement('option');o.value=r.id;o.textContent=r.id.replace(/^npc_story_|^npc_|^class_/,'').replace('_dialogue_sprite','').replaceAll('_',' ');actor.append(o)}
+actor.value='npc_aria_dialogue_sprite';let images={},playing=true,position=0,last=0,generation=0;
+function load(reset=true){const token=++generation;images={};if(reset){position=0;slider.value=0;}const row=dialogueRoster.find(r=>r.id===actor.value);const off=!$('physics').checked&&row.parts?.length;for(const kind of ['source','body','face']){const im=new Image();im.onload=()=>{if(token!==generation)return;images[kind]=im;draw()};im.src='frames/'+actor.value+'-'+(off&&kind!=='source'?'rig-':'')+kind+'.png'}draw()}
+function draw(){const frame=Number(slider.value),face=view.value==='face',row=dialogueRoster.find(r=>r.id===actor.value);$('number').value=(frame+1)+' / 96';$('rig-status').textContent=(row.parts?.length?'Calibrated attachments: '+row.parts.map(p=>p.name).join(', ')+'.':'Base rig: breathing, blinking, sway and speech. Attachment calibration pending.')+(row.lips?' Three painted lip anchors.':' Lip seam estimated from artwork.');const speech=frame>=8&&frame<52;const phase=speech?(row.side<0?'Listening to NPC speech':'Speaking — painted lip movement and small gestures'):frame>=52&&frame<76&&row.side>0?'Listening — inward glance':'Settling / idle';if($('phase').textContent!==phase)$('phase').textContent=phase;
+for(const id of ['original','motion']){const c=$(id),h=face?440:800;if(c.height!==h)c.height=h;const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);if(id==='original'&&images.source){if(face)g.drawImage(images.source,120,0,240,220,0,0,480,440);else g.drawImage(images.source,0,0)}if(id==='motion'&&images[view.value]){const sw=face?240:480,sh=face?220:800;g.drawImage(images[view.value],frame%8*sw,Math.floor(frame/8)*sh,sw,sh,0,0,480,c.height)}if($('guides').checked){g.strokeStyle='#86d8c9';g.setLineDash([5,5]);g.beginPath();g.moveTo(240,0);g.lineTo(240,c.height);g.moveTo(0,face?220:790);g.lineTo(480,face?220:790);g.stroke();g.setLineDash([]);if(id==='original')drawRig(g,row,face)}}}
+function drawRig(g,row,face){
+ const point=(x,y)=>[(row.origin[0]+x*row.scale-(face?120:0))*(face?2:1),(row.origin[1]+y*row.scale)*(face?2:1)];
+ g.strokeStyle='#77edc7';g.lineWidth=1;
+ for(const [x,y,w,h] of row.feet||[]){const a=point(x,y),b=point(x+w,y+h);g.strokeRect(a[0],a[1],b[0]-a[0],b[1]-a[1])}
+ g.strokeStyle='#efad7b';g.setLineDash([4,4]);
+ for(const [x,top,bottom,r] of row.colliders||[]){const a=point(x,top),b=point(x,bottom),radius=r*row.scale*(face?2:1);g.beginPath();g.moveTo(a[0]-radius,a[1]);g.arc(a[0],a[1],radius,Math.PI,Math.PI*2);g.lineTo(b[0]+radius,b[1]);g.arc(b[0],b[1],radius,0,Math.PI);g.closePath();g.stroke()}
+ g.setLineDash([]);
+ const colors={HAIR:'#9bd6fa',CLOTH:'#b9e998',EQUIPMENT:'#f8c779',HAND:'#ed9fc3',SOFT_TISSUE:'#d5b4ef'};
+ for(const part of row.parts||[]){g.strokeStyle=colors[part.kind];g.lineWidth=1;g.beginPath();for(let i=0;i<part.points.length;i+=2){const p=point(part.points[i],part.points[i+1]);g[i?'lineTo':'moveTo'](...p)}g.closePath();g.stroke();const p=point(...part.pivot);g.beginPath();g.arc(...p,3,0,Math.PI*2);g.stroke()}
+ if(row.lips){g.strokeStyle='#ffbe70';g.fillStyle='#ffbe70';g.beginPath();for(let i=0;i<6;i+=2){const p=point(row.lips[i],row.lips[i+1]);g[i?'lineTo':'moveTo'](...p)}g.stroke();for(let i=0;i<6;i+=2){g.beginPath();g.arc(...point(row.lips[i],row.lips[i+1]),2.5,0,Math.PI*2);g.fill()}}
+}
+function pause(){playing=false;$('play').textContent='Play'}
+actor.onchange=()=>load();$('physics').onchange=()=>load(false);view.onchange=draw;$('guides').onchange=draw;slider.oninput=()=>{pause();position=+slider.value;draw()};$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play'};
+for(const [id,step] of [['back',-1],['next',1]])$(id).onclick=()=>{pause();position=(Number(slider.value)+step+96)%96;slider.value=position;draw()};
+function tick(now){if(last&&playing&&active&&!document.hidden){position=(position+Math.min(100,now-last)/1000*24*Number($('speed').value))%96;const f=Math.floor(position);if(+slider.value!==f){slider.value=f;draw()}}last=now;requestAnimationFrame(tick)}load();requestAnimationFrame(tick);
+</script></html>

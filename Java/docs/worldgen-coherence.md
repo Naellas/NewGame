@@ -15,7 +15,7 @@ Bridge rendering uses rectangular plank decks with continuous side rails and ban
 After building from `Java/`, run:
 
 ```powershell
-java -cp out com.alderfall.game.map.WorldGenerationTest
+java -cp temp/checks/classes com.alderfall.game.map.WorldGenerationTest
 java '-Djava.awt.headless=true' -cp out com.alderfall.game.WorldGenerationPreview
 ```
 
@@ -27,8 +27,8 @@ The broader `SmokeTest` traversal assertions now check generated adventure-site 
 
 Generated with the built-in imagegen tool, not the CLI. Selected transparent PNGs are copied unmodified into the project; the normal sprite renderer crops and scales their alpha bounds.
 
-- `Java/assets/locations/deco_crossing_charter_marker.png`
-- `Java/assets/locations/deco_crossing_flood_bell.png`
+- `Java/assets/environments/locations/deco_crossing_charter_marker.png`
+- `Java/assets/environments/locations/deco_crossing_flood_bell.png`
 
 ### Charter marker prompt
 

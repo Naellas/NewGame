@@ -15,7 +15,7 @@ java '-Djava.awt.headless=true' -cp out com.alderfall.game.LayeredTerrainTest
 java '-Djava.awt.headless=true' -cp out com.alderfall.game.LayeredTerrainPreview
 java '-Djava.awt.headless=true' -cp out com.alderfall.game.RenderCacheTest
 java '-Djava.awt.headless=true' -cp out com.alderfall.game.BridgeRenderingTest
-java -cp out com.alderfall.game.map.WorldGenerationTest
+java -cp temp/checks/classes com.alderfall.game.map.WorldGenerationTest
 ```
 
 The layered test checks water masks at four zoom levels, opaque terrain coverage, tile-center consistency with gameplay, cache reuse, neighbor-edit invalidation, exact pixel agreement between direct/chunk rendering and scrolled views, and unchanged gameplay tiles. The preview writes actual game screenshots of shoreline, snow boundary, and camp to `exports/layered-terrain/`. Preview timings include PNG encoding and are not steady-state frame timings.

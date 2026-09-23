@@ -32,7 +32,7 @@ Building art and scenery use transparent PNGs, the existing sprite fitting, dept
 
 ## Assets and review
 
-Built-in imagegen assets live in `Java/assets/city/folklore/`. Western files are `folklore_briarbridge_guest_abbey.png`, `folklore_redcap_supply_shelter.png`, [folklore_open_bough_gate.png](../assets/city/folklore/folklore_open_bough_gate.png) and [folklore_sealed_mirror_door.png](../assets/city/folklore/folklore_sealed_mirror_door.png). The new gate and mirror use the abbey as their visual reference. `folklore_returning_seedhouse.png` and `folklore_boundary_shrine.png` are shared with the initial artwork pass. Exact prompts and the abbey finial correction are in [western-prompts.md](../assets/city/folklore/western-prompts.md). Earlier asset prompts are in [prompts.md](../assets/city/folklore/prompts.md).
+Built-in imagegen assets live in `Java/assets/environments/settlements/city/folklore/`. Western files are `folklore_briarbridge_guest_abbey.png`, `folklore_redcap_supply_shelter.png`, [folklore_open_bough_gate.png](../assets/environments/settlements/city/folklore/folklore_open_bough_gate.png) and [folklore_sealed_mirror_door.png](../assets/environments/settlements/city/folklore/folklore_sealed_mirror_door.png). The new gate and mirror use the abbey as their visual reference. `folklore_returning_seedhouse.png` and `folklore_boundary_shrine.png` are shared with the initial artwork pass. Exact prompts and the abbey finial correction are in [western-prompts.md](../assets/environments/settlements/city/folklore/western-prompts.md). Earlier asset prompts are in [prompts.md](../assets/environments/settlements/city/folklore/prompts.md).
 
 In-game review captures are under `asset-review/western-reach/` at repository root.
 

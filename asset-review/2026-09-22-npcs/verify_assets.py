@@ -37,6 +37,6 @@ out=Image.new('RGB',(720,6*150),(234,227,211));d=ImageDraw.Draw(out)
 for row,n in enumerate(['bartender','blacksmith','citizen_man','citizen_woman','merchant','orin']):
     d.text((4,row*150+4),n,fill=(20,20,20))
     for col,dr in enumerate(['down','left','right','up']):
-        im=Image.open(f'Java/assets/npcs/npc_{n}_model_{dr}.png').convert('RGBA')
+        im=Image.open(f'Java/assets/characters/npcs/townsfolk/npc_{n}_model_{dr}.png').convert('RGBA')
         out.paste(im,(col*180+38,row*150+20),im)
 out.save(r/'light-background-check.png')

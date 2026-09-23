@@ -39,6 +39,7 @@ public final class ReactivePropLayer {
             return;
         }
         for (WorldProp prop : nearbyProps) {
+            if (prop.visualSlot() >= 0) continue;
             if (!isReactiveAsset(prop.asset())) {
                 continue;
             }

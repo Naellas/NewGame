@@ -147,7 +147,7 @@ public final class RegionalSettlementIdentity {
         RegionalBuildingTypes.Type institution = RegionalBuildingTypes.type(mapId, building);
         if (institution != null) return institution.asset;
         if (building == null || !List.of("house", "row").contains(building.style())) return "";
-        if (Math.floorMod(building.key().hashCode(), 4) == 0) return "";
+        if (Math.floorMod(building.key().hashCode(), 2) == 0) return "";
         return switch (region(mapId)) {
             case NORTH -> "regional_north_turf_house";
             case FREEHOLDS -> mapId.equals("town_greyharbor") ? "regional_fen_stilt_house" : "regional_north_turf_house";

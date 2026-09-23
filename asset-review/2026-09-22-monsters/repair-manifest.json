@@ -1,6 +1,6 @@
 [
   {
-    "target": "Java/assets/monsters/goblin.png",
+    "target": "Java/assets/characters/monsters/goblin.png",
     "before_sha256": "9d8dc765925fa8ff3883a3bea5436b2a41a480da74c285eae07428df02c36866",
     "after_sha256": "addf537e90b6a711df96a215dab1c55a0c241e242cd0187bf51e48a46f614325",
     "size": [
@@ -16,7 +16,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-0c720566-f682-4eb0-8789-a6ec5a7d214c.png"
   },
   {
-    "target": "Java/assets/monsters/orc.png",
+    "target": "Java/assets/characters/monsters/orc.png",
     "before_sha256": "16159a5fa1d44ce1cee292327eaeb051722fbc4a8e1f59724a7681ee9f86b100",
     "after_sha256": "4cf9fca10098200f22acaa00db53138a12d8d084d4617538f02b677fa9122045",
     "size": [
@@ -32,7 +32,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-4142ce2d-65ba-4642-a257-2ccf3e0401d5.png"
   },
   {
-    "target": "Java/assets/monsters/bat.png",
+    "target": "Java/assets/characters/monsters/bat.png",
     "before_sha256": "8ff56dc29020147f818d6ab8fe31f50bd80cc5da26ad326fdbfbf83d1a975fa0",
     "after_sha256": "db99d5d220b26a372cf42cf70eeb53a1c66ee8ff5beefed94f99f52c4057ea59",
     "size": [
@@ -48,7 +48,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-291b2ff6-fcba-4654-8887-82ce8bce9e34.png"
   },
   {
-    "target": "Java/assets/monsters/ash_scorpion.png",
+    "target": "Java/assets/characters/monsters/ash_scorpion.png",
     "before_sha256": "72699b3b0d825d5532e2f29d1526d43336472970dff63185d43b70f59457acce",
     "after_sha256": "aa2c83793b8f22a889a774511faed50cb88734ba8af48fddb5b4ecf83b887453",
     "size": [
@@ -64,7 +64,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-b60487ec-18b6-47a8-8a3a-843b8491e451.png"
   },
   {
-    "target": "Java/assets/monsters/hobgoblin_guard.png",
+    "target": "Java/assets/characters/monsters/hobgoblin_guard.png",
     "before_sha256": "9d7b601c025aaaab3dca6c321bc98ac2d1355337a386ccbc8bd4214f6216aa6f",
     "after_sha256": "87f1a644b380354501af180d470c19b8dfeec7e4c9ac07b6013286d7b4794190",
     "size": [
@@ -80,7 +80,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-e770d8ad-fb17-4f41-aff1-6545403567cd.png"
   },
   {
-    "target": "Java/assets/monsters/orc_shieldbearer.png",
+    "target": "Java/assets/characters/monsters/orc_shieldbearer.png",
     "before_sha256": "83fb276302d9cab1937c75cf330bf556697b8dd96f9b9232fd6eb119d506c46c",
     "after_sha256": "85ff5b371ef0cdc04b42dd58df841ec0d79dffac88717d83c7a3d9d798d84d9e",
     "size": [
@@ -96,7 +96,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-a5ff0da3-e6e9-4ebd-9302-6a27137d54e2.png"
   },
   {
-    "target": "Java/assets/monsters/stone_giant.png",
+    "target": "Java/assets/characters/monsters/stone_giant.png",
     "before_sha256": "3924d3d3a5d05bd58378594687431b0a0547215e818d38e73d7ab267618a2b6b",
     "after_sha256": "69c67e01fe9c5d24cc4962f1ed900939d3521fa9bdaa58e74c38886fb36325b9",
     "size": [
@@ -112,7 +112,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-b33e10c1-8226-4c10-9856-674650063ff6.png"
   },
   {
-    "target": "Java/assets/monsters/elder_dragon.png",
+    "target": "Java/assets/characters/monsters/elder_dragon.png",
     "before_sha256": "e3c731bf391c22bc7770d0f88739263143e43db568c8dcfd871253d220d4b9ac",
     "after_sha256": "2ebe870bb1e48d2f3153f6a72527beba3848fa284c01ec4e008787315953faaf",
     "size": [
@@ -128,7 +128,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-73fb3a35-339f-4844-bc75-4f3885a38da9.png"
   },
   {
-    "target": "Java/assets/monsters/red_dragon.png",
+    "target": "Java/assets/characters/monsters/red_dragon.png",
     "before_sha256": "b275406d363f8d4f680a44acc17d33399ec73ec143cdb1bf6f042fd65d78a60b",
     "after_sha256": "9b3e53c195ba79e513f50c4b3f53109319e853f944d678bb0dd5aa79a61466b1",
     "size": [
@@ -144,7 +144,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-47c7b053-7a40-4e9f-ab9a-2f5e73640c11.png"
   },
   {
-    "target": "Java/assets/monsters/mountain_drake.png",
+    "target": "Java/assets/characters/monsters/mountain_drake.png",
     "before_sha256": "3a8244b74c1e69dd911d1a467302d2a97e9f69005e329505d3029ec5961427a0",
     "after_sha256": "82cae34cfc6a18bdcd7de0934a7cdeba857a47ee4c7ebe48482e6d96f101ac90",
     "size": [
@@ -160,7 +160,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-9b158481-5c0e-41e9-820f-628de4db87b2.png"
   },
   {
-    "target": "Java/assets/story/shadow_beast.png",
+    "target": "Java/assets/characters/npcs/story/shadow_beast.png",
     "before_sha256": "9bea9de6eebddead481b5a255e2bb2114ccfee1444b919ea6fd292f2b6bfd558",
     "after_sha256": "5b3967d0b310ff48d177e88bab17a00afd1f164e13d4ff5644ce9048f5a17f44",
     "size": [
@@ -176,7 +176,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-6445ec22-9f92-41b1-8f34-3d158557f7b8.png"
   },
   {
-    "target": "Java/assets/monsters/crypt_bat.png",
+    "target": "Java/assets/characters/monsters/crypt_bat.png",
     "before_sha256": "cabf572cc0436227d5c0e892d1d6e49efb9c8803c4ebdba1dfdb0b04975a6a7e",
     "after_sha256": "2660feb1450c6059d67498ae5aa2d8b5f7c337cc649158bf0f0a8828fa9ea214",
     "size": [
@@ -192,7 +192,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-55b67ee6-c488-4add-84fe-3e7e6ae5b1b0.png"
   },
   {
-    "target": "Java/assets/monsters/goblin_scout.png",
+    "target": "Java/assets/characters/monsters/goblin_scout.png",
     "before_sha256": "434800b3b531bb132df66e6a82a6b5d5b4aa43828d1b2730501a32686be819d7",
     "after_sha256": "0633b2e7373ac6f373cb758f2b27fa389c6665bc6e7efa4a2cfc99cf58848b9e",
     "size": [
@@ -208,7 +208,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-50f2b3f3-fab7-4160-8703-c8b0b73ac705.png"
   },
   {
-    "target": "Java/assets/monsters/goblin_archer.png",
+    "target": "Java/assets/characters/monsters/goblin_archer.png",
     "before_sha256": "962713638e9191fd665a827d19bf627a6a79ead66d83246f65d7db23aaa1d0d1",
     "after_sha256": "dd068408b74e4107e94fb91d194af32d2aa492aec4ff6cf464f86436caec97ee",
     "size": [
@@ -224,7 +224,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-908a790c-4427-4130-84aa-5aeddbd63c42.png"
   },
   {
-    "target": "Java/assets/monsters/goblin_trapper.png",
+    "target": "Java/assets/characters/monsters/goblin_trapper.png",
     "before_sha256": "67806d00f50dc3471c90c1e909c4884b4b5fdee0eb71a402c8ed6f961b6503e1",
     "after_sha256": "9e2520fc91ee3b30e69dba4f9ac036217774843bdf63dde916568915b4812b04",
     "size": [
@@ -240,7 +240,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-d98d9492-7a13-43b2-aad2-d957e1c75d0f.png"
   },
   {
-    "target": "Java/assets/monsters/goblin_skirmisher.png",
+    "target": "Java/assets/characters/monsters/goblin_skirmisher.png",
     "before_sha256": "b1b180d5f2a1eba92699ff5e291b41c29a676d78b3e4e402016dd00d9d91577d",
     "after_sha256": "1d84ece84035c919ab0195c13f1b6c50b7e35f0ff381642bf97957ca01cdb62d",
     "size": [
@@ -256,7 +256,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-ac9e87f8-fef1-451e-82e4-b392a5f6192a.png"
   },
   {
-    "target": "Java/assets/monsters/goblin_shaman.png",
+    "target": "Java/assets/characters/monsters/goblin_shaman.png",
     "before_sha256": "531359827cad29cc9242de10c7fe97bc66db86e16fbd95f6df2acadec8ef5059",
     "after_sha256": "ae47441bf627d798a90dab2419513fbb40ad8746ac275210e149b1c60464421b",
     "size": [
@@ -272,7 +272,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-5a841d21-32a1-43e6-a7e5-6cbc1b601c3c.png"
   },
   {
-    "target": "Java/assets/monsters/goblin_warlord.png",
+    "target": "Java/assets/characters/monsters/goblin_warlord.png",
     "before_sha256": "0886c15267c4c042e305002ac577382123e71d59c7281d01939d485ecad88c37",
     "after_sha256": "2f5b18178b177dab10e75583861917ebd7fbf76de06ad2e7e03f25dd2bd14bbc",
     "size": [
@@ -288,7 +288,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-a1a55334-0fa9-4381-9bb0-ecb453830f14.png"
   },
   {
-    "target": "Java/assets/monsters/goblin_king.png",
+    "target": "Java/assets/characters/monsters/goblin_king.png",
     "before_sha256": "9282c6dcf3625228f859190e7dbcdd352c5b982b93605d7674dd197daafcf2d6",
     "after_sha256": "ffb2e3141362d8903c19ef1bfddd9c1d0ee8edd2a533d429826ba89ba866284d",
     "size": [
@@ -304,7 +304,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-70452a64-38b6-485e-9b32-e556340c26e5.png"
   },
   {
-    "target": "Java/assets/monsters/bandit_cutthroat.png",
+    "target": "Java/assets/characters/monsters/bandit_cutthroat.png",
     "before_sha256": "5bf5da21936061694ded3f414df8c3c87c680aef97eb539325be650c51473473",
     "after_sha256": "baabfe5b86895eaf3b7956ed0528e9b1545a47a2890922e65787b7543f4294c5",
     "size": [
@@ -320,7 +320,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-5def53e6-4280-496e-a7b9-c237f91c1b2e.png"
   },
   {
-    "target": "Java/assets/monsters/bandit_archer.png",
+    "target": "Java/assets/characters/monsters/bandit_archer.png",
     "before_sha256": "34eec27d7279eefc5c15823c05a66a1ccf77505e1c78bf1e0167cfe592bce3da",
     "after_sha256": "3a85f02f7cf9014a106903fd9a6a9d7dce31cbd9893fa350ae3bbbae1c518a88",
     "size": [
@@ -336,7 +336,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-b04324a0-7de8-4203-8c47-cb2d16771a05.png"
   },
   {
-    "target": "Java/assets/monsters/bandit_captain.png",
+    "target": "Java/assets/characters/monsters/bandit_captain.png",
     "before_sha256": "cee13e103219dd38b1b4f9b0436ff139a75ad87e46d11e17bde03b1cb12d5576",
     "after_sha256": "9693d90110c5a22513bcf0eddcbe18672d260d7451418cb6a6b7966f2820928e",
     "size": [
@@ -352,7 +352,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-5e253143-0d10-4932-a2a3-c1d5395261ef.png"
   },
   {
-    "target": "Java/assets/monsters/orc_raider.png",
+    "target": "Java/assets/characters/monsters/orc_raider.png",
     "before_sha256": "cf68d1978abfb4b76df18fa850cde1681d7b065ede647b91fad04098f836862b",
     "after_sha256": "a6f7a382c75eae5a045f3b622d09cf4923bf7170e26fc5723099fec38260b1cf",
     "size": [
@@ -368,7 +368,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-843dbfc9-79ee-4c30-8216-5b864db3c371.png"
   },
   {
-    "target": "Java/assets/monsters/orc_berserker.png",
+    "target": "Java/assets/characters/monsters/orc_berserker.png",
     "before_sha256": "3186fa157243c4a0b18bc2a627e1af0d021f50f24dbf81663e42cf0a6e698f77",
     "after_sha256": "be9e3bdbebf5ff66362b04fb703b758d1c60dfd7bcf2184d56b7bcdda7e834c1",
     "size": [
@@ -384,7 +384,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-6992b072-183a-4c7c-aa0f-f57e7e29e2de.png"
   },
   {
-    "target": "Java/assets/monsters/orc_shaman.png",
+    "target": "Java/assets/characters/monsters/orc_shaman.png",
     "before_sha256": "9800d321915c373f756dafa94eaac3ed4012eba303f1ec8fd52ec41dfb8a1269",
     "after_sha256": "7dc0c15f89ae99e32dad0665e6e34eca18243c925d1ed9b3e3f084e819a9eaf1",
     "size": [
@@ -400,7 +400,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-4893b303-01e6-4b90-9d9e-e21f4e37147c.png"
   },
   {
-    "target": "Java/assets/monsters/swamp_troll.png",
+    "target": "Java/assets/characters/monsters/swamp_troll.png",
     "before_sha256": "b58d440725b2ad399611e518ae2e288962c6c4550d80843c4502ab39cfd684fe",
     "after_sha256": "f6ad19e5a9b776b8f73197975369d55ce64bd72aa6789338b97c691b315060cd",
     "size": [
@@ -416,7 +416,7 @@
     "source": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0c98a-e419-7661-aef8-904a4dfd0978\\exec-37aa4da7-8a66-4967-bd18-a06832b39627.png"
   },
   {
-    "target": "Java/assets/monsters/marsh_drake.png",
+    "target": "Java/assets/characters/monsters/marsh_drake.png",
     "before_sha256": "10f25b368e269705f164829267ca37cb4b018bacbabd441e587f8d260a942d7e",
     "after_sha256": "149abfa6a065c8060911eca06106c74bafa55438012c4b7b2b01c59296dd3a86",
     "size": [

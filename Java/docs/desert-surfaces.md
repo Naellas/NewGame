@@ -2,7 +2,7 @@
 
 Overworld and village roads now use the same material compositor, feathered boundaries, earth/gravel grain, and regional palette. Bridge construction is still drawn separately. Sand-biome roads use packed sand, including cobblestone road codes; gameplay tile codes and movement remain unchanged. Location paving stamps are suppressed over these travel surfaces.
 
-Two new full-resolution assets were generated with the built-in imagegen tool (not the CLI) and copied unmodified into `Java/assets/terrain/`:
+Two new full-resolution assets were generated with the built-in imagegen tool (not the CLI) and copied unmodified into `Java/assets/environments/terrain/common/`:
 
 - `desert_sand_wind.png`
 - `desert_path_packed.png`

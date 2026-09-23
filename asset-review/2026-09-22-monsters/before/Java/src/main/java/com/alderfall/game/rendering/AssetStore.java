@@ -385,7 +385,7 @@ public final class AssetStore {
         Path asset = catalog.findAsset(sheetName);
         Path path = asset == null ? null : asset.resolveSibling(sheetName + ".frames");
         if (path == null || !Files.exists(path)) {
-            path = assetsRoot.resolve("animations").resolve(sheetName + ".frames");
+            path = assetsRoot.resolve("characters/shared/animations").resolve(sheetName + ".frames");
         }
         if (!Files.exists(path)) {
             animationMetadataCache.put(sheetName, -1);

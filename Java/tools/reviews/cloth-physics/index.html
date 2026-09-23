@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cloth and hair physics study</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#141e25;color:#eae3d3;font:15px system-ui}main{max-width:1200px;padding:24px;margin:auto}h1{font:30px Georgia}p{line-height:1.6;color:#bdcacf}.controls{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:24px 0}button,select{font:inherit;background:#293c44;color:inherit;border:1px solid #68828a;border-radius:5px;padding:8px}label{display:flex;align-items:center;gap:8px}input{accent-color:#9fcbb0}.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}article{border:1px solid #405359;border-radius:9px;overflow:hidden;background:#1b2a31}h2{font-size:18px;margin:18px}canvas{display:block;width:100%;image-rendering:pixelated}.scrub{display:flex;gap:16px;align-items:center;margin:20px 0}.scrub input{flex:1}a{color:#dcca8f}#status{min-height:24px}@media(max-width:700px){.panels{grid-template-columns:1fr}main{padding:16px}}
+</style><main><p><a href="../movement-physics/index.html">Open the unified movement physics simulator</a></p>
+<h1>Cloth over the moving skeleton</h1>
+<p>Compare the current game walk with an experimental layer of cape and hair physics. Pink capsules mark the legs; green nodes show cloth contact, and blue nodes show hair motion.</p>
+<div class="controls"><button id="pause">Pause</button>
+<label>Character <select id="actor"><option value="0">Mage</option><option value="1" selected>Seraphine</option><option value="2">Knight</option></select></label>
+<label>Cadence preference <select id="speed"><option value="5">0.5x</option><option value="10" selected>1x</option><option value="15">1.5x</option></select></label>
+<label><input id="physics" type="checkbox" checked>Cloth / hair physics</label>
+<label><input id="colliders" type="checkbox" checked>Colliders and nodes</label>
+<label>Playback <select id="playback"><option value="0.5" selected>Slow motion</option><option value="1">Normal</option></select></label></div>
+<div class="panels"><article><h2>Current game</h2><canvas id="base" width="520" height="360"></canvas></article><article><h2>Physics study</h2><canvas id="cloth" width="520" height="360"></canvas></article></div>
+<div class="scrub"><label for="frame">Frame</label><input id="frame" type="range" min="0" max="31" value="0"><output id="number">1 / 32</output></div><p id="status" role="status">Loading...</p>
+<p>The 0.5x preference uses a 0.9x minimum sideways cadence to avoid overextended legs. Both panels cover the same distance. Short hair stays attached; Seraphine demonstrates the ponytail chain.</p>
+<p>This is a preview experiment: damped horizontal spring chains and leg-capsule collisions, baked into repeatable loops for scrubbing. It does not yet simulate cloth stretching, folds, turns or collisions with scenery. Cape/hair physics is not enabled in the game.</p>
+</main><script src="data.js?v=pelvis3"></script><script>
+const $=id=>document.getElementById(id),images=new Map();let paused=false,active=true,time=0,last=performance.now();
+function image(src){if(!images.has(src)){const im=new Image();im.src=src+'?v=pelvis3';images.set(src,im);}return images.get(src);}
+function selected(){const a=clothStudy.actors[+$('actor').value];return [a,a.speeds[$('speed').value]];}
+function reset(){time=0;last=performance.now();const [a,s]=selected();image(s.base);image(s.cloth);}
+$('actor').onchange=reset;$('speed').onchange=reset;
+$('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'Resume':'Pause';};
+$('frame').oninput=()=>{paused=true;$('pause').textContent='Resume';time=+$('frame').value/32*900/selected()[1].cadence;};
+function draw(id,actor,spec,step){
+ const c=$(id).getContext('2d'),f=step%32,z=2.1,ox=260-96*z,oy=310-137*z;
+ c.lineWidth=1;c.lineCap='butt';c.fillStyle='#17242a';c.fillRect(0,0,520,360);c.fillStyle='#2c3c36';c.fillRect(0,310,520,50);
+ const travel=.75*48*144/66/spec.cadence,scroll=step/32*travel*z;
+ c.strokeStyle='#65796c';c.beginPath();c.moveTo(0,310);c.lineTo(520,310);c.stroke();
+ for(let x=-80;x<600;x+=60)c.strokeRect(x-scroll%60,311,57,27);
+ const im=image(id==='cloth'&&$('physics').checked?spec.cloth:spec.base);if(!im.complete||!im.naturalWidth)return false;
+ c.imageSmoothingEnabled=false;c.drawImage(im,f*192,0,192,144,ox,oy,192*z,144*z);
+ if(id==='cloth'&&$('colliders').checked){
+  c.lineCap='round';c.strokeStyle='#f39dbc55';c.lineWidth=12*z;
+  for(const p of spec.legs[f]){c.beginPath();c.moveTo(ox+p[0]*z,oy+p[1]*z);c.lineTo(ox+p[2]*z,oy+p[3]*z);c.lineTo(ox+p[4]*z,oy+p[5]*z);c.stroke();}
+  if($('physics').checked)for(let chain=0;chain<3;chain++){
+   if(chain===1&&!actor.robe||chain===2&&!actor.hair)continue;
+   c.strokeStyle=c.fillStyle=chain===2?'#9bd6fa':'#b9e998';c.lineWidth=1.5;c.beginPath();
+   for(let i=0;i<7;i++){const p=spec.nodes[f][chain*7+i];c[i?'lineTo':'moveTo'](ox+p[0]*z,oy+p[1]*z);}c.stroke();
+   for(let i=0;i<7;i++){const p=spec.nodes[f][chain*7+i];c.beginPath();c.arc(ox+p[0]*z,oy+p[1]*z,2.5,0,Math.PI*2);c.fill();}
+  }
+ }
+ return true;
+}
+function animate(now){if(!paused&&active)time+=Math.min(100,now-last)*+$('playback').value;last=now;
+ const [a,s]=selected(),step=Math.floor(time/900*32*s.cadence);if(!paused)$('frame').value=step%32;$('number').value=`${step%32+1} / 32`;
+ const ready=draw('base',a,s,step)&draw('cloth',a,s,step);
+ $('status').textContent=ready?`${a.name}: actual sideways cadence ${s.cadence.toFixed(1)}x. Physics ${$('physics').checked?'on':'off'} in the right panel.`:'Loading...';requestAnimationFrame(animate);
+}
+window.addEventListener('message',e=>{if(e.source===parent&&e.data?.type==='movement-study-active'){active=!!e.data.active;last=performance.now();}});
+if(parent!==window)new ResizeObserver(()=>parent.postMessage({type:'movement-study-size',height:Math.ceil(document.querySelector('main').getBoundingClientRect().bottom+window.scrollY+24)},'*')).observe(document.querySelector('main'));
+reset();requestAnimationFrame(animate);
+</script></html>

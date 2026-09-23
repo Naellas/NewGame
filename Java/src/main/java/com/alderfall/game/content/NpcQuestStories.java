@@ -11,6 +11,8 @@ public final class NpcQuestStories {
                         String accept, String waiting, String ready, String aftermath) { }
 
     public static Story story(Quest q) {
+        Story regional = RegionalNpcQuests.story(q);
+        if (regional != null) return regional;
         if (q.id.equals("hay_for_horses")) return new Story(
                 "The watch came back on foot. Their horses had started chewing the leather traces, and the riders finally thought to ask me about feed. "
                         + "I've put aside three dry bales for them. Now my own cart has a split axle, so the hay is still out in the field.",
@@ -175,8 +177,17 @@ public final class NpcQuestStories {
             case WOODCUTTER -> "I cut timber here. I can judge a bad branch at a glance; judging when a neighbour needs help takes longer.";
             case HERBALIST -> "I gather and prepare herbs here. I label every bundle twice. People laugh until two similar leaves do very different things.";
         };
-        if (npc.shopId() != null) return "I trade here. I remember who paid late, but I also remember who came back to pay at all.";
-        return "I live and work here. I have to meet these same neighbours after the argument is over, so I try to leave room for that.";
+        return switch (NpcIdentity.role(npc)) {
+            case FARMER -> "I tend crops and livestock here. The season does not wait for a broken cart or a late delivery.";
+            case MINER -> "I work the seams and assay the ore. We count the crew before we count the sacks.";
+            case TRADER -> "I trade here. I remember who paid late, but I also remember who came back to pay at all.";
+            case ARTISAN -> "I make and mend what this town uses. Sound materials and an honest measure matter more than a quick sale.";
+            case SCHOLAR -> "I keep records here. When an account is uncertain, I write down the uncertainty too.";
+            case GUARD -> "I keep watch over the roads and households. A quiet patrol is work done properly.";
+            case HEALER -> "I prepare remedies and tend patients. Every bundle is labeled before it enters my medicine chest.";
+            case NOBLE -> "I answer for the town's charters and judgments. My seal commits me to checking the evidence.";
+            case COOK -> "I keep the kitchen and guest table ready. Good bread begins with a sound grain order and a clean oven.";
+        };
     }
 
     public static MainStoryContent.Topic belief(Npc npc) {

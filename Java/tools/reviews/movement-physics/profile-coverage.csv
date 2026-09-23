@@ -1,0 +1,1017 @@
+actor,direction,source_available,profile_status,next_step
+class_cleric,down,true,pending,calibrate pelvis contours source masks and equipment depth
+class_cleric,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_cleric,left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_cleric,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_cleric,up,true,pending,calibrate pelvis contours source masks and equipment depth
+class_cleric,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_cleric,right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_cleric,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_knight,down,true,pending,calibrate pelvis contours source masks and equipment depth
+class_knight,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_knight,left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_knight,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_knight,up,true,pending,calibrate pelvis contours source masks and equipment depth
+class_knight,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_knight,right,true,pilot,visual review at gameplay size
+class_knight,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_mage,down,true,pending,calibrate pelvis contours source masks and equipment depth
+class_mage,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_mage,left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_mage,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_mage,up,true,pending,calibrate pelvis contours source masks and equipment depth
+class_mage,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_mage,right,true,pilot,visual review at gameplay size
+class_mage,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,down,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,up,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_ranger,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,down,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,up,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,right,true,pending,calibrate pelvis contours source masks and equipment depth
+class_rogue,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_aria,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_baker,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_baker,down_left,false,pending,review directional fallback before calibration
+npc_baker,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_baker,up_left,false,pending,review directional fallback before calibration
+npc_baker,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_baker,up_right,false,pending,review directional fallback before calibration
+npc_baker,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_baker,down_right,false,pending,review directional fallback before calibration
+npc_bartender,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_bartender,down_left,false,pending,review directional fallback before calibration
+npc_bartender,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_bartender,up_left,false,pending,review directional fallback before calibration
+npc_bartender,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_bartender,up_right,false,pending,review directional fallback before calibration
+npc_bartender,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_bartender,down_right,false,pending,review directional fallback before calibration
+npc_blacksmith,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_blacksmith,down_left,false,pending,review directional fallback before calibration
+npc_blacksmith,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_blacksmith,up_left,false,pending,review directional fallback before calibration
+npc_blacksmith,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_blacksmith,up_right,false,pending,review directional fallback before calibration
+npc_blacksmith,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_blacksmith,down_right,false,pending,review directional fallback before calibration
+npc_calder,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_calder,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_calder,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_calder,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_calder,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_calder,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_calder,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_calder,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_cassia,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_man,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_man,down_left,false,pending,review directional fallback before calibration
+npc_citizen_man,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_man,up_left,false,pending,review directional fallback before calibration
+npc_citizen_man,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_man,up_right,false,pending,review directional fallback before calibration
+npc_citizen_man,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_man,down_right,false,pending,review directional fallback before calibration
+npc_citizen_woman,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_woman,down_left,false,pending,review directional fallback before calibration
+npc_citizen_woman,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_woman,up_left,false,pending,review directional fallback before calibration
+npc_citizen_woman,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_woman,up_right,false,pending,review directional fallback before calibration
+npc_citizen_woman,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_citizen_woman,down_right,false,pending,review directional fallback before calibration
+npc_elowen,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_elowen,down_left,false,pending,review directional fallback before calibration
+npc_elowen,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_elowen,up_left,false,pending,review directional fallback before calibration
+npc_elowen,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_elowen,up_right,false,pending,review directional fallback before calibration
+npc_elowen,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_elowen,down_right,false,pending,review directional fallback before calibration
+npc_garruk,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_garruk,down_left,false,pending,review directional fallback before calibration
+npc_garruk,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_garruk,up_left,false,pending,review directional fallback before calibration
+npc_garruk,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_garruk,up_right,false,pending,review directional fallback before calibration
+npc_garruk,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_garruk,down_right,false,pending,review directional fallback before calibration
+npc_innkeeper,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_innkeeper,down_left,false,pending,review directional fallback before calibration
+npc_innkeeper,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_innkeeper,up_left,false,pending,review directional fallback before calibration
+npc_innkeeper,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_innkeeper,up_right,false,pending,review directional fallback before calibration
+npc_innkeeper,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_innkeeper,down_right,false,pending,review directional fallback before calibration
+npc_kael,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_kael,down_left,false,pending,review directional fallback before calibration
+npc_kael,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_kael,up_left,false,pending,review directional fallback before calibration
+npc_kael,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_kael,up_right,false,pending,review directional fallback before calibration
+npc_kael,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_kael,down_right,false,pending,review directional fallback before calibration
+npc_liora,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_liora,down_left,false,pending,review directional fallback before calibration
+npc_liora,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_liora,up_left,false,pending,review directional fallback before calibration
+npc_liora,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_liora,up_right,false,pending,review directional fallback before calibration
+npc_liora,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_liora,down_right,false,pending,review directional fallback before calibration
+npc_lyra,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_lyra,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_lyra,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_lyra,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_lyra,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_lyra,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_lyra,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_lyra,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_maera,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_marla,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_marla,down_left,false,pending,review directional fallback before calibration
+npc_marla,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_marla,up_left,false,pending,review directional fallback before calibration
+npc_marla,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_marla,up_right,false,pending,review directional fallback before calibration
+npc_marla,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_marla,down_right,false,pending,review directional fallback before calibration
+npc_merchant,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_merchant,down_left,false,pending,review directional fallback before calibration
+npc_merchant,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_merchant,up_left,false,pending,review directional fallback before calibration
+npc_merchant,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_merchant,up_right,false,pending,review directional fallback before calibration
+npc_merchant,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_merchant,down_right,false,pending,review directional fallback before calibration
+npc_mira_sunwarden,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_mira_sunwarden,down_left,false,pending,review directional fallback before calibration
+npc_mira_sunwarden,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_mira_sunwarden,up_left,false,pending,review directional fallback before calibration
+npc_mira_sunwarden,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_mira_sunwarden,up_right,false,pending,review directional fallback before calibration
+npc_mira_sunwarden,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_mira_sunwarden,down_right,false,pending,review directional fallback before calibration
+npc_nyx,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_nyx,down_left,false,pending,review directional fallback before calibration
+npc_nyx,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_nyx,up_left,false,pending,review directional fallback before calibration
+npc_nyx,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_nyx,up_right,false,pending,review directional fallback before calibration
+npc_nyx,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_nyx,down_right,false,pending,review directional fallback before calibration
+npc_orin,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_orin,down_left,false,pending,review directional fallback before calibration
+npc_orin,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_orin,up_left,false,pending,review directional fallback before calibration
+npc_orin,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_orin,up_right,false,pending,review directional fallback before calibration
+npc_orin,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_orin,down_right,false,pending,review directional fallback before calibration
+npc_quartermaster,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_quartermaster,down_left,false,pending,review directional fallback before calibration
+npc_quartermaster,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_quartermaster,up_left,false,pending,review directional fallback before calibration
+npc_quartermaster,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_quartermaster,up_right,false,pending,review directional fallback before calibration
+npc_quartermaster,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_quartermaster,down_right,false,pending,review directional fallback before calibration
+npc_rafiq,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rafiq,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rafiq,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rafiq,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rafiq,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rafiq,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rafiq,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rafiq,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_artisan_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_artisan_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_artisan_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_artisan_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_artisan_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_artisan_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_artisan_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_artisan_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_farmer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_farmer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_guard_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_guard_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_healer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_healer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_miner_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_miner_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_noble_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_noble_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_scholar_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_scholar_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_desert_trader_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_desert_trader_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_artisan_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_artisan_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_farmer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_farmer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_guard_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_guard_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_healer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_healer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_miner_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_miner_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_noble_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_noble_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_scholar_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_scholar_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_highland_trader_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_highland_trader_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_artisan_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_artisan_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_farmer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_farmer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_guard_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_guard_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_healer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_healer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_miner_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_miner_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_noble_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_noble_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_scholar_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_scholar_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_marsh_trader_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_marsh_trader_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_artisan_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_artisan_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_farmer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_farmer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_guard_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_guard_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_guard_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_guard_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_guard_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_guard_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_guard_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_guard_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_guard_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_healer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_healer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_healer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_healer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_healer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_healer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_healer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_healer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_healer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_miner_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_miner_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_miner_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_miner_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_miner_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_miner_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_miner_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_miner_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_miner_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_noble_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_noble_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_noble_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_noble_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_noble_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_noble_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_noble_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_noble_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_noble_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_scholar_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_scholar_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_trader_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_trader_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_trader_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_trader_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_north_trader_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_north_trader_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_north_trader_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_north_trader_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_north_trader_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_artisan_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_artisan_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_farmer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_farmer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_guard_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_guard_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_healer_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_healer_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_miner_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_miner_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_noble_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_noble_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_scholar_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_scholar_m,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_f,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_f,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_f,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_f,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_f,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_f,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_f,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_f,down_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_m,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_m,down_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_m,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_m,up_left,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_m,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_m,up_right,false,pending,review directional fallback before calibration
+npc_regional_temperate_trader_m,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_regional_temperate_trader_m,down_right,false,pending,review directional fallback before calibration
+npc_ren,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_ren,down_left,false,pending,review directional fallback before calibration
+npc_ren,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_ren,up_left,false,pending,review directional fallback before calibration
+npc_ren,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_ren,up_right,false,pending,review directional fallback before calibration
+npc_ren,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_ren,down_right,false,pending,review directional fallback before calibration
+npc_rowan,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rowan,down_left,false,pending,review directional fallback before calibration
+npc_rowan,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rowan,up_left,false,pending,review directional fallback before calibration
+npc_rowan,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rowan,up_right,false,pending,review directional fallback before calibration
+npc_rowan,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_rowan,down_right,false,pending,review directional fallback before calibration
+npc_sable,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_sable,down_left,false,pending,review directional fallback before calibration
+npc_sable,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_sable,up_left,false,pending,review directional fallback before calibration
+npc_sable,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_sable,up_right,false,pending,review directional fallback before calibration
+npc_sable,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_sable,down_right,false,pending,review directional fallback before calibration
+npc_samir,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_samir,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_samir,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_samir,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_samir,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_samir,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_samir,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_samir,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_seraphine,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_seraphine,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_seraphine,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_seraphine,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_seraphine,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_seraphine,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_seraphine,right,true,pilot,visual review at gameplay size
+npc_seraphine,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ash_scribe_damar,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ash_scribe_damar,down_left,false,pending,review directional fallback before calibration
+npc_story_ash_scribe_damar,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ash_scribe_damar,up_left,false,pending,review directional fallback before calibration
+npc_story_ash_scribe_damar,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ash_scribe_damar,up_right,false,pending,review directional fallback before calibration
+npc_story_ash_scribe_damar,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ash_scribe_damar,down_right,false,pending,review directional fallback before calibration
+npc_story_bellwright_nessa,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_bellwright_nessa,down_left,false,pending,review directional fallback before calibration
+npc_story_bellwright_nessa,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_bellwright_nessa,up_left,false,pending,review directional fallback before calibration
+npc_story_bellwright_nessa,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_bellwright_nessa,up_right,false,pending,review directional fallback before calibration
+npc_story_bellwright_nessa,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_bellwright_nessa,down_right,false,pending,review directional fallback before calibration
+npc_story_captain_elric_snowrest,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_captain_elric_snowrest,down_left,false,pending,review directional fallback before calibration
+npc_story_captain_elric_snowrest,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_captain_elric_snowrest,up_left,false,pending,review directional fallback before calibration
+npc_story_captain_elric_snowrest,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_captain_elric_snowrest,up_right,false,pending,review directional fallback before calibration
+npc_story_captain_elric_snowrest,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_captain_elric_snowrest,down_right,false,pending,review directional fallback before calibration
+npc_story_elder_rowan,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_elder_rowan,down_left,false,pending,review directional fallback before calibration
+npc_story_elder_rowan,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_elder_rowan,up_left,false,pending,review directional fallback before calibration
+npc_story_elder_rowan,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_elder_rowan,up_right,false,pending,review directional fallback before calibration
+npc_story_elder_rowan,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_elder_rowan,down_right,false,pending,review directional fallback before calibration
+npc_story_gravekeeper_hollis,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_gravekeeper_hollis,down_left,false,pending,review directional fallback before calibration
+npc_story_gravekeeper_hollis,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_gravekeeper_hollis,up_left,false,pending,review directional fallback before calibration
+npc_story_gravekeeper_hollis,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_gravekeeper_hollis,up_right,false,pending,review directional fallback before calibration
+npc_story_gravekeeper_hollis,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_gravekeeper_hollis,down_right,false,pending,review directional fallback before calibration
+npc_story_maelis,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_maelis,down_left,false,pending,review directional fallback before calibration
+npc_story_maelis,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_maelis,up_left,false,pending,review directional fallback before calibration
+npc_story_maelis,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_maelis,up_right,false,pending,review directional fallback before calibration
+npc_story_maelis,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_maelis,down_right,false,pending,review directional fallback before calibration
+npc_story_mirella,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_mirella,down_left,false,pending,review directional fallback before calibration
+npc_story_mirella,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_mirella,up_left,false,pending,review directional fallback before calibration
+npc_story_mirella,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_mirella,up_right,false,pending,review directional fallback before calibration
+npc_story_mirella,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_mirella,down_right,false,pending,review directional fallback before calibration
+npc_story_odrick,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_odrick,down_left,false,pending,review directional fallback before calibration
+npc_story_odrick,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_odrick,up_left,false,pending,review directional fallback before calibration
+npc_story_odrick,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_odrick,up_right,false,pending,review directional fallback before calibration
+npc_story_odrick,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_odrick,down_right,false,pending,review directional fallback before calibration
+npc_story_selene,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_selene,down_left,false,pending,review directional fallback before calibration
+npc_story_selene,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_selene,up_left,false,pending,review directional fallback before calibration
+npc_story_selene,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_selene,up_right,false,pending,review directional fallback before calibration
+npc_story_selene,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_selene,down_right,false,pending,review directional fallback before calibration
+npc_story_solari,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_solari,down_left,false,pending,review directional fallback before calibration
+npc_story_solari,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_solari,up_left,false,pending,review directional fallback before calibration
+npc_story_solari,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_solari,up_right,false,pending,review directional fallback before calibration
+npc_story_solari,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_solari,down_right,false,pending,review directional fallback before calibration
+npc_story_vaelthara,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_vaelthara,down_left,false,pending,review directional fallback before calibration
+npc_story_vaelthara,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_vaelthara,up_left,false,pending,review directional fallback before calibration
+npc_story_vaelthara,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_vaelthara,up_right,false,pending,review directional fallback before calibration
+npc_story_vaelthara,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_vaelthara,down_right,false,pending,review directional fallback before calibration
+npc_story_ysra,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ysra,down_left,false,pending,review directional fallback before calibration
+npc_story_ysra,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ysra,up_left,false,pending,review directional fallback before calibration
+npc_story_ysra,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ysra,up_right,false,pending,review directional fallback before calibration
+npc_story_ysra,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_story_ysra,down_right,false,pending,review directional fallback before calibration
+npc_torin,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_torin,down_left,false,pending,review directional fallback before calibration
+npc_torin,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_torin,up_left,false,pending,review directional fallback before calibration
+npc_torin,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_torin,up_right,false,pending,review directional fallback before calibration
+npc_torin,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_torin,down_right,false,pending,review directional fallback before calibration
+npc_vesper,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vesper,down_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vesper,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vesper,up_left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vesper,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vesper,up_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vesper,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vesper,down_right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vexa,down,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vexa,down_left,false,pending,review directional fallback before calibration
+npc_vexa,left,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vexa,up_left,false,pending,review directional fallback before calibration
+npc_vexa,up,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vexa,up_right,false,pending,review directional fallback before calibration
+npc_vexa,right,true,pending,calibrate pelvis contours source masks and equipment depth
+npc_vexa,down_right,false,pending,review directional fallback before calibration

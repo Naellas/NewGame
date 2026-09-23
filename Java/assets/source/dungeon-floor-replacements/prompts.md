@@ -31,6 +31,6 @@ Asset-specific additions:
   charcoal flagstone, centered as a single special tile. Avoid glow, letters, religious symbols,
   pentagrams, frames, platforms, transparent edges, or cropped ornament.
 
-`tools/import_dungeon_floor_replacements.ps1` center-crops each generated master, resamples it to the
+`tools/assets/environments/import_dungeon_floor_replacements.ps1` center-crops each generated master, resamples it to the
 native 48 px terrain size, reconciles opposite edge bands, verifies opacity, and writes the runtime
 asset. Generated masters are retained here so the import remains reproducible.

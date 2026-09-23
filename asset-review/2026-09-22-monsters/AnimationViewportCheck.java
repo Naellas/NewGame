@@ -6,7 +6,7 @@ public class AnimationViewportCheck {
  static void require(boolean condition,String message){if(!condition)throw new IllegalStateException(message);}
  public static void main(String[] args)throws Exception{
   Path review=Path.of("../asset-review/2026-09-22-monsters"),fixture=review.resolve("viewport-fixture");Files.createDirectories(fixture);
-  Files.copy(Path.of("assets/monsters/animations/skeleton_attack_anim.png"),fixture.resolve("test_attack_anim.png"),StandardCopyOption.REPLACE_EXISTING);
+  Files.copy(Path.of("assets/characters/monsters/animations/skeleton_attack_anim.png"),fixture.resolve("test_attack_anim.png"),StandardCopyOption.REPLACE_EXISTING);
   Files.writeString(fixture.resolve("test_attack_anim.frames"),"6\n");Path bounds=fixture.resolve("test_attack_anim.framebounds");
   Files.writeString(bounds,"0 138 362 390\n");AssetStore valid=new AssetStore(fixture);int fitted=visibleHeight(valid.animatedSpriteFit("test","attack",160,160,0));
   for(String invalid:new String[]{"-1 0 400 900","0 0 0 200","not a rectangle","0 0 99999 99999"}){

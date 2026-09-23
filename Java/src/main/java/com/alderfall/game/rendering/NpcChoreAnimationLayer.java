@@ -17,7 +17,7 @@ public final class NpcChoreAnimationLayer {
         if (action.isBlank()) {
             return "";
         }
-        String downSprite = npc.sprite() + "_model_down";
+        String downSprite = NpcIdentity.appearance(npc) + "_model_down";
         if (!assets.hasAnimatedSprite(downSprite, action)) {
             return "";
         }

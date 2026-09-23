@@ -1,7 +1,7 @@
 # Supplied household and warehouse furniture
 
 The three supplied sheets are preserved under `assets/source/household-expansion/`.
-`tools/import_household_expansion.py` extracts 216 named transparent candidates with
+`tools/assets/environments/import_household_expansion.py` extracts 216 named transparent candidates with
 authored crop bounds, conservative black-matte removal, and neighboring-fragment
 cleanup. The household sheet's original alpha is retained. No artwork is synthesized.
 
@@ -46,7 +46,7 @@ is not forcibly rebuilt during a running game session.
 
 ## Reproduce and verify
 
-From `Java/`, run `python tools/import_household_expansion.py` to regenerate the
+From `Java/`, run `python tools/assets/environments/import_household_expansion.py` to regenerate the
 review archive, or add `--install` to apply the reviewed runtime selection. Original
 replacement backups in the review archive are preserved on repeat runs.
 

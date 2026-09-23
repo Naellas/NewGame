@@ -76,7 +76,7 @@ That sentence can survive only after the concrete explanation, not instead of it
   - Quest state, quest completion, companion relationship, outcome memory, objective interaction.
   - Active quest objectives, quest NPCs, quest monsters, interactibles.
 
-- `Java/src/main/java/com/alderfall/game/diagnostics/CompanionDialogueQaExport.java`
+- `Java/src/review/java/com/alderfall/game/diagnostics/CompanionDialogueQaExport.java`
   - Add QA probes for new companion quest arcs.
   - Check vague options and repeated generic labels.
   - Sample relationship stages and quest stages.
@@ -132,12 +132,12 @@ That sentence can survive only after the concrete explanation, not instead of it
 
 ### Tests and Diagnostics
 
-- `Java/src/main/java/com/alderfall/game/diagnostics/SmokeTest.java`
+- `Java/src/test/java/com/alderfall/game/diagnostics/SmokeTest.java`
   - Add checks that bespoke quest objectives spawn on reachable/passable tiles.
   - Add checks that required props exist near the intended settlement/location.
   - Add checks that quest monsters and NPCs spawn with valid specs.
 
-- `Java/src/main/java/com/alderfall/game/diagnostics/CompanionDialogueQaExport.java`
+- `Java/src/review/java/com/alderfall/game/diagnostics/CompanionDialogueQaExport.java`
   - Add content QA: vague metaphor detection, repeated option detection, missing concrete objective clue detection.
 
 ## Dialogue Implementation Rules
@@ -573,7 +573,7 @@ Update `DialogueLibrary.java`:
 
 Generate or add assets for props, monsters, and NPCs:
 
-- prop sprites in `Java/assets/deco` or relevant asset folder
+- prop sprites in `Java/assets/environments/props/nature` or relevant asset folder
 - monster sprites in the existing monster asset location
 - source images in `Java/assets/source` if generated
 - renderer classifications if size/glow/animation differs from defaults

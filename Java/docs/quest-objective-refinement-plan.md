@@ -262,7 +262,7 @@ Ship coherent quest segments. Do not merge a new objective label in one batch wh
 - [DialogueLibrary](../src/main/java/com/alderfall/game/dialogues/DialogueLibrary.java) and companion modules: factual gates, explicit commitments, disclosure, and updated return lines.
 - [WorldMap](../src/main/java/com/alderfall/game/map/WorldMap.java): actual sites, anchors, transitions, reachable interaction points, and visible aftermath.
 - [SaveSystem](../src/main/java/com/alderfall/game/systems/SaveSystem.java): versioning, semantic state persistence, and migration.
-- [Diagnostics](../src/main/java/com/alderfall/game/diagnostics/): focused regression coverage and exported conversation review.
+- [Diagnostics](../src/test/java/com/alderfall/game/diagnostics/): focused regression coverage and exported conversation review.
 
 Preserve current prop indexing, bounded placement queries, and pathfinding separation. Build content through existing APIs; this plan does not justify a broad rendering or engine rewrite.
 

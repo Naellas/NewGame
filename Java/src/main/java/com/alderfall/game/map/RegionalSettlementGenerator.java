@@ -296,6 +296,20 @@ final class RegionalSettlementGenerator {
                 int score = open * 3 - Math.abs(x - preferredX) * 2 - Math.abs(y - preferredY) * 2;
                 if (clear && score > scoreBest) { best = p; scoreBest = score; }
             }
+            // Dense villages may not have an entirely empty 3x3 square after correcting building
+            // footprints. A compact common still needs a free center and three accessible neighbors.
+            if (best == null) {
+                for (int y = 4; y < area.height() - 4; y++) for (int x = 4; x < area.width() - 4; x++) {
+                    TilePoint p = new TilePoint(x, y);
+                    if (!accessible.contains(p) || protectedTiles[y][x] || Terrain.ROAD_LIKE.contains(area.tileAt(x, y))
+                            || !result.isEmpty() && distance(p, result.get(0)) < 7) continue;
+                    int open = 0;
+                    for (int[] step : STEPS) if (accessible.contains(new TilePoint(x + step[0], y + step[1]))
+                            && !protectedTiles[y + step[1]][x + step[0]]) open++;
+                    int score = open * 20 - Math.abs(x - preferredX) - Math.abs(y - preferredY);
+                    if (open >= 3 && score > scoreBest) { best = p; scoreBest = score; }
+                }
+            }
             if (best != null) {
                 result.add(best);
                 for (int y = best.y() - 1; y <= best.y() + 1; y++) for (int x = best.x() - 1; x <= best.x() + 1; x++) protectedTiles[y][x] = true;

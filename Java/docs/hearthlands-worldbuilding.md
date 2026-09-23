@@ -11,7 +11,7 @@ This pass implements environmental storytelling from `Story premise/world-framew
 
 ## Art and placement
 
-New built-in imagegen assets live in `assets/city/folklore/`: `folklore_shared_oven.png`, `folklore_seedhouse.png`, and `folklore_hearth_ward.png`. Full prompts and the selected outputs' intended use are recorded in `hearthlands-prompts.md` there. Oakhaven uses the existing `folklore_returning_seedhouse.png` for its new building lot.
+New built-in imagegen assets live in `assets/environments/settlements/city/folklore/`: `folklore_shared_oven.png`, `folklore_seedhouse.png`, and `folklore_hearth_ward.png`. Full prompts and the selected outputs' intended use are recorded in `hearthlands-prompts.md` there. Oakhaven uses the existing `folklore_returning_seedhouse.png` for its new building lot.
 
 The images retain generated alpha and use existing aspect-preserving sprite scaling, depth order, shadows and lighting. Muted terracotta, cream plaster, dark timber and mossy stone connect them to neighbouring buildings. Haloed wayshrine variants were rejected.
 

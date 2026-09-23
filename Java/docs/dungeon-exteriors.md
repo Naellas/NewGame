@@ -42,7 +42,7 @@ Coordinates below are regional anchors for new sites, not guaranteed final posit
 
 The layered renderer feathers clearings into the surrounding terrain. Snow, sand and marsh retain most of their original material; burial grounds receive muted stone, vampire courtyards a subdued burgundy tint, and arcane courts blue-grey gravel. The old five-tile-wide rectangular road landing is replaced by a narrow entrance route. Core scenery is reserved before placement, keeping tree crowns out of entrance silhouettes. Generic discoverability props no longer add unrelated runestones to playable dungeons.
 
-The user's graveyard, gothic, cave, arcane and fortress sheets supplied the visual direction. Existing runtime props and entrances are reused. Four new transparent entrance sprites were generated with the built-in imagegen tool and copied into `assets/locations/location_exterior_{sand,ice,vampire,arcane}_entrance.png`; these are new interpretations, not direct extractions from the attached sheets. Their original generated alpha is preserved.
+The user's graveyard, gothic, cave, arcane and fortress sheets supplied the visual direction. Existing runtime props and entrances are reused. Four new transparent entrance sprites were generated with the built-in imagegen tool and copied into `assets/environments/locations/location_exterior_{sand,ice,vampire,arcane}_entrance.png`; these are new interpretations, not direct extractions from the attached sheets. Their original generated alpha is preserved.
 
 ## Review and validation
 

@@ -1,67 +1,67 @@
 [
   {
     "key": "rescue",
-    "target": "Java/assets/city/regional/regional_freehold_rescue_lodge.png",
+    "target": "Java/assets/environments/settlements/city/regional/regional_freehold_rescue_lodge.png",
     "request": "The turret roof tip touches and is clipped by the top image edge; the left and right roof corners also touch the sides. Restore a complete tiny turret finial and give the entire existing building transparent clearance. Preserve slate roof, central dormer, turret and red windsock, chimney, plaster/timber walls, stone ground floor, entrance porch, rescue stretcher at left, blankets, ropes, crates and right barrel. Do not add any new architecture."
   },
   {
     "key": "sun_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_sun_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_gate_vertical.png",
     "request": "Keep ONLY the single long vertical gatehouse centered towards the right of the reference. Remove the unrelated cropped wall segment floating at the far LEFT. Remove any background matte or colored haze from the entire exterior and the arch opening; retain an actual iron gate if present. Preserve two towers aligned vertically (one behind the other), the intervening arch and top/bottom wall sockets, same slightly elevated vertical north-south orientation. Complete all outer edges; do not rotate or turn it into a horizontal gate."
   },
   {
     "key": "sun_end_tower",
-    "target": "Java/assets/city/walls/city_wall_sun_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_end_tower.png",
     "request": "Keep ONLY the central small round end tower with crenellated top and its four small attachment sockets. Remove the tiny unrelated cut-off fragment/line at the very TOP border. Remove any colored/brown background, haze or halo, including around base. Preserve the exact tower identity, wall sockets, stone colors, moss or snow if present and its slightly elevated view."
   },
   {
     "key": "hearth_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_hearth_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_hearth_gate_vertical.png",
     "request": "Keep ONLY the single long vertical gatehouse centered towards the right of the reference. Remove the unrelated cropped wall segment floating at the far LEFT. Remove any background matte or colored haze from the entire exterior and the arch opening; retain an actual iron gate if present. Preserve two towers aligned vertically (one behind the other), the intervening arch and top/bottom wall sockets, same slightly elevated vertical north-south orientation. Complete all outer edges; do not rotate or turn it into a horizontal gate."
   },
   {
     "key": "hearth_end_tower",
-    "target": "Java/assets/city/walls/city_wall_hearth_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_hearth_end_tower.png",
     "request": "Keep ONLY the central small round end tower with crenellated top and its four small attachment sockets. Remove the tiny unrelated cut-off fragment/line at the very TOP border. Remove any colored/brown background, haze or halo, including around base. Preserve the exact tower identity, wall sockets, stone colors, moss or snow if present and its slightly elevated view."
   },
   {
     "key": "north_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_north_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_north_gate_vertical.png",
     "request": "Keep ONLY the single long vertical gatehouse centered towards the right of the reference. Remove the unrelated cropped wall segment floating at the far LEFT. Remove any background matte or colored haze from the entire exterior and the arch opening; retain an actual iron gate if present. Preserve two towers aligned vertically (one behind the other), the intervening arch and top/bottom wall sockets, same slightly elevated vertical north-south orientation. Complete all outer edges; do not rotate or turn it into a horizontal gate."
   },
   {
     "key": "north_end_tower",
-    "target": "Java/assets/city/walls/city_wall_north_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_north_end_tower.png",
     "request": "Keep ONLY the central small round end tower with crenellated top and its four small attachment sockets. Remove the tiny unrelated cut-off fragment/line at the very TOP border. Remove any colored/brown background, haze or halo, including around base. Preserve the exact tower identity, wall sockets, stone colors, moss or snow if present and its slightly elevated view."
   },
   {
     "key": "fen_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_fen_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_fen_gate_vertical.png",
     "request": "Keep ONLY the single long vertical gatehouse centered towards the right of the reference. Remove the unrelated cropped wall segment floating at the far LEFT. Remove any background matte or colored haze from the entire exterior and the arch opening; retain an actual iron gate if present. Preserve two towers aligned vertically (one behind the other), the intervening arch and top/bottom wall sockets, same slightly elevated vertical north-south orientation. Complete all outer edges; do not rotate or turn it into a horizontal gate."
   },
   {
     "key": "fen_end_tower",
-    "target": "Java/assets/city/walls/city_wall_fen_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_fen_end_tower.png",
     "request": "Keep ONLY the central small round end tower with crenellated top and its four small attachment sockets. Remove the tiny unrelated cut-off fragment/line at the very TOP border. Remove any colored/brown background, haze or halo, including around base. Preserve the exact tower identity, wall sockets, stone colors, moss or snow if present and its slightly elevated view."
   },
   {
     "key": "freeholds_gate_vertical",
-    "target": "Java/assets/city/walls/city_wall_freeholds_gate_vertical.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_gate_vertical.png",
     "request": "Keep ONLY the single long vertical gatehouse centered towards the right of the reference. Remove the unrelated cropped wall segment floating at the far LEFT. Remove any background matte or colored haze from the entire exterior and the arch opening; retain an actual iron gate if present. Preserve two towers aligned vertically (one behind the other), the intervening arch and top/bottom wall sockets, same slightly elevated vertical north-south orientation. Complete all outer edges; do not rotate or turn it into a horizontal gate."
   },
   {
     "key": "freeholds_end_tower",
-    "target": "Java/assets/city/walls/city_wall_freeholds_end_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_freeholds_end_tower.png",
     "request": "Keep ONLY the central small round end tower with crenellated top and its four small attachment sockets. Remove the tiny unrelated cut-off fragment/line at the very TOP border. Remove any colored/brown background, haze or halo, including around base. Preserve the exact tower identity, wall sockets, stone colors, moss or snow if present and its slightly elevated view."
   },
   {
     "key": "sun_tower",
-    "target": "Java/assets/city/walls/city_wall_sun_tower.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_tower.png",
     "request": "Extract ONLY the central large sandstone round tower with crenellated top and four attached wall sockets. Remove the brown opaque background and surrounding brown haze/halo. Restore complete bottom socket without edge clipping. Preserve warm sandstone stonework, cracks and sparse dry vines, the top paved deck, narrow arrow slits and exact slightly elevated orientation."
   },
   {
     "key": "sun_gate_horizontal",
-    "target": "Java/assets/city/walls/city_wall_sun_gate_horizontal.png",
+    "target": "Java/assets/environments/settlements/city/walls/city_wall_sun_gate_horizontal.png",
     "request": "Extract ONE complete horizontal sandstone gatehouse with two towers and a central OPEN arch. Remove all brown opaque background including inside the arch. Complete the truncated RIGHT wall connector to match the existing left wall connector, with equal small wall wings and sockets. Preserve warm sandstone, crenellations, arrow slits, sparse dry vines and slightly elevated front view. No portcullis, no wooden door, no ground slab. All stone stays opaque, open arch fully transparent."
   }
 ]

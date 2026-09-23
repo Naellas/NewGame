@@ -26,6 +26,11 @@ public final class GameConfig {
     public int musicVolume = 70;
     public int sfxVolume = 75;
     public double combatAnimationSpeed = 1.0;
+    public double walkAnimationSpeed = 1.0;
+
+    public static double clampWalkAnimationSpeed(double speed) {
+        return Double.isFinite(speed) ? Math.max(0.5, Math.min(2.0, speed)) : 1.0;
+    }
 
     public static double clampCombatAnimationSpeed(double speed) {
         return Double.isFinite(speed) ? Math.max(0.5, Math.min(3.0, speed)) : 1.0;
@@ -92,6 +97,11 @@ public final class GameConfig {
             config.musicVolume = readInt(props, "musicVolume", config.musicVolume);
             config.sfxVolume = readInt(props, "sfxVolume", config.sfxVolume);
             try {
+                config.walkAnimationSpeed = clampWalkAnimationSpeed(Double.parseDouble(props.getProperty("walkAnimationSpeed", "1.0")));
+            } catch (NumberFormatException ignored) {
+                config.walkAnimationSpeed = 1.0;
+            }
+            try {
                 config.combatAnimationSpeed = clampCombatAnimationSpeed(Double.parseDouble(props.getProperty("combatAnimationSpeed", "1.0")));
             } catch (NumberFormatException ignored) {
                 config.combatAnimationSpeed = 1.0;
@@ -124,6 +134,7 @@ public final class GameConfig {
         props.setProperty("musicVolume", Integer.toString(musicVolume));
         props.setProperty("sfxVolume", Integer.toString(sfxVolume));
         props.setProperty("combatAnimationSpeed", Double.toString(clampCombatAnimationSpeed(combatAnimationSpeed)));
+        props.setProperty("walkAnimationSpeed", Double.toString(clampWalkAnimationSpeed(walkAnimationSpeed)));
         props.setProperty("creativeCraftingMode", Boolean.toString(creativeCraftingMode));
         props.setProperty("creativeBuildMode", Boolean.toString(creativeBuildMode));
         props.setProperty("showMapEditorButton", Boolean.toString(showMapEditorButton));

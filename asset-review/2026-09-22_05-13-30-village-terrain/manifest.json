@@ -1,16 +1,16 @@
-﻿[
+[
     {
-        "originalPath":  "Java/assets/terrain/submerged_sand.png",
+        "originalPath":  "Java/assets/environments/terrain/common/submerged_sand.png",
         "archivedFile":  "submerged_sand.png",
         "sha256":  "D86DE70EB673807EEB75388724F3CA6A420152C2CE3342D6BC1F7F17C5667C04"
     },
     {
-        "originalPath":  "Java/assets/terrain/submerged_sand_variant_1.png",
+        "originalPath":  "Java/assets/environments/terrain/common/submerged_sand_variant_1.png",
         "archivedFile":  "submerged_sand_variant_1.png",
         "sha256":  "06A9D00B79268089F0BBF12F95366C306743F0D9F851E5A332D5A93743518BB7"
     },
     {
-        "originalPath":  "Java/assets/terrain/village_packed_earth.png",
+        "originalPath":  "Java/assets/environments/terrain/common/village_packed_earth.png",
         "archivedFile":  "village_packed_earth.png",
         "sha256":  "9B2298DCB25AFAAB7708A551211C515FC7C42315952FCF99ED6DB641DD85247B"
     }

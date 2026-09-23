@@ -28,6 +28,7 @@ public final class WorldRenderer {
     private final LayeredTerrainRenderer layeredTerrain;
     private final CavernTerrainRenderer cavernTerrain;
     private final List<WorldPropRenderer.PropRenderData> visiblePropRenders = new ArrayList<>();
+    private com.alderfall.game.map.WorldMap terrainCacheWorld;
     private final Map<TerrainChunkKey, TerrainChunk> terrainChunkCache = new LinkedHashMap<>(64, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<TerrainChunkKey, TerrainChunk> eldest) {
@@ -110,7 +111,9 @@ public final class WorldRenderer {
                     continue;
                 }
                 char tile = context.state().world.tileAt(mapId, wx, wy);
-                char terrainTile = terrainPainter.visibleTerrainTile(tile, wx, wy);
+                var currentArea = context.state().world.area(mapId);
+                char visualGround = currentArea == null ? tile : currentArea.approachGroundAt(wx, wy, tile);
+                char terrainTile = terrainPainter.visibleTerrainTile(visualGround, wx, wy);
                 if (CavernTerrainRenderer.supports(cavern)) {
                     cavernTerrain.draw(g, context.state(), cavern, wx, wy, px, py, context.tileSize());
                     continue;
@@ -136,6 +139,68 @@ public final class WorldRenderer {
                 drawTileOverlay(g, context, tile, wx, wy, px, py);
             }
         }
+        drawNatureTrails(g, context);
+        drawQuarterTileDetails(g, context);
+    }
+
+    private void drawNatureTrails(Graphics2D g, TerrainContext context) {
+        var area = context.state().world.area(context.state().currentMapId);
+        if (area == null) return;
+        int size = context.tileSize();
+        record TrailDrawing(int x, int y, char terrain, List<TilePoint> trail, int gapStart, int gapLength, boolean rough) { }
+        var drawings = new ArrayList<TrailDrawing>();
+        for (var site : area.natureSites()) drawings.add(new TrailDrawing(site.x(), site.y(), site.terrain(), site.trail(), -10, 0, false));
+        for (var site : area.destinationApproaches()) drawings.add(new TrailDrawing(site.destination().x(), site.destination().y(),
+                site.biome(), site.trail(), site.gapStart(), site.gapLength(), true));
+        for (var site : drawings) {
+            if (site.x() + 32 < context.camX() || site.x() - 32 > context.camX() + context.visibleCols()
+                    || site.y() + 32 < context.camY() || site.y() - 32 > context.camY() + context.visibleRows()) continue;
+            Color earth = switch (site.terrain()) {
+                case 's', 'P' -> new Color(155, 129, 83); case 'n' -> new Color(119, 132, 137);
+                case 'b' -> new Color(109, 75, 55); default -> new Color(107, 93, 59);
+            };
+            var trail = site.trail();
+            for (int i = 1; i < trail.size(); i++) {
+                if (i >= site.gapStart() && i < site.gapStart() + site.gapLength()) continue;
+                var a = trail.get(i - 1); var b = trail.get(i);
+                // Soft layered dabs fade into the landscape at the trail mouth. Absolute positions avoid chunk seams.
+                double fade = Math.min(1, i / 3.0);
+                for (int step = 0; step < 7; step++) {
+                    if (site.rough() && Math.floorMod(a.x() * 31 + a.y() * 13 + step, 13) == 0) continue;
+                    double t = step / 7.0;
+                    double x = a.x() + .5 + (b.x() - a.x()) * t;
+                    double y = a.y() + .5 + (b.y() - a.y()) * t;
+                    for (int layer = 0; layer < 3; layer++) {
+                        int diameter = Math.max(2, (int) (size * ((site.rough() ? .36 : .44) - layer * .08)));
+                        g.setColor(new Color(earth.getRed(), earth.getGreen(), earth.getBlue(), (int) ((10 + layer * 5) * fade)));
+                        int px = (int) Math.round(x * size) - context.camX() * size;
+                        int py = (int) Math.round(y * size) - context.camY() * size;
+                        g.fillOval(px - diameter / 2, py - diameter / 2, diameter, diameter);
+                    }
+                }
+            }
+        }
+    }
+
+    /** Bake static plants into the existing terrain chunks: no extra per-frame images or depth sorting. */
+    private void drawQuarterTileDetails(Graphics2D g, TerrainContext context) {
+        if (assets == null) return;
+        var state = context.state();
+        WorldPropRenderer painter = propRenderer == null ? new WorldPropRenderer(assets, state, null) : propRenderer;
+        var propContext = new PropContext(state, context.camX(), context.camY(), context.visibleCols(),
+                context.visibleRows(), context.tileSize(), context.zoom(), 0, 0, 0);
+        var details = new ArrayList<WorldPropRenderer.PropRenderData>();
+        // Include adjacent owners so a sprite crossing a chunk edge is clipped identically on both sides.
+        for (WorldProp prop : state.world.propsInBounds(state.currentMapId, context.camX() - 1, context.camY() - 1,
+                context.camX() + context.visibleCols() + 1, context.camY() + context.visibleRows() + 1)) {
+            if (prop.visualSlot() >= 0) details.add(painter.prepare(prop, propContext));
+        }
+        details.sort(java.util.Comparator.comparingDouble(WorldPropRenderer.PropRenderData::depthY)
+                .thenComparingDouble(WorldPropRenderer.PropRenderData::depthX)
+                .thenComparing(WorldPropRenderer.PropRenderData::asset)
+                .thenComparingInt(render -> render.prop().size()));
+        for (var detail : details) painter.drawPropImage(g, detail.asset(), detail.bounds().x, detail.bounds().y,
+                detail.width(), detail.height(), 1.0f);
     }
 
     private boolean nearWater(TerrainContext context, int x, int y) {
@@ -163,6 +228,10 @@ public final class WorldRenderer {
     }
 
     private BufferedImage cachedTerrainChunk(TerrainContext context, int chunkX, int chunkY, int originX, int originY) {
+        if (terrainCacheWorld != context.state().world) {
+            terrainChunkCache.clear();
+            terrainCacheWorld = context.state().world;
+        }
         TerrainChunkKey key = new TerrainChunkKey(
                 context.state().currentMapId,
                 context.mapKind(),
@@ -282,7 +351,7 @@ public final class WorldRenderer {
                 context.camX() + context.visibleCols() + 4,
                 context.camY() + context.visibleRows() + 4
         )) {
-            nearbyProps.add(prop);
+            if (prop.visualSlot() < 0) nearbyProps.add(prop);
         }
     }
 
@@ -331,9 +400,14 @@ public final class WorldRenderer {
     }
 
     void drawVisibleProps(Graphics2D g, PropContext context, List<WorldProp> nearbyProps, List<WorldProp> visibleProps) {
+        drawVisibleProps(g, context, nearbyProps, visibleProps, null);
+    }
+
+    void drawVisibleProps(Graphics2D g, PropContext context, List<WorldProp> nearbyProps, List<WorldProp> visibleProps, WorldDepthRenderer depth) {
         visibleProps.clear();
         visiblePropRenders.clear();
         for (WorldProp prop : nearbyProps) {
+            if (prop.visualSlot() >= 0) continue;
             if (prop.asset().equals("location_overgrown_landing") && usesLayeredLocationGround(context, prop)) continue;
             if (!isGroundProp(prop.asset()) && isWorldPropVisible(prop, context)) {
                 visiblePropRenders.add(propRenderer.prepare(prop, context));
@@ -351,7 +425,15 @@ public final class WorldRenderer {
         }
         for (WorldPropRenderer.PropRenderData render : visiblePropRenders) {
             visibleProps.add(render.prop());
-            propRenderer.drawWorldProp(g, render, context);
+            if (depth == null || render.placement().kind() == PropPlacement.Kind.COVER
+                    || render.asset().equals("location_overgrown_landing")) {
+                propRenderer.drawWorldProp(g, render, context);
+            } else {
+                java.awt.Rectangle bounds = new java.awt.Rectangle(render.bounds());
+                bounds.grow(context.tileSize(), context.tileSize());
+                depth.scenery(g, (render.depthY() - context.camY()) * context.tileSize(), bounds,
+                        target -> propRenderer.drawWorldProp(target, render, context));
+            }
         }
     }
 

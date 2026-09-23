@@ -60,7 +60,7 @@ Raw nonmetal inventory drops share their corresponding deposit artwork;
 processed materials have separate icons.
 
 Runtime PNGs use 96x96 inventory icons, 192x192 deposits, and a 256x256 tree,
-with the game's normal smooth scaling. `tools/import_resource_art.ps1` exports the
+with the game's normal smooth scaling. `tools/assets/items/import_resource_art.ps1` exports the
 generated alpha PNGs at these dimensions. Final prompts are recorded in
 `assets/source/resource-art-prompts.json`; per-asset provenance is under
 `assets/source/resources-painted/`. The original five regional deposits are

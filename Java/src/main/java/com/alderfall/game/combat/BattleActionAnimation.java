@@ -30,6 +30,7 @@ public final class BattleActionAnimation {
     public final int travelFrames;
     public int impactFrames;
     private String visualName = "";
+    private MonsterAbilityVfx.Profile monsterVisual;
     private Ability.AbilityKind actionKind;
     private int frame;
     private final boolean[] stepTriggered;
@@ -90,11 +91,33 @@ public final class BattleActionAnimation {
     }
 
     public String visualName() { return visualName; }
-    public ClassAbilityVfx.Profile visualProfile() { return ClassAbilityVfx.forName(visualName); }
+    public ClassAbilityVfx.Profile visualProfile() { return monsterVisual == null ? ClassAbilityVfx.forName(visualName) : null; }
+    public MonsterAbilityVfx.Profile monsterVisual() { return monsterVisual; }
+    public void configureMonsterVisual(String name, MonsterAbilityVfx.Profile profile) {
+        if (frame != 0) throw new IllegalStateException("Cannot change released monster VFX");
+        monsterVisual = profile;
+        visualName = name;
+        actionKind = profile.motion() == MonsterAbilityVfx.Motion.SELF ? Ability.AbilityKind.DEFEND : Ability.AbilityKind.DAMAGE;
+        impactFrames = Math.max(impactFrames, scaledFrameCount(30));
+    }
     public Ability.AbilityKind actionKind() { return actionKind; }
 
     public int frame() {
         return frame;
+    }
+
+    /** Authored poses run once: anticipation, release, then recovery, without phase restarts. */
+    public double actorPoseProgress(Actor actor) {
+        if (actor == source) {
+            return switch (stage()) {
+                case CAST -> (7.0 / 12) * castProgress();
+                case TRAVEL -> (7.0 / 12) + (2.0 / 12) * travelProgress();
+                case IMPACT -> .75 + .25 * impactProgress();
+                case DONE -> 1.0;
+            };
+        }
+        int index = targets.indexOf(actor);
+        return index < 0 ? -1 : collisionProgress(index);
     }
 
     public int totalFrames() {

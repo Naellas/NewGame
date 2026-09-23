@@ -36,7 +36,9 @@ final class BattleRenderer {
     }
 
     void drawBackdrop(Graphics2D g, Battle battle, int x, int y, int w, int h) {
-        g.drawImage(assets.cover(battle.backdrop, w, h), x, y, null);
+        String painted = battle.backdrop + "_painted";
+        String backdrop = assets.hasSprite(painted) ? painted : battle.backdrop;
+        g.drawImage(assets.cover(backdrop, w, h), x, y, null);
         g.setPaint(new GradientPaint(x, y, new Color(8, 10, 16, 24), x, y + h, new Color(8, 10, 16, 110)));
         g.fillRect(x, y, w, h);
         g.setPaint(null);
@@ -52,9 +54,8 @@ final class BattleRenderer {
         int direction = enemySide ? -1 : 1;
         boolean source = actor == animation.source;
         String kind = animation.effectKind == null ? "strike" : animation.effectKind;
-        String className = actor.className == null ? "" : actor.className;
         if (source) {
-            return sourcePose(animation, className, animation.visualProfile() == null ? kind : animation.visualProfile().poseKind(), direction);
+            return sourcePose(animation, animation.visualProfile() == null ? kind : animation.visualProfile().poseKind(), direction);
         }
         double progress = animation.collisionProgress(animation.targets.indexOf(actor));
         boolean restorative = animation.actionKind() == null ? restorativeEffect(kind)
@@ -137,77 +138,33 @@ final class BattleRenderer {
         };
     }
 
-    private BattleActorPose sourcePose(BattleActionAnimation animation, String className, String kind, int direction) {
+    private BattleActorPose sourcePose(BattleActionAnimation animation, String kind, int direction) {
         boolean ranged = "volley".equals(kind) || "pierce".equals(kind) || kind.contains("shot") || kind.contains("arrow") || kind.contains("volley");
         boolean physical = physicalEffect(kind) || ranged || kind.contains("dual_cut") || kind.contains("shield_ram")
                 || kind.contains("hemostatic") || kind.contains("titan_hammer") || kind.contains("final_challenge");
+        BattleActorPose anticipation = ranged
+                ? new BattleActorPose(-direction * 7, 0, -direction * .045, .99, 1.01)
+                : physical ? new BattleActorPose(-direction * 12, 3, -direction * .065, 1.02, .98)
+                : new BattleActorPose(-direction * 6, -6, -direction * .035, .99, 1.02);
+        BattleActorPose release = ranged
+                ? new BattleActorPose(-direction * 2, 0, direction * .025, 1, 1)
+                : physical ? new BattleActorPose(direction * 26, -2, direction * .07, 1.02, .99)
+                : new BattleActorPose(direction * 8, -4, direction * .04, 1, 1.01);
         return switch (animation.stage()) {
-            case CAST -> {
-                double p = animation.castProgress();
-                if (ranged) {
-                    yield new BattleActorPose(
-                            (int) Math.round(-direction * p * 10.0),
-                            (int) Math.round(-Math.sin(p * Math.PI) * 5.0),
-                            -direction * (0.08 + p * 0.05),
-                            0.98,
-                            1.04
-                    );
-                }
-                if (physical) {
-                    double coil = Math.sin(p * Math.PI);
-                    yield new BattleActorPose(
-                            (int) Math.round(-direction * coil * 12.0),
-                            (int) Math.round(coil * 4.0),
-                            -direction * coil * 0.085,
-                            1.03,
-                            0.98
-                    );
-                }
-                double charge = p * p * (3 - 2 * p);
-                yield new BattleActorPose(
-                        (int) Math.round(-direction * charge * 10),
-                        (int) Math.round(-charge * 8),
-                        -direction * charge * 0.07,
-                        1.0 - charge * 0.025,
-                        1.0 + charge * 0.035
-                );
-            }
-            case TRAVEL -> {
-                double p = animation.travelProgress();
-                if (physical) {
-                    double thrust = Math.sin(p * Math.PI);
-                    yield new BattleActorPose(
-                            (int) Math.round(direction * (10.0 + thrust * 18.0)),
-                            (int) Math.round(-thrust * 3.0),
-                            direction * thrust * 0.08,
-                            1.04,
-                            0.98
-                    );
-                }
-                double settle = 1.0 - p;
-                double release = Math.sin(Math.min(1, p * 4) * Math.PI) * settle;
-                yield new BattleActorPose(
-                        (int) Math.round(direction * (-10 * settle + release * 24)),
-                        (int) Math.round(-settle * 8.0),
-                        direction * (-0.07 * settle + release * 0.15),
-                        1.0,
-                        1.0 + settle * 0.025
-                );
-            }
-            case IMPACT -> {
-                double p = 1.0 - animation.impactProgress();
-                if (physical) {
-                    yield new BattleActorPose(
-                            (int) Math.round(direction * p * 12.0),
-                            0,
-                            direction * p * 0.04,
-                            1.0,
-                            1.0
-                    );
-                }
-                yield new BattleActorPose(0, (int) Math.round(-p * 4.0), 0.0, 1.0, 1.0);
-            }
+            case CAST -> blend(BattleActorPose.REST, anticipation, animation.castProgress());
+            case TRAVEL -> blend(anticipation, release, Math.min(1, animation.travelProgress() / .75));
+            case IMPACT -> blend(release, BattleActorPose.REST, animation.impactProgress());
             case DONE -> BattleActorPose.REST;
         };
+    }
+
+    private static BattleActorPose blend(BattleActorPose from, BattleActorPose to, double progress) {
+        double t = progress * progress * (3 - 2 * progress);
+        return new BattleActorPose(
+                (int) Math.round(from.xOffset() + (to.xOffset() - from.xOffset()) * t),
+                (int) Math.round(from.yOffset() + (to.yOffset() - from.yOffset()) * t),
+                from.rotation() + (to.rotation() - from.rotation()) * t,
+                from.scaleX() + (to.scaleX() - from.scaleX()) * t,
+                from.scaleY() + (to.scaleY() - from.scaleY()) * t);
     }
 }

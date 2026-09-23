@@ -10,11 +10,47 @@ The current port is intentionally dependency-free Java 21/Swing so it can compil
 .\scripts\run.ps1
 ```
 
+Select a retained walking renderer with `scripts/run.ps1 -Movement original`,
+`alternate`, `articulated`, or `grounded`. Add `-Profile` for rendering metrics.
+The existing per-mode scripts delegate to this shared launcher. `-PrintCommand`
+prints the Java command without building or opening the game.
+
+Developer review: [characters and related subsites](tools/reviews/characters/index.html).
+Repository checks: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check.ps1`.
+
+## Character movement
+
+Grounded walking is the default for players, companions and world NPCs. It uses
+32-frame, distance-driven strides in eight directions, jointed hands/spine/head,
+separate cloth, and a short transition back to standing. The existing Gameplay
+walking-animation speed control remains at 1x by default. Character scale and
+cadence are passed to the rig so foot contact follows world travel.
+
+Previous renderers are preserved: `scripts/run-articulated-movement.ps1`,
+`scripts/run-alternate-movement.ps1`, and `scripts/run-original-movement.ps1`.
+`scripts/run-grounded-movement.ps1` explicitly selects the new default.
+The character review page offers all four walks alongside the original study.
+
+The full roster uses a shared rig. The study's detailed hand/cape masks apply to
+its reviewed right-facing source poses; other outfits/directions use the general
+part extraction and can still benefit from individual art cleanup. This system
+covers humanoid world characters; monster and combat animations keep their own
+renderers.
+
+Validation: `GroundedWalkingTest`, `GroundedGameRenderTest`,
+`WalkAnimationSpeedTest`, `WorldPoseTest`, and `CharacterAnimationAudit grounded`.
+
 ## Build
 
 ```powershell
 .\scripts\build.ps1
 ```
+
+For an isolated verification build, use `scripts/build.ps1 -OutputDirectory
+temp/<task>/classes`. Output is restricted to the normal `out` or a task path
+beneath `temp`; redirected output is never recursively cleared. Recognized
+OneDrive cloud placeholders are supported. Junctions, symbolic links, and unknown
+reparse points in the output tree or its ancestors stop the build before cleanup.
 
 ## Smoke Test
 
@@ -87,7 +123,7 @@ The remaining `com.alderfall.game` classes are grouped into responsibility folde
 - `systems`: save/load, weather, crafting, equipment hooks, and village management.
 - `worldmodel`: terrain, pathfinding, landmarks, settlements, prompts, and world props.
 - `rendering`: root-package render helpers, asset loading, metrics, weather cache, and world rendering.
-- `diagnostics`: smoke tests, audit tools, debug metrics, and QA exports.
+- Test, audit, and review programs now live in separate source roots; see [src/README.md](src/README.md). Runtime `DebugMetrics` remains with rendering helpers.
 - `uiwidgets`: root-package UI helper widgets.
 - `state`: shared game state.
 - `minigames`: standalone minigame flows.
@@ -116,12 +152,23 @@ The remaining `com.alderfall.game` classes are grouped into responsibility folde
 
 For a long-term 2D Java game, the recommended next engine step is libGDX once the gameplay systems are stable. Swing is useful here because it avoids setup friction while the port is young.
 
-## Legacy Asset Tools
+## Asset Tools
 
-The former Python asset scripts are retained under `Java/tools/` for regeneration and extraction work. Run them from the `Java` folder so their relative `assets/...` paths resolve against `Java/assets`.
+Python importers and generators are grouped by subject under `tools/assets/`; audio, checks, and tests have their own folders. Use `python tools/run.py --list` from Java (or `python Java/tools/run.py --list` from the repository root). The runner selects the Java working directory. See [tools/INDEX.md](tools/INDEX.md) for canonical paths and archived-tool status.
 
 ## Lootable chests
 
 Stand beside a chest and press `E` (or click a nearby chest) to open the chest and shared pack together. Use **Take 1**, **Store 1**, or **Stack** to transfer items, and **Take all** to collect everything. Both lists have page controls. Close with `Esc`. Equipped gear must be unequipped before storing it.
 
 Generated treasure rooms contain chests with randomized materials, weapons, and potions. Interior ironbound and screen chests also work as containers. Chest contents persist in saves, including empty chests and items you deposit. Older saves receive loot when each chest is first opened.
+
+### Slow sideways cadence and cloth preview
+
+Grounded walking now limits sideways cadence to at least 0.9x when a slower
+preference would overextend the planted legs. The saved slider value remains a
+preference; travel speed and the 1x default do not change. The same calculation
+is used by the distance clock and rendered rig, including diagonal fallbacks.
+Legacy movement modes retain their original timing.
+
+The character review page has a **Cloth & hair physics** tab with a switchable
+spring/capsule experiment. This secondary-motion simulation is preview-only.

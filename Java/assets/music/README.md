@@ -52,4 +52,4 @@
 - `dungeon_bandit.wav` - Embers in the Hideout — oboe, lute, syncopated, 92 BPM, 83.5s loop
 - `dungeon_bandit_depths.wav` - The Captain's Watch — cello, lute, march, 104 BPM, 73.8s loop
 
-Generated with `python tools/musicgen.py`.
+Generated with `python tools/audio/musicgen.py`.

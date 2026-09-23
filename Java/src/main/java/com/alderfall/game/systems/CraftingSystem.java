@@ -934,7 +934,7 @@ public final class CraftingSystem {
         List<WorldProp> props = world.propsAt(mapId, x, y);
         for (int i = props.size() - 1; i >= 0; i--) {
             WorldProp prop = props.get(i);
-            if (isGatherableProp(prop.asset())) {
+            if (prop.visualSlot() < 0 && isGatherableProp(prop.asset())) {
                 return new GatherCandidate(propGatherLabel(prop.asset()), new TilePoint(x, y), 'P', prop.asset());
             }
         }
