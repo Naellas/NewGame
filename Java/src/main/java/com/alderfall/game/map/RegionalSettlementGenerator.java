@@ -9,13 +9,70 @@ import java.util.*;
 final class RegionalSettlementGenerator {
     private static final int[][] STEPS = {{0, -1}, {-1, 0}, {1, 0}, {0, 1}};
 
+    /** Populate finished outdoor rooms so furniture and doorways remain unobstructed. */
+    static void addTownResidents(WorldMap world, MapArea area, List<Npc> residents) {
+        if (!area.id.startsWith("town_")) return;
+        Set<TilePoint> occupied = new HashSet<>();
+        for (Npc npc : world.npcs(area.id)) occupied.add(new TilePoint(npc.x(), npc.y()));
+        for (Npc npc : residents) occupied.add(new TilePoint(npc.x(), npc.y()));
+        for (Npc npc : GameData.NPCS) if (npc.mapId().equals(area.id)) occupied.add(new TilePoint(npc.x(), npc.y()));
+        List<TilePoint> anchors = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
+        for (String name : List.of("Market Square", "Civic Plaza", "Public Garden")) {
+            TilePoint center = area.landmarks.entrySet().stream().filter(e -> name.equals(e.getValue()))
+                    .map(Map.Entry::getKey).findFirst().orElse(null);
+            if (center == null) continue;
+            for (int i = 0; i < (name.equals("Market Square") ? 4 : 2); i++) {
+                anchors.add(new TilePoint(center.x() + (i % 2 == 0 ? -3 : 3), center.y() + (i < 2 ? -1 : 1)));
+                roles.add(name.equals("Market Square") ? (i % 2 == 0 ? "Market Porter" : "Market Shopper")
+                        : name.equals("Public Garden") ? "Garden Tender" : "Local Messenger");
+            }
+        }
+        for (CityBuilding b : world.cityBuildings(area.id)) if (b.key().startsWith("town_infill_home_")) {
+            anchors.add(b.outside(world.cityBuildingDoorTiles(b).getFirst(), 0, 2));
+            roles.add(b.style().equals("alchemist") ? "Garden Tender" : "Quarter Resident");
+        }
+        Set<TilePoint> entrances = new HashSet<>();
+        for (CityBuilding b : world.cityBuildings(area.id)) for (TilePoint door : world.cityBuildingDoorTiles(b)) {
+            entrances.add(door); entrances.add(b.outside(door, 0, 1));
+        }
+        String[] names = {"Nella", "Corin", "Tessa", "Bram", "Iven", "Maren", "Lysa", "Olen", "Dara", "Evin", "Rona", "Wes"};
+        for (int i = 0; i < anchors.size(); i++) {
+            TilePoint anchor = anchors.get(i), spot = null;
+            for (int radius = 0; radius <= 4 && spot == null; radius++)
+                for (int dy = -radius; dy <= radius && spot == null; dy++) for (int dx = -radius; dx <= radius; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) != radius) continue;
+                    TilePoint p = new TilePoint(anchor.x() + dx, anchor.y() + dy);
+                    if (occupied.contains(p) || entrances.contains(p) || !world.isPassable(area.id, p.x(), p.y())
+                            || world.transitionAt(area.id, p.x(), p.y()) != null || area.propAt(p.x(), p.y()) != null
+                            || world.cityBuildingAt(area.id, p.x(), p.y()) != null) continue;
+                    spot = p; break;
+                }
+            if (spot == null) continue;
+            occupied.add(spot);
+            String role = roles.get(i);
+            List<String> dialogue = new ArrayList<>();
+            dialogue.add(role + ": " + switch (role) {
+                case "Market Porter" -> "The morning deliveries go to the stalls; the empty baskets come back with me.";
+                case "Market Shopper" -> "I compare the stalls before carrying supper home.";
+                case "Garden Tender" -> "These paths need tending as much as the beds do.";
+                case "Local Messenger" -> "There is always another message to carry across the quarter.";
+                default -> "I live just along this lane. The square is a short walk from home.";
+            });
+            dialogue.addAll(RegionalSettlementIdentity.dialogue(RegionalSettlementIdentity.region(area.id), i % 2));
+            residents.add(new Npc(area.id, role + " " + names[i % names.length],
+                    i % 2 == 0 ? "npc_citizen_woman" : "npc_citizen_man", spot.x(), spot.y(), List.copyOf(dialogue), null, null));
+        }
+    }
+
     static List<Npc> populate(WorldMap world, MapArea area) {
         Region region = RegionalSettlementIdentity.region(area.id);
         if (region == Region.NONE) return List.of();
         // Villages can still inherit an obsolete blocker. Authored city rings are never carved here.
         if (!"city".equals(area.kind)) {
             for (CityBuilding building : world.cityBuildings(area.id)) for (TilePoint door : world.cityBuildingDoorTiles(building)) {
-                int x = door.x(), y = door.y() + 1;
+                TilePoint approach = building.outside(door, 0, 1);
+                int x = approach.x(), y = approach.y();
                 if (area.tileAt(x, y) == 'x' && world.cityBuildingAt(area.id, x, y) == null) area.tiles[y][x] = 'K';
             }
         }
@@ -42,7 +99,10 @@ final class RegionalSettlementGenerator {
             }
             area.tiles[center.y()][center.x()] = court;
             connectCommon(world, area, center, region);
-            String[] props = props(region, index);
+            String[] props = area.id.equals("town_greyharbor")
+                    ? (index == 0 ? new String[]{"village_prop_net_drying_rack", "city_prop_refresh_barrel", "village_prop_tool_rack"}
+                    : new String[]{"deco_mountain_cairn", "village_prop_notice_board", "village_prop_bench"})
+                    : props(region, index);
             place(world, area, center.x(), center.y(), props[0], 56);
             place(world, area, center.x() - 2, center.y(), props[1], 40);
             place(world, area, center.x() + 2, center.y(), props[2], 40);
@@ -91,7 +151,7 @@ final class RegionalSettlementGenerator {
         Set<TilePoint> reached = reachable(world, area, entrance(world, area));
         for (CityBuilding building : world.cityBuildings(area.id)) {
             List<TilePoint> approaches = world.cityBuildingDoorTiles(building).stream()
-                    .map(p -> new TilePoint(p.x(), p.y() + 1)).toList();
+                    .map(p -> building.outside(p, 0, 1)).toList();
             if (approaches.stream().anyMatch(reached::contains)) continue;
             record Step(TilePoint point, int cost) { }
             PriorityQueue<Step> queue = new PriorityQueue<>(Comparator.comparingInt(Step::cost)
@@ -164,6 +224,7 @@ final class RegionalSettlementGenerator {
         for (int index = 0; index < centers.size(); index++) {
             TilePoint center = centers.get(index);
             char material = districtMaterial(region, index);
+            if (index == 1 && (area.id.equals("town_northwatch") || area.id.equals("town_ironvale"))) material = 'n';
             for (int y = center.y() - 5; y <= center.y() + 5; y++) {
                 for (int x = center.x() - 6; x <= center.x() + 6; x++) {
                     if (x <= 1 || y <= 1 || x >= area.width() - 2 || y >= area.height() - 2
@@ -337,7 +398,7 @@ final class RegionalSettlementGenerator {
             if (!plant(p) || !p.asset().contains("tree") || p.asset().contains("harvestable")) continue;
             String replacement = switch (region) {
                 case NORTH -> "deco_tree_pine";
-                case FREEHOLDS -> area.id.equals("town_greyharbor") ? "deco_mountain_scrub_pine" : "deco_tree_pine";
+                case FREEHOLDS -> "deco_tree_pine";
                 case SUN -> nearWater(area, p.x(), p.y(), 3) ? "deco_beach_palm" : "deco_dry_grass";
                 case FEN -> "deco_reeds";
                 default -> p.asset();

@@ -21,6 +21,15 @@ public final class BuildingGeometry {
     }
 
     public static List<Rectangle2D.Double> footprints(WorldMap world, String mapId, CityBuilding building) {
+        if (building.facing() != CityBuilding.Facing.SOUTH) {
+            double left = building.x1() + .12, right = building.x2() + .88;
+            double top = building.y1() + .15, bottom = building.y2() + .88;
+            // Leave the visible side doorstep / rear threshold outside the solid base.
+            if (building.facing() == CityBuilding.Facing.WEST) left = building.x1() + .82;
+            if (building.facing() == CityBuilding.Facing.EAST) right = building.x2() + .18;
+            if (building.facing() == CityBuilding.Facing.NORTH) top = building.y1() + .82;
+            return List.of(new Rectangle2D.Double(left, top, right - left, bottom - top));
+        }
         List<Rectangle2D.Double> result = new ArrayList<>();
         List<TilePoint> doors = world.cityBuildingDoorTiles(building);
         boolean single = standalone(mapId, world.kind(mapId), building);

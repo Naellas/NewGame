@@ -1,0 +1,26 @@
+[
+  {
+    "key": "town_briarbridge_bridge_court_grand",
+    "region": "river",
+    "prompt": "Game asset, one isolated grand medieval river-town charter hall, for a 2D top-down RPG. STRICT CARDINAL SOUTH FACING orthographic elevated view: front facade baseline and roof ridges horizontal, vertical columns vertical, left/right wings exactly symmetrical and aligned to square tile grid. NOT isometric, no diagonal footprint. Monumental pale limestone arcaded hall, tall central copper-blue clockless bell turret, two stepped blue slate roof wings, carved river-wave pediment, teal civic banners, wide centered entrance on bottom/front. Readable detailed hand-painted pixel-art-adjacent medieval game sprite, restrained earthy colors. Building only, NO grounds, no garden, no people, no text, no shadows on ground. Genuine transparent RGBA background. Complete building with generous transparent margin, strong silhouette, intended runtime width about 6 tiles. No snow.",
+    "original": "C:/Users/Maciej/.codex/generated_images/01a0d06e-5b25-71b0-9765-03d98e5a009d/exec-1d8ec1bd-dcd1-4aef-9db3-4ef51ea38166.png"
+  },
+  {
+    "key": "town_ironvale_forge_keep_grand",
+    "region": "north",
+    "prompt": "Single game building asset: monumental northern medieval Forge Keep for an elevated orthographic 2D RPG. STRICT CARDINAL SOUTH FACING, facade bottom edge perfectly horizontal, all wings grid aligned, NO isometric or diagonal view. Massive dark granite civic stronghold with a tall central square tower, two lower wings with steep dark iron slate roofs, glowing enclosed forge windows, copper chimney caps, rust-red banners without text, carved anvil emblem above large centered entrance on bottom/front. Restrained snow only along roof edges, weathered pine details. Rich hand-painted pixel-art-adjacent sprite, readable at 6 tiles wide, complete silhouette with padding. Genuine transparent RGBA background, building ONLY, no terrain, no people, no grounds, no cast ground shadow, no writing. Elevated straight-on game camera sees front wall and roofs, side walls never recede diagonally.",
+    "original": "C:/Users/Maciej/.codex/generated_images/01a0d06e-5b25-71b0-9765-03d98e5a009d/exec-57eafe03-9518-4221-b1b9-9e7c50200068.png"
+  },
+  {
+    "key": "town_embermarket_sun_court_grand",
+    "region": "sun",
+    "prompt": "Single game building asset: grand Sun Court public water palace for a desert caravan city, elevated orthographic 2D RPG. STRICT CARDINAL SOUTH FACING, front wall baseline horizontal, symmetrical wings aligned horizontally, vertical columns vertical, NO isometric or diagonal footprint. Pale warm sandstone civic building, one grand turquoise glazed central dome, two smaller turquoise domes, shaded arcades and a wide recessed centered entrance at bottom/front, geometric carved water-channel motifs, brass finials, terracotta parapets, blue fabric awnings. Beautiful monumental civic architecture, not a castle. Rich hand-painted pixel-art-adjacent medieval fantasy game sprite, 6 tile readable width. Genuine transparent RGBA background, complete isolated building with margin, no terrain, no pond, no people, no lettering, no snow, no cast ground shadow. Roofs visible from elevated camera, no diagonal side walls.",
+    "original": "C:/Users/Maciej/.codex/generated_images/01a0d06e-5b25-71b0-9765-03d98e5a009d/exec-c2c27727-a83b-460c-9ee5-c20bdba5b2b8.png"
+  },
+  {
+    "key": "town_moonspire_botanical_glasshouse",
+    "region": "hearth",
+    "prompt": "Single isolated medieval botanical glasshouse building sprite for an elevated orthographic top-down 2D RPG. STRICT CARDINAL SOUTH FACING front facade horizontal, centered door bottom/front, no isometric diagonal footprint. Compact scholarly greenhouse: weathered bronze and dark oak frame, many muted translucent pale-green glass panels, raised pale stone plinth, pitched glass roof with small ridge vents, visible shelves of herbs and citrus saplings inside, modest arched central glass door. Detailed painterly pixel-art-adjacent medieval fantasy asset. Entire building visible with transparent margin. Genuine transparent RGBA background, no backdrop, no ground, no surrounding garden, no people, no labels or writing, no cast ground shadow. Width suitable for four game tiles. No snow.",
+    "original": "C:/Users/Maciej/.codex/generated_images/01a0d06e-5b25-71b0-9765-03d98e5a009d/exec-9db654aa-8720-4b5e-b976-26f5161672b7.png"
+  }
+]

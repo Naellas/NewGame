@@ -12,6 +12,10 @@ public final class VillageOverlayRenderer {
     private final AssetStore assets;
     private final GameState state;
     private final Effects effects;
+    private int assignmentPage;
+    private int cataloguePage;
+    private String catalogueCategory="All";
+    private String assignmentBuildingKey = "";
 
     public VillageOverlayRenderer(AssetStore assets, GameState state, Effects effects) {
         this.assets = assets;
@@ -76,99 +80,123 @@ public final class VillageOverlayRenderer {
     }
 
     public void drawVillageManager(Graphics2D g) {
-        int x = 24;
-        int y = villagePanelTop();
-        int w = gameAreaWidth() - 48;
-        int h = viewHeight() - y - 24;
-        drawOverlayBase(g, x, y, w, h);
-
-        g.setFont(new Font("SansSerif", Font.BOLD, 24));
-        g.setColor(new Color(244, 239, 220));
-        g.drawString("Oathstead Camp", x + 24, y + 38);
-        g.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        g.setColor(new Color(198, 202, 211));
-        g.drawString((state.isManagedVillageInterior() ? "Interior layout" : "Village layout")
-                + " | Storage " + state.villageStorageUsed() + "/" + state.villageStorageCapacity()
-                + " | Gold " + state.player.gold, x + 24, y + 62);
-
-        String[] tabs = {"Build", "Tiles", "Props", "Inside", "Workers"};
-        for (int i = 0; i < tabs.length; i++) {
-            int tab = i;
-            boolean selected = state.villageTab == i;
-            actionButton(g, x + 214 + i * 88, y + 24, 78, 30, tabs[i], () -> state.setVillageTab(tab),
-                    selected ? new Color(57, 76, 60) : new Color(35, 39, 54),
-                    selected ? new Color(126, 176, 95) : new Color(86, 98, 128), true);
+        int w=Math.min(1080,gameAreaWidth()-48),h=Math.min(800,viewHeight()-64);
+        int x=gameAreaCenteredX(w),y=centeredY(h);
+        g.setColor(new Color(5,9,13,190));g.fillRect(0,0,gameAreaWidth(),viewHeight());
+        SettlementPanelStyle.card(g,x,y,w,h);
+        g.setFont(new Font("Serif",Font.BOLD,32));g.setColor(SettlementPanelStyle.GOLD);
+        g.drawString("Build Oathstead",x+28,y+45);
+        g.setFont(new Font("SansSerif",Font.PLAIN,13));g.setColor(SettlementPanelStyle.MUTED);
+        g.drawString("Choose a plan, then place it in your settlement.   Gold "+state.player.gold,x+28,y+70);
+        String[] categories={"All","Housing","Production","Civic"};
+        for(int i=0;i<4;i++){String category=categories[i];
+            actionButton(g,x+28+i*126,y+88,116,30,category,()->{catalogueCategory=category;cataloguePage=0;},
+                    category.equals(catalogueCategory)?new Color(44,82,68):new Color(25,35,44),SettlementPanelStyle.GOLD,true);
         }
-
-        actionButton(g, x + w - 434, y + 24, 92, 30, "Place", () -> state.setVillageEditAction("place"),
-                "place".equals(state.villageEditAction) ? new Color(57, 76, 60) : new Color(35, 39, 54),
-                new Color(126, 176, 95), true);
-        actionButton(g, x + w - 334, y + 24, 92, 30, "Move", () -> state.setVillageEditAction("move"),
-                "move".equals(state.villageEditAction) ? new Color(71, 63, 42) : new Color(35, 39, 54),
-                new Color(169, 137, 74), true);
-        actionButton(g, x + w - 234, y + 24, 92, 30, "Upgrade", () -> state.setVillageEditAction("upgrade"),
-                "upgrade".equals(state.villageEditAction) ? new Color(69, 62, 88) : new Color(35, 39, 54),
-                new Color(125, 107, 166), true);
-        actionButton(g, x + w - 134, y + 24, 92, 30, "Delete", () -> state.setVillageEditAction("delete"),
-                "delete".equals(state.villageEditAction) ? new Color(84, 50, 50) : new Color(35, 39, 54),
-                new Color(149, 96, 88), true);
-
-        if (state.villageTab == 0) {
-            drawVillageBuildingTools(g, x + 24, y + 92, w - 48);
-        } else if (state.villageTab == 1) {
-            drawVillageTileTools(g, x + 24, y + 92, w - 48);
-        } else if (state.villageTab == 2) {
-            drawVillageAssetTools(g, x + 24, y + 92, w - 48);
-        } else if (state.villageTab == 3) {
-            drawVillageInteriorTools(g, x + 24, y + 92, w - 48);
-        } else {
-            drawVillageAllyTools(g, x + 24, y + 88, w - 48);
+        List<VillageManager.BuildingPlan> plans=VillageManager.buildingPlans().stream()
+                .filter(p -> catalogueCategory.equals("All")||catalogueCategory.equals(VillageManager.buildingCategory(p.style()))).toList();
+        int cols=w>=850?3:2,rows=Math.max(1,(h-192)/178),perPage=cols*rows;
+        int pages=Math.max(1,(plans.size()+perPage-1)/perPage);cataloguePage=Math.min(cataloguePage,pages-1);
+        int cw=(w-72)/cols;
+        for(int i=cataloguePage*perPage;i<Math.min(plans.size(),(cataloguePage+1)*perPage);i++){
+            var plan=plans.get(i);int n=i-cataloguePage*perPage,bx=x+28+(n%cols)*(cw+8),by=y+134+(n/cols)*178;
+            SettlementPanelStyle.card(g,bx,by,cw,166);
+            g.drawImage(assets.spriteFit(VillageManager.buildingLevelSprite(plan.style(),1),74,84),bx+10,by+8,null);
+            g.setColor(SettlementPanelStyle.INK);g.setFont(new Font("Serif",Font.BOLD,19));
+            drawClippedString(g,plan.label(),bx+92,by+28,cw-102);
+            g.setFont(new Font("SansSerif",Font.PLAIN,12));g.setColor(SettlementPanelStyle.MUTED);
+            int beds=SettlementEconomy.housing(plan.style(),1);
+            drawWrapped(g,beds>0?beds+" beds. More beds with each tier.":"1 worker. More slots at tiers 3 and 5.",bx+92,by+49,cw-102,15,3);
+            g.setColor(state.canAffordVillageCost(plan.cost())?SettlementPanelStyle.GOLD:new Color(224,151,126));
+            drawWrapped(g,VillageManager.costLabel(plan.cost()),bx+12,by+108,cw-24,14,2);
+            actionButton(g,bx+12,by+134,cw-24,24,"Select "+plan.label(),()->{state.selectVillageBuildingStyle(plan.style());state.villageCatalogOpen=false;},new Color(44,82,68),SettlementPanelStyle.TEAL,true);
         }
-
-        actionButton(g, x + w - 118, y + h - 42, 82, 28, "Close", state::toggleVillage,
-                new Color(58, 72, 100), new Color(107, 126, 166), true);
+        actionButton(g,x+28,y+h-44,100,28,"Previous",()->cataloguePage--,new Color(25,35,44),SettlementPanelStyle.MUTED,cataloguePage>0);
+        actionButton(g,x+140,y+h-44,100,28,"Next",()->cataloguePage++,new Color(25,35,44),SettlementPanelStyle.MUTED,cataloguePage+1<pages);
+        actionButton(g,x+w-142,y+h-44,114,28,"Back to town",()->state.villageCatalogOpen=false,new Color(44,60,62),SettlementPanelStyle.GOLD,true);
     }
 
     public void drawBuildingAssignment(Graphics2D g) {
         CityBuilding building = state.activeVillageBuilding;
-        int panelW = 760;
-        int panelH = 560;
+        int panelW = Math.min(900, gameAreaWidth()-40);
+        int panelH = Math.min(740, viewHeight()-80);
         int x = gameAreaCenteredX(panelW);
         int y = Math.max(54, (viewHeight() - panelH) / 2);
         drawOverlayBase(g, x, y, panelW, panelH);
+        String key=building==null?"":building.key();
+        if(!key.equals(assignmentBuildingKey)){assignmentBuildingKey=key;assignmentPage=0;}
+        int level=state.world.playerVillageBuildingLevel(building);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        g.setColor(SettlementPanelStyle.GOLD);
+        g.drawString("OATHSTEAD  /  BUILDING MANAGEMENT",x+32,y+26);
         g.setFont(new Font("SansSerif", Font.BOLD, 26));
         g.setColor(new Color(244, 239, 220));
-        String title = building == null ? "Building Assignment" : VillageManager.buildingLabel(building.style());
-        g.drawString(title, x + 32, y + 46);
+        String title = building == null ? "Building Assignment" : state.generatedBuildingName(building);
+        drawClippedString(g, title, x + 32, y + 57, panelW - 260);
+        g.setFont(new Font("SansSerif",Font.PLAIN,12));g.setColor(SettlementPanelStyle.GOLD);
+        g.drawString(VillageManager.tierLabel(level)+"  /  "+level+" of 6",x+panelW-225,y+38);
+        SettlementPanelStyle.tiers(g,x+panelW-225,y+50,190,level);
         g.setFont(new Font("SansSerif", Font.PLAIN, 14));
         g.setColor(new Color(198, 202, 211));
-        VillageManager.WorkerRole buildingRole = building == null
-                ? VillageManager.workerRole("idle")
-                : VillageManager.workerRole(VillageManager.buildingPlan(building.style()).workerRole());
+        boolean housing=building!=null && SettlementEconomy.housing(building.style(),level)>0;
         String assigned = building == null ? "" : state.assignedAllyForBuilding(building.key());
         String assignment = assigned.isBlank() ? "Unassigned" : "Assigned: " + assigned;
-        g.drawString(assignment + " | Work: " + buildingRole.label(), x + 32, y + 74);
-        drawWrapped(g, buildingRole.description(), x + 32, y + 94, panelW - 64, 17, 2);
+        drawClippedString(g,(building==null?"":"Type: "+VillageManager.buildingLabel(building.style())+" | ")+assignment+(building==null?"":" | "+state.workersForBuilding(building.key()).size()+"/"+SettlementEconomy.slots(building.style(),level)+" staff | "+SettlementEconomy.housing(building.style(),level)+" beds"),x+32,y+81,panelW-64);
+        SettlementPanelStyle.card(g,x+24,y+96,panelW-48,150);
         if (building != null && building.key().startsWith("player_")) {
-            g.setColor(new Color(151, 177, 112));
-            g.setFont(new Font("SansSerif", Font.PLAIN, 13));
-            drawClippedString(g, state.buildingInteriorSummary(building), x + 32, y + 132, panelW - 64);
+            g.drawImage(assets.spriteFit(VillageManager.buildingLevelSprite(building.style(),level),112,120),x+36,y+108,null);
+            int infoX=x+166, infoW=panelW-360;
+            g.setColor(SettlementPanelStyle.INK);g.setFont(new Font("SansSerif",Font.BOLD,13));
+            g.drawString(level>=6?"MASTERWORK":"NEXT IMPROVEMENT",infoX,y+119);
+            g.setFont(new Font("SansSerif",Font.PLAIN,12));g.setColor(SettlementPanelStyle.MUTED);
+            drawWrapped(g,VillageManager.tierImprovement(Math.min(6,level+1)),infoX,y+140,infoW,15,2);
+            g.setColor(SettlementPanelStyle.TEAL);
+            drawWrapped(g,VillageManager.upgradeBenefit(building.style(),level),infoX,y+175,infoW,15,2);
+            g.setColor(SettlementPanelStyle.MUTED);
+            drawClippedString(g,state.buildingInteriorSummary(building),infoX,y+225,panelW-215);
+            VillageManager.VillageCost cost=VillageManager.upgradeCost(building.style(),level);
+            if(cost!=null) {
+                drawWrapped(g,villageCostDisplay(cost),x+panelW-182,y+127,145,15,4);
+                actionButton(g,x+panelW-182,y+191,145,28,"Improve to "+(level+1),
+                        () -> state.upgradeManagedBuilding(building),new Color(44,82,68),SettlementPanelStyle.TEAL,state.canAffordVillageCost(cost));
+            }
         }
 
+        boolean compact=panelH<650;
+        if(building!=null && !compact) {
+            int tw=(panelW-64)/6;
+            for(int tier=1;tier<=6;tier++) {
+                int tx=x+32+(tier-1)*tw;
+                g.setColor(tier==level?new Color(43,78,69):new Color(24,34,43));
+                g.fillRoundRect(tx,y+257,tw-6,79,8,8);
+                g.drawImage(assets.spriteFit(VillageManager.buildingLevelSprite(building.style(),tier),tw-18,57),tx+6,y+261,null);
+                g.setColor(tier==level?SettlementPanelStyle.TEAL:SettlementPanelStyle.MUTED);
+                g.setFont(new Font("SansSerif",Font.PLAIN,10));
+                drawClippedString(g,tier+"  "+VillageManager.tierLabel(tier),tx+8,y+328,tw-18);
+            }
+        }
         int listX = x + 32;
-        int listY = y + 156;
+        int listY = y + (compact?279:367);
+        g.setColor(SettlementPanelStyle.GOLD);g.setFont(new Font("SansSerif",Font.BOLD,12));
+        g.drawString(housing?"RESIDENTS - beds assigned automatically":"STAFFING",listX,listY-14);
         int rowH = 66;
         List<Actor> workers = state.stationedAllies();
+        if(housing) workers=workers.stream().filter(a -> {
+            CityBuilding home=state.housingForAlly(a.name);
+            return home!=null && home.key().equals(building.key());
+        }).toList();
         if (workers.isEmpty()) {
             g.setFont(new Font("SansSerif", Font.PLAIN, 15));
             g.setColor(new Color(176, 182, 196));
             drawWrapped(g, "No companions are set to city attendance. Open Village > Workers and station someone first.", listX, listY + 24, panelW - 64, 18, 3);
         }
-        int maxRows = 5;
-        for (int i = 0; i < Math.min(maxRows, workers.size()); i++) {
+        int maxRows = Math.max(1, Math.min(4,(panelH-(compact?377:465))/rowH));
+        int pages=Math.max(1,(workers.size()+maxRows-1)/maxRows);
+        assignmentPage=Math.max(0,Math.min(assignmentPage,pages-1));
+        for (int i = assignmentPage*maxRows; i < Math.min((assignmentPage+1)*maxRows, workers.size()); i++) {
             Actor ally = workers.get(i);
-            int rowY = listY + i * rowH;
-            boolean selected = building != null && ally.name.equals(state.assignedAllyForBuilding(building.key()));
+            int rowY = listY + (i-assignmentPage*maxRows) * rowH;
+            boolean selected = building != null && state.workersForBuilding(building.key()).contains(ally.name);
             String otherBuilding = state.buildingAssignmentForAlly(ally.name);
             g.setColor(new Color(28, 32, 43, 235));
             g.fillRoundRect(listX, rowY, panelW - 64, rowH - 10, 8, 8);
@@ -180,22 +208,30 @@ public final class VillageOverlayRenderer {
             drawClippedString(g, ally.name, listX + 60, rowY + 20, panelW - 260);
             g.setFont(new Font("SansSerif", Font.PLAIN, 12));
             g.setColor(new Color(176, 182, 196));
-            String detail = professionSummary(ally);
+            String detail = state.housingForAlly(ally.name)==null?"Needs housing before working":professionSummary(ally);
+            if(building!=null && state.housingForAlly(ally.name)!=null) {
+                var output=SettlementEconomy.output(building.style());
+                int skill=SettlementEconomy.skill(ally,output),tools=state.buildingToolScore(building);
+                detail="Skill "+skill+" | Tools "+tools+" | "+SettlementEconomy.amount(output,level,skill,tools)+" / cycle | Rare "+Math.round(100*SettlementEconomy.rareChance(level,skill,tools))+"%";
+            }
             if (!otherBuilding.isBlank() && (building == null || !otherBuilding.equals(building.key()))) {
                 CityBuilding other = state.playerVillageBuildingByKey(otherBuilding);
                 detail = "At " + (other == null ? "another building" : VillageManager.buildingLabel(other.style())) + " | " + detail;
             }
             drawClippedString(g, shortText(detail, 84), listX + 60, rowY + 40, panelW - 260);
             String allyName = ally.name;
-            actionButton(g, listX + panelW - 190, rowY + 15, 104, 28, selected ? "Assigned" : "Assign",
-                    () -> state.assignAllyToActiveBuilding(allyName),
+            actionButton(g, listX + panelW - 190, rowY + 15, 104, 28, housing?"Resident":selected ? "Remove" : "Assign",
+                    () -> {if(selected)state.unassignVillageWorker(allyName);else state.assignAllyToActiveBuilding(allyName);},
                     selected ? new Color(57, 76, 60) : new Color(69, 62, 88),
-                    selected ? new Color(126, 176, 95) : new Color(125, 107, 166), building != null);
+                    selected ? new Color(126, 176, 95) : new Color(125, 107, 166), building != null && !housing);
         }
         if (workers.size() > maxRows) {
             g.setFont(new Font("SansSerif", Font.PLAIN, 12));
             g.setColor(new Color(176, 182, 196));
-            g.drawString("Open Village > Workers for the full city-attendance roster.", listX, listY + maxRows * rowH + 8);
+            int py=y+panelH-91;
+            actionButton(g,x+panelW-208,py,72,24,"Previous",() -> assignmentPage--,new Color(34,51,62),SettlementPanelStyle.MUTED,assignmentPage>0);
+            actionButton(g,x+panelW-124,py,72,24,"Next",() -> assignmentPage++,new Color(34,51,62),SettlementPanelStyle.MUTED,assignmentPage<pages-1);
+            g.drawString("Staff page "+(assignmentPage+1)+" / "+pages,listX,py+17);
         }
 
         actionButton(g, x + 32, y + panelH - 54, 138, 34, "Enter Inside", state::enterActiveVillageBuilding,
@@ -286,7 +322,7 @@ public final class VillageOverlayRenderer {
         if (plan.sprites().isEmpty()) {
             return "city_building_town_gabled";
         }
-        return plan.sprites().get(0);
+        return VillageManager.buildingLevelSprite(plan.style(), 1);
     }
 
     public String villageCostDisplay(VillageManager.VillageCost cost) {

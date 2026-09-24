@@ -5,6 +5,7 @@ from pathlib import Path as _BootstrapPath
 if not __package__:
     _bootstrap_sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[2]))
 from tools.project_paths import JAVA_ROOT, REPO_ROOT
+from tools.assets.shared.asset_paths import asset_file
 from tools.assets.shared.asset_paths import family_dir
 
 import tkinter as tk
@@ -101,7 +102,7 @@ def output_path(name: str) -> Path:
         folder = "terrain"
     else:
         folder = "monsters"
-    path = family_dir(OUT, folder) / f"{name}.png"
+    path = asset_file(OUT, f"{folder}/{name}.png")
     path.parent.mkdir(parents=True, exist_ok=True)
     return path
 

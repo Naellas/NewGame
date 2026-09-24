@@ -155,6 +155,7 @@ final class Pathfinder {
 
     private static int movementCost(GameState state, int fromX, int fromY, int toX, int toY) {
         int cost = Terrain.roadLike(state.world.tileAt(state.currentMapId, toX, toY)) ? ROAD_TILE_COST : NORMAL_TILE_COST;
+        cost = (int) Math.round(cost * state.world.waterDepth(state.currentMapId, toX, toY).movementCost);
         if (Math.abs(toX - fromX) == 1 && Math.abs(toY - fromY) == 1) {
             cost = cost * DIAGONAL_COST_MULTIPLIER / 100;
         }

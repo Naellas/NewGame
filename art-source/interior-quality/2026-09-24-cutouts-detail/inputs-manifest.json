@@ -1,0 +1,354 @@
+[
+  {
+    "id": "interior_cooking_station",
+    "asset_file": "Java/assets/environments/interiors/interior_cooking_station.png",
+    "input": "inputs/interior_cooking_station.png",
+    "sha256": "b2879de0dc775792aafe48df7315a137fd0b264f1322fcd3047547b8564ad490",
+    "subject": "a warm oak kitchen preparation table with vegetables, ceramic jar, cutting board, small knife, teal cloth and a bowl underneath",
+    "aspect": 2
+  },
+  {
+    "id": "interior_alchemy_station",
+    "asset_file": "Java/assets/environments/interiors/interior_alchemy_station.png",
+    "input": "inputs/interior_alchemy_station.png",
+    "sha256": "3ca64d6ff6d4138c31bf84d1489efe6a674f1244198a32760ec67d5bb1ad2efa",
+    "subject": "a dark oak alchemy table with purple cloth, brass still, mortar, amber and blue glass flasks",
+    "aspect": 2
+  },
+  {
+    "id": "interior_anvil",
+    "asset_file": "Java/assets/environments/interiors/interior_anvil.png",
+    "input": "inputs/interior_anvil.png",
+    "sha256": "f94fad2bcaf1a862669b16ea4c38d97b201e15936f3230a587936ee999e8ca61",
+    "subject": "a dark steel anvil with clear horn and polished working face mounted on a thick round oak stump",
+    "aspect": 1
+  },
+  {
+    "id": "interior_forge",
+    "asset_file": "Java/assets/environments/interiors/interior_forge.png",
+    "input": "inputs/interior_forge.png",
+    "sha256": "a4610c14ca0cd684cd935d466e990e1d178551c876a667523f4566f2655db5d0",
+    "subject": "a small soot-dark masonry forge with curved chimney and warm coal opening, preserve compact domestic-sized silhouette",
+    "aspect": 1
+  },
+  {
+    "id": "interior_oven",
+    "asset_file": "Java/assets/environments/interiors/interior_oven.png",
+    "input": "inputs/interior_oven.png",
+    "sha256": "a7a09eb68743f9f5e502d74490cee05ba045c23df0ea45585d36c92543488033",
+    "subject": "a rustic red brick domed bread oven on a short stone base with visible fire and stacked logs",
+    "aspect": 1
+  },
+  {
+    "id": "interior_stove",
+    "asset_file": "Java/assets/environments/interiors/interior_stove.png",
+    "input": "inputs/interior_stove.png",
+    "sha256": "520581e40d05769c857493ef93bd18dcf06867b36e41a179479e05508f63719d",
+    "subject": "a square dark cast-iron stove with narrow upright stovepipe and small glowing front firebox",
+    "aspect": 1
+  },
+  {
+    "id": "interior_round_table",
+    "asset_file": "Java/assets/environments/interiors/interior_round_table.png",
+    "input": "inputs/interior_round_table.png",
+    "sha256": "853e1f576b787e9b6ecad5e10c64d8a4712b667c76b3bf3a6941b01a94befadf",
+    "subject": "a bare round oak dining table with circular plank top and sturdy wooden pedestal feet",
+    "aspect": 1
+  },
+  {
+    "id": "interior_shop_counter",
+    "asset_file": "Java/assets/environments/interiors/interior_shop_counter.png",
+    "input": "inputs/interior_shop_counter.png",
+    "sha256": "a9677b0bd9dc26a8a1965f32d6bc205ad13609e5ed5c8d22b9d54b133e2d4241",
+    "subject": "a broad oak shop counter with two lower cubbies, square cabinet door, blue cloth draped over top, tiny plant and ceramic jug",
+    "aspect": 2
+  },
+  {
+    "id": "interior_side_table",
+    "asset_file": "Java/assets/environments/interiors/interior_side_table.png",
+    "input": "inputs/interior_side_table.png",
+    "sha256": "0488028b79b9bae01f1eb993c617c26ca394584fc8355aaf6d9077d249268491",
+    "subject": "a small square oak side table with one drawer and lower open shelf, bare level top",
+    "aspect": 1
+  },
+  {
+    "id": "interior_tavern_bar",
+    "asset_file": "Java/assets/environments/interiors/interior_tavern_bar.png",
+    "input": "inputs/interior_tavern_bar.png",
+    "sha256": "03a1a9d139b623df9b8e9263cfa0b5d18233b4a0fbbd0ce4822fb14eee18b2db",
+    "subject": "a broad straight oak tavern bar with simple paneled front, bare worktop, two red round stools in front",
+    "aspect": 2
+  },
+  {
+    "id": "interior_seed_bowl",
+    "asset_file": "Java/assets/environments/interiors/interior_seed_bowl.png",
+    "input": "inputs/interior_seed_bowl.png",
+    "sha256": "94cd25ec2de7e5ea69a2d9f8acda37ad28f9505acd5c74d89d751462b0a9df7a",
+    "subject": "a small wooden bowl of seeds next to an upright cloth seed packet marked with a simple green leaf, no lettering",
+    "aspect": 1
+  },
+  {
+    "id": "interior_sprout_planter",
+    "asset_file": "Java/assets/environments/interiors/interior_sprout_planter.png",
+    "input": "inputs/interior_sprout_planter.png",
+    "sha256": "55b04d0e78bb6ea9ef243dcc2d2a0a61fe4e36ea0d7687d1aad0c9e353351e11",
+    "subject": "a rectangular dark wooden planter box with black soil and four young green sprouts, two small iron corner bands",
+    "aspect": 1
+  },
+  {
+    "id": "interior_floor_bushy_planter",
+    "asset_file": "Java/assets/environments/interiors/interior_floor_bushy_planter.png",
+    "input": "inputs/interior_floor_bushy_planter.png",
+    "sha256": "8b81eca6c53500c9925d089cbfef2ceb81315cce96524467e2eb8d1a1d427479",
+    "subject": "a broad low oak planter trough densely filled with green herbs and soft fern leaves",
+    "aspect": 2
+  },
+  {
+    "id": "interior_floor_sapling_pot",
+    "asset_file": "Java/assets/environments/interiors/interior_floor_sapling_pot.png",
+    "input": "inputs/interior_floor_sapling_pot.png",
+    "sha256": "d9d2dd71f59746f348a76ef365858d1ad0e3a059127254d5f8ac8ef8c56ef40c",
+    "subject": "a little terracotta flowerpot holding one young green sapling with a slim stem",
+    "aspect": 1
+  },
+  {
+    "id": "interior_wall_crystal_ornament",
+    "asset_file": "Java/assets/environments/interiors/interior_wall_crystal_ornament.png",
+    "input": "inputs/interior_wall_crystal_ornament.png",
+    "sha256": "754d1cc5eab11adf616d82b838b80c60b3e71d136327aa54979c885870f5d176",
+    "subject": "a single purple faceted hanging crystal suspended by a brass wall bracket; purple belongs ONLY inside crystal silhouette",
+    "aspect": 1
+  },
+  {
+    "id": "interior_wall_window_wide",
+    "asset_file": "Java/assets/environments/interiors/interior_wall_window_wide.png",
+    "input": "inputs/interior_wall_window_wide.png",
+    "sha256": "43935d775b8ff40d2217007a70863d63353886a27c759407299f9b402d1982af",
+    "subject": "a wide rectangular oak-framed window with four blue glass panes, green ivy on sill and small terracotta pot, whole frame included",
+    "aspect": 2
+  },
+  {
+    "id": "interior_banquet_table_h",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_banquet_table_h.png",
+    "input": "inputs/interior_banquet_table_h.png",
+    "sha256": "78afae84775b50744a1ffb8e61bc910d5e7187f1ad7acfd900a3b3b758ff6de8",
+    "subject": "a rectangular oak dining table with cream runner and red trim, two plates, small candle and tankards, no chairs",
+    "aspect": 2
+  },
+  {
+    "id": "interior_stool_table_h",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_stool_table_h.png",
+    "input": "inputs/interior_stool_table_h.png",
+    "sha256": "f85948295708e68c31a2ac921be4afa305c49419c6c86a83a9c137818c096bbb",
+    "subject": "a rectangular oak tavern table with bare horizontal plank top and two round red padded stools in front",
+    "aspect": 2
+  },
+  {
+    "id": "interior_study_desk_h",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_study_desk_h.png",
+    "input": "inputs/interior_study_desk_h.png",
+    "sha256": "105a5fd9970a3285093fd25604a3fcfd6a50131dafdbbff6d20457bb78665d82",
+    "subject": "a wide oak writing desk, open book, parchment, inkpot and feather quill, drawer and sturdy legs",
+    "aspect": 2
+  },
+  {
+    "id": "interior_bakery_counter",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_bakery_counter.png",
+    "input": "inputs/interior_bakery_counter.png",
+    "sha256": "5aea2553e8b9023317451c654a3b5e74b28640f4778c66564dc7025618608dad",
+    "subject": "a wide oak bakery sales counter filled with crisp bread loaves, wicker basket, little pale linen runner and flour jar",
+    "aspect": 2
+  },
+  {
+    "id": "interior_bakery_oven",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_bakery_oven.png",
+    "input": "inputs/interior_bakery_oven.png",
+    "sha256": "a7be1f478f2b998b3060fec06a4f07b7e53ef87e3b6c427af16b5e3ae306fc87",
+    "subject": "a tall narrow rustic red-brick bread oven with domed upper fire opening and wood store beneath",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_carpenter_workbench",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_carpenter_workbench.png",
+    "input": "inputs/interior_carpenter_workbench.png",
+    "sha256": "3f609fb950762f2265afb64bbe209c40513c53ff2e95e95f1ac4d75ae62e332f",
+    "subject": "a broad sturdy carpentry workbench with hand saw, wooden plane, mallet, vise and plank offcuts; shelf beneath",
+    "aspect": 2
+  },
+  {
+    "id": "interior_long_table_benches",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_long_table_benches.png",
+    "input": "inputs/interior_long_table_benches.png",
+    "sha256": "b87f0a89f90f980124862c8dff0306a0f99861ada16e00ac2f298e194496628f",
+    "subject": "a long oak dining table with two integrated benches, restrained blue linen runner and two tankards on top",
+    "aspect": 2
+  },
+  {
+    "id": "interior_storage_counter",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_storage_counter.png",
+    "input": "inputs/interior_storage_counter.png",
+    "sha256": "de4d322fa9702473637130024d529dc18756d03628861cc410b6cfcc47d3477a",
+    "subject": "a broad oak supply counter with sacks and basket on top, crates and storage bins underneath",
+    "aspect": 2
+  },
+  {
+    "id": "interior_tavern_counter",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_tavern_counter.png",
+    "input": "inputs/interior_tavern_counter.png",
+    "sha256": "1d6569fa7e7cc985cf9ad570778a6121735bd05f5f1839b65e96ee3477f5d7d3",
+    "subject": "a wide oak tavern serving counter with blue runner, pewter jugs and green bottles, two red stools in front",
+    "aspect": 2
+  },
+  {
+    "id": "interior_metal_crate",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_metal_crate.png",
+    "input": "inputs/interior_metal_crate.png",
+    "sha256": "6e507e0f7db68abfedbf833f78e2030250ff636458e020ddf25190d70df145a1",
+    "subject": "a broad iron-bound oak crate filled with neatly stacked steel bars and ingots; no loose ground debris",
+    "aspect": 2
+  },
+  {
+    "id": "interior_grain_sacks_v",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_grain_sacks_v.png",
+    "input": "inputs/interior_grain_sacks_v.png",
+    "sha256": "9831246723f979dc10f75b38687f74c02eaf881d4b99d6df6351ef6eb005dd44",
+    "subject": "three burlap grain sacks stacked vertically on a narrow wooden pallet",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_herb_drying_rack_v",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_herb_drying_rack_v.png",
+    "input": "inputs/interior_herb_drying_rack_v.png",
+    "sha256": "a1ddc1a24871b0cdeb87f0a46b1234221618d83bac3a4bc04536eb8dcd210349",
+    "subject": "a tall narrow oak freestanding drying rack with purple and green herbs hung from straight horizontal crossbar",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_linen_shelf",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_linen_shelf.png",
+    "input": "inputs/interior_linen_shelf.png",
+    "sha256": "9f18e514f987415cff76e2088fd39e1264d25e4640adba7b7305957126300a72",
+    "subject": "a tall narrow oak shelf with folded cream linens, green blankets and a basket on lower shelf",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_inn_screen_chest",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_inn_screen_chest.png",
+    "input": "inputs/interior_inn_screen_chest.png",
+    "sha256": "2e85dc5e20d264be200d6cdffb02405747a3da505ffa3056602212e2dfd05f8e",
+    "subject": "a tall narrow oak privacy screen with an iron-bound chest at its foot, no cropped parts",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_traveler_trunk",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_traveler_trunk.png",
+    "input": "inputs/interior_traveler_trunk.png",
+    "sha256": "774bb27cd5bac21fbf2ed58441239f581a498403485cea587f9d889bf7148487",
+    "subject": "a tall narrow upright oak travel trunk with iron bands and brass locks, folded small bags secured on top",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_aquarium_table",
+    "asset_file": "Java/assets/environments/interiors/interior_aquarium_table.png",
+    "input": "inputs/interior_aquarium_table.png",
+    "sha256": "7d3b19a2dd5e58f47e3810b203822385c1dea435bb237920434696e686c57c80",
+    "subject": "a broad oak cabinet supporting a clear glass rectangular aquarium with blue water, plants and small fish; all inside glass, no background",
+    "aspect": 2
+  },
+  {
+    "id": "interior_chair_north",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_north.png",
+    "input": "inputs/interior_chair_north.png",
+    "sha256": "c3ad24a1dce548fa696a877e1c5dc21cd9edae5bb1f5b2def372527e37375296",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; front view, occupant faces DOWN on screen",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_chair_south",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_south.png",
+    "input": "inputs/interior_chair_south.png",
+    "sha256": "cd3200a3d0db168bcd07ef3ce22394b944b0bcb2be63eaaa43ea89df79e46c1d",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; rear view, occupant faces UP on screen",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_chair_east",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_east.png",
+    "input": "inputs/interior_chair_east.png",
+    "sha256": "6651f264829e6c18f9a6f8d9eba1dfaacbce420c741f9b8ad2110447acd8b7b7",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; strict LEFT-facing side profile: backrest on RIGHT, seat extends LEFT",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_chair_west",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_west.png",
+    "input": "inputs/interior_chair_west.png",
+    "sha256": "62e28b88e1191e0bb86174c108f6f89f7e6f1bc06d8563cd9e88258a03380f36",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; strict RIGHT-facing side profile: backrest on LEFT, seat extends RIGHT",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_chair_north_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_north_alt.png",
+    "input": "inputs/interior_chair_north_alt.png",
+    "sha256": "137bba125e34caf8f742b0d82b93939905eb57e82aa25cfb2d02ebd7022cebc1",
+    "subject": "a padded dark oak chair with worn tan leather seat; rear view, occupant faces UP, rear of backrest closest to viewer",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_chair_south_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_south_alt.png",
+    "input": "inputs/interior_chair_south_alt.png",
+    "sha256": "d184a544bef93f3371aaf3dc1988e7b7c0f3f25e01e1df21fafa9a763c8465d2",
+    "subject": "a padded dark oak chair with worn tan leather seat; straight FRONT view, occupant faces DOWN",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_chair_east_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_east_alt.png",
+    "input": "inputs/interior_chair_east_alt.png",
+    "sha256": "e7b744cb902a31c95056231273a86ee5e0e76ed748f240eeace80c2afa459c33",
+    "subject": "a padded dark oak chair with worn tan leather seat; strict RIGHT side profile, thin backrest on LEFT and seat projecting RIGHT, two visible legs only",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_chair_west_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_west_alt.png",
+    "input": "inputs/interior_chair_west_alt.png",
+    "sha256": "03677b50afefcfc30a7d99a59d2492b0b487dc63560ffa649431876550621a97",
+    "subject": "a padded dark oak chair with worn tan leather seat; strict LEFT side profile, thin backrest on RIGHT and seat projecting LEFT, two visible legs only",
+    "aspect": 0.7
+  },
+  {
+    "id": "interior_rug_runner",
+    "asset_file": "Java/assets/environments/interiors/interior_rug_runner.png",
+    "input": "inputs/interior_rug_runner.png",
+    "sha256": "44e1df6f52677e2793589014bfdd072fb26d33ce16e46341fe9e5c089e8ee16d",
+    "subject": "a long narrow teal woven runner carpet with muted gold geometric border and small diamond medallions, FLAT top-down rectangle exactly aligned to image axes, no perspective",
+    "aspect": 0.4
+  },
+  {
+    "id": "interior_cookpot_stand",
+    "asset_file": "Java/assets/environments/interiors/interior_cookpot_stand.png",
+    "input": "inputs/interior_cookpot_stand.png",
+    "sha256": "509e175c33e20eb5e2574e7d2fe8cac59691ede2dae23d2870c5cd95a844bb66",
+    "subject": "a black iron cauldron of orange vegetable stew on a small iron tripod over contained red coals, visible handles and legs",
+    "aspect": 1
+  },
+  {
+    "id": "interior_herb_planter",
+    "asset_file": "Java/assets/environments/interiors/interior_herb_planter.png",
+    "input": "inputs/interior_herb_planter.png",
+    "sha256": "f87024570215e59f3e930c9766cf24837accd053327672fb5aa6c6a9ea62e1a8",
+    "subject": "a short rectangular oak herb planter with dense small green culinary herb leaves in dark soil, iron corner bands",
+    "aspect": 1
+  },
+  {
+    "id": "interior_wall_window_small",
+    "asset_file": "Java/assets/environments/interiors/interior_wall_window_small.png",
+    "input": "inputs/interior_wall_window_small.png",
+    "sha256": "8b989abd5541953dc2888712f5369e12ba3eebc1e0b8c762c0b39aa5f909d507",
+    "subject": "a small square oak-framed window with four blue glass panes and modest ivy leaves along its sill",
+    "aspect": 1
+  }
+]

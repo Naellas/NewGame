@@ -7,7 +7,9 @@ Companion and story conversations animate the large standing character cutouts
 in `DialogueRenderer`. Both the NPC and player breathe and blink independently;
 only the NPC moves their mouth as their speech is revealed. Narration, whitespace,
 punctuation, completed lines and instantly revealed lines keep the mouth closed.
-The small ordinary NPC cards and travel banter UI retain their existing rendering.
+Ordinary NPC cards retain their existing rendering. Party cards use animated
+crops of the same dialogue artwork; travel banter prompts attach to the current
+speaker's sidebar portrait. See the framework guide for timing and paging.
 
 `DialogueFigureAnimation` uses a monotonic clock for a subtle 4.2-second breath,
 a 170 ms blink with character-specific timing, and three mouth poses. Breathing

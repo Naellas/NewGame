@@ -4,6 +4,7 @@ from pathlib import Path as _BootstrapPath
 if not __package__:
     _bootstrap_sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[3]))
 from tools.project_paths import JAVA_ROOT, REPO_ROOT
+from tools.assets.shared.asset_paths import asset_file
 from pathlib import Path
 
 from PIL import Image
@@ -93,11 +94,11 @@ def main() -> None:
     sheet = Image.open(SOURCE)
     for index, (prop_folder, prop_name, icon_folder, icon_name) in enumerate(PROPS):
         image = cropped_cell(sheet, index)
-        prop_path = ROOT / "assets" / prop_folder / f"{prop_name}.png"
+        prop_path = asset_file(ROOT / "assets", f"{prop_folder}/{prop_name}.png")
         prop_path.parent.mkdir(parents=True, exist_ok=True)
         image.save(prop_path)
         if icon_name is not None:
-            icon_path = ROOT / "assets" / icon_folder / f"{icon_name}.png"
+            icon_path = asset_file(ROOT / "assets", f"{icon_folder}/{icon_name}.png")
             icon_path.parent.mkdir(parents=True, exist_ok=True)
             save_icon(image, icon_path)
 

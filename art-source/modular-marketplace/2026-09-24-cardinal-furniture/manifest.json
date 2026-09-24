@@ -1,0 +1,95 @@
+[
+  {
+    "id": "interior_armchair_green_north",
+    "prompt": "Generate one directional game sprite of this exact green tufted high-back carved wooden armchair, preserving its design, materials, colors and decorative details. Rear view: its backrest is nearest the viewer, seat facing away toward the top of the image. Fixed RPG orthographic camera looking down about 45 degrees, NOT isometric diamond perspective. Upper-left lighting. Detailed crisp pixel-art with small readable clusters matching the reference. Isolated single complete object on genuinely transparent alpha. NO checkerboard pattern, no backdrop, ground patch, floor, text or shadow haze. Center with generous transparent margin. Do not simply rotate the input image; redraw the correct three-dimensional view.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-0ead66d4-4813-4e55-b6c4-55513f4ebfe5.png",
+    "source": "interior_armchair_green_south.png",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_armchair_green_north.png"
+  },
+  {
+    "id": "interior_armchair_green_east",
+    "prompt": "A strict RIGHT-facing SIDE PROFILE sprite of the attached green carved wooden armchair. NOT isometric, NOT three-quarter. Backrest a thin VERTICAL slab on LEFT, seat extends HORIZONTALLY RIGHT. Only ONE exterior green side panel and ONE armrest visible; far side completely occluded. Exactly TWO visible vertical legs. NO view of the broad tufted FRONT of the backrest, which is edge-on. Seat top a narrow horizontal strip. ALL structural edges aligned horizontally or vertically; no diagonal depth lines. Same dark oak frame, green velvet, brass trim. Detailed pixel art appropriate to top-down RPG, restrained slight downward camera. One isolated whole object on genuinely transparent alpha; no checkerboard pixels, scene, text, floor, halo or cast shadow.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-4efacd0d-d3f3-453d-9967-b71bd5f79c5e.png",
+    "source": "interior_armchair_green_east_profile.png",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_armchair_green_east.png",
+    "rejected_source": "interior_armchair_green_east.png"
+  },
+  {
+    "id": "interior_armchair_green_west",
+    "prompt": "Create the matching LEFT-facing version of this armchair sprite. Strict side profile, NOT three-quarter, NOT isometric. Backrest thin vertical slab on RIGHT, seat opens horizontally LEFT. Only ONE exterior side panel and one armrest, exactly TWO visible legs, far side occluded. All structural edges horizontal or vertical. Preserve same green velvet and carved oak model, brass details, crisp pixel art. Lighting stays from upper-left; redraw lighting for opposite view. Transparent alpha outside single complete isolated object; no checkerboard, ground, scene, text, glow or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-4b524e96-778a-45f6-b42f-f5655f6561bb.png",
+    "source": "interior_armchair_green_west_profile.png",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_armchair_green_west.png",
+    "rejected_source": "interior_armchair_green_west.png"
+  },
+  {
+    "id": "village_prop_bench_north",
+    "prompt": "Create a directional sprite of this exact rustic plank wooden bench with a backrest and four legs, same construction and materials. Rear view from above: show the OUTSIDE back of the backrest nearest the camera; seat faces away toward the top of the canvas and is largely hidden. Orthographic RPG camera looking down 45 degrees. Match reference pixel art style, earthy palette, upper-left lighting, compact proportions. One complete isolated prop, generous transparent margin, true transparent alpha background. No checkerboard pixels, floor, scene, labels or cast shadow haze. Redraw a correct 3D perspective, not a planar rotation.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-347d2b40-b51a-4a5d-bc6e-a9c4ff5cd6bc.png",
+    "source": "village_prop_bench_south.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/village_prop_bench_north.png"
+  },
+  {
+    "id": "village_prop_bench_east",
+    "prompt": "Directional view of the exact rustic wooden bench in the reference. Seat faces screen-right; backrest on screen-left. This is an END-ON side view of a long bench, so its long axis recedes straight toward the top of the image. Orthographic top-down RPG perspective at 45 degrees, not a diagonal isometric bench. Preserve honey brown planks, two backrest planks, iron bolts and stout wooden legs. Crisp detailed pixel art, upper-left lighting. Only one complete isolated bench on true transparent alpha, ample margins, no checkerboard pattern, no floor, no text, no blurry shadow.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-14fcd0dd-4c54-4205-97c3-a40b05830dc0.png",
+    "source": "village_prop_bench_east.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/village_prop_bench_east.png"
+  },
+  {
+    "id": "village_prop_bench_west",
+    "prompt": "Directional view of the exact rustic wooden bench in the reference. Seat faces screen-left; backrest on screen-right. This is an END-ON side view of a long bench, so its long axis recedes straight toward the top of the image. Orthographic top-down RPG perspective at 45 degrees, not a diagonal isometric bench. Preserve honey brown planks, two backrest planks, iron bolts and stout wooden legs. Crisp detailed pixel art, upper-left lighting. Only one complete isolated bench on true transparent alpha, ample margins, no checkerboard pattern, no floor, no text, no blurry shadow.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-3e948328-1e37-4f07-ae58-9903098b90d9.png",
+    "source": "village_prop_bench_west.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/village_prop_bench_west.png"
+  },
+  {
+    "id": "city_prop_refresh_bench_north",
+    "prompt": "One rear-view directional game sprite of the exact oak slat bench with dark iron end brackets in the reference. Back of the backrest nearest camera, seating side faces away toward top of canvas. Show external horizontal wooden slats, iron back supports, seat edge behind, upright legs. Orthographic top-down RPG camera looking down 45 degrees, horizontal long bench aligned left-right. Crisp pixel art, warm brown wood, worn black iron, upper-left lighting. Truly transparent background, no checkerboard pixels, no floor, no text, no scene. Preserve the reference model.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-e4986d5b-d517-4493-bcb8-7fece7707739.png",
+    "source": "city_prop_refresh_bench_south.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/city_prop_refresh_bench_north.png"
+  },
+  {
+    "id": "city_prop_refresh_bench_east",
+    "prompt": "Generate the exact reference oak slat bench with iron end brackets viewed END-ON, long axis going straight toward top of screen. Seat opens to screen-right, backrest on screen-left. Orthographic top-down RPG camera looking down45 degrees; not diagonal isometric. Preserve oak planks, black iron arm ends and metal legs. One isolated complete bench in detailed crisp pixel art, matching reference textures, upper-left lighting, true transparent alpha background. No checkerboard pixels, ground, floor, labels, or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-384f9046-8639-4d6c-b1ec-03c751998298.png",
+    "source": "city_prop_refresh_bench_east.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/city_prop_refresh_bench_east.png"
+  },
+  {
+    "id": "city_prop_refresh_bench_west",
+    "prompt": "Generate the exact reference oak slat bench with dark iron end brackets viewed END-ON, long axis going straight toward top of screen. Seat opens to screen-left, backrest on screen-right. Orthographic top-down RPG camera looking down45 degrees; not diagonal isometric. Preserve oak planks, black iron arm ends and metal legs. One isolated complete bench in detailed crisp pixel art, matching reference textures, upper-left lighting, true transparent alpha background. No checkerboard pixels, ground, floor, labels, or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-0180c11c-9188-45c4-854a-f0fb0b6da925.png",
+    "source": "city_prop_refresh_bench_west.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/city_prop_refresh_bench_west.png"
+  },
+  {
+    "id": "city_prop_stone_bench_north",
+    "prompt": "Create a REAR view of this exact carved grey stone garden bench. Backrest is nearest viewer; seat faces away to top of image. Show the OUTSIDE arched stone back with matching carved interlace, stout end pillars, stone slab seat peeking behind and stone feet. Long bench horizontal left-right. Orthographic RPG view from above 45 degrees. Preserve grey stone, aged edges and subtle moss. Detailed crisp pixel art, upper-left light. One isolated complete prop on real transparent alpha, no checkerboard texture, ground patch, scene, text or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-98dffcfb-7dd1-4234-bd22-aedd3e630c3b.png",
+    "source": "city_prop_stone_bench_south.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/city_prop_stone_bench_north.png"
+  },
+  {
+    "id": "city_prop_stone_bench_east",
+    "prompt": "Generate the exact reference carved stone bench viewed END-ON, with long axis receding straight toward top of screen. Seat opens to screen-right; arched backrest at screen-left. Top-down orthographic RPG camera looking down45 degrees, not diagonally isometric. Preserve grey carved knotwork stone back, square pillar ends, thick stone slab seat, stone feet and subtle moss. Crisp detailed pixel art, upper-left lighting. One whole isolated bench on genuinely transparent alpha, no ground patch, no checkerboard pixels, no text or backdrop.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-d5750a8e-3e96-4700-8d84-91e23500abac.png",
+    "source": "city_prop_stone_bench_east.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/city_prop_stone_bench_east.png"
+  },
+  {
+    "id": "city_prop_stone_bench_west",
+    "prompt": "Generate the exact reference carved stone bench viewed END-ON, with long axis receding straight toward top of screen. Seat opens to screen-left; arched backrest at screen-right. Top-down orthographic RPG camera looking down45 degrees, not diagonally isometric. Preserve grey carved knotwork stone back, square pillar ends, thick stone slab seat, stone feet and subtle moss. Crisp detailed pixel art, upper-left lighting. One whole isolated bench on genuinely transparent alpha, no ground patch, no checkerboard pixels, no text or backdrop.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-7eec2cdb-251b-402b-8649-676befe33c61.png",
+    "source": "city_prop_stone_bench_west.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/seating/city_prop_stone_bench_west.png"
+  },
+  {
+    "id": "market_stall_canvas",
+    "prompt": "One modular medieval marketplace stall segment, front view with orthographic RPG camera looking down45 degrees, symmetrical straight-on, NOT isometric. Oak plank counter below a rectangular flat sloping canvas awning, muted cream-and-burgundy stripes, two slim upright posts at the far left and right edges. Canopy has a perfectly straight horizontal top edge and straight horizontal scalloped front edge; no triangular roof, no peak. Counter top horizontal and continuous to both side edges. Single bay intended to join identical neighbors into a continuous market arcade; reserve outer10percent width for detachable posts, maintain matching canopy and counter heights at both edges. Display a few compact produce baskets on counter but leave edges clear. Rich detailed medieval pixel-art, earthy colors, weathered wood, crisp pixel clusters, upper-left lighting. Complete isolated sprite on genuinely transparent alpha, no ground tile, no background, no shadow haze, no text. Generous transparent margin.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-941fa343-3505-4d4b-b3a4-e5b55baa53b5.png",
+    "source": "market_stall_canvas.png",
+    "asset_file": "Java/assets/environments/settlements/city/props/marketplace/market_stall_canvas.png"
+  }
+]

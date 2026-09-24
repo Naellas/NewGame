@@ -1,0 +1,992 @@
+[
+  {
+    "id": "settlement_warehouse_tier1",
+    "source": "repaired-industry.png",
+    "crop": [
+      0,
+      0,
+      296,
+      318
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/warehouse/settlement_warehouse_tier1.png"
+  },
+  {
+    "id": "settlement_warehouse_tier2",
+    "source": "repaired-industry.png",
+    "crop": [
+      296,
+      0,
+      591,
+      318
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/warehouse/settlement_warehouse_tier2.png"
+  },
+  {
+    "id": "settlement_warehouse_tier3",
+    "source": "repaired-industry.png",
+    "crop": [
+      591,
+      0,
+      887,
+      318
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/warehouse/settlement_warehouse_tier3.png"
+  },
+  {
+    "id": "settlement_warehouse_tier4",
+    "source": "repaired-industry.png",
+    "crop": [
+      887,
+      0,
+      1183,
+      318
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/warehouse/settlement_warehouse_tier4.png"
+  },
+  {
+    "id": "settlement_warehouse_tier5",
+    "source": "repaired-industry.png",
+    "crop": [
+      1183,
+      0,
+      1478,
+      318
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/warehouse/settlement_warehouse_tier5.png"
+  },
+  {
+    "id": "settlement_warehouse_tier6",
+    "source": "repaired-industry.png",
+    "crop": [
+      1478,
+      0,
+      1774,
+      318
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/warehouse/settlement_warehouse_tier6.png"
+  },
+  {
+    "id": "settlement_forestry_hut_tier1",
+    "source": "repaired-industry.png",
+    "crop": [
+      0,
+      318,
+      296,
+      600
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/forestry_hut/settlement_forestry_hut_tier1.png"
+  },
+  {
+    "id": "settlement_forestry_hut_tier2",
+    "source": "repaired-industry.png",
+    "crop": [
+      296,
+      318,
+      591,
+      600
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/forestry_hut/settlement_forestry_hut_tier2.png"
+  },
+  {
+    "id": "settlement_forestry_hut_tier3",
+    "source": "repaired-industry.png",
+    "crop": [
+      591,
+      318,
+      887,
+      600
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/forestry_hut/settlement_forestry_hut_tier3.png"
+  },
+  {
+    "id": "settlement_forestry_hut_tier4",
+    "source": "repaired-industry.png",
+    "crop": [
+      887,
+      318,
+      1183,
+      600
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/forestry_hut/settlement_forestry_hut_tier4.png"
+  },
+  {
+    "id": "settlement_forestry_hut_tier5",
+    "source": "repaired-industry.png",
+    "crop": [
+      1183,
+      318,
+      1476,
+      600
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/forestry_hut/settlement_forestry_hut_tier5.png"
+  },
+  {
+    "id": "settlement_forestry_hut_tier6",
+    "source": "repaired-industry.png",
+    "crop": [
+      1476,
+      318,
+      1774,
+      600
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/forestry_hut/settlement_forestry_hut_tier6.png"
+  },
+  {
+    "id": "settlement_mine_tier1",
+    "source": "repaired-industry.png",
+    "crop": [
+      0,
+      600,
+      296,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/mine/settlement_mine_tier1.png"
+  },
+  {
+    "id": "settlement_mine_tier2",
+    "source": "repaired-industry.png",
+    "crop": [
+      296,
+      600,
+      591,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/mine/settlement_mine_tier2.png"
+  },
+  {
+    "id": "settlement_mine_tier3",
+    "source": "repaired-industry.png",
+    "crop": [
+      591,
+      600,
+      887,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/mine/settlement_mine_tier3.png"
+  },
+  {
+    "id": "settlement_mine_tier4",
+    "source": "repaired-industry.png",
+    "crop": [
+      887,
+      600,
+      1180,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/mine/settlement_mine_tier4.png"
+  },
+  {
+    "id": "settlement_mine_tier5",
+    "source": "repaired-industry.png",
+    "crop": [
+      1180,
+      600,
+      1471,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/mine/settlement_mine_tier5.png"
+  },
+  {
+    "id": "settlement_mine_tier6",
+    "source": "repaired-industry.png",
+    "crop": [
+      1471,
+      600,
+      1774,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/mine/settlement_mine_tier6.png"
+  },
+  {
+    "id": "settlement_hunting_camp_tier1",
+    "source": "strong-food.png",
+    "crop": [
+      0,
+      0,
+      296,
+      315
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/hunting_camp/settlement_hunting_camp_tier1.png"
+  },
+  {
+    "id": "settlement_hunting_camp_tier2",
+    "source": "strong-food.png",
+    "crop": [
+      296,
+      0,
+      586,
+      315
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/hunting_camp/settlement_hunting_camp_tier2.png"
+  },
+  {
+    "id": "settlement_hunting_camp_tier3",
+    "source": "strong-food.png",
+    "crop": [
+      586,
+      0,
+      887,
+      315
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/hunting_camp/settlement_hunting_camp_tier3.png"
+  },
+  {
+    "id": "settlement_hunting_camp_tier4",
+    "source": "strong-food.png",
+    "crop": [
+      887,
+      0,
+      1183,
+      315
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/hunting_camp/settlement_hunting_camp_tier4.png"
+  },
+  {
+    "id": "settlement_hunting_camp_tier5",
+    "source": "strong-food.png",
+    "crop": [
+      1183,
+      0,
+      1478,
+      315
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/hunting_camp/settlement_hunting_camp_tier5.png"
+  },
+  {
+    "id": "settlement_hunting_camp_tier6",
+    "source": "strong-food.png",
+    "crop": [
+      1478,
+      0,
+      1774,
+      315
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/hunting_camp/settlement_hunting_camp_tier6.png"
+  },
+  {
+    "id": "settlement_farmstead_tier1",
+    "source": "strong-food.png",
+    "crop": [
+      0,
+      315,
+      296,
+      577
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/farmstead/settlement_farmstead_tier1.png"
+  },
+  {
+    "id": "settlement_farmstead_tier2",
+    "source": "strong-food.png",
+    "crop": [
+      296,
+      315,
+      583,
+      577
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/farmstead/settlement_farmstead_tier2.png"
+  },
+  {
+    "id": "settlement_farmstead_tier3",
+    "source": "strong-food.png",
+    "crop": [
+      583,
+      315,
+      887,
+      577
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/farmstead/settlement_farmstead_tier3.png"
+  },
+  {
+    "id": "settlement_farmstead_tier4",
+    "source": "strong-food.png",
+    "crop": [
+      887,
+      315,
+      1183,
+      577
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/farmstead/settlement_farmstead_tier4.png"
+  },
+  {
+    "id": "settlement_farmstead_tier5",
+    "source": "strong-food.png",
+    "crop": [
+      1183,
+      315,
+      1471,
+      577
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/farmstead/settlement_farmstead_tier5.png"
+  },
+  {
+    "id": "settlement_farmstead_tier6",
+    "source": "strong-food.png",
+    "crop": [
+      1471,
+      315,
+      1774,
+      577
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/farmstead/settlement_farmstead_tier6.png"
+  },
+  {
+    "id": "settlement_granary_tier1",
+    "source": "strong-food.png",
+    "crop": [
+      0,
+      577,
+      296,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/granary/settlement_granary_tier1.png"
+  },
+  {
+    "id": "settlement_granary_tier2",
+    "source": "strong-food.png",
+    "crop": [
+      296,
+      577,
+      591,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/granary/settlement_granary_tier2.png"
+  },
+  {
+    "id": "settlement_granary_tier3",
+    "source": "strong-food.png",
+    "crop": [
+      591,
+      577,
+      887,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/granary/settlement_granary_tier3.png"
+  },
+  {
+    "id": "settlement_granary_tier4",
+    "source": "strong-food.png",
+    "crop": [
+      887,
+      577,
+      1183,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/granary/settlement_granary_tier4.png"
+  },
+  {
+    "id": "settlement_granary_tier5",
+    "source": "strong-food.png",
+    "crop": [
+      1183,
+      577,
+      1470,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/granary/settlement_granary_tier5.png"
+  },
+  {
+    "id": "settlement_granary_tier6",
+    "source": "strong-food.png",
+    "crop": [
+      1470,
+      577,
+      1774,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/granary/settlement_granary_tier6.png"
+  },
+  {
+    "id": "settlement_row_tier1",
+    "source": "strong-civic.png",
+    "crop": [
+      0,
+      0,
+      296,
+      316
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/row/settlement_row_tier1.png"
+  },
+  {
+    "id": "settlement_row_tier2",
+    "source": "strong-civic.png",
+    "crop": [
+      296,
+      0,
+      591,
+      316
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/row/settlement_row_tier2.png"
+  },
+  {
+    "id": "settlement_row_tier3",
+    "source": "strong-civic.png",
+    "crop": [
+      591,
+      0,
+      890,
+      316
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/row/settlement_row_tier3.png"
+  },
+  {
+    "id": "settlement_row_tier4",
+    "source": "strong-civic.png",
+    "crop": [
+      890,
+      0,
+      1183,
+      316
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/row/settlement_row_tier4.png"
+  },
+  {
+    "id": "settlement_row_tier5",
+    "source": "strong-civic.png",
+    "crop": [
+      1183,
+      0,
+      1478,
+      316
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/row/settlement_row_tier5.png"
+  },
+  {
+    "id": "settlement_row_tier6",
+    "source": "strong-civic.png",
+    "crop": [
+      1478,
+      0,
+      1774,
+      316
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/row/settlement_row_tier6.png"
+  },
+  {
+    "id": "settlement_guild_tier1",
+    "source": "strong-civic.png",
+    "crop": [
+      0,
+      316,
+      296,
+      590
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/guild/settlement_guild_tier1.png"
+  },
+  {
+    "id": "settlement_guild_tier2",
+    "source": "strong-civic.png",
+    "crop": [
+      296,
+      316,
+      591,
+      590
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/guild/settlement_guild_tier2.png"
+  },
+  {
+    "id": "settlement_guild_tier3",
+    "source": "strong-civic.png",
+    "crop": [
+      591,
+      316,
+      887,
+      590
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/guild/settlement_guild_tier3.png"
+  },
+  {
+    "id": "settlement_guild_tier4",
+    "source": "strong-civic.png",
+    "crop": [
+      887,
+      316,
+      1183,
+      590
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/guild/settlement_guild_tier4.png"
+  },
+  {
+    "id": "settlement_guild_tier5",
+    "source": "strong-civic.png",
+    "crop": [
+      1183,
+      316,
+      1478,
+      590
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/guild/settlement_guild_tier5.png"
+  },
+  {
+    "id": "settlement_guild_tier6",
+    "source": "strong-civic.png",
+    "crop": [
+      1478,
+      316,
+      1774,
+      590
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/guild/settlement_guild_tier6.png"
+  },
+  {
+    "id": "settlement_watchtower_tier1",
+    "source": "strong-civic.png",
+    "crop": [
+      0,
+      590,
+      296,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/watchtower/settlement_watchtower_tier1.png"
+  },
+  {
+    "id": "settlement_watchtower_tier2",
+    "source": "strong-civic.png",
+    "crop": [
+      296,
+      590,
+      591,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/watchtower/settlement_watchtower_tier2.png"
+  },
+  {
+    "id": "settlement_watchtower_tier3",
+    "source": "strong-civic.png",
+    "crop": [
+      591,
+      590,
+      887,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/watchtower/settlement_watchtower_tier3.png"
+  },
+  {
+    "id": "settlement_watchtower_tier4",
+    "source": "strong-civic.png",
+    "crop": [
+      887,
+      590,
+      1183,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/watchtower/settlement_watchtower_tier4.png"
+  },
+  {
+    "id": "settlement_watchtower_tier5",
+    "source": "strong-civic.png",
+    "crop": [
+      1183,
+      590,
+      1478,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/watchtower/settlement_watchtower_tier5.png"
+  },
+  {
+    "id": "settlement_watchtower_tier6",
+    "source": "strong-civic.png",
+    "crop": [
+      1478,
+      590,
+      1774,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/watchtower/settlement_watchtower_tier6.png"
+  },
+  {
+    "id": "settlement_shrine_tier1",
+    "source": "strong-specialists.png",
+    "crop": [
+      0,
+      0,
+      296,
+      328
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/shrine/settlement_shrine_tier1.png"
+  },
+  {
+    "id": "settlement_shrine_tier2",
+    "source": "strong-specialists.png",
+    "crop": [
+      296,
+      0,
+      591,
+      328
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/shrine/settlement_shrine_tier2.png"
+  },
+  {
+    "id": "settlement_shrine_tier3",
+    "source": "strong-specialists.png",
+    "crop": [
+      591,
+      0,
+      887,
+      328
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/shrine/settlement_shrine_tier3.png"
+  },
+  {
+    "id": "settlement_shrine_tier4",
+    "source": "strong-specialists.png",
+    "crop": [
+      887,
+      0,
+      1179,
+      328
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/shrine/settlement_shrine_tier4.png"
+  },
+  {
+    "id": "settlement_shrine_tier5",
+    "source": "strong-specialists.png",
+    "crop": [
+      1179,
+      0,
+      1478,
+      328
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/shrine/settlement_shrine_tier5.png"
+  },
+  {
+    "id": "settlement_shrine_tier6",
+    "source": "strong-specialists.png",
+    "crop": [
+      1478,
+      0,
+      1774,
+      328
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/shrine/settlement_shrine_tier6.png"
+  },
+  {
+    "id": "settlement_garden_tier1",
+    "source": "strong-specialists.png",
+    "crop": [
+      0,
+      328,
+      296,
+      598
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/garden/settlement_garden_tier1.png"
+  },
+  {
+    "id": "settlement_garden_tier2",
+    "source": "strong-specialists.png",
+    "crop": [
+      296,
+      328,
+      591,
+      598
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/garden/settlement_garden_tier2.png"
+  },
+  {
+    "id": "settlement_garden_tier3",
+    "source": "strong-specialists.png",
+    "crop": [
+      591,
+      328,
+      887,
+      598
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/garden/settlement_garden_tier3.png"
+  },
+  {
+    "id": "settlement_garden_tier4",
+    "source": "strong-specialists.png",
+    "crop": [
+      887,
+      328,
+      1139,
+      598
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/garden/settlement_garden_tier4.png"
+  },
+  {
+    "id": "settlement_garden_tier5",
+    "source": "strong-specialists.png",
+    "crop": [
+      1139,
+      328,
+      1467,
+      598
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/garden/settlement_garden_tier5.png"
+  },
+  {
+    "id": "settlement_garden_tier6",
+    "source": "strong-specialists.png",
+    "crop": [
+      1467,
+      328,
+      1774,
+      598
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/garden/settlement_garden_tier6.png"
+  },
+  {
+    "id": "settlement_blacksmith_tier1",
+    "source": "strong-specialists.png",
+    "crop": [
+      0,
+      598,
+      296,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/blacksmith/settlement_blacksmith_tier1.png"
+  },
+  {
+    "id": "settlement_blacksmith_tier2",
+    "source": "strong-specialists.png",
+    "crop": [
+      296,
+      598,
+      581,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/blacksmith/settlement_blacksmith_tier2.png"
+  },
+  {
+    "id": "settlement_blacksmith_tier3",
+    "source": "strong-specialists.png",
+    "crop": [
+      581,
+      598,
+      887,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/blacksmith/settlement_blacksmith_tier3.png"
+  },
+  {
+    "id": "settlement_blacksmith_tier4",
+    "source": "strong-specialists.png",
+    "crop": [
+      887,
+      598,
+      1168,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/blacksmith/settlement_blacksmith_tier4.png"
+  },
+  {
+    "id": "settlement_blacksmith_tier5",
+    "source": "strong-specialists.png",
+    "crop": [
+      1168,
+      598,
+      1452,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/blacksmith/settlement_blacksmith_tier5.png"
+  },
+  {
+    "id": "settlement_blacksmith_tier6",
+    "source": "strong-specialists.png",
+    "crop": [
+      1452,
+      598,
+      1774,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/blacksmith/settlement_blacksmith_tier6.png"
+  },
+  {
+    "id": "settlement_bakery_tier1",
+    "source": "repaired-provisions.png",
+    "crop": [
+      0,
+      0,
+      296,
+      312
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/bakery/settlement_bakery_tier1.png"
+  },
+  {
+    "id": "settlement_bakery_tier2",
+    "source": "repaired-provisions.png",
+    "crop": [
+      296,
+      0,
+      591,
+      312
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/bakery/settlement_bakery_tier2.png"
+  },
+  {
+    "id": "settlement_bakery_tier3",
+    "source": "repaired-provisions.png",
+    "crop": [
+      591,
+      0,
+      887,
+      312
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/bakery/settlement_bakery_tier3.png"
+  },
+  {
+    "id": "settlement_bakery_tier4",
+    "source": "repaired-provisions.png",
+    "crop": [
+      887,
+      0,
+      1183,
+      312
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/bakery/settlement_bakery_tier4.png"
+  },
+  {
+    "id": "settlement_bakery_tier5",
+    "source": "repaired-provisions.png",
+    "crop": [
+      1183,
+      0,
+      1474,
+      312
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/bakery/settlement_bakery_tier5.png"
+  },
+  {
+    "id": "settlement_bakery_tier6",
+    "source": "repaired-provisions.png",
+    "crop": [
+      1474,
+      0,
+      1774,
+      312
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/bakery/settlement_bakery_tier6.png"
+  },
+  {
+    "id": "settlement_apothecary_tier1",
+    "source": "repaired-provisions.png",
+    "crop": [
+      0,
+      312,
+      296,
+      584
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/apothecary/settlement_apothecary_tier1.png"
+  },
+  {
+    "id": "settlement_apothecary_tier2",
+    "source": "repaired-provisions.png",
+    "crop": [
+      296,
+      312,
+      591,
+      584
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/apothecary/settlement_apothecary_tier2.png"
+  },
+  {
+    "id": "settlement_apothecary_tier3",
+    "source": "repaired-provisions.png",
+    "crop": [
+      591,
+      312,
+      887,
+      584
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/apothecary/settlement_apothecary_tier3.png"
+  },
+  {
+    "id": "settlement_apothecary_tier4",
+    "source": "repaired-provisions.png",
+    "crop": [
+      887,
+      312,
+      1183,
+      584
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/apothecary/settlement_apothecary_tier4.png"
+  },
+  {
+    "id": "settlement_apothecary_tier5",
+    "source": "repaired-provisions.png",
+    "crop": [
+      1183,
+      312,
+      1473,
+      584
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/apothecary/settlement_apothecary_tier5.png"
+  },
+  {
+    "id": "settlement_apothecary_tier6",
+    "source": "repaired-provisions.png",
+    "crop": [
+      1473,
+      312,
+      1774,
+      584
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/apothecary/settlement_apothecary_tier6.png"
+  },
+  {
+    "id": "settlement_fishing_hut_tier1",
+    "source": "repaired-provisions.png",
+    "crop": [
+      0,
+      584,
+      296,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/fishing_hut/settlement_fishing_hut_tier1.png"
+  },
+  {
+    "id": "settlement_fishing_hut_tier2",
+    "source": "repaired-provisions.png",
+    "crop": [
+      296,
+      584,
+      591,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/fishing_hut/settlement_fishing_hut_tier2.png"
+  },
+  {
+    "id": "settlement_fishing_hut_tier3",
+    "source": "repaired-provisions.png",
+    "crop": [
+      591,
+      584,
+      887,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/fishing_hut/settlement_fishing_hut_tier3.png"
+  },
+  {
+    "id": "settlement_fishing_hut_tier4",
+    "source": "repaired-provisions.png",
+    "crop": [
+      887,
+      584,
+      1183,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/fishing_hut/settlement_fishing_hut_tier4.png"
+  },
+  {
+    "id": "settlement_fishing_hut_tier5",
+    "source": "repaired-provisions.png",
+    "crop": [
+      1183,
+      584,
+      1476,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/fishing_hut/settlement_fishing_hut_tier5.png"
+  },
+  {
+    "id": "settlement_fishing_hut_tier6",
+    "source": "repaired-provisions.png",
+    "crop": [
+      1476,
+      584,
+      1774,
+      887
+    ],
+    "output": "Java/assets/environments/settlements/player_village/buildings/fishing_hut/settlement_fishing_hut_tier6.png"
+  }
+]

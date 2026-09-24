@@ -33,6 +33,18 @@ public final class RenderBenchmark {
                 BufferedImage target = new BufferedImage(GameConfig.WIDTH, GameConfig.HEIGHT, BufferedImage.TYPE_INT_RGB);
                 Graphics2D graphics = target.createGraphics();
                 try {
+                    if(args.length>1 && args[1].equals("dialogue")) {
+                        Actor aria=GameData.RECRUITS.get("aria").createActor();
+                        state.recruitedIds.add("aria");state.allies.add(aria);
+                        if(!state.talkToPartyAlly(aria))throw new IllegalStateException("Cannot open benchmark dialogue");
+                        run(panel,graphics,samples,"dialogue-with-world-"+(Boolean.getBoolean("alderfall.dialogueDenseReference")?"dense":"mesh"));
+                        if(args.length>2) {
+                            Path capture=Path.of(args[2]);
+                            if(capture.getParent()!=null)java.nio.file.Files.createDirectories(capture.getParent());
+                            javax.imageio.ImageIO.write(target,"png",capture.toFile());
+                        }
+                        return;
+                    }
                     run(panel, graphics, samples, "starting-village");
                     state.currentMapId = com.alderfall.game.map.WorldMap.OVERWORLD_ID;
                     state.playerX = com.alderfall.game.map.WorldMap.START_POSITION.x();
@@ -41,7 +53,7 @@ public final class RenderBenchmark {
                 } finally {
                     graphics.dispose();
                 }
-            } catch (ReflectiveOperationException ex) {
+            } catch (ReflectiveOperationException | java.io.IOException ex) {
                 throw new IllegalStateException(ex);
             } finally {
                 panel.shutdown();

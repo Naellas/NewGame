@@ -1,0 +1,16 @@
+[
+  {
+    "id": "interior_archive_lectern",
+    "prompt": "One detailed pixel-art RPG furniture sprite: a medieval library lectern: single dark oak pedestal, carved sturdy square base, sloped bookrest holding one open illuminated manuscript, tiny brass reading candle on left. Strict cardinal front view, facing screen DOWN, slightly elevated orthographic camera; vertical edges vertical, horizontal edges horizontal, NO isometric diagonal perspective. Muted oak brown palette, readable low-resolution pixel clusters, upper-left light, match warm medieval workshop and library interiors. Complete single object centered with generous fully transparent alpha margins including all four corners; no floor, background, cast shadow, haze, checkerboard, labels or UI.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-e9ba2b99-727d-4034-aa60-3367d21afdef.png",
+    "source": "interior_archive_lectern.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_archive_lectern.png"
+  },
+  {
+    "id": "interior_oak_support_pillar",
+    "prompt": "One detailed pixel-art RPG furniture sprite: a complete rustic medieval architectural oak support pillar: single tall straight square oak post with stone square foot, dark iron bands, short symmetrical horizontal capital, sturdy timber structure, no wall attached. Strict cardinal front view, facing screen DOWN, slightly elevated orthographic camera; vertical edges vertical, horizontal edges horizontal, NO isometric diagonal perspective. Muted oak brown palette, readable low-resolution pixel clusters, upper-left light, match warm medieval workshop and library interiors. Complete single object centered with generous fully transparent alpha margins including all four corners; no floor, background, cast shadow, haze, checkerboard, labels or UI.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-6a0cd799-0a45-4705-90da-0b0d39b0f327.png",
+    "source": "interior_oak_support_pillar.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_oak_support_pillar.png"
+  }
+]

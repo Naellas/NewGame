@@ -1,0 +1,215 @@
+asset,width,height,flagged_magenta_edge_pixels,review_decision
+interior_alchemy_station,96,48,0,replaced: source detail and/or cutout quality
+interior_anvil,48,48,0,replaced: source detail and/or cutout quality
+interior_aquarium_table,96,48,0,replaced: source detail and/or cutout quality
+interior_barrels,105,110,0,retained in this batch; see review scope and limitations
+interior_bed_vertical,48,96,0,retained in this batch; see review scope and limitations
+interior_bookshelf,158,199,0,retained in this batch; see review scope and limitations
+interior_carpenter_table,1254,1254,0,retained in this batch; see review scope and limitations
+interior_chair_east,48,48,0,replaced: source detail and/or cutout quality
+interior_chair_north,48,48,0,replaced: source detail and/or cutout quality
+interior_chair_south,48,48,0,replaced: source detail and/or cutout quality
+interior_chair_west,48,48,0,replaced: source detail and/or cutout quality
+interior_cooking_station,96,48,0,replaced: source detail and/or cutout quality
+interior_cookpot_stand,48,48,0,replaced: source detail and/or cutout quality
+interior_crates,121,120,0,retained in this batch; see review scope and limitations
+interior_door_closed,48,48,0,retained in this batch; see review scope and limitations
+interior_door_open,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_blend,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_blend_alt,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_bushy_planter,96,48,3,replaced: source detail and/or cutout quality
+interior_floor_dark,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_flower_planter,48,48,15,retained in this batch; see review scope and limitations
+interior_floor_leafy_plant,48,48,1,retained in this batch; see review scope and limitations
+interior_floor_reed_pot,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_sapling_pot,48,48,0,replaced: source detail and/or cutout quality
+interior_floor_shop,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_study,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_tavern,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_warm_a,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_warm_b,48,48,0,retained in this batch; see review scope and limitations
+interior_floor_worn,48,48,0,retained in this batch; see review scope and limitations
+interior_flower_pot,48,48,17,retained in this batch; see review scope and limitations
+interior_flower_vase,48,48,8,retained in this batch; see review scope and limitations
+interior_forge,48,48,0,replaced: source detail and/or cutout quality
+interior_hearth_pot,48,48,0,retained in this batch; see review scope and limitations
+interior_herb_drying_rack,96,48,3,retained in this batch; see review scope and limitations
+interior_herb_planter,48,48,0,replaced: source detail and/or cutout quality
+interior_herb_pot,48,48,0,retained in this batch; see review scope and limitations
+interior_mortar_pestle,48,48,0,retained in this batch; see review scope and limitations
+interior_oven,48,48,0,replaced: source detail and/or cutout quality
+interior_planting_pot,48,48,1,retained in this batch; see review scope and limitations
+interior_round_table,48,48,0,replaced: source detail and/or cutout quality
+interior_rug_red,48,48,1,retained in this batch; see review scope and limitations
+interior_rug_runner,48,48,2,replaced: source detail and/or cutout quality
+interior_rug_teal,48,48,0,retained in this batch; see review scope and limitations
+interior_seed_bowl,48,48,0,replaced: source detail and/or cutout quality
+interior_shop_counter,96,48,0,replaced: source detail and/or cutout quality
+interior_side_table,48,48,0,replaced: source detail and/or cutout quality
+interior_sprout_planter,48,48,0,replaced: source detail and/or cutout quality
+interior_stove,48,48,0,replaced: source detail and/or cutout quality
+interior_tabletop_candle,48,48,0,retained in this batch; see review scope and limitations
+interior_tabletop_meal,48,48,0,retained in this batch; see review scope and limitations
+interior_tabletop_place_setting,48,48,0,retained in this batch; see review scope and limitations
+interior_tavern_bar,96,48,0,replaced: source detail and/or cutout quality
+interior_vine_trellis,48,96,17,retained in this batch; see review scope and limitations
+interior_void_edge,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_corner,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_crystal_ornament,48,48,15,replaced: source detail and/or cutout quality
+interior_wall_door_h_closed,48,48,41,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_door_h_open,48,48,28,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_door_v_closed,48,48,2,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_door_v_open,48,48,8,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_flower_pot,48,48,7,retained in this batch; see review scope and limitations
+interior_wall_front_north,48,48,2,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_front_south,48,48,40,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_herb_rack,96,48,53,retained in this batch; see review scope and limitations
+interior_wall_horizontal_cap,96,24,3,retained in this batch; see review scope and limitations
+interior_wall_horizontal_center,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_horizontal_left,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_horizontal_right,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_horizontal_shadow,96,24,0,retained in this batch; see review scope and limitations
+interior_wall_inner_ne,48,48,1,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_inner_nw,48,48,43,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_inner_se,48,48,1,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_inner_sw,48,48,0,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_ivy_planter,48,48,5,retained in this batch; see review scope and limitations
+interior_wall_outer_bl,48,48,2,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_outer_br,48,48,1,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_outer_tl,48,48,11,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_outer_tr,48,48,10,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_plant_shelf,96,48,16,retained in this batch; see review scope and limitations
+interior_wall_plaster,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_sconce_lamp,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_side_left,48,48,2,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_side_right,48,48,2,retained: legacy architecture; edge fringe remains; not used by current modular wall renderer
+interior_wall_stone,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_timber,48,48,0,retained in this batch; see review scope and limitations
+interior_wall_vertical_side,48,48,1,retained in this batch; see review scope and limitations
+interior_wall_window_small,48,48,1,replaced: source detail and/or cutout quality
+interior_wall_window_wide,96,48,0,replaced: source detail and/or cutout quality
+interior_module_eastern_base,48,7,0,retained in this batch; see review scope and limitations
+interior_module_eastern_cap,48,8,0,retained in this batch; see review scope and limitations
+interior_module_eastern_face,48,96,0,retained in this batch; see review scope and limitations
+interior_module_eastern_floor,48,48,0,retained in this batch; see review scope and limitations
+interior_module_eastern_post,6,96,0,retained in this batch; see review scope and limitations
+interior_module_eastern_side,16,48,0,retained in this batch; see review scope and limitations
+interior_module_paneled_base,48,7,0,retained in this batch; see review scope and limitations
+interior_module_paneled_cap,48,8,0,retained in this batch; see review scope and limitations
+interior_module_paneled_face,48,96,0,retained in this batch; see review scope and limitations
+interior_module_paneled_floor,48,48,0,retained in this batch; see review scope and limitations
+interior_module_paneled_post,6,96,0,retained in this batch; see review scope and limitations
+interior_module_paneled_side,16,48,0,retained in this batch; see review scope and limitations
+interior_module_stone_base,48,7,0,retained in this batch; see review scope and limitations
+interior_module_stone_cap,48,8,0,retained in this batch; see review scope and limitations
+interior_module_stone_face,48,96,0,retained in this batch; see review scope and limitations
+interior_module_stone_floor,48,48,0,retained in this batch; see review scope and limitations
+interior_module_stone_post,6,96,0,retained in this batch; see review scope and limitations
+interior_module_stone_side,16,48,0,retained in this batch; see review scope and limitations
+interior_module_timber_base,48,7,0,retained in this batch; see review scope and limitations
+interior_module_timber_cap,48,8,0,retained in this batch; see review scope and limitations
+interior_module_timber_face,48,96,0,retained in this batch; see review scope and limitations
+interior_module_timber_floor,48,48,0,retained in this batch; see review scope and limitations
+interior_module_timber_post,6,96,0,retained in this batch; see review scope and limitations
+interior_module_timber_side,16,48,0,retained in this batch; see review scope and limitations
+interior_wall_window_curtained,96,123,0,retained in this batch; see review scope and limitations
+interior_wall_window_leaded,48,62,0,retained in this batch; see review scope and limitations
+interior_armchair_green,93,167,0,retained in this batch; see review scope and limitations
+interior_basket_demijohn,68,105,0,retained in this batch; see review scope and limitations
+interior_basket_empty,92,85,0,retained in this batch; see review scope and limitations
+interior_bottle_crate,84,94,0,retained in this batch; see review scope and limitations
+interior_broom,45,146,0,retained in this batch; see review scope and limitations
+interior_bucket,64,78,0,retained in this batch; see review scope and limitations
+interior_cask_on_side,96,75,0,retained in this batch; see review scope and limitations
+interior_chest_of_drawers,168,166,0,retained in this batch; see review scope and limitations
+interior_coal_crate,63,77,0,retained in this batch; see review scope and limitations
+interior_coat_stand,107,173,0,retained in this batch; see review scope and limitations
+interior_crockery_cupboard,167,199,0,retained in this batch; see review scope and limitations
+interior_fireplace,156,172,0,retained in this batch; see review scope and limitations
+interior_firewood_basket,121,116,0,retained in this batch; see review scope and limitations
+interior_handcart,204,116,0,retained in this batch; see review scope and limitations
+interior_ironbound_chest,98,95,0,retained in this batch; see review scope and limitations
+interior_leaning_ladder,90,217,0,retained in this batch; see review scope and limitations
+interior_open_storage_bin,110,96,0,retained in this batch; see review scope and limitations
+interior_pallet,140,84,0,retained in this batch; see review scope and limitations
+interior_pantry_shelf,153,205,0,retained in this batch; see review scope and limitations
+interior_plate_rack,172,158,0,retained in this batch; see review scope and limitations
+interior_pottery_cluster,133,121,0,retained in this batch; see review scope and limitations
+interior_produce_apples,85,97,0,retained in this batch; see review scope and limitations
+interior_produce_cabbages,84,98,0,retained in this batch; see review scope and limitations
+interior_produce_corn,83,99,0,retained in this batch; see review scope and limitations
+interior_produce_fish,83,110,0,retained in this batch; see review scope and limitations
+interior_produce_potatoes,80,101,0,retained in this batch; see review scope and limitations
+interior_room_screen,228,173,0,retained in this batch; see review scope and limitations
+interior_sofa_red,229,146,0,retained in this batch; see review scope and limitations
+interior_stepladder,95,113,0,retained in this batch; see review scope and limitations
+interior_stool,93,89,0,retained in this batch; see review scope and limitations
+interior_supplies_shelf,185,222,0,retained in this batch; see review scope and limitations
+interior_tabletop_books,120,78,0,retained in this batch; see review scope and limitations
+interior_tabletop_fruit,107,88,0,retained in this batch; see review scope and limitations
+interior_tabletop_inkwell,102,94,0,retained in this batch; see review scope and limitations
+interior_tabletop_jug,75,82,0,retained in this batch; see review scope and limitations
+interior_tabletop_scrolls,105,91,0,retained in this batch; see review scope and limitations
+interior_tabletop_tankard,77,76,0,retained in this batch; see review scope and limitations
+interior_tabletop_wine,94,109,0,retained in this batch; see review scope and limitations
+interior_tied_bales,114,97,0,retained in this batch; see review scope and limitations
+interior_tools_shelf,172,222,0,retained in this batch; see review scope and limitations
+interior_wall_antlers,150,134,0,retained in this batch; see review scope and limitations
+interior_wall_banner_lion,127,170,0,retained in this batch; see review scope and limitations
+interior_wall_books,184,141,0,retained in this batch; see review scope and limitations
+interior_wall_clock,86,167,0,retained in this batch; see review scope and limitations
+interior_wall_flower_painting,111,109,0,retained in this batch; see review scope and limitations
+interior_wall_landscape,178,135,0,retained in this batch; see review scope and limitations
+interior_wall_mirror,104,151,0,retained in this batch; see review scope and limitations
+interior_wall_parcels,120,88,0,retained in this batch; see review scope and limitations
+interior_wall_tools,155,124,0,retained in this batch; see review scope and limitations
+interior_wardrobe,155,217,0,retained in this batch; see review scope and limitations
+interior_washstand,140,153,0,retained in this batch; see review scope and limitations
+interior_armchair_green_east,936,1681,0,retained in this batch; see review scope and limitations
+interior_armchair_green_north,936,1681,0,retained in this batch; see review scope and limitations
+interior_armchair_green_west,936,1681,0,retained in this batch; see review scope and limitations
+interior_banquet_table_h,96,48,0,replaced: source detail and/or cutout quality
+interior_bench_h,96,48,0,retained in this batch; see review scope and limitations
+interior_bench_v,48,96,0,retained in this batch; see review scope and limitations
+interior_chair_east_alt,48,48,0,replaced: source detail and/or cutout quality
+interior_chair_north_alt,48,48,0,replaced: source detail and/or cutout quality
+interior_chair_south_alt,48,48,0,replaced: source detail and/or cutout quality
+interior_chair_west_alt,48,48,0,replaced: source detail and/or cutout quality
+interior_counter_corner_h,96,48,0,retained in this batch; see review scope and limitations
+interior_stool_table_h,96,48,0,replaced: source detail and/or cutout quality
+interior_study_desk_h,96,48,0,replaced: source detail and/or cutout quality
+interior_table_h_left,96,48,0,retained in this batch; see review scope and limitations
+interior_table_h_middle,96,48,0,retained in this batch; see review scope and limitations
+interior_table_h_right,96,48,0,retained in this batch; see review scope and limitations
+interior_table_v_bottom,48,96,0,retained in this batch; see review scope and limitations
+interior_table_v_middle,48,96,0,retained in this batch; see review scope and limitations
+interior_table_v_top,48,96,0,retained in this batch; see review scope and limitations
+interior_anvil_tool_rack,48,96,0,retained in this batch; see review scope and limitations
+interior_bakery_counter,96,48,0,replaced: source detail and/or cutout quality
+interior_bakery_oven,48,96,0,replaced: source detail and/or cutout quality
+interior_carpenter_workbench,96,48,0,replaced: source detail and/or cutout quality
+interior_grain_sacks_v,48,96,0,replaced: source detail and/or cutout quality
+interior_herb_drying_rack_v,48,96,0,replaced: source detail and/or cutout quality
+interior_inn_screen_chest,48,96,0,replaced: source detail and/or cutout quality
+interior_linen_shelf,48,96,0,replaced: source detail and/or cutout quality
+interior_long_table_benches,96,48,0,replaced: source detail and/or cutout quality
+interior_low_cupboard,184,151,0,retained in this batch; see review scope and limitations
+interior_metal_crate,96,48,0,replaced: source detail and/or cutout quality
+interior_resident_bed,48,96,0,retained in this batch; see review scope and limitations
+interior_sawhorse_planks,96,48,0,retained in this batch; see review scope and limitations
+interior_storage_counter,96,48,0,replaced: source detail and/or cutout quality
+interior_tavern_counter,96,48,0,replaced: source detail and/or cutout quality
+interior_traveler_trunk,48,96,0,replaced: source detail and/or cutout quality
+interior_apothecary_storage,1417,1110,0,retained in this batch; see review scope and limitations
+interior_apothecary_worktop,1860,845,0,retained in this batch; see review scope and limitations
+interior_archive_lectern,1214,1295,0,retained in this batch; see review scope and limitations
+interior_archive_storage,1430,1100,0,retained in this batch; see review scope and limitations
+interior_archive_worktop,1870,841,0,retained in this batch; see review scope and limitations
+interior_bakehouse_storage,1430,1100,0,retained in this batch; see review scope and limitations
+interior_bakehouse_worktop,1860,846,0,retained in this batch; see review scope and limitations
+interior_joinery_storage,1430,1100,0,retained in this batch; see review scope and limitations
+interior_joinery_worktop,1860,846,0,retained in this batch; see review scope and limitations
+interior_oak_support_pillar,1024,1536,0,retained in this batch; see review scope and limitations
+interior_smith_hearth,1374,1145,0,retained in this batch; see review scope and limitations
+interior_smith_storage,1430,1100,0,retained in this batch; see review scope and limitations
+interior_smith_worktop,1860,845,0,retained in this batch; see review scope and limitations

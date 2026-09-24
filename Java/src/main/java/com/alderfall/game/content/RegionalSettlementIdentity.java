@@ -58,7 +58,8 @@ public final class RegionalSettlementIdentity {
                             new TownBuildingSpec("west_stacks", "guild", "Moonspire Map Stacks"),
                             new TownBuildingSpec("inner_west_row", "row", "Moonspire Common Granary"),
                             new TownBuildingSpec("west_scriptorium", "guild", "Public Scriptorium"),
-                            new TownBuildingSpec("south_mid_shop", "alchemist", "Illuminators' Workshop")
+                            new TownBuildingSpec("south_mid_shop", "alchemist", "Illuminators' Workshop"),
+                            new TownBuildingSpec("town_infill_home_0", "alchemist", "Moonspire Botanical Glasshouse")
                     ));
             case "town_reedwatch" -> new TownProfile(
                     "Flood warnings, reed craft, listening customs and maintained plank walks",
@@ -75,6 +76,7 @@ public final class RegionalSettlementIdentity {
                     List.of("First-Cup Court", "Cistern Ward"),
                     List.of(
                             new TownBuildingSpec("embermarket_sun_court", "sun_shrine", "Embermarket Sun Court"),
+                            new TownBuildingSpec("embermarket_water_ledger_annex", "hall", "Water Ledger Annex"),
                             new TownBuildingSpec("west_reliquary", "guild", "Water Ledger House"),
                             new TownBuildingSpec("inner_west_row", "row", "Embermarket Cistern House"),
                             new TownBuildingSpec("inner_east_row", "row", "Roadside Caravanserai"),
@@ -143,8 +145,18 @@ public final class RegionalSettlementIdentity {
         };
     }
 
+    /** Visual-only town replacements. Geometry continues to use buildingAsset. */
+    public static String townBuildingAsset(String mapId, CityBuilding building) {
+        return TownBuildingArt.asset(mapId, building);
+    }
+
     public static String buildingAsset(String mapId, CityBuilding building) {
         RegionalBuildingTypes.Type institution = RegionalBuildingTypes.type(mapId, building);
+        // Retained smaller town landmarks now serve related village institutions in their own regions.
+        if (institution == RegionalBuildingTypes.Type.FERRY_LODGE && mapId.equals("village_foxbarrow"))
+            return "town_briarbridge_bridge_court";
+        if (institution == RegionalBuildingTypes.Type.CISTERN_HOUSE && mapId.equals("village_sunmere"))
+            return "town_embermarket_sun_court";
         if (institution != null) return institution.asset;
         if (building == null || !List.of("house", "row").contains(building.style())) return "";
         if (Math.floorMod(building.key().hashCode(), 2) == 0) return "";

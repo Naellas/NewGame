@@ -1,0 +1,722 @@
+[
+  {
+    "id": "fire_flight",
+    "path": "Java/assets/sfx/fire_flight.wav",
+    "sha256": "b7e0d875d0145f78f900303b935da7aa3f8af28b0dcd63446ce5c402e7b1908b"
+  },
+  {
+    "id": "fire_explosion",
+    "path": "Java/assets/sfx/fire_explosion.wav",
+    "sha256": "601fb118c1b020d194000ad9f8ae7ff213d7c895c8833560a86b0f140bc7f38e"
+  },
+  {
+    "id": "ice_flight",
+    "path": "Java/assets/sfx/ice_flight.wav",
+    "sha256": "b369ff723ccb42faca41877e6285edf7b25f4325b5a73cece3d73f3397091ae2"
+  },
+  {
+    "id": "ice_shatter",
+    "path": "Java/assets/sfx/ice_shatter.wav",
+    "sha256": "04c447d9f3254fa6646b6f92768a37518136133537491b7056f614495a57a92f"
+  },
+  {
+    "id": "lightning_flight",
+    "path": "Java/assets/sfx/lightning_flight.wav",
+    "sha256": "8f45df948bbd9c9929cdf018572ac8c1921208854f16c624158411095c4b6936"
+  },
+  {
+    "id": "lightning_impact",
+    "path": "Java/assets/sfx/lightning_impact.wav",
+    "sha256": "cfcce3a453a735df770b6ce2ad9411f3afaf9f73b4c58699b18b22674f750034"
+  },
+  {
+    "id": "arcane_flight",
+    "path": "Java/assets/sfx/arcane_flight.wav",
+    "sha256": "b6a9a846355208563344ad7f136b7dd7d77f7a22721128c65435ac74641a9ba0"
+  },
+  {
+    "id": "arcane_impact",
+    "path": "Java/assets/sfx/arcane_impact.wav",
+    "sha256": "dc0a15ba38315bb2ecd23f6d6530808f09a8f0f6a093f18f1bf3cd06b0e8dbcf"
+  },
+  {
+    "id": "shadow_flight",
+    "path": "Java/assets/sfx/shadow_flight.wav",
+    "sha256": "6c22086fae121199f8dcec0130197eb07aebdc555dcd979e983dee41e41a0b39"
+  },
+  {
+    "id": "poison_flight",
+    "path": "Java/assets/sfx/poison_flight.wav",
+    "sha256": "861d997ce7476c390c38841c7d8188be670938f47d532f348ad9ed67176dc876"
+  },
+  {
+    "id": "root_flight",
+    "path": "Java/assets/sfx/root_flight.wav",
+    "sha256": "29c45fc98da7996d92aa07503b8c1473b71428f8f7d88353fa33e4ec20be5255"
+  },
+  {
+    "id": "holy_flight",
+    "path": "Java/assets/sfx/holy_flight.wav",
+    "sha256": "1f644274d8db1b2a96b47fa4ce7a406e2494bc66dac54cb12696f871c00bbfd8"
+  },
+  {
+    "id": "water_flight",
+    "path": "Java/assets/sfx/water_flight.wav",
+    "sha256": "55d9fefc761472ceda795d12f43c28e36eded17c84a4d30a9c19c27dbe863ab4"
+  },
+  {
+    "id": "wind_flight",
+    "path": "Java/assets/sfx/wind_flight.wav",
+    "sha256": "16ac9e66a105e326a5742182277ce99ba6c681cfd25990884a213656d8e50669"
+  },
+  {
+    "id": "blade_impact_1",
+    "path": "Java/assets/sfx/blade_impact_1.wav",
+    "sha256": "90e98c59aa792bb161786f8612d1a20c0c8a9275d28b21d246d3535e3d9f3403"
+  },
+  {
+    "id": "blade_impact_2",
+    "path": "Java/assets/sfx/blade_impact_2.wav",
+    "sha256": "00d0a572749963b3e87cdeca443ac880cf8cd3cc67651db8c5fec409106a0175"
+  },
+  {
+    "id": "blade_impact_3",
+    "path": "Java/assets/sfx/blade_impact_3.wav",
+    "sha256": "79cd935defb6b6e914e2d6d4b56302f10990a16f7db3761a50182fcc2110bcec"
+  },
+  {
+    "id": "blunt_impact_1",
+    "path": "Java/assets/sfx/blunt_impact_1.wav",
+    "sha256": "fad5deaeafad691ef8dc90a895be86327b3f70bc0f3212488f92ada9d4536e1e"
+  },
+  {
+    "id": "blunt_impact_2",
+    "path": "Java/assets/sfx/blunt_impact_2.wav",
+    "sha256": "118342db9d486d05bc0ce470699cdb3b263f638329e2055c22f0696d7474d6af"
+  },
+  {
+    "id": "blunt_impact_3",
+    "path": "Java/assets/sfx/blunt_impact_3.wav",
+    "sha256": "a999b48b03670ada06824a7ebce3fb29bdb85382c498b5feb6f4d531ff54b843"
+  },
+  {
+    "id": "arrow_impact_1",
+    "path": "Java/assets/sfx/arrow_impact_1.wav",
+    "sha256": "6bb78f68dd534d7f755bd06a64a350a9c009f68bf7731450aa6218540576a859"
+  },
+  {
+    "id": "arrow_impact_2",
+    "path": "Java/assets/sfx/arrow_impact_2.wav",
+    "sha256": "81e64727c811d51af551b81cb161b4140a41b04604b7fb5750fbae4df9d6591a"
+  },
+  {
+    "id": "arrow_impact_3",
+    "path": "Java/assets/sfx/arrow_impact_3.wav",
+    "sha256": "2dac7439b83faa4c8799b694903ce6bb713087e87cc8b065ae4a082d7bfab393"
+  },
+  {
+    "id": "shadow_impact_1",
+    "path": "Java/assets/sfx/shadow_impact_1.wav",
+    "sha256": "97722e5ef39930c45e34635e94dbcde59b265377a5d16b5e9fb8db566d09f809"
+  },
+  {
+    "id": "shadow_impact_2",
+    "path": "Java/assets/sfx/shadow_impact_2.wav",
+    "sha256": "e503eae3bdb3a6b5af6cb4f80ce119be93231e19cbc0e3efb407bfd2ca158ebd"
+  },
+  {
+    "id": "shadow_impact_3",
+    "path": "Java/assets/sfx/shadow_impact_3.wav",
+    "sha256": "8ab0da6e2063c65545b74d9eb25621202384e9507cae361acd1602dc6471e3ff"
+  },
+  {
+    "id": "poison_impact_1",
+    "path": "Java/assets/sfx/poison_impact_1.wav",
+    "sha256": "9c693b59ddd232d80da1acfc7c50f0c9bb2740774e6a094db64ada5599dedf12"
+  },
+  {
+    "id": "poison_impact_2",
+    "path": "Java/assets/sfx/poison_impact_2.wav",
+    "sha256": "b58e346565283fe2bbd25df287ebd95fd0769501ba3dedc3809855f90ce10484"
+  },
+  {
+    "id": "poison_impact_3",
+    "path": "Java/assets/sfx/poison_impact_3.wav",
+    "sha256": "424a3b6867ef90fbc55e446aa9d780a906fcc79cc1e3c5d000a2b8639c092357"
+  },
+  {
+    "id": "root_impact_1",
+    "path": "Java/assets/sfx/root_impact_1.wav",
+    "sha256": "ada3ee693efd543d7d2ca22d2e71bfce8d9ca85c03a61a4405928a46301b15bc"
+  },
+  {
+    "id": "root_impact_2",
+    "path": "Java/assets/sfx/root_impact_2.wav",
+    "sha256": "448fa71e6adac959a4fc838c0585d88fab3ee328410bed767133ab7feae87194"
+  },
+  {
+    "id": "root_impact_3",
+    "path": "Java/assets/sfx/root_impact_3.wav",
+    "sha256": "70cacbef6315ff95e4a6ef0c7ce4b83bab0ddb46c4198bbf74f477a726a173e4"
+  },
+  {
+    "id": "holy_impact_1",
+    "path": "Java/assets/sfx/holy_impact_1.wav",
+    "sha256": "bf9078e344b9357adec0dec967d0e47e486dbfa10c9a2059423bfd2215f098c7"
+  },
+  {
+    "id": "holy_impact_2",
+    "path": "Java/assets/sfx/holy_impact_2.wav",
+    "sha256": "93f742a619b35d648679cb0d148514fbfe87f0e4840566c11f109aa0c5f559eb"
+  },
+  {
+    "id": "holy_impact_3",
+    "path": "Java/assets/sfx/holy_impact_3.wav",
+    "sha256": "6c5cc6efc3255de467b67953b171b26733ce8b7441a7834bf27595372c0e272c"
+  },
+  {
+    "id": "heal_impact_1",
+    "path": "Java/assets/sfx/heal_impact_1.wav",
+    "sha256": "33f0d65235f63198b55e98403657512f991fdbcee2beb3071646868b06541aa3"
+  },
+  {
+    "id": "heal_impact_2",
+    "path": "Java/assets/sfx/heal_impact_2.wav",
+    "sha256": "a44dbb9b3d5567db2556166b21b3c068eb09d6848d4f41f98ac3eda9b44a0cb8"
+  },
+  {
+    "id": "heal_impact_3",
+    "path": "Java/assets/sfx/heal_impact_3.wav",
+    "sha256": "3e3a3c99ae744213471fc1071079004458541c77e7099f4595eb70ffcb2b8125"
+  },
+  {
+    "id": "ward_impact_1",
+    "path": "Java/assets/sfx/ward_impact_1.wav",
+    "sha256": "6120437e380f8284d5b2e899bf235cfb69c5daedf6b34641291d2fe5d1d74757"
+  },
+  {
+    "id": "ward_impact_2",
+    "path": "Java/assets/sfx/ward_impact_2.wav",
+    "sha256": "326b79cc021dae0c5323c3d740beae6b53ab08acbceeee47ef223d2c30078669"
+  },
+  {
+    "id": "ward_impact_3",
+    "path": "Java/assets/sfx/ward_impact_3.wav",
+    "sha256": "772b09e3abd6358a8088b505391cdd329f53ff9a2990cf503b6da5457c2b9f21"
+  },
+  {
+    "id": "water_impact_1",
+    "path": "Java/assets/sfx/water_impact_1.wav",
+    "sha256": "50a5bfe5181e03663fe2d755fd6c041d96ad6edbe050e84b03c66141a3405b46"
+  },
+  {
+    "id": "water_impact_2",
+    "path": "Java/assets/sfx/water_impact_2.wav",
+    "sha256": "6717a02763264c50299373de36cef99e45f7a7dea84b3bc8dbc35e59eee07947"
+  },
+  {
+    "id": "water_impact_3",
+    "path": "Java/assets/sfx/water_impact_3.wav",
+    "sha256": "129f09626a2c1d6ad286579c5b5bd0f411187237eae1c07a91bed9a06917c906"
+  },
+  {
+    "id": "wind_impact_1",
+    "path": "Java/assets/sfx/wind_impact_1.wav",
+    "sha256": "eb5cd61b4f5ae81d15bae9a5feb0efe3d8ccd2bca26586b2977650663b44f983"
+  },
+  {
+    "id": "wind_impact_2",
+    "path": "Java/assets/sfx/wind_impact_2.wav",
+    "sha256": "f33bc9f423f30cbcc17893b353472fe957b00bbab5ed29b97fe7a419e624df3b"
+  },
+  {
+    "id": "wind_impact_3",
+    "path": "Java/assets/sfx/wind_impact_3.wav",
+    "sha256": "046074c9a1d43ffdf182de6b466bc566019b1b48cc2336cc800c215772eac379"
+  },
+  {
+    "id": "bone_impact_1",
+    "path": "Java/assets/sfx/bone_impact_1.wav",
+    "sha256": "907aa0ee9adfcae140123fd7c18920373a3a9e1da25c22e79bc6de3f71170386"
+  },
+  {
+    "id": "bone_impact_2",
+    "path": "Java/assets/sfx/bone_impact_2.wav",
+    "sha256": "06df433272162e9d434f88a8670e04612a85b66ec399a6aa0f63a445ee980090"
+  },
+  {
+    "id": "bone_impact_3",
+    "path": "Java/assets/sfx/bone_impact_3.wav",
+    "sha256": "3f013fbedeeb383473c7359b4b1bed2ae279ab92f541bc0818cf77980ae61bf2"
+  },
+  {
+    "id": "bite_impact_1",
+    "path": "Java/assets/sfx/bite_impact_1.wav",
+    "sha256": "87148b18fb4ec56690ab088e7f0522766585b0fdc401150275ab9063e7a5b36d"
+  },
+  {
+    "id": "bite_impact_2",
+    "path": "Java/assets/sfx/bite_impact_2.wav",
+    "sha256": "bd01f427579e61b431ef04d5591bbd3991044253d9081c3e974b731c67a0190c"
+  },
+  {
+    "id": "bite_impact_3",
+    "path": "Java/assets/sfx/bite_impact_3.wav",
+    "sha256": "0b8ce68c39eafe9150bc0a45532ffdeed119e9edc6c9fd56b7f18f69e5b93cfc"
+  },
+  {
+    "id": "claw_impact_1",
+    "path": "Java/assets/sfx/claw_impact_1.wav",
+    "sha256": "30ecb4cec2eeeb5f0cce0bed767d21ac72194319f4eff7a3f7f1d95390b173b0"
+  },
+  {
+    "id": "claw_impact_2",
+    "path": "Java/assets/sfx/claw_impact_2.wav",
+    "sha256": "1e7b7ad9f1dd171c97100aad59609a288e10d69a1cdcdf693fad6663132a4121"
+  },
+  {
+    "id": "claw_impact_3",
+    "path": "Java/assets/sfx/claw_impact_3.wav",
+    "sha256": "b9fd21e80fa9b60246b1284d73d1538da78e19ea8da4082f1000b37b392c0783"
+  },
+  {
+    "id": "heavy_impact_1",
+    "path": "Java/assets/sfx/heavy_impact_1.wav",
+    "sha256": "670f0dcbce0cbe64526f2521793b98c4aca1f2866f15dda706cf014e2f64bc1a"
+  },
+  {
+    "id": "heavy_impact_2",
+    "path": "Java/assets/sfx/heavy_impact_2.wav",
+    "sha256": "71925cfdd7be2a626bd1ef081561272b84ca75107513161cbe24e19c7e18dadd"
+  },
+  {
+    "id": "heavy_impact_3",
+    "path": "Java/assets/sfx/heavy_impact_3.wav",
+    "sha256": "7201bd013d00d56323cb773c3701c3f4e4ad277131dd0aacc52c8194615bee6f"
+  },
+  {
+    "id": "blade_swing_1",
+    "path": "Java/assets/sfx/blade_swing_1.wav",
+    "sha256": "b9b7d7e3d8e100ed39d8cec2a85e1564056d6e1f6bb3e72b74924404677f87e0"
+  },
+  {
+    "id": "blade_swing_2",
+    "path": "Java/assets/sfx/blade_swing_2.wav",
+    "sha256": "ccbb86bcd5ff65d67f6120d297d4ddb351723c97bf133bb3954d2e1baf5e57b1"
+  },
+  {
+    "id": "blade_swing_3",
+    "path": "Java/assets/sfx/blade_swing_3.wav",
+    "sha256": "4207ee82ccb91cae30bfac28e199727e13b711fb1456aee8fe39ef758411be39"
+  },
+  {
+    "id": "blunt_swing_1",
+    "path": "Java/assets/sfx/blunt_swing_1.wav",
+    "sha256": "fb40e11bf791e557d3554c3d62536754c6bd5106860cd3a583bad733d2fe8703"
+  },
+  {
+    "id": "blunt_swing_2",
+    "path": "Java/assets/sfx/blunt_swing_2.wav",
+    "sha256": "e23d067e88edecd5b643588c9899c878d40be2df99be507b2a4cb5790088bafe"
+  },
+  {
+    "id": "blunt_swing_3",
+    "path": "Java/assets/sfx/blunt_swing_3.wav",
+    "sha256": "4195933227c82a31c8d6c692ab5fff6218adc16d33a65357a330ceb48c76f49a"
+  },
+  {
+    "id": "arrow_release_1",
+    "path": "Java/assets/sfx/arrow_release_1.wav",
+    "sha256": "2ba3d8f88b24de4aa49da507f11e4b31ae699df4e15b8038faad27f4166be469"
+  },
+  {
+    "id": "arrow_release_2",
+    "path": "Java/assets/sfx/arrow_release_2.wav",
+    "sha256": "82678faf073ea5c85aa500a71f422ed9b29acefc0639382e794d55a7f74c0432"
+  },
+  {
+    "id": "arrow_release_3",
+    "path": "Java/assets/sfx/arrow_release_3.wav",
+    "sha256": "5e54aec375f6bc99884cedc1a351907c4d5b240e6aebfb2fbe56abb18f8ea61b"
+  },
+  {
+    "id": "monster_growl_1",
+    "path": "Java/assets/sfx/monster_growl_1.wav",
+    "sha256": "56033b08ca631202b786738213630ba79f34cab1cb1ff33cda8d28927bb11008"
+  },
+  {
+    "id": "monster_growl_2",
+    "path": "Java/assets/sfx/monster_growl_2.wav",
+    "sha256": "f6a6f6af2c7e6ec273b11789c75e2c4f1c93a0cfb3656d32230a736503efdd25"
+  },
+  {
+    "id": "monster_growl_3",
+    "path": "Java/assets/sfx/monster_growl_3.wav",
+    "sha256": "e3adffd58c8e17dd5db466d54f0549b17b5d5b5eb24b0f323cd64ef3bb935898"
+  },
+  {
+    "id": "monster_roar_1",
+    "path": "Java/assets/sfx/monster_roar_1.wav",
+    "sha256": "6008809b7c4d21d9be2812345c6d1b862368f20cfeb977396b33cc474e411aad"
+  },
+  {
+    "id": "monster_roar_2",
+    "path": "Java/assets/sfx/monster_roar_2.wav",
+    "sha256": "097f5842636f816fae9004ff91de3b5e577d8e1c40310f9a94bb1942db5d8051"
+  },
+  {
+    "id": "monster_roar_3",
+    "path": "Java/assets/sfx/monster_roar_3.wav",
+    "sha256": "2b22b4f08117ed808d1b281d40f9c36229d7ec1b99183a91fc573033cd99550e"
+  },
+  {
+    "id": "monster_hiss_1",
+    "path": "Java/assets/sfx/monster_hiss_1.wav",
+    "sha256": "8b37f49d9c733bfc8f9d7ecc2e841e9bc7c95856c2bce50ceb926ccdc9f58191"
+  },
+  {
+    "id": "monster_hiss_2",
+    "path": "Java/assets/sfx/monster_hiss_2.wav",
+    "sha256": "34591c371c0a7aa42fb57f8efc4e19659b27e424c187ec253284af8876a07dec"
+  },
+  {
+    "id": "monster_hiss_3",
+    "path": "Java/assets/sfx/monster_hiss_3.wav",
+    "sha256": "42375deb4f41de1829ba7f9267441d941700e295f6e6a132a67b64da039f8805"
+  },
+  {
+    "id": "monster_rattle_1",
+    "path": "Java/assets/sfx/monster_rattle_1.wav",
+    "sha256": "f12aa72e49e84a03cefb58ee7fb1f5d3cb1279713b2816a1bf258406cfa20015"
+  },
+  {
+    "id": "monster_rattle_2",
+    "path": "Java/assets/sfx/monster_rattle_2.wav",
+    "sha256": "63150401a4b77b76f48a77bf5e1221f35f4def11c3d4a04e94a830bb4ad718b5"
+  },
+  {
+    "id": "monster_rattle_3",
+    "path": "Java/assets/sfx/monster_rattle_3.wav",
+    "sha256": "1f21737967edefbe8c3a6e06331054a677955bf0397e319d3dd50b2003f74821"
+  },
+  {
+    "id": "foot_grass_1",
+    "path": "Java/assets/sfx/foot_grass_1.wav",
+    "sha256": "17a6413c91fce2d7d87c608dbe3c80ed835948897174c7aa0f14fdb5c2035de9"
+  },
+  {
+    "id": "foot_grass_2",
+    "path": "Java/assets/sfx/foot_grass_2.wav",
+    "sha256": "95e0d21dfc362af11b3741c0e663dcbcb9a63815e5b5a03cad11d9aa773cb692"
+  },
+  {
+    "id": "foot_grass_3",
+    "path": "Java/assets/sfx/foot_grass_3.wav",
+    "sha256": "4dc6c8cbfa70c763144530955785d5186ca5e467d0d78a499da7dff130981432"
+  },
+  {
+    "id": "foot_grass_4",
+    "path": "Java/assets/sfx/foot_grass_4.wav",
+    "sha256": "548e793523ea2546d2364d38ab3beb6abe9fe96f24077e15af9dc20cb48d3edf"
+  },
+  {
+    "id": "foot_grass_5",
+    "path": "Java/assets/sfx/foot_grass_5.wav",
+    "sha256": "af2d7d80c6472b906d3b9a61bc22e7d434b4736dcb68c798c9022436dca5a378"
+  },
+  {
+    "id": "foot_grass_6",
+    "path": "Java/assets/sfx/foot_grass_6.wav",
+    "sha256": "29f0ebab5c8c7fd3d1e20a04aae62f172ba899059fdd4c48d2fa575feb2b011b"
+  },
+  {
+    "id": "foot_grass_7",
+    "path": "Java/assets/sfx/foot_grass_7.wav",
+    "sha256": "1ee30dd57a5c2f58a288966d2e86cf8bb4581a11f60403fd007f2fe77826aeae"
+  },
+  {
+    "id": "foot_grass_8",
+    "path": "Java/assets/sfx/foot_grass_8.wav",
+    "sha256": "db27257a9560b79a36943cb8bbc453a7e6a0cf4e531cdfcdc1eb2908a932880f"
+  },
+  {
+    "id": "foot_dirt_1",
+    "path": "Java/assets/sfx/foot_dirt_1.wav",
+    "sha256": "f10f8fc8a38aa134efd38eaa518b0096a8346fc7c4af2f2b07e1a52f5617004e"
+  },
+  {
+    "id": "foot_dirt_2",
+    "path": "Java/assets/sfx/foot_dirt_2.wav",
+    "sha256": "91befa2fbea7f564e9bb99fb2918859eac51199a81983b2c71664e5b2ea2524f"
+  },
+  {
+    "id": "foot_dirt_3",
+    "path": "Java/assets/sfx/foot_dirt_3.wav",
+    "sha256": "dd9c31fb518ca6b8259546d04e1fb5838819a980ec4c12be8136a33641334d18"
+  },
+  {
+    "id": "foot_dirt_4",
+    "path": "Java/assets/sfx/foot_dirt_4.wav",
+    "sha256": "d9094b64ee1dfe36ab7bc250a3e707618ab839b3ebc56f5634bee36ff9094069"
+  },
+  {
+    "id": "foot_dirt_5",
+    "path": "Java/assets/sfx/foot_dirt_5.wav",
+    "sha256": "59b85e59562536f4e63c70b41719960c5d474dcf5fef5d0f9b88870803e55983"
+  },
+  {
+    "id": "foot_dirt_6",
+    "path": "Java/assets/sfx/foot_dirt_6.wav",
+    "sha256": "0b3b175ad4ca71002507e7dad1f2db3ae9c66e730ac03c4e8bf673661be754b0"
+  },
+  {
+    "id": "foot_dirt_7",
+    "path": "Java/assets/sfx/foot_dirt_7.wav",
+    "sha256": "09ae5f87b786f37e063c8af36f50c7b613456bbef04cf7499feae8f079f67836"
+  },
+  {
+    "id": "foot_dirt_8",
+    "path": "Java/assets/sfx/foot_dirt_8.wav",
+    "sha256": "4a72d18b3b5c32b6e30236c51d127d50e243acfaccf6be5d27c299bba85458e4"
+  },
+  {
+    "id": "foot_stone_1",
+    "path": "Java/assets/sfx/foot_stone_1.wav",
+    "sha256": "689b144a03d7b7ddde992bbf80a2113abf006fd92dd3917c4360629ed0e872da"
+  },
+  {
+    "id": "foot_stone_2",
+    "path": "Java/assets/sfx/foot_stone_2.wav",
+    "sha256": "c0c86c59f8a3d33f29340f1253869ecb8d5b6e324dfcec6c8021fa9fb53e9608"
+  },
+  {
+    "id": "foot_stone_3",
+    "path": "Java/assets/sfx/foot_stone_3.wav",
+    "sha256": "045abc926eae88da7f15e244cc4cc8bc37e32ee5900a79408ad0f303f6e292e6"
+  },
+  {
+    "id": "foot_stone_4",
+    "path": "Java/assets/sfx/foot_stone_4.wav",
+    "sha256": "5a87a878c781695cc718991aab0eed05243a56c94c7909c9c097a43600cd4ab7"
+  },
+  {
+    "id": "foot_stone_5",
+    "path": "Java/assets/sfx/foot_stone_5.wav",
+    "sha256": "0a0331bf001df23926d1b8c8c0bec21f5c00f1083d86129fa5915881ec3b6323"
+  },
+  {
+    "id": "foot_stone_6",
+    "path": "Java/assets/sfx/foot_stone_6.wav",
+    "sha256": "88a59dac2310c6a39009384275613183fe356684c0104374b74c58a20361a576"
+  },
+  {
+    "id": "foot_stone_7",
+    "path": "Java/assets/sfx/foot_stone_7.wav",
+    "sha256": "b7c73f7d58d54ca7e09f96895f923f18c4347a009d0f3d3436a870d4b40324cf"
+  },
+  {
+    "id": "foot_stone_8",
+    "path": "Java/assets/sfx/foot_stone_8.wav",
+    "sha256": "6f9811c6f9c712abd8b092f6e504caebdf3d17c93f20fd7aae20fbe70dc2fa61"
+  },
+  {
+    "id": "foot_wood_1",
+    "path": "Java/assets/sfx/foot_wood_1.wav",
+    "sha256": "e588579f3203597d46d9a95f44d05cbd7cb794bc61b19858cc7299740ef75b38"
+  },
+  {
+    "id": "foot_wood_2",
+    "path": "Java/assets/sfx/foot_wood_2.wav",
+    "sha256": "9fd1a429373928a36b233967daa66997dc3e1e457f6eb2eddfea00be552f53b4"
+  },
+  {
+    "id": "foot_wood_3",
+    "path": "Java/assets/sfx/foot_wood_3.wav",
+    "sha256": "68f2605dd0651d9624cecd536e4a332dee6002fda566187eff0ee2b2f66c0040"
+  },
+  {
+    "id": "foot_wood_4",
+    "path": "Java/assets/sfx/foot_wood_4.wav",
+    "sha256": "afceb13074cf791124d6851b48121f57c95308553b4e34e2118580eed11f5040"
+  },
+  {
+    "id": "foot_wood_5",
+    "path": "Java/assets/sfx/foot_wood_5.wav",
+    "sha256": "064127304a17dca34d295fc7007441c48e2bcd9fccba71ab6399f0c52c9622d1"
+  },
+  {
+    "id": "foot_wood_6",
+    "path": "Java/assets/sfx/foot_wood_6.wav",
+    "sha256": "304dcadc88f4cf5d41780e95bd6d2506a1e6318d2894cc663ad59fb09318cbc8"
+  },
+  {
+    "id": "foot_wood_7",
+    "path": "Java/assets/sfx/foot_wood_7.wav",
+    "sha256": "5976a02be19eecc3698385649986f93c0b0c3d56c1c5b7ec0950834b124edc93"
+  },
+  {
+    "id": "foot_wood_8",
+    "path": "Java/assets/sfx/foot_wood_8.wav",
+    "sha256": "86a34f0e1cf6732d5e445ec18d50c8ab3827974a53862bbcce0ddc13d7ba0b34"
+  },
+  {
+    "id": "foot_sand_1",
+    "path": "Java/assets/sfx/foot_sand_1.wav",
+    "sha256": "075301292a1ddb07b89d6e8cec0caba8075c919cf55058ba03aa017fa40ec8e0"
+  },
+  {
+    "id": "foot_sand_2",
+    "path": "Java/assets/sfx/foot_sand_2.wav",
+    "sha256": "0377e0f3408bb4d126b4b3674ab6e522cec13964cc56524a8ee4611974fb72de"
+  },
+  {
+    "id": "foot_sand_3",
+    "path": "Java/assets/sfx/foot_sand_3.wav",
+    "sha256": "5b4c8fc57197f417ee1ccf1b822fef4cb5ecd5c05e291365833b12552590bece"
+  },
+  {
+    "id": "foot_sand_4",
+    "path": "Java/assets/sfx/foot_sand_4.wav",
+    "sha256": "928e3584e524df199776ea8cb31b192e3a6887f11c343cf7f9b1c3d027ff1320"
+  },
+  {
+    "id": "foot_sand_5",
+    "path": "Java/assets/sfx/foot_sand_5.wav",
+    "sha256": "6c3b4095e7b8b5135b701a9da1e56647895d724df9935309e83b3e90ec23f67a"
+  },
+  {
+    "id": "foot_sand_6",
+    "path": "Java/assets/sfx/foot_sand_6.wav",
+    "sha256": "ea93461691a0c76eac8439a70fcc6f356b6fc173fe60265fac4051d52b49c7f6"
+  },
+  {
+    "id": "foot_sand_7",
+    "path": "Java/assets/sfx/foot_sand_7.wav",
+    "sha256": "0f5222abc85950e5d2bb05b62d5ad19e15b02c49869b9574672c96ade660fb82"
+  },
+  {
+    "id": "foot_sand_8",
+    "path": "Java/assets/sfx/foot_sand_8.wav",
+    "sha256": "e1cc080a6de7afa40a5aa4b3b87b8aa8244e38b6cf9c7cfd9d96e55820fbbc35"
+  },
+  {
+    "id": "foot_snow_1",
+    "path": "Java/assets/sfx/foot_snow_1.wav",
+    "sha256": "746cb86717477a34c9fb3d3e22b0075a3e58581a27d23a951a80f54a85f0e0e5"
+  },
+  {
+    "id": "foot_snow_2",
+    "path": "Java/assets/sfx/foot_snow_2.wav",
+    "sha256": "3d728296ef5b2fabc1775857ec5f599ca45a3b8e55753071a732ee0f30777b15"
+  },
+  {
+    "id": "foot_snow_3",
+    "path": "Java/assets/sfx/foot_snow_3.wav",
+    "sha256": "6eb5ab9d532cbace716041bf60a90b9252c7770ca2c208390ba971c8d087cf7f"
+  },
+  {
+    "id": "foot_snow_4",
+    "path": "Java/assets/sfx/foot_snow_4.wav",
+    "sha256": "b762c8695b2df825f1800f246712c8ff437e1dd50b7722e07150bf331b6f4f7b"
+  },
+  {
+    "id": "foot_snow_5",
+    "path": "Java/assets/sfx/foot_snow_5.wav",
+    "sha256": "5b65055ee43e26a4fb66c4f524cda48a3d4a7184209c917840e4c1dc981e3016"
+  },
+  {
+    "id": "foot_snow_6",
+    "path": "Java/assets/sfx/foot_snow_6.wav",
+    "sha256": "f36cdd83558830c181208ccb1a6ef9377f548771d9cda9355d601422ed6d408d"
+  },
+  {
+    "id": "foot_snow_7",
+    "path": "Java/assets/sfx/foot_snow_7.wav",
+    "sha256": "88dabd49e46b1a5aefa85d62225b92d104ed2fb261f92d19cd4590fc2237dfad"
+  },
+  {
+    "id": "foot_snow_8",
+    "path": "Java/assets/sfx/foot_snow_8.wav",
+    "sha256": "3adad7926caca7ee2478bf3b4844661e26ff598d0efaee3ebd22d34192be8589"
+  },
+  {
+    "id": "foot_water_1",
+    "path": "Java/assets/sfx/foot_water_1.wav",
+    "sha256": "cb1e811c4acb2063a347e63fc8b38d84f951da12a3ead91ce83be138cadaeb23"
+  },
+  {
+    "id": "foot_water_2",
+    "path": "Java/assets/sfx/foot_water_2.wav",
+    "sha256": "1395c0ab470fdda38db080a5d20a7a357f9c6bfc6eba4c2794d18166379c42b1"
+  },
+  {
+    "id": "foot_water_3",
+    "path": "Java/assets/sfx/foot_water_3.wav",
+    "sha256": "90d15cf0ebba1a92b852d6bf14f2ad38593bae3a06b53999ec8642e362ecf966"
+  },
+  {
+    "id": "foot_water_4",
+    "path": "Java/assets/sfx/foot_water_4.wav",
+    "sha256": "aed3ab6e4fc74dac1e83d0bb56634cfa5bcffdef69578d1981aa14a6384b40ea"
+  },
+  {
+    "id": "foot_water_5",
+    "path": "Java/assets/sfx/foot_water_5.wav",
+    "sha256": "330adc77378efb2d0268c2cd31e386c39a64755cf50daa5c6878ffd4c2ad1570"
+  },
+  {
+    "id": "foot_water_6",
+    "path": "Java/assets/sfx/foot_water_6.wav",
+    "sha256": "499b4ea6162cc010d88a75284cce6597f26d464f2db3526810b388e2e8cc2b50"
+  },
+  {
+    "id": "foot_water_7",
+    "path": "Java/assets/sfx/foot_water_7.wav",
+    "sha256": "adc70210ac87ece60496b017de5bd967bea338a2834dfb35f30bdbadc3dab883"
+  },
+  {
+    "id": "foot_water_8",
+    "path": "Java/assets/sfx/foot_water_8.wav",
+    "sha256": "859d2ed85cedf90a124e5e9ae1a06080ec1da6e5282140d479853f165b71dc96"
+  },
+  {
+    "id": "foot_cloth_1",
+    "path": "Java/assets/sfx/foot_cloth_1.wav",
+    "sha256": "0da53a5a93f97c1a1c8d6a4cdfa0bb67b3ba021e4c54fecf44ec45c1909fd0e2"
+  },
+  {
+    "id": "foot_cloth_2",
+    "path": "Java/assets/sfx/foot_cloth_2.wav",
+    "sha256": "ac6db97c109ff926beb52a2acf07c9eeb2c5fa848465c5c4d49249553f52d895"
+  },
+  {
+    "id": "foot_cloth_3",
+    "path": "Java/assets/sfx/foot_cloth_3.wav",
+    "sha256": "b2eaaa6963adfb3092c385816492d2c10d174b00a3ba8c658e7f9d7a3e099fea"
+  },
+  {
+    "id": "foot_cloth_4",
+    "path": "Java/assets/sfx/foot_cloth_4.wav",
+    "sha256": "e86ecafbafdabe3b18632b40e0b18af8ff11dd74a92b5fda37467de6cecbc443"
+  },
+  {
+    "id": "foot_cloth_5",
+    "path": "Java/assets/sfx/foot_cloth_5.wav",
+    "sha256": "e7b3d1fb57f60f3ac767dd42647024be8420e23f1ef3fea62920f273fd29d2fa"
+  },
+  {
+    "id": "foot_cloth_6",
+    "path": "Java/assets/sfx/foot_cloth_6.wav",
+    "sha256": "e6889ea2d7290ef15eb112ae5f3acbf3ac933bec29694b5eeaba7a1258261350"
+  },
+  {
+    "id": "foot_cloth_7",
+    "path": "Java/assets/sfx/foot_cloth_7.wav",
+    "sha256": "8f4e215ec6bc1f98c58aaeaccb7ca43ff4554092d0c74aee0f3a1e2a63102f85"
+  },
+  {
+    "id": "foot_cloth_8",
+    "path": "Java/assets/sfx/foot_cloth_8.wav",
+    "sha256": "31e4e219bc9957bdf8f7c8b241ae32a53bf6c02f25b7932e267c9fd7d66a381a"
+  }
+]

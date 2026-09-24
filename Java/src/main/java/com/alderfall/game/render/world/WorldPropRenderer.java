@@ -11,6 +11,10 @@ import java.awt.image.BufferedImage;
 
 public final class WorldPropRenderer {
     private final AssetStore assets;
+    private final ModularFences.Sprites fenceSprites = new ModularFences.Sprites();
+    private final ShrineEventVisuals.Sprites shrineSprites = new ShrineEventVisuals.Sprites();
+    private final ConnectedFurniture.Sprites furnitureSprites = new ConnectedFurniture.Sprites();
+    private final ConnectedBoundary.Sprites boundarySprites = new ConnectedBoundary.Sprites();
     private final GameState state;
     private final Effects effects;
     private final java.util.Map<BufferedImage, java.awt.Rectangle> surfaceInkBounds = new java.util.WeakHashMap<>();
@@ -36,11 +40,50 @@ public final class WorldPropRenderer {
         double depthY;
         double depthX;
         int depthLayer;
-        if (asset.startsWith("interior_")) {
+        if (ModularMarket.supports(asset)) {
+            int tile = context.tileSize();
+            drawW = tile * 2;
+            drawH = Math.round(tile * 1.5f);
+            bounds = new java.awt.Rectangle((prop.x() - context.camX()) * tile,
+                    (prop.y() - context.camY() + 1) * tile - drawH, drawW, drawH);
+            depthY = prop.y() + 1;
+            depthX = prop.x();
+            depthLayer = 1;
+        } else if (ConnectedBoundary.supports(asset)) {
+            int tile = context.tileSize();
+            drawW = tile; drawH = tile * 2;
+            bounds = new java.awt.Rectangle((prop.x() - context.camX()) * tile,
+                    (prop.y() - context.camY() - 1) * tile, drawW, drawH);
+            depthY = prop.y() + .75;
+            depthX = prop.x();
+            depthLayer = 1;
+        } else if (TownGardenArt.gate(asset) || TownGardenArt.fountain(asset)) {
+            int tile = context.tileSize();
+            boolean gate = TownGardenArt.gate(asset);
+            drawW = tile * 3; drawH = Math.round(tile * (gate ? 2.4f : 2.8f));
+            bounds = new java.awt.Rectangle(Math.round((prop.x() - context.camX() - (gate ? 1f : .5f)) * tile),
+                    (prop.y() - context.camY() + (gate ? 1 : 2)) * tile - drawH, drawW, drawH);
+            depthY = prop.y() + (gate ? 1 : 2);
+            depthX = prop.x();
+            depthLayer = 1;
+        } else if (ConnectedFurniture.outdoor(asset)) {
+            int tile = context.tileSize();
+            boolean gate = asset.equals("town_fence_gate");
+            boolean vertical = asset.endsWith("_v");
+            drawW = gate ? tile * 2 : vertical ? Math.round(tile * .55f) : tile;
+            drawH = Math.round(tile * (gate ? 1.35f : vertical ? 1.45f
+                    : asset.contains("stall") ? 1.6f : asset.contains("bench") ? .65f : .85f));
+            bounds = new java.awt.Rectangle((prop.x() - context.camX()) * tile + (tile - drawW) / 2,
+                    Math.round((prop.y() - context.camY() + (vertical ? 1.5f : 1f)) * tile) - drawH, drawW, drawH);
+            depthY = prop.y() + 1;
+            depthX = prop.x();
+            depthLayer = 1;
+        } else if (asset.startsWith("interior_")) {
             int[] footprint = state.world.interiorVisualFootprint(asset);
             bounds = interiorBounds(prop, asset, context.tileSize(), context.camX(), context.camY(),
                     drawW, drawH, footprint);
-            depthY = prop.y() + footprint[1] + (isInteriorTabletopAsset(asset) ? 0.1 : 0.0);
+            depthY = prop.y() + footprint[1] + (isInteriorTabletopAsset(asset) ? 0.1
+                    : isInteriorWallDecorAsset(asset) ? 0.02 : 0.0);
             depthX = prop.x();
             depthLayer = 0;
         } else {
@@ -51,7 +94,12 @@ public final class WorldPropRenderer {
             depthLayer = placement.kind() == PropPlacement.Kind.COVER
                     || asset.equals("location_overgrown_landing") ? 0 : 1;
         }
-        return new PropRenderData(prop, asset, placement, size, drawW, drawH, bounds, depthLayer, depthY, depthX);
+        bounds.translate((int)Math.round(prop.offsetX()*context.tileSize()/48.0),
+                (int)Math.round(prop.offsetY()*context.tileSize()/48.0));
+        depthX+=prop.offsetX()/48.0;
+        // Nudging a mounted picture changes its height, not which side of the wall it occupies.
+        if (!isInteriorWallDecorAsset(asset)) depthY+=prop.offsetY()/48.0;
+        return new PropRenderData(prop, asset, placement, size, bounds.width, bounds.height, bounds, depthLayer, depthY, depthX);
     }
 
     public void drawWorldProp(Graphics2D g, PropRenderData render, WorldRenderer.PropContext context) {
@@ -60,8 +108,14 @@ public final class WorldPropRenderer {
         if (isDisallowedSettlementOutdoorProp(asset)) {
             return;
         }
+        if (ModularMarket.supports(asset)) {
+            g.drawImage(placedImage(prop, render.width(), render.height()), render.bounds().x, render.bounds().y, null);
+            return;
+        }
         if (isVillageFenceAsset(asset)) {
-            drawVillageFenceProp(g, prop, context);
+            Graphics2D shifted=(Graphics2D)g.create();
+            shifted.translate(prop.offsetX()*context.tileSize()/48.0,prop.offsetY()*context.tileSize()/48.0);
+            drawVillageFenceProp(shifted, prop, context);shifted.dispose();
             return;
         }
         int size = render.size();
@@ -92,18 +146,31 @@ public final class WorldPropRenderer {
         if (naturalBlend) {
             drawPropGroundBlend(g, prop.x(), prop.y(), px, py, size, 0.20f, false);
         }
+        int joins = ConnectedBoundary.supports(asset)
+                ? ConnectedBoundary.connections(state.world, state.currentMapId, prop) : furnitureConnections(prop);
         if (castsPropShadow(asset)) {
-            BufferedImage image = propImage(asset, drawW, drawH);
-            effects.drawCasterShadow(g, image, "prop:" + asset + ":" + drawW + "x" + drawH,
+            BufferedImage image = placedImage(prop, drawW, drawH);
+            effects.drawCasterShadow(g, image, "prop:" + asset + ":join=" + joins + ":" + drawW + "x" + drawH,
                     px, py, drawW, drawH, false, 0.36f);
-            effects.drawShadow(g, px + drawW / 6, py + drawH - scaled(8), drawW * 2 / 3, scaled(8));
+            // Boundary canvases include transparent space below their ground node.
+            // A generic canvas-bottom ellipse makes continuous hedges look suspended.
+            if (!ConnectedBoundary.supports(asset))
+                effects.drawShadow(g, px + drawW / 6, py + drawH - scaled(8), drawW * 2 / 3, scaled(8));
         }
         if (asset.startsWith("interior_")) {
-            drawPropImage(g, asset, px, py, drawW, drawH, 1.0f);
+            g.drawImage(placedImage(prop, drawW, drawH), px, py, null);
+            String detail = FurnitureQuestContent.decoration(state, prop);
+            if (!detail.isEmpty()) {
+                int detailSize = Math.max(8, context.tileSize() / 2);
+                g.drawImage(assets.spriteFit(detail, detailSize, detailSize),
+                        px + (drawW - detailSize) / 2, py + drawH / 3 - detailSize / 2, null);
+            }
             drawInteriorEmbers(g, prop, px, py, drawW, drawH, context.frame());
             return;
         }
-        drawAnimatedPropImage(g, prop, asset, px, py, size, 1.0f, context);
+        if (ConnectedFurniture.outdoor(asset) || TownGardenArt.fountain(asset) || state.roamingEvents.shrineVariant(state.currentMapId, prop) >= 0)
+            g.drawImage(placedImage(prop, drawW, drawH), px, py, null);
+        else drawAnimatedPropImage(g, prop, asset, px, py, size, 1.0f, context);
         if (naturalBlend) {
             drawPropGroundVeil(g, prop.x(), prop.y(), px, py, size, 0.08f);
         }
@@ -120,11 +187,21 @@ public final class WorldPropRenderer {
 
     private java.awt.Rectangle interiorBounds(WorldProp prop, String asset, int tileSize, int camX, int camY,
                                                int width, int height, int[] footprint) {
+        if (isInteriorWallDecorAsset(asset)) {
+            var face = ConnectedInteriorWalls.bounds(state.world, state.currentMapId, prop.x(), prop.y(),
+                    (prop.x() - camX) * tileSize, (prop.y() - camY) * tileSize, tileSize);
+            int available = Math.max(1, Math.round(face.height * .78f));
+            if (height > available) { width = Math.max(1, width * available / height); height = available; }
+            // Center on plaster above the dado; the saved anchor stays on the wall cell.
+            int centerY = face.y + Math.round(face.height * .43f);
+            return new java.awt.Rectangle((prop.x() - camX) * tileSize + (footprint[0] * tileSize - width) / 2,
+                    centerY - height / 2, width, height);
+        }
         if (isInteriorTabletopAsset(asset)) {
             WorldProp surface = state.world.interiorSurfaceAt(state.currentMapId, prop.x(), prop.y());
             if (surface != null) {
                 java.awt.Rectangle support = interiorBounds(surface, tileSize, camX, camY);
-                BufferedImage sprite = propImage(surface.asset(), support.width, support.height);
+                BufferedImage sprite = placedImage(surface, support.width, support.height);
                 java.awt.Rectangle ink = surfaceInkBounds.computeIfAbsent(sprite, WorldPropRenderer::visibleBounds);
                 int[] supportFootprint = state.world.interiorVisualFootprint(surface.asset());
                 float slot = (prop.x() - surface.x() + .5f) / supportFootprint[0];
@@ -132,6 +209,10 @@ public final class WorldPropRenderer {
                 int baseY = support.y + ink.y + Math.round(ink.height * .30f);
                 return new java.awt.Rectangle(centerX - width / 2, baseY - Math.round(height * .75f), width, height);
             }
+        }
+        if (furnitureConnections(prop) != 0) {
+            return new java.awt.Rectangle((prop.x() - camX) * tileSize,
+                    (prop.y() - camY + footprint[1]) * tileSize - height, footprint[0] * tileSize, height);
         }
         return new java.awt.Rectangle((prop.x() - camX) * tileSize + (footprint[0] * tileSize - width) / 2
                 + interiorPropOffsetX(asset, tileSize),
@@ -155,6 +236,8 @@ public final class WorldPropRenderer {
     }
 
     public java.awt.Rectangle propBounds(WorldProp prop, int tileSize, int camX, int camY) {
+        if (ModularMarket.supports(prop.asset())) return new java.awt.Rectangle((prop.x()-camX)*tileSize,
+                (prop.y()-camY+1)*tileSize-Math.round(tileSize*1.5f), tileSize*2, Math.round(tileSize*1.5f));
         if (prop.asset().startsWith("interior_")) return interiorBounds(prop, tileSize, camX, camY);
         PropPlacement.Placement placement = PropPlacement.at(state.world, state.currentMapId, prop);
         int size = Math.max(1, (int) Math.round(propRenderSize(prop.asset(), prop.size(), tileSize) * placement.scale()));
@@ -219,10 +302,28 @@ public final class WorldPropRenderer {
         g.setComposite(oldComposite);
     }
 
+    private int furnitureConnections(WorldProp prop) {
+        if (!ConnectedFurniture.supports(prop.asset())) return 0;
+        int width = ConnectedFurniture.connectionWidth(prop.asset());
+        var neighbors = new java.util.ArrayList<WorldProp>();
+        neighbors.addAll(state.world.propsAt(state.currentMapId, prop.x() - width, prop.y()));
+        neighbors.addAll(state.world.propsAt(state.currentMapId, prop.x() + width, prop.y()));
+        return ConnectedFurniture.connections(prop, neighbors);
+    }
+
+    private BufferedImage placedImage(WorldProp prop, int width, int height) {
+        if (ConnectedBoundary.supports(prop.asset())) return boundarySprites.image(assets, prop.asset(), width,
+                ConnectedBoundary.connections(state.world, state.currentMapId, prop));
+        int mask = furnitureConnections(prop);
+        BufferedImage image = mask == 0 ? propImage(prop.asset(), width, height)
+                : furnitureSprites.image(assets, prop.asset(), width, height, mask);
+        return shrineSprites.tint(image, state.roamingEvents.shrineVariant(state.currentMapId, prop));
+    }
+
     public BufferedImage propImage(String asset, int width, int height) {
         return asset.startsWith("interior_wall_") && InteriorFurnishings.find(asset) == null
                 ? assets.image(asset, width, height)
-                : assets.spriteFit(asset, width, height);
+                : assets.placementSpriteFit(asset, width, height);
     }
 
     public int interiorPropWidth(String asset, int size) {
@@ -395,42 +496,14 @@ public final class WorldPropRenderer {
     }
 
     private void drawVillageFenceProp(Graphics2D g, WorldProp prop, WorldRenderer.PropContext context) {
-        int size = propRenderSize(prop.asset(), prop.size(), context.tileSize());
-        int px = (prop.x() - context.camX()) * context.tileSize() + (context.tileSize() - size) / 2;
-        int py = (prop.y() - context.camY()) * context.tileSize() + context.tileSize() - size;
-        String asset = "village_fence_" + String.format("%02d", villageFenceBits(prop.x(), prop.y()));
-        effects.drawShadow(g, px + size / 6, py + size - scaled(9), size * 2 / 3, scaled(7));
-        drawPropImage(g, asset, px, py, size, size, 1.0f);
-    }
-
-    private int villageFenceBits(int wx, int wy) {
-        int bits = 0;
-        if (connectsVillageFence(wx, wy - 1)) {
-            bits |= 1;
-        }
-        if (connectsVillageFence(wx, wy + 1)) {
-            bits |= 2;
-        }
-        if (connectsVillageFence(wx - 1, wy)) {
-            bits |= 4;
-        }
-        if (connectsVillageFence(wx + 1, wy)) {
-            bits |= 8;
-        }
-        return bits;
-    }
-
-    private boolean connectsVillageFence(int x, int y) {
-        for (WorldProp prop : state.world.propsAt(state.currentMapId, x, y)) {
-            if (isVillageFenceAsset(prop.asset())) {
-                return true;
-            }
-        }
-        return false;
+        int size = context.tileSize();
+        int x = (prop.x() - context.camX()) * size, y = (prop.y() - context.camY()) * size;
+        g.drawImage(fenceSprites.image(assets, prop.asset(), size,
+                ModularFences.connections(state.world, state.currentMapId, prop)), x, y, null);
     }
 
     private boolean isVillageFenceAsset(String asset) {
-        return "village_fence_auto".equals(asset) || (asset != null && asset.startsWith("village_fence_"));
+        return asset != null && !ModularFences.family(asset).isEmpty();
     }
 
     private boolean isDisallowedSettlementOutdoorProp(String asset) {

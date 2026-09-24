@@ -19,7 +19,7 @@ Spiders drop one Spider Silk. Bramble boars, swamp trolls and frost trolls drop 
 
 ## Sprite provenance
 
-Generated with the built-in image_gen tool. Asset: `Java/assets/items/tailoring_leather_materials_atlas.png`. Original preserved in Codex generated_images. Runtime atlas extraction supplies twelve material sprites, preserving alpha.
+Generated with the built-in image_gen tool. Asset: `Java/assets/items/atlases/tailoring_leather_materials_atlas.png`. Original preserved in Codex generated_images. Runtime atlas extraction supplies twelve material sprites, preserving alpha.
 
 Exact generation prompt:
 

@@ -4,6 +4,11 @@ import com.alderfall.game.map.WorldMap;
 import com.alderfall.game.map.WorldTransition;
 import com.alderfall.game.inventory.Equipment;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.util.Base64;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -19,6 +24,8 @@ import java.util.StringJoiner;
 public final class SaveSystem {
     private static final DateTimeFormatter SAVE_ID_TIME = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
     private static final int MAX_SAVED_COMPANION_MEMORIES = 18;
+    private record CachedSummary(java.nio.file.attribute.FileTime modified, long size, SaveSummary summary) {}
+    private final Map<Path, CachedSummary> summaryCache = new java.util.HashMap<>();
     private final Path savesDir;
     private final Path legacySavePath;
 
@@ -80,16 +87,24 @@ public final class SaveSystem {
     }
 
     public void save(GameState state, String saveName) throws IOException {
+        save(state, saveName, null);
+    }
+
+    public void save(GameState state, String saveName, BufferedImage snapshot) throws IOException {
         state.refreshPlayerVillageGrowth();
         String characterId = saveIdFor(state.player.name);
         String displaySaveName = saveName == null || saveName.isBlank() ? state.world.label(state.currentMapId) : saveName.strip();
         String saveId = nextSaveId(state, displaySaveName);
         Path path = savePath(saveId);
         Files.createDirectories(path.getParent());
-        writeSave(state, saveId, characterId, displaySaveName, path);
+        writeSave(state, saveId, characterId, displaySaveName, path, snapshot);
     }
 
     public void overwrite(GameState state, String saveId, String saveName) throws IOException {
+        overwrite(state, saveId, saveName, null);
+    }
+
+    public void overwrite(GameState state, String saveId, String saveName, BufferedImage snapshot) throws IOException {
         Path path = savePath(saveId);
         if (!Files.exists(path)) {
             throw new IOException("Save file no longer exists.");
@@ -98,11 +113,16 @@ public final class SaveSystem {
         String characterId = saveIdFor(state.player.name);
         String displaySaveName = saveName == null || saveName.isBlank() ? state.world.label(state.currentMapId) : saveName.strip();
         Files.createDirectories(path.getParent());
-        writeSave(state, saveId, characterId, displaySaveName, path);
+        writeSave(state, saveId, characterId, displaySaveName, path, snapshot);
     }
 
-    private void writeSave(GameState state, String saveId, String characterId, String displaySaveName, Path path) throws IOException {
+    private void writeSave(GameState state, String saveId, String characterId, String displaySaveName, Path path, BufferedImage snapshot) throws IOException {
         Properties props = new Properties();
+        if (snapshot != null) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            ImageIO.write(snapshot, "png", bytes);
+            props.setProperty("snapshot.png", Base64.getEncoder().encodeToString(bytes.toByteArray()));
+        }
         SavePosition position = normalizedSavePosition(state);
         props.setProperty("saveId", saveId);
         props.setProperty("characterId", characterId);
@@ -132,6 +152,7 @@ public final class SaveSystem {
         props.setProperty("gold", Integer.toString(state.player.gold));
         props.setProperty("inventory", writeInventory(state.player));
         state.chests.write(props);
+        state.shopInventory.write(props);
         props.setProperty("equipment", writeEquipment(state.player));
         props.setProperty("skillPoints", Integer.toString(state.player.skillPoints));
         props.setProperty("statPoints", Integer.toString(state.player.statPoints));
@@ -165,6 +186,9 @@ public final class SaveSystem {
         props.setProperty("villageStorage", writeVillageStorage(state));
         props.setProperty("playerVillageStage", Integer.toString(state.world.playerVillageStage()));
         props.setProperty("villageTiles", writeVillageTiles(state));
+        StringJoiner heights = new StringJoiner(",");
+        state.world.playerVillageHeights().forEach((p,h) -> heights.add(p.x()+":"+p.y()+":"+h));
+        props.setProperty("villageHeights", heights.toString());
         props.setProperty("villageBuildings", writeVillageBuildings(state));
         props.setProperty("villageBuildingLevels", writeVillageBuildingLevels(state));
         props.setProperty("villageProps", writeVillageProps(state));
@@ -179,7 +203,30 @@ public final class SaveSystem {
         try (var out = Files.newOutputStream(path)) {
             props.store(out, "Echoes of Alderfall Java save");
         }
+        summaryCache.remove(path);
         state.currentSaveId = saveId;
+    }
+
+    /** Missing or damaged previews never prevent loading an adventure. */
+    public BufferedImage readSnapshot(String saveId) {
+        try (var in = Files.newInputStream(savePath(saveId))) {
+            Properties props = new Properties();
+            props.load(in);
+            String encoded = props.getProperty("snapshot.png", "");
+            if (encoded.isEmpty() || encoded.length() > 4_000_000) return null;
+            try (var images = ImageIO.createImageInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(encoded)))) {
+                var readers = ImageIO.getImageReaders(images);
+                if (!readers.hasNext()) return null;
+                var reader = readers.next();
+                try {
+                    reader.setInput(images);
+                    if (reader.getWidth(0) > 1920 || reader.getHeight(0) > 1080) return null;
+                    return reader.read(0);
+                } finally { reader.dispose(); }
+            }
+        } catch (IOException | RuntimeException ex) {
+            return null;
+        }
     }
 
     private String nextSaveId(GameState state, String saveName) {
@@ -203,7 +250,9 @@ public final class SaveSystem {
         return load(state, saves.get(0).saveId());
     }
 
-    public boolean load(GameState state, String saveId) throws IOException {
+    public boolean load(GameState state,String saveId)throws IOException{return load(state,saveId,message -> {});}
+    public boolean load(GameState state, String saveId,java.util.function.Consumer<String> progress) throws IOException {
+        progress.accept("Reading save file...");
         Path path = savePath(saveId);
         if (!Files.exists(path) && "save".equals(saveId) && Files.exists(legacySavePath)) {
             path = legacySavePath;
@@ -215,7 +264,9 @@ public final class SaveSystem {
         try (var in = Files.newInputStream(path)) {
             props.load(in);
         }
+        progress.accept("Restoring character, inventory and storage...");
         state.chests.read(props);
+        state.shopInventory.read(props);
         state.activeChest = null;
         Actor player = readPlayer(props);
         state.player = player;
@@ -233,6 +284,7 @@ public final class SaveSystem {
         state.activeShop = null;
         state.dialogIndex = 0;
         state.mode = GameMode.EXPLORE;
+        progress.accept("Restoring settlement buildings, terrain and interiors...");
         state.world.clearPlayerVillageCustomizations();
         state.villageStorage.clear();
         state.villageWorkerRoles.clear();
@@ -244,8 +296,16 @@ public final class SaveSystem {
         readVillageBuildingLevels(props.getProperty("villageBuildingLevels", ""), state);
         readRemovedVillageProps(props.getProperty("removedVillageProps", ""), state);
         readVillageProps(props.getProperty("villageProps", ""), state);
+        for (String entry : props.getProperty("villageHeights", "").split(",")) {
+            String[] parts = entry.split(":");
+            if (parts.length != 3) continue;
+            try {
+                state.world.setPlayerVillageHeight(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Double.parseDouble(parts[2]));
+            } catch (NumberFormatException ignored) { }
+        }
         readVillageInteriorTiles(props.getProperty("villageInteriorTiles", ""), state);
         readVillageInteriorProps(props.getProperty("villageInteriorProps", ""), state);
+        progress.accept("Restoring quests and world changes...");
         state.ensureWeeklyNpcQuests();
         String questMigrationNote = readQuests(props.getProperty("quests", ""), state);
         readQuestBranchOutcomes(props.getProperty("questBranchOutcomes", ""), state);
@@ -265,6 +325,7 @@ public final class SaveSystem {
         readSettlementVisits(props.getProperty("settlementVisits", ""), state);
         readBuildingKnowledge(props.getProperty("buildingKnowledge", ""), state);
         readWorldAbilityTimers(props.getProperty("worldAbilityTimers", ""), state);
+        progress.accept("Restoring companions, relationships and workers...");
         readParty(props, state);
         readVillageAllies(props.getProperty("villageAllies", ""), state);
         readCompanionIds(props.getProperty("romancedCompanions", ""), state.romancedCompanionIds);
@@ -282,6 +343,7 @@ public final class SaveSystem {
                 y = WorldMap.START_POSITION.y();
             }
         }
+        progress.accept("Checking arrival position and travel access...");
         TilePoint safePosition = safePosition(state.world, mapId, x, y);
         state.currentMapId = mapId;
         state.playerX = safePosition.x();
@@ -292,6 +354,7 @@ public final class SaveSystem {
         state.syncAllSkillAbilities();
         state.refreshPlayerVillageGrowth();
         state.resetNpcRuntime();
+        progress.accept("Preparing nearby characters and encounters...");
         state.resetDungeonMonsterRuntime();
         state.status = "Loaded save." + questMigrationNote;
         return true;
@@ -332,6 +395,7 @@ public final class SaveSystem {
         state.world.clearPlayerVillageCustomizations();
         state.world.setPlayerVillageStage(1);
         state.chests.clear();
+        state.shopInventory.clear();
         state.activeChest = null;
         state.villageStorage.clear();
         state.villageAllies.clear();
@@ -441,6 +505,14 @@ public final class SaveSystem {
     }
 
     private void readSummary(Path path, List<SaveSummary> summaries) {
+        try {
+            var attributes = Files.readAttributes(path, java.nio.file.attribute.BasicFileAttributes.class);
+            CachedSummary cached = summaryCache.get(path);
+            if (cached != null && cached.modified().equals(attributes.lastModifiedTime()) && cached.size() == attributes.size()) {
+                summaries.add(cached.summary());
+                return;
+            }
+        } catch (IOException ex) { return; }
         Properties props = new Properties();
         try (var in = Files.newInputStream(path)) {
             props.load(in);
@@ -449,7 +521,7 @@ public final class SaveSystem {
             long modifiedAt = lastModified(path);
             String characterId = props.getProperty("characterId", characterIdForSummary(path, props));
             String saveName = props.getProperty("saveName", fallbackSaveName(fallbackId, props.getProperty("name", "Hero")));
-            summaries.add(new SaveSummary(
+            SaveSummary summary = new SaveSummary(
                     props.getProperty("saveId", fallbackId),
                     saveIdFor(characterId),
                     saveName,
@@ -462,7 +534,9 @@ public final class SaveSystem {
                     questCounts.completed(),
                     1 + Math.max(0, readInt(props, "allyCount", countCsv(props.getProperty("recruits", "")))),
                     readSavedAt(props.getProperty("savedAt", ""), modifiedAt)
-            ));
+            );
+            summaries.add(summary);
+            summaryCache.put(path, new CachedSummary(Files.getLastModifiedTime(path), Files.size(path), summary));
         } catch (IOException ignored) {
         }
     }
@@ -779,7 +853,7 @@ public final class SaveSystem {
     private String writeVillageProps(GameState state) {
         StringJoiner joiner = new StringJoiner(",");
         for (WorldProp prop : state.world.playerVillageProps()) {
-            joiner.add(prop.x() + ":" + prop.y() + ":" + prop.asset() + ":" + prop.size());
+            joiner.add(prop.x() + ":" + prop.y() + ":" + prop.asset() + ":" + prop.size()+":"+prop.offsetX()+":"+prop.offsetY());
         }
         return joiner.toString();
     }
@@ -796,7 +870,7 @@ public final class SaveSystem {
         StringJoiner joiner = new StringJoiner(",");
         for (var entry : state.world.playerInteriorProps().entrySet()) {
             for (WorldProp prop : entry.getValue()) {
-                joiner.add(entry.getKey() + ":" + prop.x() + ":" + prop.y() + ":" + prop.asset() + ":" + prop.size());
+                joiner.add(entry.getKey() + ":" + prop.x() + ":" + prop.y() + ":" + prop.asset() + ":" + prop.size()+":"+prop.offsetX()+":"+prop.offsetY());
             }
         }
         return joiner.toString();
@@ -1424,7 +1498,7 @@ public final class SaveSystem {
         }
         for (String part : value.split(",")) {
             String[] fields = part.split(":");
-            if (fields.length != 4) {
+            if (fields.length != 4 && fields.length != 6) {
                 continue;
             }
             try {
@@ -1432,9 +1506,11 @@ public final class SaveSystem {
                         Integer.parseInt(fields[0]),
                         Integer.parseInt(fields[1]),
                         fields[2],
-                        Integer.parseInt(fields[3])
+                        Integer.parseInt(fields[3]), -1,
+                        fields.length>4?Math.max(-48,Math.min(48,Integer.parseInt(fields[4]))):0,
+                        fields.length>4?Math.max(-48,Math.min(48,Integer.parseInt(fields[5]))):0
                 );
-                if (!isStarterCampProp(prop)) {
+                if (fields.length > 4 || !isStarterCampProp(prop)) {
                     state.world.restorePlayerVillageProp(prop);
                 }
             } catch (NumberFormatException ignored) {
@@ -1496,7 +1572,7 @@ public final class SaveSystem {
         }
         for (String part : value.split(",")) {
             String[] fields = part.split(":");
-            if (fields.length != 5) {
+            if (fields.length != 5 && fields.length != 7) {
                 continue;
             }
             try {
@@ -1504,7 +1580,9 @@ public final class SaveSystem {
                         Integer.parseInt(fields[1]),
                         Integer.parseInt(fields[2]),
                         fields[3],
-                        Integer.parseInt(fields[4])
+                        Integer.parseInt(fields[4]), -1,
+                        fields.length>5?Math.max(-48,Math.min(48,Integer.parseInt(fields[5]))):0,
+                        fields.length>5?Math.max(-48,Math.min(48,Integer.parseInt(fields[6]))):0
                 ));
             } catch (NumberFormatException ignored) {
             }

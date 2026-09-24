@@ -1,0 +1,92 @@
+[
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_house_west.png",
+        "sha256":  "0137736877C2D07796EBE99EB551EFD8498C65B94F1DB04E340DE0C1347E36C9",
+        "source":  "originals/town_briarbridge_house_west.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_house_east.png",
+        "sha256":  "3F137A9E6473D6F61FE2AAF11586A778C8FF5C079973E59DE97840FFD49D7485",
+        "source":  "originals/town_briarbridge_house_east.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_house_north.png",
+        "sha256":  "52A30B7BE3B17C13F436E5D953EDBE6FBAA6A650BB604690C5BED1B7E66156D8",
+        "source":  "originals/town_briarbridge_house_north.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/north/town_ironvale_house_west.png",
+        "sha256":  "3A47E7860E6D6C801A2849CB374B05BE3779C83CFFD2D96B12A9F9AEB2F59CC5",
+        "source":  "originals/town_ironvale_house_west.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/north/town_ironvale_house_east.png",
+        "sha256":  "8FA25B4CC8FD777011DE54C08497212E08C9E81C9DDBA8CE5E555C921588BB29",
+        "source":  "originals/town_ironvale_house_east.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/north/town_ironvale_house_north.png",
+        "sha256":  "BEC507ABA734BE7215F362601FA1CECED66FD6C7AF461F12D4D252B92041CF3F",
+        "source":  "originals/town_ironvale_house_north.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_house_west.png",
+        "sha256":  "374C9ED9D6668B9BEDC52933E7A0FA5248DFE75AA442E06EA482CE2EC21802EA",
+        "source":  "originals/town_moonspire_house_west.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_house_east.png",
+        "sha256":  "43DB788ABA383498452D9D1848E191B2B687FF998F1118AFC882DF67C41DDAC5",
+        "source":  "originals/town_moonspire_house_east.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_house_north.png",
+        "sha256":  "7342A244D1E61245D233FD78C2FB88988E1FEA4B409817F6EE9779DDEE088AC6",
+        "source":  "originals/town_moonspire_house_north.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_house_west.png",
+        "sha256":  "614B7DC3D9EB4FB8C988581AF46E5597C59EC50A28DF467CCEA06DA4E309A1B7",
+        "source":  "originals/town_reedwatch_house_west.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_house_east.png",
+        "sha256":  "9C21B1CFC173F588B2F474360E33856DE2A71A8B5D9224F4EC7252B6895FA99D",
+        "source":  "originals/town_reedwatch_house_east.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_house_north.png",
+        "sha256":  "C3E2DA0C43B4C3698B8FD33D246EE3F6CC21FAF0FDDE26EDBBE5B8CA2FC210DE",
+        "source":  "originals/town_reedwatch_house_north.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_house_west.png",
+        "sha256":  "14B4B45BE14386216D5A93675EEF484FFB18C466A5460641CDB902B0446B326A",
+        "source":  "originals/town_embermarket_house_west.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_house_east.png",
+        "sha256":  "780996DD090FDBF10F0B10EE03B4EA82E6BA5AD25B79521EB04477483CE33724",
+        "source":  "originals/town_embermarket_house_east.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_house_north.png",
+        "sha256":  "FE0D9583170565DC9AC91E75A631AD48011017524127D45EEB4007297E1D4936",
+        "source":  "originals/town_embermarket_house_north.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_house_west.png",
+        "sha256":  "0EC6D3C4F8400B5C067CDF95A96CC62F10725D1F3E98ED742EA733BDA6CA9109",
+        "source":  "originals/town_greyharbor_house_west.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_house_east.png",
+        "sha256":  "EF0F7BAB8EA5E60F5B81D6A48EC5439AED876F09C5816D97BCDA2FC65680128A",
+        "source":  "originals/town_greyharbor_house_east.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_house_north.png",
+        "sha256":  "B5D6C6140C74BF6F15770A82569D3A678B07A6F25E46FA96920641902E6604E4",
+        "source":  "originals/town_greyharbor_house_north.png"
+    }
+]

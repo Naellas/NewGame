@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alderfall — elevation study</title>
+<style>
+body{margin:0;background:#141d19;color:#eae3cc;font:16px system-ui,sans-serif}main{max-width:1056px;margin:32px auto;padding:0 20px}h1{font-size:28px}p{color:#b5c2b0;line-height:1.6}a{color:#e0cc93}nav{display:flex;gap:12px;margin:22px 0}button{padding:12px 20px;background:#2d4033;color:#eae3cc;border:1px solid #657554;border-radius:6px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#66744c}img{width:100%;height:auto;border-radius:8px}code{display:block;background:#233126;padding:14px;overflow:auto}small{color:#a8b39f}
+</style>
+<main>
+<h1>Original elevation study</h1><p><a href="index.html">World integration gallery</a></p>
+<p>Rounded grassy terraces with low, walkable steps. Climb the shallow grass shelves or use a ramp; tall banks still block movement. Existing game terrain and artwork, with an experimental height renderer.</p>
+<nav aria-label="Preview view">
+<button type="button" aria-pressed="true" data-file="plateau.png">Landscape</button>
+<button type="button" aria-pressed="false" data-file="ascent.gif">Watch the climb</button>
+<button type="button" aria-pressed="false" data-file="route.png">Route to the top</button>
+<button type="button" aria-pressed="false" data-file="steps.png">Steps close-up</button>
+<button type="button" aria-pressed="false" data-file="plateau.png" data-batch="2026-09-24-organic-banks">Previous version</button>
+</nav>
+<img id="preview" src="../../../../asset-review/reviews/elevation/2026-09-24-small-steps/plateau.png" alt="Rounded grassy terraces with natural soil banks and connecting earth ramps">
+<p>To walk around the standalone preview, run from the Java folder after building the review sources:</p>
+<code>java -cp temp/elevation/classes com.alderfall.game.ElevationPreview --play</code>
+<p>Click a visible surface to walk there, or use WASD / arrow keys. Close the window to exit.</p>
+<small>Historical isolated study. The current world integration is available in the main gallery. Props are decorative; the climbing figure uses a standing pose. <a href="../../../../asset-review/reviews/elevation/2026-09-24-small-steps/README.md">Reproduction and limitations</a>.</small>
+</main>
+<script>
+const buttons=[...document.querySelectorAll('button')];
+buttons.forEach(button=>button.addEventListener('click',()=>{
+  buttons.forEach(other=>other.setAttribute('aria-pressed',String(other===button)));
+  document.getElementById('preview').src='../../../../asset-review/reviews/elevation/'+(button.dataset.batch||'2026-09-24-small-steps')+'/'+button.dataset.file;
+}));
+</script>
+</html>

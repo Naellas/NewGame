@@ -1,0 +1,1052 @@
+[
+  {
+    "id": "town_briarbridge_cottage",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "cottage",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: narrow one-storey ferryman cottage, simple centered door, tiny chimney and shutter.",
+    "source": "originals/town_briarbridge_cottage.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_cottage.png",
+    "sha256": "5893ed344a1dc8a1b98f36eda6e4393d1eaa03c3c47af2b58085ab652bfa560a",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_townhouse",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "townhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: two-storey orchard-trader townhouse with projecting upper bay and espalier apple branches.",
+    "source": "originals/town_briarbridge_townhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_townhouse.png",
+    "sha256": "f4da71927e48c730283890cac39e2d7d694d28f7fd7f75dc1d1b827a1e9136cf",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_manor",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "manor",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: broad three-storey bridge-charter merchant manor, paired slate gables, carved oak balconies; civic-scale but not a castle.",
+    "source": "originals/town_briarbridge_manor.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_manor.png",
+    "sha256": "d30527dd7f8aa2d1152bc8ce9182a8963aa1687f679dfa1aaec7e2c9317979fa",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_warehouse",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "warehouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: low broad riverside grain warehouse, heavy central double door, small loft hoist, bags sheltered under eaves.",
+    "source": "originals/town_briarbridge_warehouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_warehouse.png",
+    "sha256": "656f375e41b7bff4c6998b66a081f9c8d58fd862ae2ab0c4ee7d03f4c5550281",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_apothecary",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "apothecary",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: compact herbalist shop with deep blue shutters, herb drying racks within porch and small bottle display.",
+    "source": "originals/town_briarbridge_apothecary.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_apothecary.png",
+    "sha256": "49ea06f9766e6ab26e112425a729d6ec28ccb89f5446955cb74ae015c943c187",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_bakery",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "bakery",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: compact bread bakery with squat brick side oven and flour sacks beneath a slate awning.",
+    "source": "originals/town_briarbridge_bakery.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_bakery.png",
+    "sha256": "4b8281586ce5197881da1ac40da3af17620f7cf3ae6346ba50f4d46a751b2a77",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_restaurant",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "restaurant",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: two-storey river tavern eatery, broad welcoming central door, sheltered serving window and timber canopy.",
+    "source": "originals/town_briarbridge_restaurant.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_restaurant.png",
+    "sha256": "0c2fbe2d627ee7d44b5f86406d27c0f6edd488a2797f1720a2d23ead9318d1fb",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_inn",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "inn",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: two-storey modest coaching inn, dormer attic, simple horseshoe emblem without writing.",
+    "source": "originals/town_briarbridge_inn.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_inn.png",
+    "sha256": "4eb5d8d0ba50d9665f8e8e75429ec199822fd327dbf9b568cc33bab8e615215a",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_millwork",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "millwork",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: river millwright workshop, oak beams, small attached vertical waterwheel mechanism but NO water or ground.",
+    "source": "originals/town_briarbridge_millwork.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_millwork.png",
+    "sha256": "2cbe66bf353c646ad1ff082c34d9f745cb2a416dbc6aa871c92fdc2ecc2808f3",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_briarbridge_charterhall",
+    "town": "briarbridge",
+    "region": "river",
+    "role": "charterhall",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Western Reach river-town architecture: cream plaster, weathered oak framing, blue-grey slate gables, restrained orchard greens, small river-work details. Subject: practical public charter records hall, long low slate roof and central entrance, small closed upper records loft.",
+    "source": "originals/town_briarbridge_charterhall.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_charterhall.png",
+    "sha256": "3b372716906107ce580509a02d09e32455313bea3c6723f0c9f1dac26c83af64",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_cottage",
+    "town": "ironvale",
+    "region": "north",
+    "role": "cottage",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: narrow one-storey miner cottage with robust iron shutters and steep roof.",
+    "source": "originals/town_ironvale_cottage.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_cottage.png",
+    "sha256": "d349335c8b165dd5051e288079ad9bee42d64725d706e0c3d434ac5add477783",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_townhouse",
+    "town": "ironvale",
+    "region": "north",
+    "role": "townhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: compact two-storey stone-based winter townhouse with stout central door and tiny attic.",
+    "source": "originals/town_ironvale_townhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_townhouse.png",
+    "sha256": "2eb3345c300bb87be5db0bbd1044f3f1e609443f25034f16afb70d0b86152e4f",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_barracks",
+    "town": "ironvale",
+    "region": "north",
+    "role": "barracks",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: broad low garrison barracks with repeated small upper windows and central reinforced entrance.",
+    "source": "originals/town_ironvale_barracks.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_barracks.png",
+    "sha256": "cc22ad8dd93c53113e6548ee2f620ba1435a8aa5eb9ea72ea24f2ca9e4ab6cc7",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_guardhouse",
+    "town": "ironvale",
+    "region": "north",
+    "role": "guardhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: compact square pass guardhouse with a squat lookout roof and covered porch.",
+    "source": "originals/town_ironvale_guardhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_guardhouse.png",
+    "sha256": "c15c2ac8d666b93064dbbc8599cbf272a954e4f9492dcc0df154a4acb019d98b",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_armory",
+    "town": "ironvale",
+    "region": "north",
+    "role": "armory",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: two-storey armorers hall with crossed hammer emblem, iron-banded central doors and small equipment window.",
+    "source": "originals/town_ironvale_armory.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_armory.png",
+    "sha256": "003ec052cbac4fa2e60bbc48f12c4174f1724871dd1c3a545094cffd12acd323",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_forge",
+    "town": "ironvale",
+    "region": "north",
+    "role": "forge",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: low stout smithy with chimney stack, enclosed side forge window glowing very faint orange and a sheltered anvil.",
+    "source": "originals/town_ironvale_forge.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_forge.png",
+    "sha256": "e130275ff221f546b472c5b635439bc255b015392ae2c15aebcce65b186cc202",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_carpenter",
+    "town": "ironvale",
+    "region": "north",
+    "role": "carpenter",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: compact northern carpenter shed with deep gable, timber beams and fixed saw emblem without words.",
+    "source": "originals/town_ironvale_carpenter.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_carpenter.png",
+    "sha256": "912823e408bb82d5398a73b6fe00c3c9702a696bd8bda21cad16c510dce6a8b1",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_captains_hall",
+    "town": "ironvale",
+    "region": "north",
+    "role": "captains_hall",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: two-storey disciplined captain assembly hall, stone central entry, modest stepped parapet and grey banners.",
+    "source": "originals/town_ironvale_captains_hall.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_captains_hall.png",
+    "sha256": "de2840938d3e90fe97057336fe6d4c1f977959151036a1223f3e1998e6c51c5b",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_command_keep",
+    "town": "ironvale",
+    "region": "north",
+    "role": "command_keep",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: broad compact command keep of granite with three low square battlements and strong central entrance.",
+    "source": "originals/town_ironvale_command_keep.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_command_keep.png",
+    "sha256": "32496a5741e8e4ee8941be9d1d0ad96de20a63c4bb75b25c0226c0fbdc1d0fac",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_ironvale_courtyard_house",
+    "town": "ironvale",
+    "region": "north",
+    "role": "courtyard_house",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Stormbound northern ironworking town: heavy grey granite, dark pine, charcoal slate roofs, iron strapwork, sparse snow on roof seams, muted warm windows. Subject: distinct stoneworker family home with offset chimney, steep single gable and short enclosed side porch.",
+    "source": "originals/town_ironvale_courtyard_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_courtyard_house.png",
+    "sha256": "c2b7b91e4272e0830d5c63ef803f676f718d24a24482e7f7111a4eeb88126e1c",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_cottage",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "cottage",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: small survey assistant cottage, narrow gable and tiny drafting-room window.",
+    "source": "originals/town_moonspire_cottage.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_cottage.png",
+    "sha256": "cf7a6fffc2ff08ba8c5eab1c7810c933959f3e29f079263099679c2fe6580ee5",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_townhouse",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "townhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: two-storey mapmaker townhouse with tall sash windows and offset terracotta dormer.",
+    "source": "originals/town_moonspire_townhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_townhouse.png",
+    "sha256": "6ec0a9c177fcb397743236ad30efeadb318cb93c3b6adfe19a1323e5bda20e6e",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_guild_stacks",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "guild_stacks",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: compact archive book-stacks guild building, three close roof gables and shuttered book room.",
+    "source": "originals/town_moonspire_guild_stacks.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_guild_stacks.png",
+    "sha256": "3c817c4f193ceee036cc6f7bedcd9306325426aa89e67bb1df668c1478b8b9aa",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_scriptorium",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "scriptorium",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: two-storey public scriptorium with broad north-light style upper window, central oak door and quill emblem without letters.",
+    "source": "originals/town_moonspire_scriptorium.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_scriptorium.png",
+    "sha256": "d8065dfda2c740f0398412f33e437038ebfac9f01f6c32e8eeaa5f0bd62fc050",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_apothecary",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "apothecary",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: scholarly herbalist house with small glazed plant alcove and a compact red-tile porch.",
+    "source": "originals/town_moonspire_apothecary.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_apothecary.png",
+    "sha256": "5c82e1641951d13af601e8cbd2c21ce8e91bbbd6ce2d872a620668c76b1882a1",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_records_hall",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "records_hall",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: broad civic household-records hall with low octagonal center roof and simple public entrance.",
+    "source": "originals/town_moonspire_records_hall.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_records_hall.png",
+    "sha256": "5e96a196d40b2914f34d0be4155a0661755aa3282ac1b7fda06cb29afee93171",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_bindery",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "bindery",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: low bookbinders workshop with timber work bay, rolls of leather and small book press visible inside window.",
+    "source": "originals/town_moonspire_bindery.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_bindery.png",
+    "sha256": "52c8d4b5cbe723646dcd4de3aceca4854d7bed131de3a441e8b21bc30242db41",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_alchemist",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "alchemist",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: compact illuminators pigment shop with copper vent, colored pigment jars in window and simple front door.",
+    "source": "originals/town_moonspire_alchemist.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_alchemist.png",
+    "sha256": "ac7640acafdb91982f4c5d4b7634eb65ad000892ec020a03adfd25b36a19b314",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_bakery",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "bakery",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: warm modest bakery with cream stone oven wing, small glazed door and terracotta gable.",
+    "source": "originals/town_moonspire_bakery.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_bakery.png",
+    "sha256": "e1948a2880c054c74b6cf21b8e33979828837f35dfad0a9c76fd103a50b91534",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_moonspire_observatory",
+    "town": "moonspire",
+    "region": "hearth",
+    "role": "observatory",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Hearthlands scholarly town: warm cream limestone, honey oak framing, muted terracotta tiled roofs, modest brass instruments, practical public scholarship rather than glowing magic. Subject: broad survey academy manor with twin modest observation turrets and brass measuring instruments; no magic glow.",
+    "source": "originals/town_moonspire_observatory.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_observatory.png",
+    "sha256": "b59895679adeaa25bb4560d38603538413e38dff1a7c8003e39b2a00f9bdb903",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_cottage",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "cottage",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: narrow low reed-cutter cottage with tiny woven shutters and only two short attached entry steps.",
+    "source": "originals/town_reedwatch_cottage.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_cottage.png",
+    "sha256": "f5c405d9a2d98b5abe1cb72a70562b2745b855b567527e022b46670391b9c3d1",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_townhouse",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "townhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: two-storey marsh family house with broad low reed gable and enclosed upper reed-woven balcony.",
+    "source": "originals/town_reedwatch_townhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_townhouse.png",
+    "sha256": "6136c3600da1bc5cba525ce8f0596dbb5967d26727d48605dd552e329478c06a",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_workshop",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "workshop",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: bellwright workshop, compact front work porch with small bronze bell hung under eave.",
+    "source": "originals/town_reedwatch_workshop.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_workshop.png",
+    "sha256": "88a7188f60ab0102c29145db4667415a129fdd79ca1ca3269ec07214dd7a1445",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_chapel",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "chapel",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: modest civic listening chapel with long reed roof and small open bronze-bell roof vent.",
+    "source": "originals/town_reedwatch_chapel.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_chapel.png",
+    "sha256": "5013823fe705063c0c9b77c64cd2be6326a4b1ea2613e79ea464b60cd6d313b1",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_bakery",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "bakery",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: raised fen bakery with squat enclosed oven wing, covered central door and baskets under eaves.",
+    "source": "originals/town_reedwatch_bakery.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_bakery.png",
+    "sha256": "e2528eed5cde04821ce8444aaac3800740913291c4423a9fe04ee1398372a0c7",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_market_shop",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "market_shop",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: compact woven-mat traders shop with rolled reed mats sheltered beside a clear centered doorway.",
+    "source": "originals/town_reedwatch_market_shop.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_market_shop.png",
+    "sha256": "eca1ced39730801a85abefc9b872cf0eac6e3067358494b273271cd49f65e871",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_lodge",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "lodge",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: two-storey bellkeepers inn with deep thatch gable, timber porch and a small bronze listening bell.",
+    "source": "originals/town_reedwatch_lodge.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_lodge.png",
+    "sha256": "76431fa6ceb2bf40b0e8f4d6725c708e72f230cfd46d897232797ef0138f8193",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_bellfoundry",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "bellfoundry",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: low bronze bell foundry with masonry chimney and shuttered side casting bay, no open flames.",
+    "source": "originals/town_reedwatch_bellfoundry.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_bellfoundry.png",
+    "sha256": "9cea68809fc7803a90629982153fdcc7419809fa6f224f9b164d52628fc377d5",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_fishing_hut",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "fishing_hut",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: compact eelers house with drying net fixed to side wall and fish-trap baskets under reed awning.",
+    "source": "originals/town_reedwatch_fishing_hut.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_fishing_hut.png",
+    "sha256": "96c5c3e165d65166df68e5f2e2542206ea2c471aa6d6290bb1257123230b3d75",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_reedwatch_manor",
+    "town": "reedwatch",
+    "region": "fen",
+    "role": "manor",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Fenlands flood-town architecture: short thick stilts and grey stone footings, reed thatch roofs, weathered dark oak, sage-grey timber, restrained bronze bells, muddy umber palette. No water or ground. Subject: broad bellfounder guild manor, layered reed gables, raised stone-and-timber base and modest central porch.",
+    "source": "originals/town_reedwatch_manor.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_manor.png",
+    "sha256": "e672fa84024606be5ce6ec461efa0e3353c8959d5b100f57dad78810e03b2c95",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_cottage",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "cottage",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: small narrow irrigation worker cottage with stepped flat roof and recessed arched front door.",
+    "source": "originals/town_embermarket_cottage.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_cottage.png",
+    "sha256": "37434c120e0e2322a66e7d0afda776dc159129e77591ecb7c36960aacd41d7bd",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_townhouse",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "townhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: two-storey caravan household with shaded upper lattice balcony and a small closed rooftop cistern.",
+    "source": "originals/town_embermarket_townhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_townhouse.png",
+    "sha256": "3118185d88222ea66878fe4cf6d8a039c1945d7d1abb18208094ccd64f79557e",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_cloister",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "cloister",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: broad civic cloister house, three shallow roof vaults, arched upper arcade and centered door.",
+    "source": "originals/town_embermarket_cloister.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_cloister.png",
+    "sha256": "7505039254e182e9f14df39940db7869d7dd0062bdf39ac4848120f39798c388",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_ledger_house",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "ledger_house",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: compact two-storey water-ledger guild house with sheltered accounting window and carved water-drop emblem without text.",
+    "source": "originals/town_embermarket_ledger_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_ledger_house.png",
+    "sha256": "c08a056c335e6e614c12e31e0c76f1caf45a685579c62c0142ea50ba776cce74",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_apothecary",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "apothecary",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: small irrigators apothecary with clay herb jars in alcove and deep sunshade over front entrance.",
+    "source": "originals/town_embermarket_apothecary.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_apothecary.png",
+    "sha256": "89dbac5806e462ba8f3ee7f570cbb8e3a46d6bb9d1a3912cb6c1802a630f824f",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_warden_hall",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "warden_hall",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: broad public water-warden hall, low stepped central tower and balanced shade terraces.",
+    "source": "originals/town_embermarket_warden_hall.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_warden_hall.png",
+    "sha256": "7c3208800634a2112f7270579edb7f0325768dee45437439c4df375f1f98270e",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_tea_house",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "tea_house",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: modest caravan tea house with shaded serving window, low ochre canopy and small rooftop pergola.",
+    "source": "originals/town_embermarket_tea_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_tea_house.png",
+    "sha256": "2ad13b6d52c895c9b3685313eead037317ba5232316c508057550c95227001a9",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_alchemist",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "alchemist",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: compact pigment-and-salt alchemist shop with tiny copper vent and turquoise shuttered window.",
+    "source": "originals/town_embermarket_alchemist.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_alchemist.png",
+    "sha256": "bc1b50e0903e69d4093fd05402909bf47ab29ab1d85cef7e37640eafca5d5d07",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_bakery",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "bakery",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: small desert flatbread bakery with enclosed round oven wing and terracotta bread trays beneath awning.",
+    "source": "originals/town_embermarket_bakery.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_bakery.png",
+    "sha256": "3eb8c00aa5038014df22819bf0cdac49fa5eea640956fde34a6e57adc34a8892",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_embermarket_workshop",
+    "town": "embermarket",
+    "region": "sun",
+    "role": "workshop",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Sunrealm caravan town: warm ivory plaster, ochre sandstone base, terracotta-edged flat or shallow roofs, turquoise lattice shutters, muted saffron fabric awnings, tiny blue ceramic water jars. Subject: compact caravan repair workshop with sheltered wheelwright bench and leather straps fixed inside side bay.",
+    "source": "originals/town_embermarket_workshop.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_workshop.png",
+    "sha256": "b3150d61a05e58092cfdbb42768884883e90e687aad498cd8bdf19da480ffe2f",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_cottage",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "cottage",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: small trail-guide cottage with red-brown steep shingles and a covered central door.",
+    "source": "originals/town_northwatch_cottage.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_cottage.png",
+    "sha256": "a9e57e8e6719b48228ca7af46d13fd172fdd2fec5ea0e808f989fd4b0872d69b",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_townhouse",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "townhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: two-storey ropeworker house with narrow gable and small enclosed storage loft.",
+    "source": "originals/town_northwatch_townhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_townhouse.png",
+    "sha256": "a88e8da3d1b28978b6d039bec1e1e69008a043aa82b74a3c18d4340f754ee6ff",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_barracks",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "barracks",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: broad independent rescue crew dormitory, rough timber and stone, closed roof lookout vent.",
+    "source": "originals/town_northwatch_barracks.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_barracks.png",
+    "sha256": "8827fa578d1ac59e92cf7ddd5b3c5926a3eedeea1b05467d40017cc13c76fcf3",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_ropewright",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "ropewright",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: compact ropewright shed with sheltered rope spool and pulley fittings secured to facade.",
+    "source": "originals/town_northwatch_ropewright.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_ropewright.png",
+    "sha256": "cd1525dbbde385d91f01758b4bf8deb6265f9ee003400f2c20fbb9b6208c39e0",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_warehouse",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "warehouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: broad winter rescue stores house, heavy central double door, raised stone footing and sheltered blanket crates.",
+    "source": "originals/town_northwatch_warehouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_warehouse.png",
+    "sha256": "186f91a4f9a718a05e47eaac4f18eac170016b1fc13e965d94cd494635beb168",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_guardhouse",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "guardhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: compact square signal guardhouse with tiny lookout upper window and low angular slate roof.",
+    "source": "originals/town_northwatch_guardhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_guardhouse.png",
+    "sha256": "61b65fc51a41917de7aee4a116bceba1fe20dad24112f6976850e4b8d011621a",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_travelers_inn",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "travelers_inn",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: two-storey stranded-travelers inn with deep central porch and simple lantern emblem without writing.",
+    "source": "originals/town_northwatch_travelers_inn.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_travelers_inn.png",
+    "sha256": "87c5af3891cf3c82c6bd80322cee0c9ca600203b1c2ff401e35f07d1537b1050",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_captains_hall",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "captains_hall",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: public rescue crew meeting hall with low square central gable and heavy stone entry surround.",
+    "source": "originals/town_northwatch_captains_hall.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_captains_hall.png",
+    "sha256": "84035de1b144e3e10b383fd94924e973e9cc371241535b5fdf0325391a158a20",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_blacksmith",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "blacksmith",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: small rescue tool smithy with stone chimney, iron tools fixed beneath side awning and central door.",
+    "source": "originals/town_northwatch_blacksmith.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_blacksmith.png",
+    "sha256": "d87d1a2c16507f6dca8459ddd7b9fefeb08f7c5995b61b9ce2be2a9efb9f47e6",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_northwatch_command_hall",
+    "town": "northwatch",
+    "region": "freehold",
+    "role": "command_hall",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Inland Northroad Freeholds rescue town: rugged grey granite base, dark pine walls, rust-red wooden shingle roofs, heavy rope fittings, slate on civic buildings. Angular sturdy rescue architecture distinct from coastal Greyharbor. Subject: broad independent council and dispatch house, chunky granite wings and steep red-shingle main roof.",
+    "source": "originals/town_northwatch_command_hall.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_command_hall.png",
+    "sha256": "e16ff2e3629fa699802e8b77e70aa0c0c85b7c76f6254a698f768a22fec82f3c",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_cottage",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "cottage",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: small narrow harbor-worker cottage with curved slate gable and simple central blue-grey door.",
+    "source": "originals/town_greyharbor_cottage.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_cottage.png",
+    "sha256": "1d0c4efb10e4c23ac0f0fb1c523c6c730207a4acd7e0386dc6d81e059d77b105",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_townhouse",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "townhouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: two-storey harbor townhouse with sheltered net-drying upper balcony and stout stone base.",
+    "source": "originals/town_greyharbor_townhouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_townhouse.png",
+    "sha256": "dbb165338175c455ba550e63dfeb7765490b6de0c215985367507a4ecfa7317e",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_netmaker",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "netmaker",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: compact netmakers loft with fixed net reels under side awning and woven nets inside upper window.",
+    "source": "originals/town_greyharbor_netmaker.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_netmaker.png",
+    "sha256": "6d95e61507b162475aeb0e4a61f50286393eba500ab3b434edbec84a5fa484b8",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_warehouse",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "warehouse",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: broad raised storm-stores warehouse with heavy doors, high stone foundation and roof hoist.",
+    "source": "originals/town_greyharbor_warehouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_warehouse.png",
+    "sha256": "057a253d70a3375c84b389a29a3f1cc8bfe04b09fcc6eaae335378af9996de3e",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_bakery",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "bakery",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: compact harbor bakery with short broad stone chimney and enclosed side oven bay.",
+    "source": "originals/town_greyharbor_bakery.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_bakery.png",
+    "sha256": "fc6238a24fc3b12b74592f65c4f922673484f67ea8a24b0f93c0b23849f163e0",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_market_shop",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "market_shop",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: small coastal chandlery shop with rope spools and closed lanterns displayed beneath an awning.",
+    "source": "originals/town_greyharbor_market_shop.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_market_shop.png",
+    "sha256": "b244c5126cc11a0c5aecbfcb8e750161daa96e0596243eb53439fda70b5f0532",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_inn",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "inn",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: two-storey returned-crews inn, curved slate dormers, deep central porch and small anchor emblem without text.",
+    "source": "originals/town_greyharbor_inn.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_inn.png",
+    "sha256": "5286adf08f2c66c543a713282004e96baec86b785ec5af06c46658ba43a99f3a",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_foundry",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "foundry",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: low maritime ironworks with rugged chimney and small anchor fittings beneath covered side bay.",
+    "source": "originals/town_greyharbor_foundry.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_foundry.png",
+    "sha256": "eb7f90b72ea6d8f4147df79304e17f21829165f05106e056aa466e416fdf6a82",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_tea_house",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "tea_house",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: compact harbor meal-house with sea-blue shutters, enclosed bay window and central porch.",
+    "source": "originals/town_greyharbor_tea_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_tea_house.png",
+    "sha256": "ba30f959437bed7f0e41bf12ac067140c96db666a33c3c283b8d4fca6b67e2b4",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  },
+  {
+    "id": "town_greyharbor_manor",
+    "town": "greyharbor",
+    "region": "freehold",
+    "role": "manor",
+    "prompt": "Use case: stylized-concept. Generate ONE complete production transparent PNG building sprite, square canvas, for Echoes of Alderfall medieval 2D RPG. Match detailed hand-painted pixel-art architecture, crisp stepped pixel clusters and dark brown outlines; not photorealism, not vector, not miniature toy. Front-facing orthographic facade with modest overhead view of roof, NOT isometric. Consistent human scale: one central south-facing entrance, entrance height about 24 percent of the visible building height for homes and shops, 19 percent for civic buildings. Modest whole building not several joined houses; recognizable clean silhouette at 180px. Centered, complete roof/chimney/foundation visible, 8 percent empty transparent margin on all four sides. Genuine transparent alpha background and gaps, no ground slab, scenery, floor shadow, glow, detached props, people, text, signage lettering, border or checkerboard. Upper-left soft daylight only on object. Coastal Northroad Freeholds storm-rescue town: salt-weathered pale grey stone and silver-grey timber, curved storm-blue slate roofs, faded blue shutters, net fittings, rounded marine details. No sea, boats or ground. Subject: broad storm-rescue guild manor with curved slate roofline, squat round corner turret and strong central entrance.",
+    "source": "originals/town_greyharbor_manor.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_manor.png",
+    "sha256": "e2a580aa492bca8b5b02047b57522d4e6f2f68f8fe984af98c0f700920109a83",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen"
+  }
+]

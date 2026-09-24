@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oathstead building progression</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101b22;color:#eae9db;font:15px system-ui}header{position:sticky;top:0;background:#101b22f5;padding:20px 28px;border-bottom:1px solid #385158;z-index:1}h1{font-size:24px;margin:0 0 6px}p{color:#a4b7b5;margin:6px 0}input{margin-top:12px;padding:10px 14px;background:#1f3035;border:1px solid #55756c;border-radius:6px;color:#eae9db;width:min(380px,100%)}main{padding:16px 28px}section{margin:0 0 22px;background:#1a2931;border:1px solid #385158;border-radius:12px;overflow:hidden}h2{font-size:16px;margin:14px 18px;color:#dcb973}.tiers{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));overflow-x:auto}figure{margin:0;padding:10px;text-align:center;border-top:1px solid #385158;border-right:1px solid #385158}img{width:100%;height:160px;object-fit:contain}figcaption{font-size:12px;color:#a4b7b5;padding:8px}a{color:#6ab8a0}footer{padding:20px 28px}
+</style>
+<header><h1>Oathstead / Building progression</h1><p>18 building types · 6 distinct stages · 108 playable sprites</p><p>Canvas camp → timber shelter → thatched village → framed town → stone town → ornate metropolis</p><input id="search" aria-label="Filter buildings" placeholder="Find a building or trade…"></header>
+<main id="gallery"></main>
+<footer><a href="../../../../art-source/settlement-growth/2026-09-24-specialist-tiers/README.md">Sources, prompts and import recipe</a> · <a href="../../../docs/settlement-building.md">Game controls and progression</a></footer>
+<script>
+const buildings=[['house','Cottage','residence'],['row','Longhouse'],['inn','Hall','civic'],['warehouse','Warehouse'],['forestry_hut','Forestry Hut'],['mine','Mine'],['hunting_camp','Hunting Lodge'],['farmstead','Farmstead'],['shop','Workshop','workshop'],['guild','Study'],['granary','Granary'],['watchtower','Watchtower'],['shrine','Shrine'],['garden','Garden'],['blacksmith','Blacksmith'],['bakery','Bakery'],['apothecary','Apothecary'],['fishing_hut','Fishing Hut']];
+const tiers=['Camp','Small Village','Village','Small Town','Large Town','Metropolis'];
+const gallery=document.getElementById('gallery');
+for(const [style,label,family] of buildings){
+ const section=document.createElement('section');section.dataset.search=(style+' '+label).toLowerCase();
+ const title=document.createElement('h2');title.textContent=label;section.append(title);
+ const row=document.createElement('div');row.className='tiers';
+ tiers.forEach((tier,i)=>{const figure=document.createElement('figure');const image=document.createElement('img');
+ image.src='../../../assets/environments/settlements/player_village/buildings/'+(family?'shared':style)+'/settlement_'+(family||style)+'_tier'+(i+1)+'.png';
+ image.alt=label+' — '+tier;image.loading='lazy';const caption=document.createElement('figcaption');caption.textContent=(i+1)+' / '+tier;
+ figure.append(image,caption);row.append(figure);});section.append(row);gallery.append(section);
+}
+document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();for(const section of gallery.children)section.hidden=!section.dataset.search.includes(q);});
+</script></html>

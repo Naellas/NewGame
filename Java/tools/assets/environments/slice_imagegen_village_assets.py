@@ -5,6 +5,7 @@ from pathlib import Path as _BootstrapPath
 if not __package__:
     _bootstrap_sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[3]))
 from tools.project_paths import JAVA_ROOT, REPO_ROOT
+from tools.assets.shared.asset_paths import asset_file
 
 from pathlib import Path
 
@@ -61,7 +62,7 @@ def output_path(name: str) -> Path:
     if name.startswith("village_prop_"):
         return CITY_DIR / "props" / "village" / f"{name}.png"
     if name.startswith("village_building_") or name.startswith("imagegen_city_"):
-        return CITY_DIR / "buildings" / "village" / f"{name}.png"
+        return asset_file(ROOT / "assets", f"environments/settlements/city/buildings/village/{name}.png")
     return CITY_DIR / f"{name}.png"
 
 

@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +23,82 @@ public final class SaveMenuRenderer {
     private final GameState state;
     private final SaveSystem saveSystem;
     private final Effects effects;
+    private SaveSystem.SaveSummary previewSave;
+    private BufferedImage previewImage;
+    private BufferedImage currentSnapshot;
+    private String previewKey = "";
+    private String previewContext = "";
+
+    public void resetPreview() {
+        previewSave = null;
+        previewImage = null;
+        previewKey = "";
+    }
+
+    public void setCurrentSnapshot(BufferedImage image) {
+        currentSnapshot = image;
+        resetPreview();
+    }
+
+    private void selectPreview(SaveSystem.SaveSummary summary) {
+        String key = summary.saveId() + ":" + summary.savedAtMillis();
+        if (!key.equals(previewKey)) {
+            previewImage = saveSystem.readSnapshot(summary.saveId());
+            previewKey = key;
+        }
+        previewSave = summary;
+    }
+
+    private void previewRow(Graphics2D g, SaveSystem.SaveSummary summary, int x, int y, int width) {
+        effects.addButton(new Rectangle(x, y, width, 68), "Preview " + summary.saveName(), () -> selectPreview(summary));
+        if (previewSave != null && previewSave.saveId().equals(summary.saveId())) {
+            g.setColor(new Color(244, 213, 141));
+            g.fillRect(x, y + 8, 3, 52);
+        }
+    }
+
+    private void drawPreview(Graphics2D g, int x, int y, int w, int h) {
+        effects.drawOverlayBase(g, x, y, w, h);
+        g.setFont(new Font("Serif", Font.BOLD, 24));
+        g.setColor(new Color(244, 213, 141));
+        g.drawString(previewSave == null && state.saveMenuCanSave ? "Current Adventure" : "Saved Moment", x + 22, y + 42);
+        BufferedImage image = previewSave == null && state.saveMenuCanSave ? currentSnapshot : previewImage;
+        int ix = x + 20, iy = y + 68, iw = w - 40, ih = 220;
+        g.setColor(new Color(14, 19, 26));
+        g.fillRoundRect(ix, iy, iw, ih, 8, 8);
+        if (image != null) {
+            double scale = Math.min(iw / (double) image.getWidth(), ih / (double) image.getHeight());
+            int dw = (int) (image.getWidth() * scale), dh = (int) (image.getHeight() * scale);
+            g.drawImage(image, ix + (iw - dw) / 2, iy + (ih - dh) / 2, dw, dh, null);
+        } else {
+            g.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            g.setColor(new Color(170, 178, 194));
+            effects.drawCenteredIn(g, "No snapshot available", ix, iy + ih / 2, iw);
+        }
+        g.setColor(new Color(98, 112, 142));
+        g.drawRoundRect(ix, iy, iw, ih, 8, 8);
+        g.setFont(new Font("SansSerif", Font.BOLD, 17));
+        g.setColor(new Color(235, 236, 240));
+        effects.drawClippedString(g, previewSave == null ? (state.saveMenuCanSave ? state.player.name : "Select an adventure") : previewSave.saveName(), ix, iy + ih + 34, iw);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        g.setColor(new Color(176, 182, 196));
+        if (previewSave != null) {
+            String[] details = {previewSave.name() + " ? " + previewSave.className(),
+                    "Level " + previewSave.level() + " ? " + previewSave.gold() + " gold",
+                    state.world.label(previewSave.mapId()), formatSaveTime(previewSave.savedAtMillis()),
+                    previewSave.completedQuests() + " quests done ? " + previewSave.activeQuests() + " active",
+                    "Party of " + previewSave.partySize()};
+            for (int i = 0; i < details.length; i++) effects.drawClippedString(g, details[i], ix, iy + ih + 64 + i * 26, iw);
+        } else if (state.saveMenuCanSave) {
+            effects.drawClippedString(g, state.world.label(state.currentMapId), ix, iy + ih + 64, iw);
+            effects.drawClippedString(g, "A snapshot is included when you save.", ix, iy + ih + 94, iw);
+        }
+        effects.drawClippedString(g, "Click a save's details to preview it.", ix, y + h - 30, iw);
+        if (state.saveMenuCanSave && previewSave != null) {
+            effects.actionButton(g, ix, y + h - 94, iw, 34, "Show Current Adventure", this::resetPreview,
+                    new Color(48, 55, 70), new Color(89, 102, 125), true);
+        }
+    }
 
     public SaveMenuRenderer(GameState state, SaveSystem saveSystem, Effects effects) {
         this.state = state;
@@ -38,6 +115,7 @@ public final class SaveMenuRenderer {
 
 
     private static final class LoadFolder {
+        private final SaveSystem.SaveSummary latest;
         private final String characterId;
         private final String name;
         private final String className;
@@ -46,6 +124,7 @@ public final class SaveMenuRenderer {
         private int maxLevel;
 
         private LoadFolder(SaveSystem.SaveSummary summary) {
+            this.latest = summary;
             this.characterId = summary.characterId();
             this.name = summary.name();
             this.className = summary.className();
@@ -59,13 +138,18 @@ public final class SaveMenuRenderer {
     }
 
     public void drawSaveMenu(Graphics2D g, boolean overlay) {
+        String context = state.saveMenuCanSave + "/" + effects.selectedLoadCharacterId() + "/" + effects.saveListCurrentCharacterOnly();
+        if (!context.equals(previewContext)) {
+            resetPreview();
+            previewContext = context;
+        }
         if (overlay) {
             g.setColor(new Color(8, 11, 16, 170));
             g.fillRect(0, 0, effects.viewWidth(), effects.viewHeight());
         }
         int w = 756;
         int h = 650;
-        int x = overlay ? effects.gameAreaCenteredX(w) : effects.centeredX(w);
+        int x = effects.centeredX(w + 344);
         int y = effects.centeredY(h);
         effects.drawOverlayBase(g, x, y, w, h);
         g.setFont(new Font("Serif", Font.BOLD, 32));
@@ -73,6 +157,12 @@ public final class SaveMenuRenderer {
         String title = state.saveMenuCanSave ? "Save / Load Adventure" : effects.importingCharacter() ? "Import Character" : "Load Adventure";
         effects.drawCenteredIn(g, title, x, y + 48, w);
 
+        if (previewSave == null && !state.saveMenuCanSave) {
+            List<SaveSystem.SaveSummary> initial = effects.selectedLoadCharacterId().isBlank()
+                    ? saveSystem.listSaves() : selectedLoadFolderSaves();
+            if (!initial.isEmpty()) selectPreview(initial.get(Math.min(effects.saveListScroll(), initial.size() - 1)));
+        }
+        drawPreview(g, x + w + 16, y, 328, h);
         int rowY = y + 92;
         if (state.saveMenuCanSave) {
             g.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -109,6 +199,7 @@ public final class SaveMenuRenderer {
         if (state.saveMenuCanSave) {
             effects.actionButton(g, x + w - 278, rowY - 6, 100, 28, "This Hero",
                     () -> {
+                        resetPreview();
                         effects.setSaveListCurrentCharacterOnly(true);
                         effects.setSaveListScroll(0);
                     },
@@ -117,6 +208,7 @@ public final class SaveMenuRenderer {
                     true);
             effects.actionButton(g, x + w - 166, rowY - 6, 96, 28, "All Saves",
                     () -> {
+                        resetPreview();
                         effects.setSaveListCurrentCharacterOnly(false);
                         effects.setSaveListScroll(0);
                     },
@@ -145,17 +237,18 @@ public final class SaveMenuRenderer {
                 g.fillRoundRect(x + 52, rowY, w - 104, 68, 8, 8);
                 g.setColor(new Color(82, 92, 116));
                 g.drawRoundRect(x + 52, rowY, w - 104, 68, 8, 8);
+                previewRow(g, summary, x + 52, rowY, w - 350);
                 g.setFont(new Font("SansSerif", Font.BOLD, 16));
                 g.setColor(new Color(235, 236, 240));
-                g.drawString(buttonIndex + ". " + shortText(summary.saveName(), 34), x + 70, rowY + 24);
+                effects.drawClippedString(g, buttonIndex + ". " + summary.saveName(), x + 70, rowY + 24, state.saveMenuCanSave ? w - 380 : w - 260);
                 g.setFont(new Font("SansSerif", Font.PLAIN, 13));
                 g.setColor(new Color(176, 182, 196));
-                g.drawString(summary.name() + " (" + summary.className() + ")  Level " + summary.level() + "  "
-                        + state.world.label(summary.mapId()) + "  " + summary.gold() + "g", x + 70, rowY + 43);
+                effects.drawClippedString(g, summary.name() + " (" + summary.className() + ")  Level " + summary.level() + "  "
+                        + state.world.label(summary.mapId()) + "  " + summary.gold() + "g", x + 70, rowY + 43, state.saveMenuCanSave ? w - 380 : w - 260);
                 g.setColor(new Color(147, 154, 172));
-                g.drawString("Saved " + formatSaveTime(summary.savedAtMillis()) + "  "
+                effects.drawClippedString(g, "Saved " + formatSaveTime(summary.savedAtMillis()) + "  "
                         + summary.completedQuests() + " done  " + summary.activeQuests() + " active  Party "
-                        + summary.partySize(), x + 70, rowY + 60);
+                        + summary.partySize(), x + 70, rowY + 60, state.saveMenuCanSave ? w - 380 : w - 260);
                 boolean canOverwrite = state.saveMenuCanSave
                         && summary.characterId().equals(SaveSystem.saveIdFor(state.player.name));
                 if (canOverwrite) {
@@ -213,6 +306,7 @@ public final class SaveMenuRenderer {
             g.fillRoundRect(x + 52, rowY, w - 104, 68, 8, 8);
             g.setColor(new Color(82, 92, 116));
             g.drawRoundRect(x + 52, rowY, w - 104, 68, 8, 8);
+            previewRow(g, folder.latest, x + 52, rowY, w - 240);
             g.setFont(new Font("SansSerif", Font.BOLD, 16));
             g.setColor(new Color(235, 236, 240));
             g.drawString(buttonIndex + ". " + shortText(folder.name, 34), x + 70, rowY + 24);
@@ -257,17 +351,18 @@ public final class SaveMenuRenderer {
             g.fillRoundRect(x + 52, rowY, w - 104, 68, 8, 8);
             g.setColor(new Color(82, 92, 116));
             g.drawRoundRect(x + 52, rowY, w - 104, 68, 8, 8);
+            previewRow(g, summary, x + 52, rowY, w - 240);
             g.setFont(new Font("SansSerif", Font.BOLD, 16));
             g.setColor(new Color(235, 236, 240));
-            g.drawString(buttonIndex + ". " + shortText(summary.saveName(), 34), x + 70, rowY + 24);
+            effects.drawClippedString(g, buttonIndex + ". " + summary.saveName(), x + 70, rowY + 24, state.saveMenuCanSave ? w - 380 : w - 260);
             g.setFont(new Font("SansSerif", Font.PLAIN, 13));
             g.setColor(new Color(176, 182, 196));
-            g.drawString(summary.name() + " (" + summary.className() + ")  Level " + summary.level() + "  "
-                    + state.world.label(summary.mapId()) + "  " + summary.gold() + "g", x + 70, rowY + 43);
+            effects.drawClippedString(g, summary.name() + " (" + summary.className() + ")  Level " + summary.level() + "  "
+                    + state.world.label(summary.mapId()) + "  " + summary.gold() + "g", x + 70, rowY + 43, state.saveMenuCanSave ? w - 380 : w - 260);
             g.setColor(new Color(147, 154, 172));
-            g.drawString("Saved " + formatSaveTime(summary.savedAtMillis()) + "  "
+            effects.drawClippedString(g, "Saved " + formatSaveTime(summary.savedAtMillis()) + "  "
                     + summary.completedQuests() + " done  " + summary.activeQuests() + " active  Party "
-                    + summary.partySize(), x + 70, rowY + 60);
+                    + summary.partySize(), x + 70, rowY + 60, state.saveMenuCanSave ? w - 380 : w - 260);
             String actionLabel = effects.importingCharacter() ? "Import" : "Load";
             effects.actionButton(g, x + w - 172, rowY + 18, 104, 32, actionLabel,
                     () -> effects.loadOrImportGame(saveId), effects.importingCharacter() ? new Color(89, 68, 43) : new Color(57, 71, 102),
@@ -303,6 +398,7 @@ public final class SaveMenuRenderer {
     }
 
     void setSelectedLoadFolder(String characterId) {
+        resetPreview();
         effects.setSelectedLoadCharacterId(characterId);
         effects.setSaveListScroll(0);
     }

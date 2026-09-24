@@ -1,0 +1,6 @@
+{
+  "prompt": "Edit this oak support pillar game sprite. Preserve the wood, iron bands, stone foot, front view and proportions. REMOVE ALL the brown glow, vignette, shadow and haze around it. This is a nonluminous solid object, not magical. Every pixel outside its hard object silhouette must be fully transparent alpha zero. All four corners fully transparent. No background or backdrop. Crisp pixel art cutout only.",
+  "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-0475ca02-2094-4d1a-914a-f43acc82b33b.png",
+  "source": "interior_oak_support_pillar_alpha.png",
+  "asset_file": "Java/assets/environments/interiors/props/trades/interior_oak_support_pillar.png"
+}

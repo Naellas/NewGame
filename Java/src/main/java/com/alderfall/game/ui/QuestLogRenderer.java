@@ -17,11 +17,13 @@ public final class QuestLogRenderer {
     private final GameState state;
     private final Effects effects;
     private int travelPartyPage;
+    private final PartyPortraitRenderer partyPortraits;
 
     public QuestLogRenderer(AssetStore assets, GameState state, Effects effects) {
         this.assets = assets;
         this.state = state;
         this.effects = effects;
+        this.partyPortraits=new PartyPortraitRenderer(assets);
     }
 
 
@@ -521,6 +523,11 @@ public final class QuestLogRenderer {
         if (paged) memberAreaH = Math.max(32, memberAreaH - 30);
         int capacity = Math.max(1, (memberAreaH + memberGap) / 70);
         int pages = (party.size() + capacity - 1) / capacity;
+        GameState.TravelBanterPrompt banter=state.activeTravelBanter();
+        int speakerIndex=-1;
+        if(banter!=null)for(int i=0;i<party.size();i++)if(party.get(i).name.equals(banter.speaker())){speakerIndex=i;break;}
+        if(speakerIndex>=0)travelPartyPage=speakerIndex/capacity;
+        boolean followingSpeaker=speakerIndex>=0;
         travelPartyPage = Math.min(travelPartyPage, pages - 1);
         int first = travelPartyPage * capacity;
         int rows = Math.min(capacity, party.size() - first);
@@ -532,9 +539,9 @@ public final class QuestLogRenderer {
         if (paged) {
             int pageY = y + h - 34;
             effects.actionButton(g, x + 10, pageY, 70, 24, "Previous",
-                    () -> travelPartyPage--, new Color(35, 43, 58), new Color(82, 92, 116), travelPartyPage > 0);
+                    () -> travelPartyPage--, new Color(35, 43, 58), new Color(82, 92, 116), !followingSpeaker && travelPartyPage > 0);
             effects.actionButton(g, x + w - 80, pageY, 70, 24, "Next",
-                    () -> travelPartyPage++, new Color(35, 43, 58), new Color(82, 92, 116), travelPartyPage < pages - 1);
+                    () -> travelPartyPage++, new Color(35, 43, 58), new Color(82, 92, 116), !followingSpeaker && travelPartyPage < pages - 1);
             g.setFont(new Font("SansSerif", Font.PLAIN, 11));
             g.setColor(new Color(198, 202, 211));
             effects.drawCenteredIn(g, (travelPartyPage + 1) + " / " + pages, x + 80, pageY + 16, w - 160);
@@ -597,12 +604,14 @@ public final class QuestLogRenderer {
         Rectangle bounds = new Rectangle(x, y, w, h);
         g.setColor(new Color(24, 28, 38, 232));
         g.fillRoundRect(x, y, w, h, 8, 8);
-        g.setColor(new Color(82, 92, 116));
+        GameState.TravelBanterPrompt prompt=state.activeTravelBanter();
+        boolean speaking=prompt!=null && actor.name.equals(prompt.speaker());
+        g.setColor(speaking ? new Color(154,205,165) : new Color(82, 92, 116));
         g.drawRoundRect(x, y, w, h, 8, 8);
         effects.addPartyPortraitZone(bounds, actor);
         int portraitW = Math.min(w / 2, Math.max(70, h));
         int portraitH = Math.max(1, h - 8);
-        g.drawImage(assets.portrait(dialoguePortraitSprite(actor), portraitW, portraitH), x + 4, y + 4, null);
+        partyPortraits.draw(g,actor,new Rectangle(x+4,y+4,portraitW,portraitH),prompt);
         int textX = x + portraitW + 10;
         int textW = Math.max(34, w - portraitW - 16);
         g.setFont(new Font("SansSerif", Font.BOLD, 13));
@@ -642,8 +651,7 @@ public final class QuestLogRenderer {
         if (actor == null) {
             return state.player.worldSprite;
         }
-        String sprite = actor.sprite + "_dialogue_sprite";
-        return assets.hasSprite(sprite) ? sprite : actor.worldSprite;
+        return PartyPortraitRenderer.sprite(assets,actor);
     }
 
     private void drawMiniResourceBar(Graphics2D g, int x, int y, int w, int h, int value, int max, Color fill) {

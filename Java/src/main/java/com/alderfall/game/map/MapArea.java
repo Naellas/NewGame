@@ -32,6 +32,9 @@ public final class MapArea {
     public void setApproachGround(TilePoint point, char ground) {
         approachGround.put(point, ground); markVisualChange();
     }
+    private List<TownLandPlots.Plot> townPlots = List.of();
+    public List<TownLandPlots.Plot> townPlots() { return townPlots; }
+    public void setTownPlots(List<TownLandPlots.Plot> plots) { townPlots = List.copyOf(plots); markVisualChange(); }
     private List<NatureSiteGenerator.Site> natureSites = List.of();
     public List<NatureSiteGenerator.Site> natureSites() { return natureSites; }
     public void setNatureSites(List<NatureSiteGenerator.Site> sites) {
@@ -104,6 +107,10 @@ public final class MapArea {
         visualRevision++;
     }
 
+    public void invalidateAfter(long previousRevision) {
+        visualRevision = Math.max(visualRevision, previousRevision) + 1;
+    }
+
     public void addProp(WorldProp prop) {
         props.add(prop);
     }
@@ -116,7 +123,7 @@ public final class MapArea {
         if (!removeProp(prop)) {
             return null;
         }
-        WorldProp moved = new WorldProp(x, y, prop.asset(), prop.size(), prop.visualSlot());
+        WorldProp moved = new WorldProp(x, y, prop.asset(), prop.size(), prop.visualSlot(), prop.offsetX(), prop.offsetY());
         addProp(moved);
         return moved;
     }

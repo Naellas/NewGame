@@ -14,15 +14,20 @@ public final class PropPlacement {
     private static final java.util.Map<String, Kind> KINDS = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static Placement at(WorldMap world, String mapId, WorldProp prop) {
+        if(prop.visualSlot()>=128&&prop.visualSlot()<=131){
+            int slot=prop.visualSlot()-128;
+            return new Placement(.25+(slot%2)*.5,.25+(slot/2)*.5,1,Kind.COVER);
+        }
+        if (mapId.startsWith("town_") && com.alderfall.game.map.TownStreets.lamp(prop.asset())) {
+            TilePoint side = com.alderfall.game.map.TownStreets.roadSide(world.area(mapId), prop.x(), prop.y());
+            return new Placement(.5 + side.x() * .18, .9 + side.y() * .10, 1, Kind.FIXED);
+        }
         if (!usesOffsets(world, mapId)) return FIXED;
         Kind kind = kind(prop.asset());
         if (kind == Kind.FIXED) return FIXED;
         int seed = prop.x() * 73428767 ^ prop.y() * 912931 ^ prop.asset().hashCode() ^ mapId.hashCode();
         if (prop.visualSlot() >= 0) {
-            int slot = prop.visualSlot();
-            return new Placement(0.25 + (slot % 2) * 0.5 + (random(seed) - 0.5) * 0.12,
-                    0.25 + (slot / 2) * 0.5 + (random(seed ^ 0x51ed270b) - 0.5) * 0.12,
-                    0.82 + (int) (random(seed ^ 0x6d2b79f5) * 4) * 0.06, kind);
+            return GroundCoverPattern.anchor(mapId, prop.x(), prop.y(), prop.visualSlot());
         }
         // A bounded root footprint prevents neighboring tile rows from collapsing into each other.
         double radius = kind == Kind.TREE ? 0.23 : kind == Kind.COVER ? 0.14 : 0.20;
@@ -72,7 +77,7 @@ public final class PropPlacement {
         if (asset.contains("root")) return Kind.COVER;
         if (asset.contains("tree") || asset.contains("pine") || asset.contains("willow") || asset.contains("palm")) return Kind.TREE;
         for (String word : new String[]{"soft_", "grass", "flower", "bloom", "fern", "bush", "mushroom",
-                "reed", "cattail", "plant", "lily", "duckweed", "floating", "weed", "leaf", "scrub", "pebble", "moss"}) {
+                "reed", "sedge", "cattail", "plant", "lily", "duckweed", "floating", "weed", "leaf", "scrub", "pebble", "moss"}) {
             if (asset.contains(word)) return Kind.COVER;
         }
         return Kind.FIXED;

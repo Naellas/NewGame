@@ -34,7 +34,8 @@ public final class TownNpcNavigationTest {
         Method update = GameState.class.getDeclaredMethod("updateNpcMovement");
         update.setAccessible(true);
         int totalMoves = 0;
-        for (String mapId : List.of("village_elderford", "town_briarbridge", "city_riverside")) {
+        for (String mapId : List.of("village_elderford", "town_briarbridge", "town_ironvale", "town_moonspire",
+                "town_reedwatch", "town_embermarket", "town_northwatch", "town_greyharbor", "city_riverside")) {
             require(state.world.hasMap(mapId), "Missing simulation map " + mapId);
             state.currentMapId = mapId;
             state.playerX = 0;

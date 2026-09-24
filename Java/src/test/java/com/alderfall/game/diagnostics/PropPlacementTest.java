@@ -38,14 +38,35 @@ public final class PropPlacementTest {
             changed++;
             sizes.add(p.scale());
             if (prop.visualSlot() >= 0) {
-                require(p.x() >= 0.19 && p.x() <= 0.81 && p.y() >= 0.19 && p.y() <= 0.81,
-                        "Quarter-tile detail leaves its slot");
+                require(p.x() >= 0.06 && p.x() <= 0.94 && p.y() >= 0.12 && p.y() <= 0.92,
+                        "Ground detail leaves its owner tile");
                 require(PropCollision.footprint(state.world, state.currentMapId, prop) == null, "Ground detail blocks movement");
                 continue;
             }
             require(p.x() >= 0.14 && p.x() <= 0.86 && p.y() >= 0.32 && p.y() <= 0.86, "Anchor leaves tile");
             require(p.scale() >= 0.76 && p.scale() <= 1.15, "Scale outside family range");
         }
+        // Candidate IDs must no longer lock plants to quarter-tile rows or depend on artwork.
+        var anchorBins = new HashSet<Integer>();
+        var moduleScales = new HashSet<Double>();
+        for (int x = 10; x < 80; x++) for (int slot = 0; slot < 4; slot++) {
+            var a = PropPlacement.at(state.world, state.currentMapId, new WorldProp(x, 44, "deco_ground_tundra_1", 20, slot));
+            var b = PropPlacement.at(state.world, state.currentMapId, new WorldProp(x, 44, "deco_ground_grass_2", 20, slot));
+            require(a.equals(b), "Changing cover module moves its root");
+            moduleScales.add(a.scale());
+            anchorBins.add((int) (a.x() * 10) + 10 * (int) (a.y() * 10));
+        }
+        require(moduleScales.size() == 5 && java.util.Collections.max(moduleScales) / java.util.Collections.min(moduleScales) > 2.5, "Module scale range too narrow");
+        require(anchorBins.size() > 45, "Ground cover still follows fixed sub-tile rows");
+        double minimum = 1, maximum = 0;
+        for (int y = 0; y < 40; y++) for (int x = 0; x < 40; x++) {
+            var patch = GroundCoverPattern.patch(x, y + .3, 714);
+            minimum = Math.min(minimum, patch.coverage()); maximum = Math.max(maximum, patch.coverage());
+            require(Math.abs(GroundCoverPattern.patch(x - .0001, y + .3, 714).coverage()
+                    - GroundCoverPattern.patch(x + .0001, y + .3, 714).coverage()) < .001,
+                    "Cover discontinuity at tile or patch boundary");
+        }
+        require(minimum < .01 && maximum > .95, "Missing bare gaps or full patch centers");
         require(changed > 100 && sizes.size() >= 5, "Missing natural variation");
         WorldProp tree = new WorldProp(123, 99, "deco_tree_oak_harvestable", 80);
         var placement = PropPlacement.at(state.world, state.currentMapId, tree);

@@ -13,3 +13,9 @@ Exploration movement sweeps a player box with a radius of 0.14 tiles against tho
 Pathfinding chooses a clear center or quarter-tile anchor for each tile and checks the swept connection between anchors. Diagonal corner cutting is prevented. A small local quarter-tile search joins click routes from the player's actual fractional position. The global search retains one anchor per gameplay tile, so it can be conservative where multiple disconnected gaps occupy one tile. This is not a replacement of the world, encounters or save coordinates with a higher-resolution grid. NPC schedules and party follower navigation retain their existing systems.
 
 Validation: `SubtileCollisionTest`, `GroundDetailBatchTest`, `PropPlacementTest`, and `SmokeTest` pass. The batch test compares direct and cached pixels at three zooms and camera offsets, and verifies removal invalidation. `VillageTerrainTest` reports a cached/direct terrain pixel mismatch at (0,0); the same failure occurs in a separate build with quarter-tile generation disabled. Run diagnostics from `Java/` after building. Visual review images are in `asset-review/subtile-placement/` at the repository root; orange rectangles show prop ground footprints, without the additional player clearance margin.
+
+Editor-authored natural props now retain linear footprint scaling above 2x and
+apply reference-pixel offsets to their ground bases. Editor collision searches
+include the full supported 512px size/offset range. Fixed structural prop footprints
+also follow offsets; unshifted game structures preserve their grid rules. The editor
+Collision overlay exposes these footprints for review. See `EditorPropCollisionTest`.

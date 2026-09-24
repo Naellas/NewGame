@@ -1,0 +1,82 @@
+"""Deterministic, original spell and foot-contact synthesis (standard library only)."""
+import argparse
+import math
+import random
+from pathlib import Path
+
+from tools.audio.musicgen import SAMPLE_RATE, write_wav
+from tools.project_paths import JAVA_ROOT
+
+SURFACES = ("grass", "dirt", "stone", "wood", "sand", "snow", "water", "cloth")
+SPELLS = ("fire_flight", "fire_explosion", "ice_flight", "ice_shatter",
+          "lightning_flight", "lightning_impact", "arcane_flight", "arcane_impact")
+
+
+def synthesize(name: str) -> list[float]:
+    rng = random.Random(name)
+    foot = name.startswith("foot_")
+    flight = name.endswith("flight")
+    duration = .25 if foot else .6 if flight else 1.05
+    low = 0.0
+    phase = 0.0
+    samples = []
+    material = name.split("_")[1] if foot else ""
+    for i in range(int(SAMPLE_RATE * duration)):
+        t = i / SAMPLE_RATE
+        noise = rng.uniform(-1, 1)
+        low += .065 * (noise - low)
+        high = noise - low
+        fade = min(1, t / .006, (duration - t) / .04)
+        if foot:
+            # Heel body followed by a softer toe/scuff; variants change grain and pitch.
+            body = math.exp(-t * 32) * math.sin(2 * math.pi * (95 + int(name[-1]) * 8) * t)
+            scuff = math.exp(-((t - .075) / .047) ** 2)
+            if material == "stone":
+                value = .5 * body + .45 * high * math.exp(-t * 75) + .1 * low * scuff
+            elif material == "wood":
+                value = .5 * body + .23 * math.sin(2 * math.pi * 390 * t) * math.exp(-t * 38) + .15 * high * math.exp(-t * 70)
+            elif material == "water":
+                value = .65 * low * scuff + .18 * high * scuff + .18 * math.sin(2 * math.pi * (780 * t - 950 * t * t)) * math.exp(-t * 30)
+            elif material == "cloth":
+                value = .27 * body + .2 * low * scuff
+            else:
+                grain = {"grass": .18, "dirt": .1, "sand": .07, "snow": .28}[material]
+                value = .3 * body + .6 * low * scuff + grain * high * scuff
+            value *= fade * .55
+        else:
+            env = fade * (1 if flight else math.exp(-t * 4.5))
+            if name.startswith("fire"):
+                phase += 2 * math.pi * (95 + 70 * math.exp(-t * 10)) / SAMPLE_RATE
+                value = low * 1.9 + high * .1 + math.sin(phase) * (.12 if flight else .5)
+                value *= .8 + .2 * math.sin(t * 53)
+            elif name.startswith("ice"):
+                # Inharmonic shards with staggered, rapidly decaying resonances.
+                value = high * (.09 if flight else .24)
+                for j, frequency in enumerate((1120, 1783, 2617, 3911)):
+                    age = t - j * .035
+                    if age >= 0:
+                        value += .16 * math.sin(2 * math.pi * frequency * age) * math.exp(-age * (4 if flight else 12))
+            elif name.startswith("lightning"):
+                value = high * .5 * (1 if math.sin(t * 370) > .6 else .12) + low * .8
+                value += .2 * math.sin(2 * math.pi * 60 * t)
+            else:
+                phase += 2 * math.pi * (280 + 460 * t / duration) / SAMPLE_RATE
+                value = .25 * math.sin(phase) + .15 * math.sin(phase * 1.503) + low * .65
+            value *= env * .65
+        samples.append(value)
+    peak = max(abs(v) for v in samples)
+    return [v * min(1, .85 / peak) for v in samples]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, default=JAVA_ROOT / "assets/sfx")
+    args = parser.parse_args()
+    names = list(SPELLS) + [f"foot_{surface}_{variant}" for surface in SURFACES for variant in range(1, 4)]
+    for name in names:
+        write_wav(args.output / f"{name}.wav", synthesize(name))
+    print(f"Wrote {len(names)} original PCM samples to {args.output}")
+
+
+if __name__ == "__main__":
+    main()

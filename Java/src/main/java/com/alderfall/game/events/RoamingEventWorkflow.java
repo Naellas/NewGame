@@ -7,15 +7,15 @@ public final class RoamingEventWorkflow {
     }
 
     public static void openLostSatchelPrompt(GameState state, int seed) {
-        state.openRoamingEventPrompt("Lost Satchel", "npc_merchant",
-                "Lost Satchel: A torn pack lies half-buried in road grit. Damp straps, sealed pockets, and a stamped token suggest more than simple litter.",
+        state.openRoamingEventPrompt("Lost Purse", "event_lost_purse",
+                "Lost Purse: A leather purse lies in the road grit. A stamped owner token hangs beside its drawstring.",
                 List.of(
                         new GameState.RoamingEventChoice("Inspect the owner token (INT)", () -> resolveSatchelInspect(state, seed)),
-                        new GameState.RoamingEventChoice("Recover useful supplies (DEX)", () -> resolveSatchelRecover(state, seed)),
+                        new GameState.RoamingEventChoice("Recover the loose coins (DEX)", () -> resolveSatchelRecover(state, seed)),
                         new GameState.RoamingEventChoice("Leave a visible marker (CHA + WIL)", () -> resolveSatchelMarker(state, seed)),
                         new GameState.RoamingEventChoice("Ignore it", () -> state.resolveRoamingEventPrompt(
-                                "Lost Satchel: You leave the pack where its owner might still find it.",
-                                "You leave the satchel."))
+                                "Lost Purse: You leave the purse where its owner might still find it.",
+                                "You leave the purse."))
                 ));
     }
 
@@ -287,14 +287,14 @@ public final class RoamingEventWorkflow {
         int roll = eventRoll(seed, 67, state.player.intelligence, 0);
         if (roll <= 15) {
             state.startRoamingEventBattle(ambushers(state),
-                    "Lost Satchel: The owner token is bait. A trip-line jerks loose and bandits rush the road.");
+                    "Lost Purse: The owner token is bait. A trip-line jerks loose and bandits rush the road.");
             return;
         }
         int gold = 6 + roll % 14;
         state.player.gold += gold;
         state.player.gainXp(6 + roll % 8);
         state.resolveRoamingEventPrompt(
-                "Lost Satchel: The owner token points to a trade road cache. You keep only the unclaimed coin and note the mark. Recovered: "
+                "Lost Purse: The owner token points to a trade road cache. You keep only the unclaimed coin and note the mark. Recovered: "
                         + gold + "g.",
                 "You identify the satchel mark.");
     }
@@ -303,11 +303,10 @@ public final class RoamingEventWorkflow {
         int roll = eventRoll(seed, 71, state.player.dexterity, 0);
         int gold = 8 + roll % 18;
         state.player.gold += gold;
-        state.player.addItem("trail_rations", roll >= 20 ? 2 : 1);
         state.resolveRoamingEventPrompt(
-                "Lost Satchel: You sort fragile, wet, and useful items before the pack gives way. Recovered: " + gold
-                        + "g and trail rations.",
-                "You recover road supplies.");
+                "Lost Purse: You gather the coins before they spill through the split lining. Recovered: " + gold
+                        + "g.",
+                "You recover the coins.");
     }
 
     private static void resolveSatchelMarker(GameState state, int seed) {
@@ -316,9 +315,9 @@ public final class RoamingEventWorkflow {
         state.player.gainXp(xp);
         state.worldAbilityTimers.merge("foragers_luck", 70 + roll % 50, Math::max);
         state.resolveRoamingEventPrompt(
-                "Lost Satchel: You raise a marker visible to roadfolk but dull to thieves. Result: +" + xp
+                "Lost Purse: You raise a marker visible to roadfolk but dull to thieves. Result: +" + xp
                         + " XP and forager's luck.",
-                "You mark the lost satchel.");
+                "You mark the lost purse.");
     }
 
     private static void resolveTravelerTreat(GameState state, int seed) {

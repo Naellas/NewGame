@@ -1,0 +1,6 @@
+{
+  "prompt": "Preserve this exact blacksmith storage cabinet sprite, straight frontal perspective, dimensions and all details. Correct only its transparent background: exterior empty space must be fully transparent alpha ZERO, especially the four image corners. Remove all faint translucent black haze or shadow outside the cabinet silhouette. No painted checkerboard, ground, backdrop or new objects. Keep the wooden cupboard and iron tools unchanged.",
+  "path": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-54f11829-e11c-43ee-b147-a79671ea4242.png",
+  "source": "interior_smith_storage_alpha.png",
+  "asset_file": "Java/assets/environments/interiors/props/trades/interior_smith_storage.png"
+}

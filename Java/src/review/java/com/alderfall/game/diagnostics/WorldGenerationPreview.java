@@ -15,7 +15,7 @@ import javax.swing.Timer;
 /** Renders the generated crossing assets in their actual overworld surroundings. */
 public final class WorldGenerationPreview {
     public static void main(String[] args) throws Exception {
-        Path output = Path.of("exports/worldgen-preview");
+        Path output = Path.of(args.length > 0 ? args[0] : "exports/worldgen-preview");
         Files.createDirectories(output);
         SwingUtilities.invokeAndWait(() -> {
             GamePanel panel = new GamePanel(Path.of("").toAbsolutePath().normalize());
@@ -29,6 +29,10 @@ public final class WorldGenerationPreview {
                 while (state.timeOfDayMinutes() < 720) state.worldTick++;
                 state.currentMapId = WorldMap.OVERWORLD_ID;
                 panel.setSize(GameConfig.WIDTH, GameConfig.HEIGHT);
+                if (args.length > 1 && args[1].equals("roaming")) {
+                    previewEvents(panel, state, output);
+                    return;
+                }
                 AssetStore assets = new AssetStore(Path.of("assets"));
                 for (String name : List.of("deco_crossing_charter_marker", "deco_crossing_flood_bell")) {
                     if (!assets.hasSprite(name)) throw new IllegalStateException("Missing asset: " + name);
@@ -68,9 +72,99 @@ public final class WorldGenerationPreview {
         });
     }
 
+    private static void previewEvents(GamePanel panel, GameState state, Path output) throws Exception {
+        state.playerX = 1; state.playerY = 1;
+        TilePoint traveler = null;
+        for (int y = 30; y < 288 && traveler == null; y++) for (int x = 30; x < 288; x++) {
+            if (state.roamingEvents.spawnTravelerAt(state, x, y, 99)) { traveler = new TilePoint(x, y); break; }
+        }
+        if (traveler == null) throw new AssertionError("No traveler position");
+        state.playerX = traveler.x() + 1; state.playerY = traveler.y();
+        capture(panel, output.resolve("wounded-traveler.png"));
+        state.roamingEvents.reset();
+        state.playerX = traveler.x() + 3;
+        state.roamingEvents.spawnTrapAt(state, traveler.x(), traveler.y(), 99);
+        capture(panel, output.resolve("ground-trap.png"));
+        state.roamingEvents.reset();
+        boolean fish = false;
+        for (int y = 12; y < 288 && !fish; y++) for (int x = 12; x < 288; x++) {
+            if (!state.roamingEvents.spawnFishAt(state, x, y, 99)) continue;
+            for (int[] step : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+                int ax = x + step[0], ay = y + step[1];
+                if (state.world.isPassable(state.currentMapId, ax, ay)
+                        && state.world.waterDepth(state.currentMapId, ax, ay) != WaterDepth.DEEP
+                        && PropCollision.clear(state.world, state.currentMapId, ax + .5, ay + .5)) {
+                    state.playerX = ax; state.playerY = ay;
+                    break;
+                }
+            }
+            capture(panel, output.resolve("fish-run.png"));
+            fish = true;
+            break;
+        }
+        if (!fish) throw new AssertionError("No fish position");
+        state.roamingEvents.reset();
+        state.playerX = 1; state.playerY = 1;
+        TilePoint bush = null;
+        for (int y = 12; y < 288 && bush == null; y++) for (int x = 12; x < 288; x++) {
+            if (state.roamingEvents.spawnAmbushAt(state, x, y, 77)) { bush = new TilePoint(x, y); break; }
+        }
+        if (bush == null) throw new AssertionError("No ambush road");
+        state.playerX = bush.x() - 3; state.playerY = bush.y();
+        boolean purse = false;
+        for (int dy = -2; dy <= 2 && !purse; dy++) for (int dx = -2; dx <= 2; dx++) {
+            if (state.roamingEvents.spawnPurseAt(state, bush.x() + dx, bush.y() + dy, 123)) { purse = true; break; }
+        }
+        if (!purse) throw new AssertionError("No nearby purse position");
+        capture(panel, output.resolve("road-objects.png"));
+        state.playerX = bush.x(); state.playerY = bush.y();
+        if (!state.roamingEvents.triggerEnteredEvent(state)) throw new AssertionError("Ambush popup missing");
+        state.revealActiveDialogueLineInstantly();
+        capture(panel, output.resolve("ambush-popup.png"));
+        state.closeOverlay();
+        state.mode = GameMode.EXPLORE;
+        for (WorldProp shrine : state.world.props(state.currentMapId)) {
+            state.roamingEvents.reset();
+            if (!state.roamingEvents.spawnShrineAt(state, shrine, 0)) continue;
+            state.playerX = shrine.x() - 2; state.playerY = shrine.y() + 1;
+            field("frame").setInt(panel, 75);
+            for (int variant = 0; variant < 3; variant++) {
+                state.roamingEvents.reset();
+                state.roamingEvents.spawnShrineAt(state, shrine, variant);
+                capture(panel, output.resolve("shrine-" + variant + ".png"));
+            }
+            break;
+        }
+        RoamingEventWorkflow.openLostSatchelPrompt(state, 123);
+        state.revealActiveDialogueLineInstantly();
+        capture(panel, output.resolve("deliberate-interaction.png"));
+        state.closeOverlay();
+        state.roamingEvents.reset();
+        for (String id : List.of("greyharbor_cache_run", "camp_ledger")) {
+            Quest quest = state.quests.get(id);
+            quest.accepted = true;
+            if (id.equals("camp_ledger")) quest.stageIndex = 1;
+            state.resetQuestMonsterRuntime();
+            GameState.QuestObjective objective = state.activeQuestObjectives().stream()
+                    .filter(o -> o.questId().equals(id) && !o.markerOnly()).findFirst().orElseThrow();
+            state.currentMapId = objective.mapId();
+            state.playerX = objective.x() - 1; state.playerY = objective.y() + 1;
+            capture(panel, output.resolve(id + ".png"));
+        }
+        System.out.println("Captured world objects, ambush popup, shrine palettes and active cache/document quests.");
+    }
+
+    private static void capture(GamePanel panel, Path output) throws Exception {
+        ((CameraController) field("cameraController").get(panel)).resetToPlayer();
+        BufferedImage image = new BufferedImage(GameConfig.WIDTH, GameConfig.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics(); panel.paint(g); g.dispose();
+        ImageIO.write(image, "png", output.toFile());
+    }
+
     private static Field field(String name) throws NoSuchFieldException {
         Field field = GamePanel.class.getDeclaredField(name);
         field.setAccessible(true);
         return field;
     }
 }
+

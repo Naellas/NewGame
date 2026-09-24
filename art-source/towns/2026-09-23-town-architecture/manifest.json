@@ -1,0 +1,184 @@
+[
+  {
+    "id": "town_briarbridge_bridge_court",
+    "region": "river",
+    "source": "originals/town_briarbridge_bridge_court.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_bridge_court.png",
+    "sha256": "62fb653e4fb39386842de4b8378000947d7d1b71a6b06fe9500695cafc867161",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production transparent PNG building sprite for Echoes of Alderfall, a 2D top-down medieval fantasy RPG. Subject: Briarbridge Bridge Court, Western Reach river town. A compact two-storey timber-framed charter hall, cream lime plaster, weathered oak, blue-grey slate gables, broad central south-facing door, small carved open-bough emblem without letters, side tally-window and rolled charter tubes under a sheltered porch. Distinctive low side bell canopy; modest working civic building, not palace. Visual language: finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette, subtle moss and patina, readable silhouette at 160px wide. Front-facing orthographic view with modest overhead roof visibility, not isometric, not perspective illustration. Single complete freestanding building, centered, occupies 85 percent of square canvas with clear transparent margin; door centered at bottom facade for existing game entrance. Genuine alpha transparency everywhere outside the building, including gaps; no ground slab, scenery, people, text, frame, checkerboard, cast shadow or glow. Upper-left diffuse lighting confined to object. Output image only, one asset, no contact sheet."
+  },
+  {
+    "id": "town_briarbridge_house",
+    "region": "river",
+    "source": "originals/town_briarbridge_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_house.png",
+    "sha256": "2a21d375af8a94c78ad4d62b8f38e2eefa43d78a615c88b75ef91d03a486fc66",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Briarbridge riverside orchard dwelling: two-storey cream plaster and oak half-timber house, blue-grey slate roof, small orchard espalier fixed to facade, wooden shuttered upper window, compact river-worker storage porch. Lower and simpler than a civic hall, working family home."
+  },
+  {
+    "id": "town_ironvale_forge_keep",
+    "region": "north",
+    "source": "originals/town_ironvale_forge_keep.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_forge_keep.png",
+    "sha256": "98ef38534b32e358ae57288844495059075fab6bb97e67bb80c50d860fa61cdd",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Ironvale Forge Keep: compact fortified forge guildhall of soot-dark granite, squat square crenellated upper workshop, steep dark slate roof wing, iron strapwork, tall masonry forge chimney, faint warm forge light in side window. Door centered, no fire spilling outside. A northern ironworking landmark."
+  },
+  {
+    "id": "town_ironvale_house",
+    "region": "north",
+    "source": "originals/town_ironvale_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_house.png",
+    "sha256": "807534a153eee0fc39c83d7fc0f5d70997361a58f8f7d820d967dc5bf46aaa03",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Ironvale winter ironworker's dwelling: low heavy granite ground floor, timber upper storey, very steep dark slate gable, tiny snow patches tucked under roof ridges, robust black iron shutters, stacked split logs sheltered against side wall, short stone chimney. Compact family home."
+  },
+  {
+    "id": "town_moonspire_survey_tower",
+    "region": "hearth",
+    "source": "originals/town_moonspire_survey_tower.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_survey_tower.png",
+    "sha256": "51fffe50927a62826e4579ef30f13ed77b3a15ee7e1a715975a7ae1231142989",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Moonspire Survey Tower: compact three-storey scholarly survey house with a short octagonal observation turret, cream limestone and warm timber, muted terracotta roofs and small weathered brass surveying instrument fixed atop the turret. Public civic building, practical Renaissance-medieval craftsmanship, no magic glow. One central south-facing door."
+  },
+  {
+    "id": "town_moonspire_house",
+    "region": "hearth",
+    "source": "originals/town_moonspire_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_house.png",
+    "sha256": "147d9390e6f2662cee18f24730eeef89314b060d45374e6bdf3b11855defe683",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Moonspire mapmaker's townhouse: cream plaster and honey-brown timber, asymmetrical but compact terracotta gables, small glazed drawing-room bay above central door, rolled survey maps behind shuttered window, brass measuring divider emblem without text. Cozy practical scholarly home."
+  },
+  {
+    "id": "town_reedwatch_listening_tower",
+    "region": "fen",
+    "source": "originals/town_reedwatch_listening_tower.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_listening_tower.png",
+    "sha256": "470cbf24f3822548f757f1fd614794a341a4d0923c0c9845662a4d1c4339521b",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Reedwatch Listening Tower: compact timber bellkeeper's building raised on very short thick stilts, broad muted green reed-thatch lower roof, narrow open bell tower above with one bronze bell, weathered dark oak braces, moss-grey masonry footings, marked water gauge attached to side without lettering. Single centered door reached by two tiny attached steps, no detached walkway."
+  },
+  {
+    "id": "town_reedwatch_house",
+    "region": "fen",
+    "source": "originals/town_reedwatch_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/fen/town_reedwatch_house.png",
+    "sha256": "3f55887c4d797043972841e6cace9ce39be6105b151a541ad4f56f9712b63c18",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Reedwatch reed-worker dwelling: compact house on short heavy wooden stilts, broad low reed-thatched roof, grey-green timber cladding, bundled reeds secured under side eave, woven shutters, one centered front door with very short integral steps. Marsh-weathered surfaces, restrained sage and umber palette. No water or landscape."
+  },
+  {
+    "id": "town_embermarket_sun_court",
+    "region": "sun",
+    "source": "originals/town_embermarket_sun_court.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_sun_court.png",
+    "sha256": "9f670fc0eca5bb42c135cc877adc9b579bc927e5582c3d21b29fe463eae1676f",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Embermarket Sun Court: compact sunrealm civic meeting house, pale sandstone and warm cream lime plaster, low terracotta parapets and two small shaded roof terraces, central tall arched entrance with muted ochre fabric canopy, simple carved sun medallion without text, a small blue ceramic water jar mounted beside porch. Human-scale caravan-town civic landmark, not palace."
+  },
+  {
+    "id": "town_embermarket_house",
+    "region": "sun",
+    "source": "originals/town_embermarket_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_house.png",
+    "sha256": "6f6f48ac0ea2fe34d78efc8fc9dd431f3a00eb751890fa3a5b3fbc33973c16a6",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Embermarket caravan artisan home: compact warm cream plaster building with stepped flat terracotta-edged roof, shaded blue-green lattice windows, recessed central arched wooden door, narrow ochre awning, small integrated rooftop cistern and clay jars beneath sheltered side alcove. Warm sandstone base; distinctive dry-climate residence."
+  },
+  {
+    "id": "town_northwatch_signal_tower",
+    "region": "freehold",
+    "source": "originals/town_northwatch_signal_tower.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_signal_tower.png",
+    "sha256": "d29c9fbf482b76e9ae698998f6c672722f3659dddcfcd40f34c5776587476c3e",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Northwatch Signal Tower: rugged compact stone-and-timber watch house with a squat square lookout turret, closed beacon lantern mounted at top, steep weathered grey slate awnings, heavy rope coils and a rescue sled secured under side shelter, deep centered wooden front doorway. Independent mountain-road rescue outpost, no flames, no snow landscape."
+  },
+  {
+    "id": "town_northwatch_house",
+    "region": "freehold",
+    "source": "originals/town_northwatch_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_house.png",
+    "sha256": "013c31ac2a0d5e182bfcb9e264e938c170824d86ad6414d47efb15cd773e052c",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Northwatch ropewright residence: compact rough granite base and dark pine timber walls, steep red-brown shingle roof, a modest closed loft with rope-making pulley, thick shutters and coiled rescue ropes fixed beneath eaves, centered front door. Practical inland upland settlement home, restrained rust-brown and grey."
+  },
+  {
+    "id": "town_greyharbor_storm_beacon",
+    "region": "freehold",
+    "source": "originals/town_greyharbor_storm_beacon.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_storm_beacon.png",
+    "sha256": "c0b259034e12098de414a5f86e9f2e45784779bf2b84a24bd62def0874c4d88b",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Greyharbor Storm Beacon: compact coastal rescue guildhouse of salt-weathered pale grey stone, a short round beacon turret integrated into broad main house, closed amber glass lantern with no outer glow, storm-blue slate roofs, stout iron weather vane, net reels sheltered along side. Central south-facing entrance. Clearly distinct from angular inland Northwatch tower."
+  },
+  {
+    "id": "town_greyharbor_house",
+    "region": "freehold",
+    "source": "originals/town_greyharbor_house.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/freehold/town_greyharbor_house.png",
+    "sha256": "1c1310cf532b54b6b78789312cbc87a034fb7c0c7ecf05e9923ca468a28307fd",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generator": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Generate ONE production building sprite for Echoes of Alderfall, 2D top-down medieval fantasy RPG. Finely detailed game pixel art with crisp stepped clusters, dark brown outlines, restrained earthy palette and readable silhouette at 160px wide, matching hand-painted pixel-art medieval RPG architecture. Front-facing orthographic view with modest overhead roof visibility, NOT isometric. Single complete freestanding building centered on square canvas, 85 percent occupancy with clear transparent margin on ALL sides. Central south-facing entrance aligned near lower center of facade, for existing game entrance. Genuine alpha transparency everywhere outside building and in gaps. No ground slab, scenery, people, text, labels, grid, checkerboard, cast shadow, glow or vignette. Upper-left diffuse lighting confined to object. One asset only, no contact sheet. Subject: Greyharbor netmaker's house: compact two-storey coastal dwelling with salt-worn grey timber, faded storm-blue painted shutters, curved dark slate roofline, sheltered net-drying upper balcony with fishing net fixed flat to railing, raised stone foundation and centered front entrance. No sea, boat, ground, or detached props."
+  }
+]

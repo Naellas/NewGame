@@ -1,0 +1,12 @@
+[
+  {
+    "direction": "east",
+    "prompt": "A strict RIGHT-facing SIDE PROFILE sprite of the attached green carved wooden armchair. NOT isometric, NOT three-quarter. Backrest a thin VERTICAL slab on LEFT, seat extends HORIZONTALLY RIGHT. Only ONE exterior green side panel and ONE armrest visible; far side completely occluded. Exactly TWO visible vertical legs. NO view of the broad tufted FRONT of the backrest, which is edge-on. Seat top a narrow horizontal strip. ALL structural edges aligned horizontally or vertically; no diagonal depth lines. Same dark oak frame, green velvet, brass trim. Detailed pixel art appropriate to top-down RPG, restrained slight downward camera. One isolated whole object on genuinely transparent alpha; no checkerboard pixels, scene, text, floor, halo or cast shadow.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-4efacd0d-d3f3-453d-9967-b71bd5f79c5e.png"
+  },
+  {
+    "direction": "west",
+    "prompt": "Create the matching LEFT-facing version of this armchair sprite. Strict side profile, NOT three-quarter, NOT isometric. Backrest thin vertical slab on RIGHT, seat opens horizontally LEFT. Only ONE exterior side panel and one armrest, exactly TWO visible legs, far side occluded. All structural edges horizontal or vertical. Preserve same green velvet and carved oak model, brass details, crisp pixel art. Lighting stays from upper-left; redraw lighting for opposite view. Transparent alpha outside single complete isolated object; no checkerboard, ground, scene, text, glow or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-4b524e96-778a-45f6-b42f-f5655f6561bb.png"
+  }
+]

@@ -1,0 +1,362 @@
+[
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_cottage.png",
+    "current": "environments/settlements/player_village/buildings/house/imagegen_city_cottage.png",
+    "sha256": "6c06714a8c8effe890c35e461dee4957773d7f5e34f5458ea4e55501715cdf76"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_cottage_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/house/imagegen_city_cottage_lvl2.png",
+    "sha256": "094b894126cd93d99053fa5371665d8080ae1a57fef6c51b0a5cfdcd2bb85d90"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_cottage_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/house/imagegen_city_cottage_lvl3.png",
+    "sha256": "96eac9c4f9cfa9faae5053d2d04a884470b4cff063d1a9f6397b0c1c36cf936f"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_hall.png",
+    "current": "environments/settlements/player_village/buildings/inn/imagegen_city_hall.png",
+    "sha256": "76f0d80519184c5714f23cd886b4be3a88e803c590b45d6079c50c088ca06e35"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_hall_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/inn/imagegen_city_hall_lvl2.png",
+    "sha256": "90ed344e613af0722399c867e709c35b4db0ab4a9a63ae4dea6ec0683fc7282b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_hall_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/inn/imagegen_city_hall_lvl3.png",
+    "sha256": "1fb39177d3e77162191e29e9649c6323d1e6942cc6b0bf98cb96ce23d0e7c7ff"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_row.png",
+    "current": "environments/settlements/player_village/buildings/row/imagegen_city_row.png",
+    "sha256": "a5f9f268d88f55dd8f30a8d371964ecc68edab4da2eb1926814e4507b2b80c8d"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_row_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/row/imagegen_city_row_lvl2.png",
+    "sha256": "e71abf7fcd5da2bea2cc71455c5cf13b94ba177b06901ec0490ea0d697fcd134"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_row_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/row/imagegen_city_row_lvl3.png",
+    "sha256": "4588feb90c6fc57b95595af06733ba4a5a6da2c93d770cb64fb0492c7f390343"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_study.png",
+    "current": "environments/settlements/player_village/buildings/guild/imagegen_city_study.png",
+    "sha256": "a4737d0fe3a89303a49e2872c46ccd75f884109af4cdc42a985a58c6408050fc"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_study_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/guild/imagegen_city_study_lvl2.png",
+    "sha256": "f0bea3063919ed6c39406c34de13d2bdb5ec9bca7bac97e66e323a7deee664bc"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/imagegen_city_study_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/guild/imagegen_city_study_lvl3.png",
+    "sha256": "f82895838706c95bc5ddbd355c3e3f91c8403da8f7442ff520983bba5e4b5dfb"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_civic_tier1.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_civic_tier1.png",
+    "sha256": "ead51d18ee146bb5131ef812d5bd8ae6cd3e58390785c2f94bb7d8aec92514fc"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_civic_tier2.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_civic_tier2.png",
+    "sha256": "b3ba7201b7675ea30f97ce7abc57eb15db0e70cb934ad28cfcad1c68e1802127"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_civic_tier3.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_civic_tier3.png",
+    "sha256": "c0142e4a16f1d48ddd4e8170eaa0713418ef1e5f8aa413bcd2639056ead184ee"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_civic_tier4.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_civic_tier4.png",
+    "sha256": "43427c3f5ced9186c068f412b82bbca738bca5b1f367d87578221159bec0b12b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_civic_tier5.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_civic_tier5.png",
+    "sha256": "81840c47137f9654d4ebcbd1a9dd3b4ae3083f55e9e48b10959a521aa2f0b137"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_civic_tier6.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_civic_tier6.png",
+    "sha256": "d86b4eea84518cc2d0a01e80be6b4bda11621cad060a63f3c7b4e66f428c4e10"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_residence_tier1.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_residence_tier1.png",
+    "sha256": "ecc46b173ad2f62b837a504dff19de6be79faae759e7423b89c9c19a7e34df1d"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_residence_tier2.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_residence_tier2.png",
+    "sha256": "a28f57b65eaa56fc19961d8cec9c7d66240e06ba302ce7c9bd1267f8470905c3"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_residence_tier3.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_residence_tier3.png",
+    "sha256": "89cab933ccfdf259e6bb15db2ed87bcb973a014e79d04a6dffbb444d1fb3b586"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_residence_tier4.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_residence_tier4.png",
+    "sha256": "bc13e2c4f850512c8211fc5e20da1d85233080f2b95bd0cefb6ca38bfd2af73a"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_residence_tier5.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_residence_tier5.png",
+    "sha256": "07d41ceedbccc70dfc59009dbfe0dd190aa563321c0d4fca6e2c4fe07adc9360"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_residence_tier6.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_residence_tier6.png",
+    "sha256": "5db2c1af8949f7a89c49640b34192dfb8226e61d88ebd64874237633f6e0ca92"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_workshop_tier1.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_workshop_tier1.png",
+    "sha256": "2efaf5a67e3f011a55a6c22c3b659235b77bc108eeedeb68037586b9adfa4125"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_workshop_tier2.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_workshop_tier2.png",
+    "sha256": "44cce9cf7f33a27c2b62fc3c5c053c4fb85c93511dd040f5449188f4f5f37ba6"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_workshop_tier3.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_workshop_tier3.png",
+    "sha256": "72e50744f988c21f57a79c7e69428718543144522b5c3bf00078f780f087d2a1"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_workshop_tier4.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_workshop_tier4.png",
+    "sha256": "bb29d164460f6fe6ded60bee382963f60692b0e0ada9b46e1a5f09359a0440d6"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_workshop_tier5.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_workshop_tier5.png",
+    "sha256": "f2d8b322442946a07c9b792fe7f007e9692d5a55ddc4a9099bed0cd787a72f0d"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/settlement_workshop_tier6.png",
+    "current": "environments/settlements/player_village/buildings/shared/settlement_workshop_tier6.png",
+    "sha256": "a50a5b44d78889d3db263cdf17a5183b9f061d0eef689ddb4cb1e1c561031c41"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_apothecary.png",
+    "current": "environments/settlements/player_village/buildings/apothecary/village_building_apothecary.png",
+    "sha256": "fc5549c8e5b132954171f89b218453a206222151afc977ac06447ee11b5758b9"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_apothecary_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/apothecary/village_building_apothecary_lvl2.png",
+    "sha256": "dd057d3cf67658c54f7352c176cdef9d2dd05f1e86185f99156b78e1803bdbe1"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_apothecary_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/apothecary/village_building_apothecary_lvl3.png",
+    "sha256": "edcb70f1000d259b6c49f63de1d02a67d0138c83bbacec084076a89291289bf4"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_bakery.png",
+    "current": "environments/settlements/player_village/buildings/bakery/village_building_bakery.png",
+    "sha256": "b7faf74475fc2f317c0d077c7d9b94909618222907721ef57189a325dd3ea6dc"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_bakery_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/bakery/village_building_bakery_lvl2.png",
+    "sha256": "4c425c4e9bf8a87e5e966b28f97feb4bd617d7f89f3927da327914dfbc7abe56"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_bakery_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/bakery/village_building_bakery_lvl3.png",
+    "sha256": "1c9c829e88c7eb21386dc71d5cc243579e22dcc4632338b4d8d7ddf54673ff28"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_blacksmith.png",
+    "current": "environments/settlements/player_village/buildings/blacksmith/village_building_blacksmith.png",
+    "sha256": "f7e743ae16cdd81a430e38e6199888ca7572403507e2db4bd2c327b49108ea45"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_blacksmith_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/blacksmith/village_building_blacksmith_lvl2.png",
+    "sha256": "9543c59ec0e80fe5282f8bb013833886d33354ffd2ea4ab56e7f6ad51156458b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_blacksmith_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/blacksmith/village_building_blacksmith_lvl3.png",
+    "sha256": "6469a1ce85218b18db679619685c66b0a697e810a17c90c8c57a3e9256e6ab8b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_farmstead.png",
+    "current": "environments/settlements/player_village/buildings/farmstead/village_building_farmstead.png",
+    "sha256": "2295a244ea2d4e26a3d2d74383469112be0f69058e82c40c183a912e549a350b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_farmstead_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/farmstead/village_building_farmstead_lvl2.png",
+    "sha256": "1f2f5d5e9f93ad2638417d5adf18e0d19e0fdf2609b3a0ab75c06c655f61ae6f"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_farmstead_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/farmstead/village_building_farmstead_lvl3.png",
+    "sha256": "6661f1a5c9437a1dc0bf9363536bbc2f46d90ebd9b38f0d60effb369e9ac46c3"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_fishing_hut.png",
+    "current": "environments/settlements/player_village/buildings/fishing_hut/village_building_fishing_hut.png",
+    "sha256": "5ae3d33a1227f315f2f43f8bf9f864cf180902d33000360b13f18dcc8f54f0ef"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_fishing_hut_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/fishing_hut/village_building_fishing_hut_lvl2.png",
+    "sha256": "ab95ab6c156979ea1d9278eea49ac8a02c93039c72e7548ce8c07a9b028d57a7"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_fishing_hut_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/fishing_hut/village_building_fishing_hut_lvl3.png",
+    "sha256": "767698312b742bbb10ee8c3ed2f181c1b76929fb2b3e92be8cdad4e41a454d2a"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_forestry_hut.png",
+    "current": "environments/settlements/player_village/buildings/forestry_hut/village_building_forestry_hut.png",
+    "sha256": "82be150940952eeea93ea6b19e108887c03ec067355aeb6354ff6d44f0127892"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_forestry_hut_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/forestry_hut/village_building_forestry_hut_lvl2.png",
+    "sha256": "1a65338c69c38341aa2662e6e7b12297c942023f6349804656ccffab10237da7"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_forestry_hut_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/forestry_hut/village_building_forestry_hut_lvl3.png",
+    "sha256": "2511b86f4cdd88b1ad6f9ea4daf45af57de1ba430c30797199781abc1443cc11"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_garden.png",
+    "current": "environments/settlements/player_village/buildings/garden/village_building_garden.png",
+    "sha256": "b0ff0f34b37564d7f5271c55661a6598233d272b7b0dc907309c039cd0df7f3b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_garden_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/garden/village_building_garden_lvl2.png",
+    "sha256": "4cbf6140290ab011ed14a83fee0ddf997e3e50c1ad2594280dc57946b878c234"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_garden_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/garden/village_building_garden_lvl3.png",
+    "sha256": "3a97c79ecf0b261d11d988a9317a5dd1612426ac7524afcd5cf24f97de04e731"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_granary.png",
+    "current": "environments/settlements/player_village/buildings/granary/village_building_granary.png",
+    "sha256": "62e369e0c18273f4fbc12c6fc1c8bf5ff9db6657dbf89fc08fb914c05af61211"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_granary_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/granary/village_building_granary_lvl2.png",
+    "sha256": "722f805972dd5b4de0c18e0a2f7ea302799fcd5f57310432e8098c7553dc7afa"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_granary_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/granary/village_building_granary_lvl3.png",
+    "sha256": "61807bd8fe523c8b406ce7f2bddc10d8f3b6220421aa45b47cf3b7d77e04a080"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_hunting_camp.png",
+    "current": "environments/settlements/player_village/buildings/hunting_camp/village_building_hunting_camp.png",
+    "sha256": "eac6ecc23f8273f04508a337fc04276b8078b5004aca11b0785d3ad545e69a6c"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_hunting_camp_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/hunting_camp/village_building_hunting_camp_lvl2.png",
+    "sha256": "07ca8a910eab8b0f4aa76a181ded5f13fd81cefc749d424673153dc8e94ee105"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_hunting_camp_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/hunting_camp/village_building_hunting_camp_lvl3.png",
+    "sha256": "11ccacac1144f50d0191396148af516670f4742512689aed0b79a478cde703a1"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_mine.png",
+    "current": "environments/settlements/player_village/buildings/mine/village_building_mine.png",
+    "sha256": "15eea726057dd9984e940cdd547ddf13579657fa8db91e7fd463a3a68d2b0e92"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_mine_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/mine/village_building_mine_lvl2.png",
+    "sha256": "1c472449fbb76c4fcd2ddb1d296fb407147430e6d027dc0b6785f4b28315163d"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_mine_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/mine/village_building_mine_lvl3.png",
+    "sha256": "159c9d56e1a1d94d7685e72fc73ab8718dbfbf202b69bdd63f5cfd0f31ec8f95"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_shrine.png",
+    "current": "environments/settlements/player_village/buildings/shrine/village_building_shrine.png",
+    "sha256": "02af58844b120f47fdb165eecc4422e8dbf9510126979ed377a48a774d99e1b3"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_shrine_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/shrine/village_building_shrine_lvl2.png",
+    "sha256": "872b862c4bd6ccbdebac836955aff487e621b099949ce884225897f343e6ef4e"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_shrine_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/shrine/village_building_shrine_lvl3.png",
+    "sha256": "1e953b4cb4d9a022ca0b267f743a9a33a2196ac37824c850e437ddb0d6abc613"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_warehouse.png",
+    "current": "environments/settlements/player_village/buildings/warehouse/village_building_warehouse.png",
+    "sha256": "64e8b582b989d3d2d8c302a3986eceae53619045bd8c7c67161c560090d88150"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_warehouse_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/warehouse/village_building_warehouse_lvl2.png",
+    "sha256": "427ba85e278ed8e08383debc2949da25e43e3d4716b3fd45955c869f1e258e7b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_warehouse_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/warehouse/village_building_warehouse_lvl3.png",
+    "sha256": "5a82fc9b9acda27599ab6eaaa9d9a3e0c08a5fc633c0ce086909f0d0d7219439"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_watchtower.png",
+    "current": "environments/settlements/player_village/buildings/watchtower/village_building_watchtower.png",
+    "sha256": "583f2f0cf8242c4ef0146bd3cd72e4bc71fd7342179e0eba6f3635077e209b9b"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_watchtower_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/watchtower/village_building_watchtower_lvl2.png",
+    "sha256": "c0adb13ac238326ac64fac55cde067acd39812f0a2ef0456386a41d62cda0878"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_watchtower_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/watchtower/village_building_watchtower_lvl3.png",
+    "sha256": "44e567b3204b982e88248ef66ea2ec88058f5da559c5672eb9118b1f86c8b3e7"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_workshop.png",
+    "current": "environments/settlements/player_village/buildings/shop/village_building_workshop.png",
+    "sha256": "a382e3565854d980d6198178126f4b0bb5c14bbf26120e73bc6a37f6df4d57e9"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_workshop_lvl2.png",
+    "current": "environments/settlements/player_village/buildings/shop/village_building_workshop_lvl2.png",
+    "sha256": "b18a29bc91a0b2c4eb752934b1de3abe0e927c06109e9526f14f09fa3472502e"
+  },
+  {
+    "original": "environments/settlements/city/buildings/shared/village_building_workshop_lvl3.png",
+    "current": "environments/settlements/player_village/buildings/shop/village_building_workshop_lvl3.png",
+    "sha256": "af1ef851263fff42d85af45b2e484f9a865c521d863f6e722345544cd189b816"
+  }
+]

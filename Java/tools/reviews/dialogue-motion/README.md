@@ -1,13 +1,15 @@
 # Dialogue motion review
 
 Framework details and calibration instructions:
-[`Java/docs/dialogue-animation-framework.md`](../../Java/docs/dialogue-animation-framework.md).
+[`Java/docs/dialogue-animation-framework.md`](../../../docs/dialogue-animation-framework.md).
 
 Open the **Dialogue animation** tab in `../characters/index.html`, or use the
 direct `#dialogue-motion` link. The embedded preview loads on first use, adapts
 its height to face/full-figure views and pauses while another tab is active.
 `index.html` also remains available as a standalone preview.
 The preview uses exported production Java frames, not a separate browser rig.
+Frames now use the adaptive mesh renderer with native cubic filtering and the same
+full-resolution textures and physics. See the [performance report](../../../docs/dialogue-animation-performance.md).
 
 Coverage: all 26 dialogue cutouts, 96 frames each at 24 fps. Face and full-figure views
 compare the original artwork with speaking/listening motion. Slow playback,

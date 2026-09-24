@@ -24,7 +24,7 @@ public final class InteriorFurnishingsTest {
             require(ids.contains(item.asset()), "Missing editor asset " + item.asset());
             require(VillageManager.interiorAssets(item.category()).stream().anyMatch(a -> a.asset().equals(item.asset())),
                     "Missing category entry " + item.asset());
-            Path path = catalog.findAsset(item.asset());
+            Path path = catalog.findAsset(DirectionalSeating.source(item.asset()));
             require(path != null, "Missing sprite " + item.asset());
             var image = ImageIO.read(path.toFile());
             require(image.getColorModel().hasAlpha() && image.getRGB(0, 0) >>> 24 == 0,
@@ -61,7 +61,7 @@ public final class InteriorFurnishingsTest {
         Method repair = WorldMap.class.getDeclaredMethod("ensureInteriorNavigable", MapArea.class);
         place.setAccessible(true); repair.setAccessible(true);
         int checked = 0;
-        for (String theme : List.of("home", "inn", "tavern", "shop", "bakery", "study", "blacksmith", "carpenter",
+        for (String theme : List.of("home", "inn", "tavern", "shop", "bakery", "study", "alchemy", "blacksmith", "carpenter",
                 "granary", "smokehouse", "ferry_lodge", "remembrance_hall", "cistern_house", "bellhouse", "reedworks",
                 "caravanserai", "rescue_lodge")) {
             for (InteriorStyle style : InteriorStyle.values()) for (int seed : new int[]{0, 42, -1024}) {
@@ -89,7 +89,7 @@ public final class InteriorFurnishingsTest {
         }
         checkSurfaceRendering();
         System.out.println("Household furnishings passed: " + InteriorFurnishings.all().size()
-                + " editor assets; " + checked + " plans across 17 building uses.");
+                + " editor assets; " + checked + " plans across 18 building uses.");
     }
     private static void checkSurfaceRendering() {
         GameState state = new GameState(GameConfig.load(Path.of("").toAbsolutePath().normalize()));

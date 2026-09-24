@@ -1,4 +1,5 @@
 {
+  "shop_restock_days": 3,
   "monster_spawn_chances": {
     "wild": 0.12,
     "dungeon": 0.18,

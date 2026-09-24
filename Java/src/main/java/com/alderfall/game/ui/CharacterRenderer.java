@@ -21,13 +21,13 @@ public final class CharacterRenderer {
     private final AssetStore assets;
     private final GameState state;
     private final Effects effects;
-    private final DialogueFigureAnimation partyAnimation=new DialogueFigureAnimation();
-    private final long partyAnimationStart=System.nanoTime();
+    private final PartyPortraitRenderer partyPortraits;
 
     public CharacterRenderer(AssetStore assets, GameState state, Effects effects) {
         this.assets = assets;
         this.state = state;
         this.effects = effects;
+        this.partyPortraits=new PartyPortraitRenderer(assets);
     }
 
     private static final String[][] ATTRIBUTE_STATS = {
@@ -531,7 +531,7 @@ public final class CharacterRenderer {
             g.drawRoundRect(x + 34, memberY, 198, 58, 8, 8);
             Rectangle memberBounds = new Rectangle(x + 34, memberY, 198, 58);
             effects.addPartyPortraitZone(memberBounds, member);
-            g.drawImage(assets.spriteFit(effects.dialoguePortraitSprite(member), 40, 50), x + 44, memberY + 4, null);
+            partyPortraits.draw(g,member,new Rectangle(x+44,memberY+4,40,50),state.activeTravelBanter());
             g.setFont(new Font("SansSerif", Font.BOLD, 14));
             g.setColor(new Color(235, 236, 240));
             g.drawString((i + 1) + ". " + member.name, x + 96, memberY + 23);
@@ -552,9 +552,7 @@ public final class CharacterRenderer {
         int contentRight = x + w - 34;
         Rectangle detailPortraitBounds = new Rectangle(detailX, y + 96, 92, 120);
         effects.addPartyPortraitZone(detailPortraitBounds, actor);
-        String portraitSprite=effects.dialoguePortraitSprite(actor);
-        partyAnimation.drawPortrait(g,assets.spriteFit(portraitSprite,480,800),portraitSprite,
-                detailPortraitBounds,(System.nanoTime()-partyAnimationStart)/1_000_000,0,false,false,0);
+        partyPortraits.draw(g,actor,detailPortraitBounds,state.activeTravelBanter());
         g.setFont(new Font("SansSerif", Font.BOLD, 22));
         g.setColor(new Color(246, 224, 151));
         g.drawString(actor.name + " the " + actor.className, detailX + 112, y + 122);

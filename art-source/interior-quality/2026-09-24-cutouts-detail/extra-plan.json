@@ -1,0 +1,42 @@
+[
+  [
+    "chair_north_alt",
+    "a padded dark oak chair with worn tan leather seat; rear view, occupant faces UP, rear of backrest closest to viewer",
+    0.7
+  ],
+  [
+    "chair_south_alt",
+    "a padded dark oak chair with worn tan leather seat; straight FRONT view, occupant faces DOWN",
+    0.7
+  ],
+  [
+    "chair_east_alt",
+    "a padded dark oak chair with worn tan leather seat; strict RIGHT side profile, thin backrest on LEFT and seat projecting RIGHT, two visible legs only",
+    0.7
+  ],
+  [
+    "chair_west_alt",
+    "a padded dark oak chair with worn tan leather seat; strict LEFT side profile, thin backrest on RIGHT and seat projecting LEFT, two visible legs only",
+    0.7
+  ],
+  [
+    "rug_runner",
+    "a long narrow teal woven runner carpet with muted gold geometric border and small diamond medallions, FLAT top-down rectangle exactly aligned to image axes, no perspective",
+    0.4
+  ],
+  [
+    "cookpot_stand",
+    "a black iron cauldron of orange vegetable stew on a small iron tripod over contained red coals, visible handles and legs",
+    1
+  ],
+  [
+    "herb_planter",
+    "a short rectangular oak herb planter with dense small green culinary herb leaves in dark soil, iron corner bands",
+    1
+  ],
+  [
+    "wall_window_small",
+    "a small square oak-framed window with four blue glass panes and modest ivy leaves along its sill",
+    1
+  ]
+]

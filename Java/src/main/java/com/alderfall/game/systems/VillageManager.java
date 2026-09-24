@@ -94,20 +94,24 @@ public final class VillageManager {
                     "A second shelter and marked plots turn the camp into a plan."),
             stage(3, "Palisade Camp", "Camp", 3, 2, 1, 1, 5, 8, "player_village_stage_03",
                     "Stakes, stores, and a posted board give the camp a public heart."),
-            stage(4, "First Homesteads", "Homestead", 4, 3, 1, 2, 10, 14, "player_village_stage_04",
+            stage(4, "First Homesteads", "Small Village", 4, 3, 1, 2, 10, 14, "player_village_stage_04",
                     "Permanent homes begin replacing canvas and rough bedrolls."),
-            stage(5, "Oathstead Hamlet", "Hamlet", 5, 5, 2, 3, 20, 22, "player_village_stage_05",
+            stage(5, "Oathstead Hamlet", "Small Village", 5, 5, 2, 3, 20, 22, "player_village_stage_05",
                     "Gardens, wells, and cottages make Oathstead feel lived in."),
             stage(6, "Working Village", "Village", 7, 7, 2, 4, 30, 32, "player_village_stage_06",
                     "Work yards and storage sheds let the settlement support itself."),
             stage(7, "Market Village", "Village", 9, 9, 3, 5, 45, 44, "player_village_stage_07",
                     "A hall, watch post, and market space draw people to stay."),
-            stage(8, "Walled Township", "Township", 11, 11, 4, 7, 60, 58, "player_village_stage_08",
+            stage(8, "Walled Township", "Small Town", 11, 11, 4, 7, 60, 58, "player_village_stage_08",
                     "Walls and denser streets mark Oathstead as a true township."),
-            stage(9, "Prosperous Town", "Town", 14, 14, 5, 9, 80, 74, "player_village_stage_09",
+            stage(9, "Prosperous Town", "Small Town", 14, 14, 5, 9, 80, 74, "player_village_stage_09",
                     "Stonework, towers, and paved squares give the town weight."),
-            stage(10, "Oathstead Town", "Town", 16, 16, 6, 12, 100, 92, "player_village_stage_10",
-                    "A fortified town now anchors the road instead of hiding from it.")
+            stage(10, "Oathstead Town", "Large Town", 16, 16, 6, 12, 100, 92, "player_village_stage_10",
+                    "A fortified town now anchors the road instead of hiding from it."),
+            stage(11, "Oathstead Boroughs", "Large Town", 19, 20, 6, 14, 140, 130, "settlement_civic_tier5",
+                    "Stone boroughs and specialist workshops surround the old village."),
+            stage(12, "Oathstead Metropolis", "Metropolis", 24, 28, 6, 16, 200, 190, "settlement_civic_tier6",
+                    "A metropolitan council oversees a thriving network of homes and trades.")
     );
 
     private static final List<BuildingPlan> BUILDINGS = List.of(
@@ -203,12 +207,38 @@ public final class VillageManager {
                             3, VillageCost.of(72, Map.of("wood", 7, "bone", 2))))
     );
 
-    private static final List<PlaceableAsset> OUTDOOR_ASSETS = List.of(
+    private static final List<PlaceableAsset> OUTDOOR_ASSETS = DirectionalSeating.addTo(List.of(
+            new PlaceableAsset("city_prop_refresh_cart", "Cart", 56, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_bench", "Bench", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_barrel", "Barrel", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_crate_green", "Crate Green", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_crate_closed", "Crate Closed", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_crate_red", "Crate Red", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_lamp_iron", "Lamp Iron", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_lamp_left", "Lamp Left", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("city_prop_refresh_lamp_right", "Lamp Right", 40, VillageCost.of(4, Map.of("wood", 1)), "Street"),
+            new PlaceableAsset("town_fountain_civic", "Civic Fountain", 64, VillageCost.of(20, Map.of("stone", 8)), "Decor"),
+            new PlaceableAsset("town_fountain_north", "Northern Fountain", 64, VillageCost.of(20, Map.of("stone", 8)), "Decor"),
+            new PlaceableAsset("town_fountain_sun", "Sun Fountain", 64, VillageCost.of(20, Map.of("stone", 8)), "Decor"),
+            new PlaceableAsset("town_hedge_h", "Garden Hedge", 48, VillageCost.of(0, Map.of("plant_fiber", 1)), "Plants"),
+            new PlaceableAsset("town_hedge_v", "Garden Hedge Vertical", 48, VillageCost.of(0, Map.of("plant_fiber", 1)), "Plants"),
+            new PlaceableAsset("town_hedge_corner", "Garden Hedge Corner", 48, VillageCost.of(0, Map.of("plant_fiber", 1)), "Plants"),
+            new PlaceableAsset("town_garden_gate_arbor", "Garden Arbor", 48, VillageCost.of(0, Map.of("wood", 2)), "Decor"),
+            new PlaceableAsset("town_garden_gate_iron", "Garden Iron Gate", 48, VillageCost.of(0, Map.of("iron_ore", 2)), "Decor"),
+            new PlaceableAsset("town_fence_h", "Town Fence", 48, VillageCost.of(0, Map.of("wood", 1)), "Decor"),
+            new PlaceableAsset("town_fence_v", "Town Fence Vertical", 48, VillageCost.of(0, Map.of("wood", 1)), "Decor"),
+            new PlaceableAsset("deco_marsh_sedge_clump", "Marsh Sedge", 38, VillageCost.of(0, Map.of("plant_fiber", 1)), "Plants"),
             new PlaceableAsset("city_prop_flower_pot", "Flower Pot", 40, VillageCost.free(), "Decor"),
             new PlaceableAsset("deco_flowers", "Flowers", 34, VillageCost.free(), "Decor"),
             new PlaceableAsset("city_lantern", "Lantern", 38, VillageCost.of(8, Map.of("iron_ore", 1)), "Decor"),
             new PlaceableAsset("village_prop_well", "Well", 46, VillageCost.of(10, Map.of("stone", 2)), "Decor"),
             new PlaceableAsset("village_prop_notice_board", "Notice Board", 42, VillageCost.of(0, Map.of("wood", 1)), "Decor"),
+            new PlaceableAsset("market_stall_canvas", "Market Bay Burgundy", 48, VillageCost.of(12, Map.of("wood", 4)), "Decor"),
+            new PlaceableAsset("market_stall_blue", "Market Bay Blue", 48, VillageCost.of(12, Map.of("wood", 4)), "Decor"),
+            new PlaceableAsset("market_stall_green", "Market Bay Green", 48, VillageCost.of(12, Map.of("wood", 4)), "Decor"),
+            new PlaceableAsset("market_stall_gold", "Market Bay Gold", 48, VillageCost.of(12, Map.of("wood", 4)), "Decor"),
+            new PlaceableAsset("location_farmland_fence", "Farm Fence (connects)", 48, VillageCost.of(0, Map.of("wood", 2)), "Farm"),
+            new PlaceableAsset("location_graveyard_iron_fence", "Iron Fence (connects)", 48, VillageCost.of(0, Map.of("iron_ore", 2)), "Decor"),
             new PlaceableAsset("village_prop_bench", "Bench", 38, VillageCost.of(0, Map.of("wood", 1)), "Decor"),
             new PlaceableAsset("village_prop_wash_line", "Wash Line", 48, VillageCost.of(0, Map.of("wood", 1, "plant_fiber", 1)), "Decor"),
             new PlaceableAsset("village_prop_clay_oven", "Clay Oven", 44, VillageCost.of(8, Map.of("clay", 2, "stone", 1)), "Decor"),
@@ -302,9 +332,9 @@ public final class VillageManager {
             new PlaceableAsset("deco_beach_driftwood", "Driftwood", 38, VillageCost.of(0, Map.of("wood", 1)), "Beach"),
             new PlaceableAsset("deco_beach_grass", "Dune Grass", 34, VillageCost.of(0, Map.of("plant_fiber", 1)), "Beach"),
             new PlaceableAsset("location_camp_fire", "Campfire", 38, VillageCost.free(), "Camp"),
-            new PlaceableAsset("player_village_quest_board", "Quest Board", 42, VillageCost.free(), "Camp"),
+            new PlaceableAsset("player_village_quest_board", "Quest Board", 56, VillageCost.free(), "Camp"),
             new PlaceableAsset("location_camp_tent", "Tent", 46, VillageCost.of(0, Map.of("skin", 1)), "Camp")
-    );
+    ), false);
 
     private static final List<PlaceableAsset> INTERIOR_ASSETS = withHouseholdFurnishings(List.of(
             new PlaceableAsset("interior_bed_vertical", "Bed", 48, VillageCost.of(8, Map.of("wood", 2, "skin", 1)), "Beds"),
@@ -395,10 +425,25 @@ public final class VillageManager {
     private static List<PlaceableAsset> withHouseholdFurnishings(List<PlaceableAsset> existing) {
         var result = new java.util.ArrayList<>(existing);
         for (InteriorFurnishings.Furnishing item : InteriorFurnishings.all()) result.add(item.placeable());
-        return List.copyOf(result);
+        return DirectionalSeating.addTo(result, true);
     }
 
     private static final List<TilePlan> TILES = List.of(
+            new TilePlan('!', "Camp Soil", VillageCost.free(), "Dark soil and straw."),
+            new TilePlan('$', "Small Village Earth", VillageCost.free(), "Warm gravel and packed earth."),
+            new TilePlan('%', "Village Fieldstone", VillageCost.of(0, Map.of("stone", 1)), "Irregular weathered fieldstone."),
+            new TilePlan('&', "Small Town Cobbles", VillageCost.of(0, Map.of("stone", 2)), "Dressed gray cobbles."),
+            new TilePlan('(', "Large Town Brick", VillageCost.of(0, Map.of("stone", 2)), "Warm herringbone brick."),
+            new TilePlan(')', "Metropolis Limestone", VillageCost.of(0, Map.of("stone", 3)), "Fine limestone and blue-gray inlay."),
+            new TilePlan('w', "Lake / River", VillageCost.free(), "Water deepens away from banks; deep water blocks travel."),
+            new TilePlan('~', "Shallow Water", VillageCost.free(), "A wadeable stream or pond shelf."),
+            new TilePlan('B', "Bridge", VillageCost.of(0, Map.of("wood", 2)), "A walkable crossing over water."),
+            new TilePlan('s', "Dry Sand", VillageCost.free(), "Dry sandy ground."),
+            new TilePlan('v', "Marsh", VillageCost.free(), "Wet peat and marsh ground."),
+            new TilePlan('n', "Snow / Tundra", VillageCost.free(), "Cold ground for northern districts."),
+            new TilePlan('b', "Red Badlands", VillageCost.free(), "Red earth and shale."),
+            new TilePlan('C', "Herringbone Cobble", VillageCost.of(0, Map.of("stone", 2)), "Formal town paving."),
+            new TilePlan('G', "Brick Crosswalk", VillageCost.of(0, Map.of("stone", 2)), "Brick pedestrian paving."),
             new TilePlan('i', "Interior Floor", VillageCost.free(), "Plain interior floor for custom rooms."),
             new TilePlan('o', "Interior Wall", VillageCost.free(), "Interior wall tiles for dividing rooms."),
             new TilePlan('A', "Farmland", VillageCost.of(0, Map.of("wood", 1)), "Tilled ground that improves farmer output."),
@@ -623,6 +668,10 @@ public final class VillageManager {
     }
 
     public static String buildingLevelSprite(String style, int level) {
+        if (isManagedBuildingStyle(style)) {
+            String family = switch(style) {case "house" -> "residence"; case "shop" -> "workshop"; case "inn" -> "civic"; default -> style;};
+            return "settlement_" + family + "_tier" + Math.max(1,Math.min(6, level));
+        }
         String primary = primaryBuildingSprite(style);
         if (primary.isBlank() || level <= 1) {
             return primary;
@@ -664,6 +713,37 @@ public final class VillageManager {
     public static int storageCapacity(String style, int level) {
         BuildingPlan plan = buildingPlan(style);
         return Math.max(0, plan.storageCapacity()) * Math.max(1, level);
+    }
+
+    public static String buildingCategory(String style) {
+        return switch (style) {
+            case "house", "row" -> "Housing";
+            case "inn", "guild", "shrine", "watchtower" -> "Civic";
+            default -> "Production";
+        };
+    }
+
+    public static int tierRevenue(int level) { return Math.max(1, Math.min(6, level)) - 1; }
+    public static int tierTools(int level) { return (Math.max(1, Math.min(6, level)) - 1) / 2; }
+
+    public static String upgradeBenefit(String style, int level) {
+        if (level >= 6) return "Masterwork - all improvements complete";
+        BuildingPlan plan = buildingPlan(style);
+        int beds=SettlementEconomy.housing(style,level+1)-SettlementEconomy.housing(style,level);
+        String result=beds>0?"+"+beds+" beds":"+1g/cycle per worker | Better rare finds";
+        int slots=SettlementEconomy.slots(style,level+1)-SettlementEconomy.slots(style,level);
+        if(slots>0)result+=" | +"+slots+" worker slot";
+        if(beds==0 && (level+1)%2==1)result+=" | +1 base yield";
+        if(plan.storageCapacity()>0)result+=" | +"+plan.storageCapacity()+" storage";
+        if(tierTools(level+1)>tierTools(level))result+=" | +1 tool quality";
+        return result;
+    }
+
+    public static String tierImprovement(int level) {
+        return List.of("Canvas shelter and portable camp equipment", "Permanent timber walls and a wooden roof",
+                "Thatched roof, plaster walls and a dedicated work area", "Tall timber framing, slate roofing and improved equipment",
+                "Substantial stone walls, extra floors and expanded storage", "Ornate urban architecture, copper roofing and specialist facilities")
+                .get(Math.max(1,Math.min(6,level))-1);
     }
 
     public static int productionLevelBonus(String roleId, Map<String, Integer> buildingLevels) {
@@ -778,8 +858,26 @@ public final class VillageManager {
             String workerRole,
             Map<Integer, VillageCost> upgradeCosts
     ) {
-        return new BuildingPlan(style, label, width, depth, cost, sprites, description, maxLevel, storageCapacity,
-                workerRole, Map.copyOf(upgradeCosts));
+        // Camp shelters are accessible; later material stages require a working supply chain.
+        int baseGold=Math.max(8,(cost.gold()+1)/2);
+        Map<String,Integer> baseMaterials=new LinkedHashMap<>();
+        cost.items().forEach((item,amount)->baseMaterials.put(item,Math.max(1,(amount+1)/2)));
+        VillageCost initial=VillageCost.of(baseGold,baseMaterials);
+        Map<Integer,VillageCost> costs=new LinkedHashMap<>();
+        for(int tier=2;tier<=6;tier++) {
+            Map<String,Integer> materials=new LinkedHashMap<>();
+            final int level=tier;
+            baseMaterials.forEach((item,amount)->materials.put(item,amount*level));
+            if(tier>=3)materials.merge("stone",(tier-2)*3,Integer::sum);
+            if(tier>=4)materials.merge("iron_ore",(tier-3)*2,Integer::sum);
+            costs.put(tier,VillageCost.of(baseGold*tier*tier/2,materials));
+        }
+        return new BuildingPlan(style,label,width,depth,initial,sprites,description,6,storageCapacity,workerRole,Map.copyOf(costs));
+    }
+
+    public static String tierLabel(int level) {
+        return List.of("Camp", "Small Village", "Village", "Small Town", "Large Town", "Metropolis")
+                .get(Math.max(1, Math.min(6, level)) - 1);
     }
 
     private static SettlementStage stage(

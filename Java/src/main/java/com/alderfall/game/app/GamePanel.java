@@ -18,6 +18,7 @@ import com.alderfall.game.map.WorldMapLabels;
 import com.alderfall.game.render.WorldMapTerrainCache;
 import com.alderfall.game.render.battle.BattleVfxRenderer;
 import com.alderfall.game.render.world.TerrainFeatureRenderer;
+import com.alderfall.game.render.world.ConnectedInteriorWalls;
 import com.alderfall.game.render.world.WorldAtmosphereRenderer;
 import com.alderfall.game.render.world.WorldLightingRenderer;
 import com.alderfall.game.render.world.WorldPropRenderer;
@@ -117,12 +118,12 @@ public final class GamePanel extends JPanel {
     private final WorldRenderer worldRenderer;
     private final AmbientMotionLayer ambientMotionLayer = new AmbientMotionLayer();
     private final ReactivePropLayer reactivePropLayer = new ReactivePropLayer();
-    private final RoamingWorldEventLayer roamingWorldEventLayer = new RoamingWorldEventLayer();
     private final NpcChoreAnimationLayer npcChoreAnimationLayer = new NpcChoreAnimationLayer();
     private final TerrainFootstepLayer terrainFootstepLayer = new TerrainFootstepLayer();
 
     private final CameraController cameraController = new CameraController();
     private final RenderMetrics renderMetrics = RenderMetrics.create();
+    final PerformanceOverlay performanceOverlay = new PerformanceOverlay();
     private final Path javaRoot;
     private final Timer timer;
     private final List<UiButton> buttons = new ArrayList<>();
@@ -157,7 +158,7 @@ public final class GamePanel extends JPanel {
     private double worldMapDragStartCenterX;
     private double worldMapDragStartCenterY;
     private boolean worldMapDragged;
-    private final WaterTileRenderer waterTileRenderer = new WaterTileRenderer();
+    private final WaterTileRenderer waterTileRenderer;
     private final TerrainFeatureRenderer terrainFeatureRenderer;
     private final WorldAtmosphereRenderer worldAtmosphereRenderer;
     private final WorldLightingRenderer worldLightingRenderer;
@@ -459,10 +460,27 @@ public final class GamePanel extends JPanel {
         }
     }
 
+    private int editorTileSize;
+
     public GamePanel(Path javaRoot) {
+        this(javaRoot, true);
+    }
+
+    public record Prepared(GameState state,AssetStore assets){}
+    public static Prepared prepare(Path root,java.util.function.Consumer<String> progress){
+        progress.accept("Reading settings and game configuration...");
+        GameState state=new GameState(GameConfig.loadWithSettings(root),progress);
+        progress.accept("Indexing sprites, animation metadata and asset paths...");
+        return new Prepared(state,new AssetStore(root.resolve("assets")));
+    }
+    private java.util.function.Consumer<GamePanel> replacementHandler;
+    public void setReplacementHandler(java.util.function.Consumer<GamePanel> handler){replacementHandler=handler;}
+    public GamePanel(Path javaRoot, boolean runSimulation) {this(javaRoot,runSimulation,prepare(javaRoot,message -> {}));}
+    public GamePanel(Path javaRoot,boolean runSimulation,Prepared prepared) {
         this.javaRoot = javaRoot;
-        this.state = new GameState(GameConfig.loadWithSettings(javaRoot));
-        this.assets = new AssetStore(javaRoot.resolve("assets"));
+        this.state = prepared.state();
+        this.assets = prepared.assets();
+        this.waterTileRenderer = new WaterTileRenderer(assets);
         this.battleRenderer = new BattleRenderer(assets);
         this.battleVfxRenderer = new BattleVfxRenderer(assets,
                 new BattleVfxRenderer.Effects() {
@@ -1542,7 +1560,7 @@ public final class GamePanel extends JPanel {
             frame++;
             state.tickWorld();
             ambientMotionLayer.tick(state);
-            roamingWorldEventLayer.tick(state);
+            state.roamingEvents.tick(state);
             weather.tickTransition();
             if (state.mode == GameMode.DEFENSE && state.defenseRaid != null) {
                 tickDefensePlayerMovement();
@@ -1556,12 +1574,86 @@ public final class GamePanel extends JPanel {
                 if (state.mode == GameMode.EXPLORE) syncPlayerAnimationToState();
             }
             audio.update(frame);
+            updateFootstepAudio();
             syncStatusLog();
             renderMetrics.record("update", updateStarted);
             repaint();
         });
-        timer.start();
+        if (runSimulation) timer.start();
         syncStatusLog();
+    }
+
+    /** Shares actual terrain, building, furniture and depth rendering with the desktop editor. */
+    public void renderEditorScene(Graphics2D g, int camX, int camY, int cols, int rows, int size,
+                                  boolean terrain, boolean buildings, boolean props) {
+        worldRenderer.prepareEditorTerrain(state,props);
+        tooltipZones.clear();
+        editorTileSize = size;
+        state.zoom = size * 100 / GameConfig.TILE;
+        lastCamX = camX; lastCamY = camY; lastVisibleCols = cols; lastVisibleRows = rows;
+        terrainFeatureRenderer.useContext(new TerrainFeatureRenderer.RenderContext(size, cols, rows, 0));
+        var area = state.world.area(state.currentMapId);
+        var tc = new WorldRenderer.TerrainContext(state, camX, camY, cols, rows, area.width(), area.height(), size, state.zoom, area.kind);
+        var pc = new WorldRenderer.PropContext(state, camX, camY, cols, rows, size, state.zoom, 0);
+        try {
+            if (terrain) worldRenderer.drawCachedTerrainBase(g, tc);
+            else if(props)worldRenderer.drawQuarterTileDetails(g,tc);
+            worldDepthRenderer.begin(size);
+            if (props) {
+                worldRenderer.rebuildNearbyProps(pc, nearbyWorldProps);
+                worldRenderer.drawGroundPropOverlays(g, pc, nearbyWorldProps);
+            }
+            if (buildings) drawCityBuildingEntities(g, camX, camY);
+            if (props) worldRenderer.drawVisibleProps(g, pc, nearbyWorldProps, visibleWorldProps, worldDepthRenderer);
+            worldDepthRenderer.draw(g);
+        } finally { editorTileSize = 0; worldRenderer.finishEditorTerrain(); }
+    }
+
+    public java.awt.Rectangle editorPropBounds(WorldProp prop,int size){
+        int previousSize=editorTileSize,previousZoom=state.zoom;
+        try{editorTileSize=size;state.zoom=size*100/GameConfig.TILE;return worldRenderer.editorPropBounds(prop,state,size);}
+        finally{editorTileSize=previousSize;state.zoom=previousZoom;}
+    }
+
+    public long editorTerrainBuildCount(){return worldRenderer.terrainBuildCount();}
+
+    public GameState editorState() { return state; }
+
+    public void startEditorPlaytest(com.alderfall.game.editor.MapDocument document) {
+        state.setPendingPlayerName("Workshop Playtest");
+        state.chooseClass("Knight");
+        String id = "editor_playtest";
+        document.install(state.world, id);
+        if (!state.world.isPassable(id, document.spawnX, document.spawnY))
+            throw new IllegalArgumentException("Spawn is blocked. Move the spawn to a walkable tile before playtesting.");
+        state.currentMapId = id; state.playerX = document.spawnX; state.playerY = document.spawnY;
+        state.mode = GameMode.EXPLORE;
+        state.status = "Editor playtest: " + document.label;
+        syncPlayerAnimationToState();
+    }
+
+    private void updateFootstepAudio() {
+        audio.beginFootsteps();
+        if (state.mode != GameMode.EXPLORE && state.mode != GameMode.DEFENSE) return;
+        double px = renderPlayerX(), py = renderPlayerY();
+        audio.footstep("player", px, py, 1f);
+        if (state.mode == GameMode.EXPLORE) {
+            for (GameState.NpcMotion motion : state.npcMotionsForMap(state.currentMapId)) {
+                double nx = renderNpcX(motion), ny = renderNpcY(motion);
+                double distance = Math.hypot(nx - px, ny - py);
+                if (distance < 5) audio.footstep("npc:" + state.npcRenderKey(motion.npc()), nx, ny,
+                        (float) (.18 * Math.pow(1 - distance / 5, 2)));
+            }
+            for (Actor ally : state.activeAllies()) {
+                FollowerVisualState visual = followerVisuals.get(followerVisualKey(ally));
+                if (visual == null) continue;
+                double[] position = renderFollowerPosition(visual);
+                double distance = Math.hypot(position[0] - px, position[1] - py);
+                if (distance < 5) audio.footstep("ally:" + followerVisualKey(ally), position[0], position[1],
+                        (float) (.26 * Math.pow(1 - distance / 5, 2)));
+            }
+        }
+        audio.endFootsteps();
     }
 
     private void syncStatusLog() {
@@ -1578,7 +1670,7 @@ public final class GamePanel extends JPanel {
     }
 
     void interactWithRoamingWorldEvent() {
-        if (roamingWorldEventLayer.interact(state)) {
+        if (state.roamingEvents.interact(state)) {
             return;
         }
         state.interact();
@@ -1597,6 +1689,7 @@ public final class GamePanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics graphics) {
+        long paintStarted = performanceOverlay.enabled() ? System.nanoTime() : 0;
         super.paintComponent(graphics);
         updateViewportTransform();
 
@@ -1608,6 +1701,7 @@ public final class GamePanel extends JPanel {
         partyPortraitZones.clear();
         int renderAttempts = 0;
         do {
+            performanceOverlay.beginFrame(viewWidth(), viewHeight());
             Graphics2D bufferGraphics = backBuffer.createGraphics(this, viewWidth(), viewHeight());
             bufferGraphics.setColor(getBackground());
             bufferGraphics.fillRect(0, 0, viewWidth(), viewHeight());
@@ -1627,8 +1721,32 @@ public final class GamePanel extends JPanel {
         int scaledWidth = (int) Math.round(viewWidth() * renderScaleX);
         int scaledHeight = (int) Math.round(viewHeight() * renderScaleY);
         backBuffer.drawTo(g, renderOffsetX, renderOffsetY, scaledWidth, scaledHeight);
+        if (performanceOverlay.enabled()) {
+            performanceOverlay.finishFrame(System.nanoTime(), System.nanoTime() - paintStarted,
+                    renderMetrics.takeOverlayTimings());
+            g.translate(renderOffsetX, renderOffsetY);
+            g.scale(renderScaleX, renderScaleY);
+            performanceOverlay.draw(g);
+        }
         g.dispose();
         renderMetrics.endFrame(frame);
+    }
+
+    void cyclePerformanceOverlay() {
+        cyclePerformanceOverlay(1);
+    }
+
+    private void cyclePerformanceOverlay(int direction) {
+        performanceOverlay.cycle(direction);
+        renderMetrics.setOverlayEnabled(performanceOverlay.enabled());
+        worldDepthRenderer.setPerformanceOverlay(performanceOverlay.heatmap() ? performanceOverlay : null);
+        repaint();
+    }
+
+    private void drawMeasuredRegion(Graphics2D g, int x, int y, int w, int h, Runnable draw) {
+        long started = performanceOverlay.startRegion();
+        draw.run();
+        if (started != 0) performanceOverlay.endRegion(g, new Rectangle(x, y, w, h), started);
     }
 
     private void renderGame(Graphics2D g) {
@@ -1649,14 +1767,14 @@ public final class GamePanel extends JPanel {
             GameMode visibleMode = visibleGameplayMode();
             if (visibleMode == GameMode.BATTLE) {
                 if (!uiHidden) {
-                    drawSidebar(g);
+                    drawMeasuredRegion(g, gameAreaWidth(), 0, viewWidth() - gameAreaWidth(), viewHeight(), () -> drawSidebar(g));
                 }
-                drawBattle(g);
+                drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> drawBattle(g));
             } else {
                 drawWorld(g);
                 drawInteriorPlacementPreview(g);
                 if (!uiHidden) {
-                    drawSidebar(g);
+                    drawMeasuredRegion(g, gameAreaWidth(), 0, viewWidth() - gameAreaWidth(), viewHeight(), () -> drawSidebar(g));
                 }
                 if (!uiHidden && visibleMode == GameMode.EXPLORE) {
                     drawTrackedQuestHud(g);
@@ -1665,21 +1783,21 @@ public final class GamePanel extends JPanel {
                     drawDefenseRaidHud(g);
                 }
                 if (!uiHidden && visibleMode == GameMode.DIALOG) {
-                    drawDialog(g);
+                    drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> drawDialog(g));
                 } else if (!uiHidden && visibleMode == GameMode.QUEST_LOG) {
                     drawQuestLog(g);
                 } else if (!uiHidden && visibleMode == GameMode.SKILLS) {
-                    drawPartyOverview(g);
+                    drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> drawPartyOverview(g));
                 } else if (!uiHidden && visibleMode == GameMode.CHEST) {
-                    inventoryRenderer.drawChest(g);
+                    drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> inventoryRenderer.drawChest(g));
                 } else if (!uiHidden && visibleMode == GameMode.INVENTORY) {
-                    drawInventory(g);
+                    drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> drawInventory(g));
                 } else if (!uiHidden && visibleMode == GameMode.CRAFTING) {
                     drawCrafting(g);
                 } else if (!uiHidden && visibleMode == GameMode.PARTY) {
-                    drawPartyOverview(g);
+                    drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> drawPartyOverview(g));
                 } else if (!uiHidden && visibleMode == GameMode.VILLAGE) {
-                    // Village controls live in the standard right sidebar.
+                    if(state.villageCatalogOpen)drawVillageManager(g);
                 } else if (!uiHidden && visibleMode == GameMode.BUILDING_ASSIGNMENT) {
                     drawBuildingAssignment(g);
                 } else if (!uiHidden && visibleMode == GameMode.SETTLEMENT_BOARD) {
@@ -1687,9 +1805,9 @@ public final class GamePanel extends JPanel {
                 } else if (!uiHidden && visibleMode == GameMode.FAST_TRAVEL) {
                     drawFastTravel(g);
                 } else if (!uiHidden && visibleMode == GameMode.SHOP) {
-                    drawShop(g);
+                    drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> drawShop(g));
                 } else if (!uiHidden && visibleMode == GameMode.WORLD_MAP) {
-                    drawWorldMap(g);
+                    drawMeasuredRegion(g, 0, 0, gameAreaWidth(), viewHeight(), () -> drawWorldMap(g));
                 }
             }
             if (state.mode == GameMode.PAUSE_MENU) {
@@ -1699,6 +1817,9 @@ public final class GamePanel extends JPanel {
             } else if (state.mode == GameMode.SAVE_MENU) {
                 drawSaveMenu(g, true);
             }
+        }
+        if (!uiHidden && (visibleGameplayMode()==GameMode.EXPLORE || visibleGameplayMode()==GameMode.PARTY || visibleGameplayMode()==GameMode.SKILLS)) {
+            drawTravelBanterPrompt(g);
         }
         if (!uiHidden) {
             drawWorldContextMenu(g);
@@ -2022,7 +2143,7 @@ public final class GamePanel extends JPanel {
         worldRenderer.drawVisibleProps(worldGraphics, propContext, nearbyWorldProps, visibleWorldProps, worldDepthRenderer);
         renderMetrics.record("world.props", propDrawStarted);
         renderMetrics.sample("world.visibleProps", visibleWorldProps.size());
-        roamingWorldEventLayer.draw(worldGraphics, propContext);
+        state.roamingEvents.draw(worldGraphics, propContext, assets, worldDepthRenderer);
         reactivePropLayer.draw(worldGraphics, propContext, visibleWorldProps);
         worldRenderer.drawFallingGatheredProp(worldGraphics, propContext);
         drawQuestInteractibles(worldGraphics, camX, camY);
@@ -2074,12 +2195,13 @@ public final class GamePanel extends JPanel {
                 int step = moving ? npcWalkAnimationFrame(npcWorldSprite, npcW, npcH, motion) : -1;
                 int npcX = px + (tileSize - npcW) / 2;
                 int npcY = py + tileSize - npcH - tileRelative(npcScale.footLift(), tileSize);
+                if (state.world.waterDepth(state.currentMapId, (int) Math.floor(nx + .5), (int) Math.floor(ny + .5)) == WaterDepth.DRY)
                 drawShadow(worldGraphics, px + tileRelative(24 - npcScale.shadowWidth() / 2, tileSize), py + tileRelative(40, tileSize), tileRelative(npcScale.shadowWidth(), tileSize), tileRelative(9, tileSize));
                 String choreAction = npcChoreAnimationLayer.actionFor(state, npc, moving, assets);
-                if (choreAction.isBlank()) {
+                if (choreAction.isBlank() || state.world.waterDepth(state.currentMapId, (int) Math.floor(nx + .5), (int) Math.floor(ny + .5)).walkable()) {
                     LocomotionClock.Selection pose = npcGaits.computeIfAbsent(state.npcRenderKey(npc), key -> new LocomotionClock()).selectAt(frame, nx, ny, state.config.walkAnimationSpeed);
-                    drawCharacterSprite(worldGraphics, npcWorldSprite, npcX, npcY, npcW, npcH, motion.facingDx(), motion.facingDy(),
-                            new CharacterAnimationSelection(pose.action(), pose.frame()));
+                    drawWadingCharacter(worldGraphics, npcWorldSprite, npcX, npcY, npcW, npcH, motion.facingDx(), motion.facingDy(),
+                            new CharacterAnimationSelection(pose.action(), pose.frame()), nx, ny);
                 } else {
                     drawCharacterActionSprite(worldGraphics, npcWorldSprite, choreAction, npcX, npcY, npcW, npcH);
                 }
@@ -2166,11 +2288,13 @@ public final class GamePanel extends JPanel {
                 : freeMoving || pathMoving
                 ? (int) Math.round(Math.sin(frame * 0.42) * tileRelative(2, tileSize))
                 : 0;
+        if (state.world.waterDepth(state.currentMapId, (int) Math.floor(playerX + .5), (int) Math.floor(playerY + .5)) == WaterDepth.DRY)
         drawShadow(worldGraphics, playerPx + tileRelative(24 - playerScale.shadowWidth() / 2, tileSize) - shadowPulse / 2, playerPy + tileRelative(40, tileSize), tileRelative(playerScale.shadowWidth(), tileSize) + shadowPulse, tileRelative(10, tileSize));
-        drawCharacterSprite(worldGraphics, state.player.worldSprite, playerXpx, playerYpx, playerW, playerH,
-                playerFacingDx, playerFacingDy, playerAnimation);
+        drawWadingCharacter(worldGraphics, state.player.worldSprite, playerXpx, playerYpx, playerW, playerH,
+                playerFacingDx, playerFacingDy, playerAnimation, playerX, playerY);
         drawGatherToolSwing(worldGraphics, camX, camY, tileSize, playerPx, playerPy);
         worldDepthRenderer.draw(worldGraphics);
+        state.roamingEvents.drawShrineHighlights(worldGraphics, propContext, worldRenderer);
         drawNearbyQuestPrompt(worldGraphics, camX, camY);
         if (weather.effectsVisibleOnCurrentMap()) {
             drawCloudLayer(worldGraphics, camX, camY);
@@ -2195,7 +2319,6 @@ public final class GamePanel extends JPanel {
         renderMetrics.record("atmosphere", atmosphereStarted);
         drawEmissiveWorldLights(g, camX, camY, tileSize, cameraOffsetX, cameraOffsetY);
         drawAmbientTownConversationBubbles(g);
-        drawTravelBanterPrompt(g, camX, camY, tileSize, cameraOffsetX, cameraOffsetY);
         clearWorldLights();
         renderMetrics.record("world", worldStarted);
     }
@@ -2358,10 +2481,11 @@ public final class GamePanel extends JPanel {
                     facingDy,
                     visual
             );
+            if (state.world.waterDepth(state.currentMapId, (int) Math.floor(fx + .5), (int) Math.floor(fy + .5)) == WaterDepth.DRY)
             drawShadow(g, px + tileRelative(24 - scale.shadowWidth() / 2, tileSize), py + tileRelative(40, tileSize),
                     tileRelative(scale.shadowWidth(), tileSize), tileRelative(9, tileSize));
-            drawCharacterSprite(g, follower.worldSprite, drawX, drawY, followerW, followerH, facingDx, facingDy,
-                    followerAnimation);
+            drawWadingCharacter(g, follower.worldSprite, drawX, drawY, followerW, followerH, facingDx, facingDy,
+                    followerAnimation, fx, fy);
             Rectangle worldBounds = new Rectangle(drawX, drawY, followerW, followerH);
             Rectangle screenBounds = new Rectangle(
                     (int) Math.round(drawX - cameraOffsetX),
@@ -2546,12 +2670,15 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void drawTravelBanterPrompt(Graphics2D g, int camX, int camY, int tileSize, double cameraOffsetX, double cameraOffsetY) {
+    private void drawTravelBanterPrompt(Graphics2D g) {
         GameState.TravelBanterPrompt prompt = state.activeTravelBanter();
         if (prompt == null) {
             return;
         }
-        Rectangle anchor = partyFollowerBounds(prompt.speaker());
+        Rectangle anchor=null;
+        // Sidebar zones precede any larger party-screen detail portrait zones.
+        for(PartyPortraitZone zone:partyPortraitZones)if(zone.actor().name.equals(prompt.speaker())){anchor=zone.bounds();break;}
+        if(anchor==null)return; // A hidden/absent portrait must not leave a detached prompt.
         int width = Math.min(scaled(380), gameAreaWidth() - scaled(24));
         int lineHeight = scaled(17);
         int optionH = scaled(31);
@@ -2559,19 +2686,27 @@ public final class GamePanel extends JPanel {
         int tailH = scaled(14);
         int textRows = prompt.tags().contains("party_scene") ? 5 : 2;
         int extraTextHeight = (textRows - 2) * lineHeight;
-        int height = scaled(58) + extraTextHeight + prompt.options().size() * optionH + Math.max(0, prompt.options().size() - 1) * optionGap;
-        BubblePlacement placement = bubblePlacement(anchor, width, height, tailH);
+        int height = scaled(74) + extraTextHeight + prompt.options().size() * optionH + Math.max(0, prompt.options().size() - 1) * optionGap;
+        boolean onLeft=anchor.x>=width+tailH+scaled(8);
+        int bubbleX=clamp(onLeft?anchor.x-width-tailH:anchor.x+anchor.width+tailH,scaled(8),Math.max(scaled(8),viewWidth()-width-scaled(8)));
+        int bubbleY=clamp(anchor.y+anchor.height/2-height/2,scaled(8),Math.max(scaled(8),viewHeight()-height-scaled(8)));
+        BubblePlacement placement=new BubblePlacement(bubbleX,bubbleY,0,false,tailH);
+        int tipY=anchor.y+anchor.height/2;
+        int baseY=clamp(tipY,bubbleY+scaled(18),bubbleY+height-scaled(18));
+        int edgeX=onLeft?bubbleX+width:bubbleX;
+        Polygon portraitTail=new Polygon(new int[]{edgeX,edgeX,onLeft?anchor.x:anchor.x+anchor.width},
+                new int[]{baseY-scaled(7),baseY+scaled(7),tipY},3);
 
         Graphics2D bubble = (Graphics2D) g.create();
         Color fill = new Color(8, 12, 20, 186);
         Color border = new Color(122, 169, 218, 178);
         bubble.setColor(fill);
         bubble.fillRoundRect(placement.x(), placement.y(), width, height, scaled(10), scaled(10));
-        drawSpeechBubbleTail(bubble, placement, height, fill);
+        bubble.fillPolygon(portraitTail);
         bubble.setColor(border);
         bubble.setStroke(new BasicStroke(1.2f));
         bubble.drawRoundRect(placement.x(), placement.y(), width, height, scaled(10), scaled(10));
-        drawSpeechBubbleTailOutline(bubble, placement, height, border);
+        bubble.drawPolygon(portraitTail);
         bubble.setFont(new Font("SansSerif", Font.BOLD, scaled(12)));
         bubble.setColor(new Color(235, 242, 250));
         drawClippedString(bubble, prompt.speaker(), placement.x() + scaled(14), placement.y() + scaled(18), width - scaled(28));
@@ -2995,6 +3130,25 @@ public final class GamePanel extends JPanel {
             int py = sy * ts;
             int pulse = (int) Math.round(Math.sin(frame * 0.15) * scaled(2));
             Color ring = objectiveColor(objective, 220);
+            if (FurnitureQuestContent.isFurniture(objective)) {
+                WorldProp furniture = null;
+                for (WorldProp candidate : state.world.propsAt(objective.mapId(), objective.x(), objective.y())) {
+                    if (candidate.asset().equals(objective.asset())) { furniture = candidate; break; }
+                }
+                if (furniture != null) {
+                    Rectangle bounds = worldRenderer.propBounds(furniture, ts, camX, camY);
+                    // Props are depth-sorted later; queue the highlight above the real furniture.
+                    worldDepthRenderer.overlay(g, target -> {
+                        Stroke oldStroke = target.getStroke();
+                        target.setColor(new Color(ring.getRed(), ring.getGreen(), ring.getBlue(), 125));
+                        target.setStroke(new BasicStroke(scaledStroke(1.2f)));
+                        target.drawRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, scaled(5), scaled(5));
+                        drawObjectivePin(target, bounds.x + bounds.width / 2, bounds.y - scaled(26) - pulse, objective);
+                        target.setStroke(oldStroke);
+                    });
+                }
+                continue;
+            }
             drawObjectiveGroundMarker(g, px, py, ts, ring);
 
             if (objective.kind().combatObjective()) {
@@ -3006,7 +3160,12 @@ public final class GamePanel extends JPanel {
                 int size = scaled(42);
                 int drawX = px + (ts - size) / 2;
                 int drawY = py + ts - size - scaled(3);
-                g.drawImage(assets.spriteFit(objective.asset(), size, size), drawX, drawY, null);
+                String visualAsset = switch (objective.asset()) {
+                    case "quest_document_bundle" -> "event_evidence_bundle";
+                    case "quest_supply_cache", "quest_inspection_cache" -> "event_supply_cache";
+                    default -> objective.asset();
+                };
+                g.drawImage(assets.spriteFit(visualAsset, size, size), drawX, drawY, null);
             }
 
             drawObjectivePin(g, px + ts / 2, py + scaled(2) - pulse, objective);
@@ -3130,7 +3289,62 @@ public final class GamePanel extends JPanel {
     private static final int CONTEXT_MENU_BUTTON_HEIGHT = 26;
     private static final int CONTEXT_MENU_ROW_STEP = 30;
 
+    private WorldProp villageContextProp;
+    private double villageContextX,villageContextY;
+
+    boolean dismissVillageContextMenu() {
+        if(state.mode!=GameMode.VILLAGE || contextMenuPoint==null)return false;
+        clearContextMenu();return true;
+    }
+
+    private void drawVillageContextMenu(Graphics2D g) {
+        Rectangle r=contextMenuBounds();
+        com.alderfall.game.ui.SettlementPanelStyle.card(g,r.x,r.y,r.width,r.height);
+        g.setFont(new Font("SansSerif",Font.BOLD,13));g.setColor(new Color(235,222,186));
+        drawClippedString(g,villageContextProp==null?"Village editor":VillageManager.outdoorAsset(villageContextProp.asset()).label(),r.x+12,r.y+23,r.width-24);
+        String[] labels={"Place selected prop here",state.villageGridSnap?"Grid snap: On":"Grid snap: Off",
+                state.villagePlacementCollisions?"Collision: On":"Collision: Off","Move this prop","Remove this prop",
+                "Nudge left","Nudge right","Nudge up","Nudge down","Close"};
+        for(int i=0;i<labels.length;i++){final int action=i;
+            actionButton(g,r.x+10,r.y+34+i*29,r.width-20,24,labels[i],()->{
+                switch(action) {
+                    case 0 -> {state.setVillageTab(state.isManagedVillageInterior()?3:2);state.setVillageEditAction("place");state.placeVillageAt(villageContextX,villageContextY);clearContextMenu();}
+                    case 1 -> state.villageGridSnap=!state.villageGridSnap;
+                    case 2 -> state.villagePlacementCollisions=!state.villagePlacementCollisions;
+                    case 3 -> {state.selectVillagePropForMove(villageContextProp);clearContextMenu();}
+                    case 4 -> {state.removeVillageEditorProp(villageContextProp);clearContextMenu();}
+                    case 5 -> villageContextProp=state.nudgeVillageEditorProp(villageContextProp,-1,0);
+                    case 6 -> villageContextProp=state.nudgeVillageEditorProp(villageContextProp,1,0);
+                    case 7 -> villageContextProp=state.nudgeVillageEditorProp(villageContextProp,0,-1);
+                    case 8 -> villageContextProp=state.nudgeVillageEditorProp(villageContextProp,0,1);
+                    default -> clearContextMenu();
+                }
+            },new Color(28,43,49),new Color(89,131,127),i<3||i==9||villageContextProp!=null);
+        }
+    }
+
+    private WorldProp villagePropAtScreenPoint(Point point) {
+        List<WorldProp> props=state.isManagedVillageInterior()?state.world.playerInteriorProps().getOrDefault(state.currentMapId,List.of()):state.world.area(state.currentMapId).props;
+        for(int i=props.size()-1;i>=0;i--){
+            WorldProp prop=props.get(i);
+            Rectangle r=state.isManagedVillageInterior()?worldRenderer.interiorPropBounds(prop,tileSize(),lastCamX,lastCamY):worldRenderer.propBounds(prop,tileSize(),lastCamX,lastCamY);
+            r.translate((int)Math.round((lastCamX-lastCameraX)*tileSize()+prop.offsetX()*tileSize()/48.0),
+                    (int)Math.round((lastCamY-lastCameraY)*tileSize()+prop.offsetY()*tileSize()/48.0));
+            if(r.contains(point))return prop;
+        }
+        return null;
+    }
+
+    private int villagePreviewOffset(boolean horizontal,WorldProp source) {
+        boolean wallMount = state.isManagedVillageInterior() && interiorPlacementPreviewAsset() != null
+                && interiorPlacementPreviewAsset().startsWith("interior_wall_");
+        if(state.villageGridSnap || hoverPoint==null || wallMount)return source==null?(horizontal?state.villagePropOffsetX:state.villagePropOffsetY):(horizontal?source.offsetX():source.offsetY());
+        double world=(horizontal?lastCameraX:lastCameraY)+(horizontal?hoverPoint.x:hoverPoint.y)/(double)tileSize();
+        return (int)Math.round((world-Math.floor(world)-(horizontal?.5:1))*48);
+    }
+
     private void drawWorldContextMenu(Graphics2D g) {
+        if(state.mode==GameMode.VILLAGE && contextMenuPoint!=null){drawVillageContextMenu(g);return;}
         boolean partyOverlayMenu = (state.mode == GameMode.EXPLORE || state.mode == GameMode.PARTY || state.mode == GameMode.SKILLS)
                 && contextMenuPartyMember != null
                 && contextMenuTile == null
@@ -3368,6 +3582,7 @@ public final class GamePanel extends JPanel {
     }
 
     private Rectangle contextMenuBounds() {
+        if(state.mode==GameMode.VILLAGE)return new Rectangle(clamp(contextMenuPoint==null?16:contextMenuPoint.x+8,8,Math.max(8,gameAreaWidth()-260)),clamp(contextMenuPoint==null?16:contextMenuPoint.y+8,8,Math.max(8,viewHeight()-334)),252,326);
         boolean hasBookshelf = contextMenuSettlement == null && contextMenuBuilding == null && contextMenuTile != null
                 && state.readableBookshelfAtTile(contextMenuTile.x(), contextMenuTile.y()) != null;
         CraftingSystem.Workstation workstation = contextMenuSettlement == null && contextMenuBuilding == null && contextMenuTile != null
@@ -3476,7 +3691,7 @@ public final class GamePanel extends JPanel {
         int bestPathLength = Integer.MAX_VALUE;
         int bestDistance = Integer.MAX_VALUE;
         for (TilePoint door : state.world.cityBuildingDoorTiles(building)) {
-            TilePoint approach = new TilePoint(door.x(), door.y() + 1);
+            TilePoint approach = building.outside(door, 0, 1);
             if (!Pathfinder.playerWalkable(state, approach.x(), approach.y())) {
                 continue;
             }
@@ -3946,7 +4161,7 @@ public final class GamePanel extends JPanel {
                     buildingPromptLabel(entryBuilding), Quest.ObjectiveKind.VISIT, "Enter");
             bestDistance = 1;
         }
-        NearbyPrompt roamingPrompt = roamingWorldEventLayer.nearestPrompt(state);
+        NearbyPrompt roamingPrompt = state.roamingEvents.nearestPrompt(state);
         if (roamingPrompt != null) {
             int distance = Math.abs(roamingPrompt.x() - state.playerX) + Math.abs(roamingPrompt.y() - state.playerY);
             if (distance <= 1 && distance < bestDistance) {
@@ -3968,9 +4183,10 @@ public final class GamePanel extends JPanel {
             if (!objective.mapId().equals(state.currentMapId)) {
                 continue;
             }
-            int distance = Math.abs(objective.x() - state.playerX) + Math.abs(objective.y() - state.playerY);
+            int distance = state.questObjectiveDistance(objective, state.playerX, state.playerY);
             if (distance <= 1 && distance < bestDistance) {
-                String action = switch (objective.kind()) {
+                String action = FurnitureQuestContent.isFurniture(objective)
+                        ? FurnitureQuestContent.binding(objective.stageId()).action() : switch (objective.kind()) {
                     case GATHER -> "Harvest";
                     case VISIT -> "Inspect";
                     case SEARCH -> "Search";
@@ -3993,6 +4209,7 @@ public final class GamePanel extends JPanel {
     }
 
     private String buildingPromptLabel(CityBuilding building) {
+        if (building != null && building.key().equals("town_service_barn")) return "Barn and Stables";
         String western = WesternReachFolklore.buildingName(state.currentMapId, building);
         if (!western.isEmpty()) return western;
         String regional = RegionalBuildingTypes.name(state.currentMapId, building);
@@ -4143,7 +4360,7 @@ public final class GamePanel extends JPanel {
             return;
         }
         int[] footprint = state.world.interiorPlacementSize(asset);
-        boolean canPlace = state.world.canPlacePlayerInteriorProp(state.currentMapId, tile.x(), tile.y(), asset);
+        boolean canPlace = state.world.canPlacePlayerInteriorProp(state.currentMapId, tile.x(), tile.y(), asset,state.villagePlacementCollisions);
         int px = (tile.x() - camX) * tileSize;
         int py = (tile.y() - camY) * tileSize;
         int width = footprint[0] * tileSize;
@@ -4179,6 +4396,9 @@ public final class GamePanel extends JPanel {
         int drawW = bounds.width, drawH = bounds.height;
         int x = bounds.x - (int) Math.round(lastCameraX * ts);
         int y = bounds.y - (int) Math.round(lastCameraY * ts);
+        WorldProp moving=state.pendingVillageMoveSource==null?null:state.world.playerInteriorPropAt(state.currentMapId,state.pendingVillageMoveSource.x(),state.pendingVillageMoveSource.y());
+        x+=(int)Math.round(villagePreviewOffset(true,moving)*ts/48.0);
+        y+=(int)Math.round(villagePreviewOffset(false,moving)*ts/48.0);
         Composite oldComposite = g.getComposite();
         Shape oldClip = g.getClip();
         g.setClip(0, 0, gameAreaWidth(), worldViewportHeight());
@@ -4199,6 +4419,22 @@ public final class GamePanel extends JPanel {
             return;
         }
         char previewTile = "delete".equals(state.villageEditAction) ? 'g' : state.selectedVillageTile;
+        if (!"paint".equals(state.villageTerrainTool)) {
+            int radius = Math.max(0, Math.min(2, state.villageBrushRadius));
+            for (int yy=tile.y()-radius; yy<=tile.y()+radius; yy++) for (int xx=tile.x()-radius; xx<=tile.x()+radius; xx++) {
+                boolean allowed=state.world.canEditVillageHeight(xx,yy)
+                        && !(Math.abs(xx-state.playerX)<=1 && Math.abs(yy-state.playerY)<=1);
+                g.setColor(allowed?new Color(115,220,164,100):new Color(230,95,85,100));
+                int bx=(xx-camX)*tileSize,by=(yy-camY)*tileSize;
+                g.fillRect(bx,by,tileSize,tileSize);
+                g.setColor(allowed?new Color(170,255,205):new Color(255,170,150));
+                g.drawRect(bx,by,tileSize-1,tileSize-1);
+            }
+            g.setColor(Color.WHITE);
+            g.drawString(state.villageTerrainTool+" | Height "+state.world.elevation(state.currentMapId)
+                    .heightAt(tile.x()+.5,tile.y()+.5),(tile.x()-camX)*tileSize,(tile.y()-camY)*tileSize-5);
+            return;
+        }
         boolean canPlace = state.world.canSetPlayerVillageTile(tile.x(), tile.y(), previewTile);
         int px = (tile.x() - camX) * tileSize;
         int py = (tile.y() - camY) * tileSize;
@@ -4236,12 +4472,14 @@ public final class GamePanel extends JPanel {
         VillageManager.PlaceableAsset selected = VillageManager.outdoorAsset(state.selectedVillageAsset);
         String asset = source == null ? selected.asset() : source.asset();
         int propSize = source == null ? selected.size() : source.size();
-        boolean canPlace = state.world.canPlacePlayerVillageProp(tile.x(), tile.y(), source);
+        boolean canPlace = state.world.canPlacePlayerVillageProp(tile.x(), tile.y(), source,state.villagePlacementCollisions);
         int size = worldRenderer.propRenderSize(asset, propSize, tileSize);
         int drawW = worldRenderer.propWidth(asset, size);
         int drawH = worldRenderer.propHeight(asset, size);
         int px = (tile.x() - camX) * tileSize + (tileSize - drawW) / 2;
         int py = (tile.y() - camY) * tileSize + tileSize - drawH;
+        px+=(int)Math.round(villagePreviewOffset(true,source)*tileSize/48.0);
+        py+=(int)Math.round(villagePreviewOffset(false,source)*tileSize/48.0);
         Composite oldComposite = g.getComposite();
         Stroke oldStroke = g.getStroke();
         g.setComposite(AlphaComposite.SrcOver.derive(canPlace ? 0.62f : 0.42f));
@@ -4481,6 +4719,10 @@ public final class GamePanel extends JPanel {
         int size = tileSize();
         int x = (int) Math.floor(lastCameraX + hoverPoint.x / (double) size);
         int y = (int) Math.floor(lastCameraY + hoverPoint.y / (double) size);
+        if (showInteriorPlacementPreview() && interiorPlacementPreviewAsset() != null
+                && interiorPlacementPreviewAsset().startsWith("interior_wall_"))
+            return ConnectedInteriorWalls.mountAt(state.world, state.currentMapId,
+                    lastCameraX + hoverPoint.x / (double) size, lastCameraY + hoverPoint.y / (double) size);
         return new TilePoint(x, y);
     }
 
@@ -4520,8 +4762,35 @@ public final class GamePanel extends JPanel {
         };
     }
 
+    private void drawWadingCharacter(Graphics2D g, String sprite, int x, int y, int width, int height,
+                                     int dx, int dy, CharacterAnimationSelection animation, double wx, double wy) {
+        WaterDepth depth = state.world.waterDepth(state.currentMapId, (int) Math.floor(wx + .5), (int) Math.floor(wy + .5));
+        if (!depth.walkable()) {
+            drawCharacterSprite(g, sprite, x, y, width, height, dx, dy, animation);
+            return;
+        }
+        int sink = (int) Math.round(height * (depth == WaterDepth.WADING ? .40 : .13));
+        drawCharacterSprite(g, sprite, x, y, width, height, dx, dy, animation, sink);
+        Graphics2D wake = (Graphics2D) g.create();
+        wake.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        wake.setStroke(new BasicStroke(Math.max(.7f, width / 70f)));
+        for (int i = 0; i < 2; i++) {
+            double phase = (frame / 90.0 + i * .5) % 1;
+            int radius = (int) (width * (.18 + phase * .22));
+            wake.setColor(new Color(183, 224, 222, (int) ((1 - phase) * 95)));
+            wake.drawOval(x + width / 2 - radius, y + height - radius / 4,
+                    radius * 2, Math.max(2, radius / 2));
+        }
+        wake.dispose();
+    }
+
     private void drawCharacterSprite(Graphics2D g, String sprite, int x, int y, int width, int height, int facingDx, int facingDy,
                                      CharacterAnimationSelection selection) {
+        drawCharacterSprite(g, sprite, x, y, width, height, facingDx, facingDy, selection, 0);
+    }
+
+    private void drawCharacterSprite(Graphics2D g, String sprite, int x, int y, int width, int height, int facingDx, int facingDy,
+                                     CharacterAnimationSelection selection, int submergedPixels) {
         DirectionalSprite directional = directionalSprite(sprite, facingDx, facingDy);
         if(selection!=null&&selection.action().contains("grounded")) {
             String action=selection.action();
@@ -4549,10 +4818,12 @@ public final class GamePanel extends JPanel {
                 : assets.spriteFit(directional.sprite(), width, height);
         String shadowKey = "char:" + directional.sprite() + ":" + width + "x" + height + ":"
                 + (animated ? selection.action() + ":" + selection.frame() : "idle");
-        drawCasterShadow(g, image, shadowKey, x, y, width, height, directional.flipHorizontal(), 0.42f);
-        final int drawX = x, drawY = y, drawW = width;
+        if (submergedPixels == 0) drawCasterShadow(g, image, shadowKey, x, y, width, height, directional.flipHorizontal(), 0.42f);
+        final int drawX = x, drawY = y + submergedPixels, drawW = width, waterline = y + height;
         worldDepthRenderer.character(g, new Rectangle(x, y, width, height), target -> {
             Graphics2D spriteG = (Graphics2D) target.create();
+            // Apply immersion inside the deferred depth pass; submission-time clips are not retained.
+            if (submergedPixels > 0) spriteG.clipRect(drawX - drawW, waterline - height * 2, drawW * 3, height * 2);
             spriteG.translate(drawX + drawW / 2.0, drawY + height);
             if (directional.flipHorizontal()) spriteG.scale(-1.0, 1.0);
             spriteG.drawImage(image, -drawW / 2, -height, drawW, height, null);
@@ -5104,6 +5375,9 @@ public final class GamePanel extends JPanel {
 
     private int playerMoveFramesForStep(String mapId, int fromX, int fromY, int toX, int toY) {
         int frames = movementSpeed().frames;
+        double waterCost = Math.max(state.world.waterDepth(mapId, fromX, fromY).movementCost,
+                state.world.waterDepth(mapId, toX, toY).movementCost);
+        if (waterCost > 1) return Math.max(1, (int) Math.round(frames * waterCost * state.travelSpeedWorldMultiplier()));
         if (Terrain.roadLike(state.world.tileAt(mapId, fromX, fromY))
                 || Terrain.roadLike(state.world.tileAt(mapId, toX, toY))) {
             return Math.max(1, Math.max(MIN_ROAD_MOVE_FRAMES, (int) Math.round(frames * ROAD_MOVE_FRAME_MULTIPLIER * state.travelSpeedWorldMultiplier())));
@@ -5515,7 +5789,8 @@ public final class GamePanel extends JPanel {
     }
 
     private boolean usesStandaloneSettlementBuilding(String kind, CityBuilding building) {
-        return BuildingGeometry.standalone(state.currentMapId, kind, building);
+        return RegionalSettlementIdentity.townProfile(state.currentMapId) != null
+                || BuildingGeometry.standalone(state.currentMapId, kind, building);
     }
 
     private void drawStandaloneVillageBuilding(Graphics2D g, CityBuilding building, int camX, int camY, int ts) {
@@ -5529,10 +5804,17 @@ public final class GamePanel extends JPanel {
         worldDepthRenderer.scenery(g, layout.drawY() + layout.drawH(),
                 new Rectangle(layout.drawX(), layout.drawY(), layout.drawW(), layout.drawH()),
                 target -> target.drawImage(assets.spriteFit(asset, layout.drawW(), layout.drawH()), layout.drawX(), layout.drawY(), null));
-        drawBuildingDoorMarker(g, layout.door(), camX, camY, ts);
+        for (TilePoint door : state.world.cityBuildingDoorTiles(building)) {
+            drawBuildingDoorMarker(g, door, camX, camY, ts);
+        }
     }
 
     private int[] standaloneBuildingTargetSize(CityBuilding building, int lotW, int ts) {
+        if (RegionalSettlementIdentity.townProfile(state.currentMapId) != null) {
+            int level = isPlayerVillageBuilding(building) ? state.world.playerVillageBuildingLevel(building) : 1;
+            String sprite = villageBuildingSpriteForLevel(building.style(), level, building, 0, 0);
+            if (assets.hasSprite(sprite)) return TownBuildingArt.targetSize(assets, sprite, ts);
+        }
         return BuildingGeometry.targetSize(state.currentMapId, building, lotW, ts);
     }
 
@@ -5551,6 +5833,11 @@ public final class GamePanel extends JPanel {
         int drawH = Math.max(ts, target[1]);
         int drawX = doorCenterX - drawW / 2;
         int drawY = frontY - drawH - tileRelative(1, ts);
+        if (building.facing() == CityBuilding.Facing.WEST || building.facing() == CityBuilding.Facing.EAST) {
+            double thresholdX = building.facing() == CityBuilding.Facing.WEST ? .11 : .94;
+            drawX = (int) Math.round(doorCenterX - thresholdX * drawW);
+            drawY = (int) Math.round((door.y() + .5 - camY) * ts - .94 * drawH);
+        }
         Rectangle spriteBounds = new Rectangle(drawX, drawY, drawW, drawH);
         Rectangle lotBounds = new Rectangle(lotX, lotY, Math.max(ts, lotW), Math.max(ts, lotH));
         return new BuildingVisualLayout(spriteBounds.union(lotBounds), drawX, drawY, drawW, drawH, lotX, lotW, frontY, door);
@@ -5566,6 +5853,16 @@ public final class GamePanel extends JPanel {
         }
         int markerX = (door.x() - camX) * ts;
         int markerY = (door.y() - camY + 1) * ts - tileRelative(7, ts);
+        CityBuilding owner = state.world.cityBuildingAt(state.currentMapId, door.x(), door.y());
+        if (owner != null && owner.facing() != CityBuilding.Facing.SOUTH) {
+            int cx = markerX + ts / 2, cy = (door.y() - camY) * ts + ts / 2;
+            boolean side = owner.facing().dx != 0;
+            g.setColor(new Color(202, 162, 98, 160));
+            g.fillRect(cx - (side ? ts / 24 : ts / 5), cy - (side ? ts / 5 : ts / 24),
+                    side ? Math.max(2, ts / 12) : ts * 2 / 5,
+                    side ? ts * 2 / 5 : Math.max(2, ts / 12));
+            return;
+        }
         g.setColor(new Color(45, 36, 29));
         g.fillRect(markerX + scaled(10), markerY - scaled(14), ts - scaled(20), scaled(12));
         g.setColor(new Color(122, 96, 65));
@@ -5575,7 +5872,8 @@ public final class GamePanel extends JPanel {
     }
 
     private int buildingModuleCount(CityBuilding building) {
-        return BuildingGeometry.moduleCount(building);
+        return RegionalSettlementIdentity.townProfile(state.currentMapId) != null
+                ? 1 : BuildingGeometry.moduleCount(building);
     }
 
     private String buildingSprite(CityBuilding building, int seed, int index) {
@@ -5583,6 +5881,8 @@ public final class GamePanel extends JPanel {
         if (!western.isEmpty()) return western;
         String local = HearthlandsFolklore.buildingAsset(state.currentMapId, building);
         if (!local.isEmpty()) return local;
+        String town = RegionalSettlementIdentity.townBuildingAsset(state.currentMapId, building);
+        if (!town.isEmpty() && assets.hasSprite(town)) return town;
         String regional = RegionalSettlementIdentity.buildingAsset(state.currentMapId, building);
         if (!regional.isEmpty()) return regional;
         String[] sprites = switch (building.style()) {
@@ -5715,10 +6015,16 @@ public final class GamePanel extends JPanel {
     }
 
     private String villageBuildingSpriteForLevel(String style, int level, CityBuilding fallbackBuilding, int seed, int index) {
+        if (fallbackBuilding != null && isPlayerVillageBuilding(fallbackBuilding)) {
+            String sprite = VillageManager.buildingLevelSprite(style, level);
+            if (assets.hasSprite(sprite)) return sprite;
+        }
         String western = WesternReachFolklore.buildingAsset(state.currentMapId, fallbackBuilding);
         if (!western.isEmpty()) return western;
         String local = HearthlandsFolklore.buildingAsset(state.currentMapId, fallbackBuilding);
         if (!local.isEmpty()) return local;
+        String town = RegionalSettlementIdentity.townBuildingAsset(state.currentMapId, fallbackBuilding);
+        if (!town.isEmpty() && assets.hasSprite(town)) return town;
         String regional = RegionalSettlementIdentity.buildingAsset(state.currentMapId, fallbackBuilding);
         if (!regional.isEmpty()) return regional;
         String themedSprite = themedCityBuildingSprite(style, fallbackBuilding, seed, index);
@@ -5734,7 +6040,8 @@ public final class GamePanel extends JPanel {
             }
         }
         if (VillageManager.isManagedBuildingStyle(style)) {
-            String candidate = VillageManager.buildingLevelSprite(style, level);
+            String candidate = fallbackBuilding == null || isPlayerVillageBuilding(fallbackBuilding)
+                    ? VillageManager.buildingLevelSprite(style, level) : VillageManager.primaryBuildingSprite(style);
             if (!candidate.isBlank() && assets.hasSprite(candidate)) {
                 return candidate;
             }
@@ -5794,7 +6101,7 @@ public final class GamePanel extends JPanel {
     private void drawHouseFloorTile(Graphics2D g, char tile, int wx, int wy, int px, int py) {
         int ts = tileSize();
         int seed = Math.abs(wx * 928371 + wy * 364479 + tile * 71);
-        g.drawImage(assets.image(interiorFloorAsset(seed), ts, ts), px, py, null);
+        ConnectedInteriorWalls.floor(g, assets, ConnectedInteriorWalls.material(state.currentMapId), wx, wy, px, py, ts);
         drawInteriorFloorDepth(g, px, py, ts, seed);
         g.setColor(InteriorStyle.forMap(state.currentMapId).materialTint);
         g.fillRect(px, py, ts, ts);
@@ -5820,123 +6127,7 @@ public final class GamePanel extends JPanel {
     }
 
     private void drawHouseWallTile(Graphics2D g, int wx, int wy, int px, int py) {
-        int ts = tileSize();
-        int seed = Math.abs(wx * 928371 + wy * 364479 + 79);
-        boolean floorNorth = nearInteriorTile(wx, wy, 0, -1);
-        boolean floorSouth = nearInteriorTile(wx, wy, 0, 1);
-        boolean floorWest = nearInteriorTile(wx, wy, -1, 0);
-        boolean floorEast = nearInteriorTile(wx, wy, 1, 0);
-        boolean wallNorth = wallConnection(wx, wy, 0, -1);
-        boolean wallSouth = wallConnection(wx, wy, 0, 1);
-        boolean wallWest = wallConnection(wx, wy, -1, 0);
-        boolean wallEast = wallConnection(wx, wy, 1, 0);
-        boolean straightVertical = (wallNorth || wallSouth) && !wallWest && !wallEast;
-        String asset = connectedInteriorWallAsset(wx, wy, seed, floorNorth, floorSouth, floorWest, floorEast);
-
-        if (straightVertical && (floorWest || floorEast)) {
-            drawLinearVerticalWallShade(g, px, py, ts, floorWest, floorEast);
-        }
-        if (floorSouth) {
-            g.setColor(new Color(0, 0, 0, 92));
-            g.fillRect(px + scaled(3), py + ts - scaled(2), ts - scaled(3), scaled(5));
-        }
-        if (straightVertical) {
-            drawInteriorVerticalCap(g, px, py, ts);
-            return;
-        }
-        InteriorStyle style = InteriorStyle.forMap(state.currentMapId);
-        String face = style == InteriorStyle.STORMBOUND ? "interior_wall_timber"
-                : style == InteriorStyle.SUNREALM ? "interior_wall_plaster" : asset;
-        g.drawImage(assets.image(face, ts, ts), px, py, null);
-        g.setColor(style.materialTint);
-        g.fillRect(px, py, ts, ts);
-
-        g.setColor(new Color(255, 225, 150, 38));
-        g.fillRect(px + scaled(3), py + scaled(2), ts - scaled(6), scaled(2));
-        g.setColor(new Color(0, 0, 0, 58));
-        g.fillRect(px + scaled(3), py + ts - scaled(7), ts - scaled(6), scaled(3));
-        drawInteriorWallJoinAccents(g, px, py, ts, wallNorth, wallEast, wallSouth, wallWest);
-        if (floorEast) {
-            g.setColor(new Color(0, 0, 0, 54));
-            g.fillRect(px + ts - scaled(5), py + scaled(6), scaled(4), ts - scaled(11));
-        }
-        if (floorWest) {
-            g.setColor(new Color(255, 226, 156, 36));
-            g.fillRect(px + scaled(1), py + scaled(6), scaled(3), ts - scaled(11));
-        }
-    }
-
-    private void drawLinearVerticalWallShade(Graphics2D g, int px, int py, int ts, boolean floorWest, boolean floorEast) {
-        if (floorEast) {
-            g.setColor(new Color(0, 0, 0, 50));
-            g.fillRect(px + ts - tileRelative(5, ts), py + tileRelative(4, ts), tileRelative(4, ts), ts - tileRelative(8, ts));
-        }
-        if (floorWest) {
-            g.setColor(new Color(255, 226, 156, 30));
-            g.fillRect(px + tileRelative(1, ts), py + tileRelative(4, ts), tileRelative(3, ts), ts - tileRelative(8, ts));
-        }
-    }
-
-    private void drawInteriorWallJoinAccents(Graphics2D g, int px, int py, int ts,
-                                             boolean north, boolean east, boolean south, boolean west) {
-        if (!((north || south) && (east || west))) {
-            return;
-        }
-        int centerX = px + ts / 2;
-        int capY = py + tileRelative(6, ts);
-        int trimY = py + tileRelative(24, ts);
-        int trimH = Math.max(2, tileRelative(5, ts));
-        int postW = Math.max(3, tileRelative(7, ts));
-        int postX = centerX - postW / 2;
-
-        g.setColor(new Color(42, 25, 22, 128));
-        if (north) {
-            g.fillRect(postX, py + tileRelative(2, ts), postW, ts / 2);
-        }
-        if (south) {
-            g.fillRect(postX, py + ts / 2, postW, ts - tileRelative(5, ts) - ts / 2);
-        }
-        if (west) {
-            g.fillRect(px, trimY, ts / 2, trimH);
-        }
-        if (east) {
-            g.fillRect(centerX, trimY, ts / 2, trimH);
-        }
-
-        g.setColor(new Color(137, 86, 48, 178));
-        if (north || south) {
-            g.fillRect(postX + Math.max(1, tileRelative(1, ts)), py + tileRelative(4, ts),
-                    Math.max(1, postW - tileRelative(2, ts)), ts - tileRelative(10, ts));
-        }
-        if (west) {
-            g.fillRect(px, capY, ts / 2 + postW / 2, Math.max(2, tileRelative(4, ts)));
-        }
-        if (east) {
-            g.fillRect(centerX - postW / 2, capY, ts / 2 + postW / 2, Math.max(2, tileRelative(4, ts)));
-        }
-
-        g.setColor(new Color(255, 229, 167, 46));
-        if (west) {
-            g.fillRect(px, capY, ts / 2, Math.max(1, tileRelative(1, ts)));
-        }
-        if (east) {
-            g.fillRect(centerX, capY, ts / 2, Math.max(1, tileRelative(1, ts)));
-        }
-    }
-
-    private void drawInteriorVerticalCap(Graphics2D g, int px, int py, int ts) {
-        g.setColor(new Color(49, 34, 29));
-        g.fillRect(px, py, ts, ts);
-        // Sample only the timber rail, continuously along the wall axis.
-        BufferedImage timber = assets.image("interior_wall_timber", ts, ts);
-        g.drawImage(timber, px + ts / 6, py, px + ts * 5 / 6, py + ts,
-                ts / 4, ts / 4, ts * 3 / 4, ts * 3 / 4, null);
-        g.setColor(new Color(181, 130, 78, 100));
-        g.fillRect(px + ts / 6, py, Math.max(1, ts / 24), ts);
-        g.setColor(new Color(0, 0, 0, 95));
-        g.fillRect(px + ts * 5 / 6, py, ts / 6, ts);
-        g.setColor(InteriorStyle.forMap(state.currentMapId).materialTint);
-        g.fillRect(px, py, ts, ts);
+        ConnectedInteriorWalls.draw(g, assets, state.world, state.currentMapId, wx, wy, px, py, tileSize());
     }
 
     private void drawHouseDoorTile(Graphics2D g, int wx, int wy, int px, int py) {
@@ -5944,31 +6135,9 @@ public final class GamePanel extends JPanel {
         boolean horizontal = wallConnection(wx, wy, -1, 0) || wallConnection(wx, wy, 1, 0)
                 || state.world.tileAt(state.currentMapId, wx - 1, wy) == 'e'
                 || state.world.tileAt(state.currentMapId, wx + 1, wy) == 'e';
-        String asset = horizontal ? "interior_wall_door_h_open" : "interior_wall_door_v_open";
-        g.drawImage(assets.image(asset, ts, ts), px, py, null);
-        drawInteriorDoorFrameBlend(g, px, py, ts, horizontal);
-        g.setColor(new Color(0, 0, 0, 68));
-        g.fillRect(px + scaled(4), py + ts - scaled(5), ts - scaled(8), scaled(3));
-    }
-
-    private void drawInteriorDoorFrameBlend(Graphics2D g, int px, int py, int ts, boolean horizontal) {
-        int side = Math.max(2, tileRelative(5, ts));
-        int cap = Math.max(2, tileRelative(6, ts));
-        g.setColor(new Color(74, 44, 31, 164));
-        if (horizontal) {
-            g.fillRect(px, py + tileRelative(2, ts), side, ts - tileRelative(5, ts));
-            g.fillRect(px + ts - side, py + tileRelative(2, ts), side, ts - tileRelative(5, ts));
-            g.fillRect(px, py, ts, cap);
-            g.setColor(new Color(190, 134, 75, 96));
-            g.fillRect(px + side, py + tileRelative(2, ts), ts - side * 2, Math.max(1, tileRelative(2, ts)));
-        } else {
-            g.fillRect(px + tileRelative(2, ts), py, ts - tileRelative(5, ts), cap);
-            g.fillRect(px + tileRelative(2, ts), py + ts - cap, ts - tileRelative(5, ts), cap);
-            g.fillRect(px + tileRelative(1, ts), py, side, ts);
-            g.fillRect(px + ts - side - tileRelative(1, ts), py, side, ts);
-            g.setColor(new Color(190, 134, 75, 82));
-            g.fillRect(px + tileRelative(3, ts), py + cap, Math.max(1, tileRelative(2, ts)), ts - cap * 2);
-        }
+        boolean start = state.world.tileAt(state.currentMapId, wx - (horizontal ? 1 : 0), wy - (horizontal ? 0 : 1)) == 'o';
+        boolean end = state.world.tileAt(state.currentMapId, wx + (horizontal ? 1 : 0), wy + (horizontal ? 0 : 1)) == 'o';
+        ConnectedInteriorWalls.door(g, assets, ConnectedInteriorWalls.material(state.currentMapId), px, py, ts, horizontal, start, end);
     }
 
     private boolean exteriorEntranceDoor(int wx, int wy) {
@@ -5982,76 +6151,11 @@ public final class GamePanel extends JPanel {
         return floorInside && outsideBelow && pairedDoor;
     }
 
-    private String connectedInteriorWallAsset(int wx, int wy, int seed,
-                                              boolean floorNorth, boolean floorSouth,
-                                              boolean floorWest, boolean floorEast) {
-        boolean north = wallConnection(wx, wy, 0, -1);
-        boolean east = wallConnection(wx, wy, 1, 0);
-        boolean south = wallConnection(wx, wy, 0, 1);
-        boolean west = wallConnection(wx, wy, -1, 0);
-        int count = (north ? 1 : 0) + (east ? 1 : 0) + (south ? 1 : 0) + (west ? 1 : 0);
-
-        if (count >= 3) {
-            return "interior_wall_horizontal_center";
-        }
-        if ((east && west && (north || south)) || (north && south && (east || west))) {
-            return "interior_wall_horizontal_center";
-        }
-        if (north && south && !east && !west) {
-            return verticalInteriorWallAsset(floorWest, floorEast);
-        }
-        if (east && south && !north && !west) {
-            return "interior_wall_horizontal_center";
-        }
-        if (west && south && !north && !east) {
-            return "interior_wall_horizontal_center";
-        }
-        if (east && north && !south && !west) {
-            return "interior_wall_horizontal_center";
-        }
-        if (west && north && !south && !east) {
-            return "interior_wall_horizontal_center";
-        }
-        if ((west || east) && !north && !south) {
-            if (east && !west) {
-                return "interior_wall_horizontal_left";
-            }
-            if (west && !east) {
-                return "interior_wall_horizontal_right";
-            }
-            return "interior_wall_horizontal_center";
-        }
-        if ((north || south) && !west && !east) {
-            return verticalInteriorWallAsset(floorWest, floorEast);
-        }
-        if (floorEast && !floorWest) {
-            return verticalInteriorWallAsset(false, true);
-        }
-        if (floorWest && !floorEast) {
-            return verticalInteriorWallAsset(true, false);
-        }
-        return "interior_wall_horizontal_center";
-    }
-
-    private String verticalInteriorWallAsset(boolean floorWest, boolean floorEast) {
-        if (floorWest && !floorEast) {
-            return "interior_wall_side_right";
-        }
-        if (floorEast && !floorWest) {
-            return "interior_wall_side_left";
-        }
-        return "interior_wall_vertical_side";
-    }
-
     private void drawInteriorFloorDepth(Graphics2D g, int px, int py, int ts, int seed) {
         if (Math.floorMod(seed, 13) == 0) {
             g.setColor(new Color(255, 230, 172, 12));
             g.fillRect(px, py, ts, ts);
         }
-    }
-
-    private String interiorFloorAsset(int seed) {
-        return InteriorStyle.forMap(state.currentMapId).floor;
     }
 
     private boolean wallConnection(int wx, int wy, int ox, int oy) {
@@ -9199,16 +9303,16 @@ public final class GamePanel extends JPanel {
         int panelH = 620;
         int x = gameAreaCenteredX(panelW);
         int y = centeredY(panelH);
-        drawOverlayBase(g, x, y, panelW, panelH);
+        com.alderfall.game.ui.SettlementPanelStyle.card(g,x,y,panelW,panelH);
 
         VillageManager.SettlementStage stage = state.villageStage();
-        g.drawImage(assets.spriteFit(stage.asset(), 128, 104), x + 34, y + 26, null);
+        g.drawImage(assets.spriteFit("player_village_quest_board", 128, 104), x + 34, y + 26, null);
         g.setFont(new Font("SansSerif", Font.BOLD, 28));
         g.setColor(new Color(244, 239, 220));
         g.drawString(stage.title(), x + 184, y + 54);
         g.setFont(new Font("SansSerif", Font.PLAIN, 14));
         g.setColor(new Color(198, 202, 211));
-        drawClippedString(g, "Stage " + stage.stage() + "/10 | " + stage.kind()
+        drawClippedString(g, "Stage " + stage.stage() + "/"+VillageManager.settlementStages().size()+" | " + stage.kind()
                 + " | Storage " + state.villageStorageUsed() + "/" + state.villageStorageCapacity()
                 + " | Workers " + state.villageAllies.size(), x + 184, y + 80, panelW - 240);
         drawWrapped(g, stage.description(), x + 184, y + 104, panelW - 240, 18, 2);
@@ -9317,6 +9421,8 @@ public final class GamePanel extends JPanel {
         drawWrapped(g, next == null ? "The board has no larger charter to post yet."
                 : next.description(), x, y + 24, w, 17, 2);
 
+        g.setColor(new Color(99,180,155));
+        drawClippedString(g,"Housing "+state.stationedAllies().size()+" / "+state.villageHousingCapacity()+" beds | Expected next day: "+state.villageForecast(null).gold()+"g",x,y+58,w);
         int rowY = y + 78;
         if (next == null) {
             drawSettlementProgressRow(g, x, rowY, w, "Player level", state.player.level, state.player.level);
@@ -9336,7 +9442,7 @@ public final class GamePanel extends JPanel {
         int barX = x + 186;
         int barW = w - 260;
         int clampedTarget = Math.max(1, target);
-        double ratio = Math.min(1.0, value / (double) clampedTarget);
+        double ratio = target<=0?1.0:Math.min(1.0, value / (double) clampedTarget);
         g.setFont(new Font("SansSerif", Font.BOLD, 13));
         g.setColor(new Color(235, 236, 240));
         drawClippedString(g, label, x, y + 18, 170);
@@ -9888,21 +9994,27 @@ public final class GamePanel extends JPanel {
                 drawToggleRow(g, left, y + 334, "Look-Ahead", state.config.cameraLookAhead, this::toggleCameraLookAhead);
                 drawSettingsHeading(g, x + 540, y + 154, "Walking Animations");
                 drawWalkAnimationSpeedRow(g, x + 540, y + 178);
+                drawSettingsHeading(g, x + 540, y + 266, "Merchants");
+                drawChoiceRow(g, x + 540, y + 282, "Restock every", state.config.shopRestockDays + " days",
+                        () -> changeShopRestockDays(-1), () -> changeShopRestockDays(1));
             }
             case AUDIO -> {
                 drawSettingsHeading(g, left, y + 154, "Volume");
                 drawVolumeRow(g, left, y + 178, "Master", state.config.masterVolume, "master");
                 drawVolumeRow(g, left, y + 230, "Music", state.config.musicVolume, "music");
                 drawVolumeRow(g, left, y + 282, "SFX", state.config.sfxVolume, "sfx");
+                drawVolumeRow(g, left, y + 334, "Footsteps", state.config.footstepVolume, "footsteps");
                 g.setFont(new Font("SansSerif", Font.PLAIN, 13));
                 g.setColor(new Color(165, 174, 193));
-                wrap(g, "Music blends between biome themes over time, with softer ambient variants during longer exploration.", left, y + 354, 490, 18);
+                wrap(g, "Footsteps follow the ground beneath each character. Master controls all audio; SFX controls spells and gathering.", left, y + 406, 490, 18);
             }
             case DEBUG -> {
-                drawSettingsHeading(g, left, y + 154, "Creative Tools");
+                drawSettingsHeading(g, left, y + 154, "Debug Tools");
                 drawToggleRow(g, left, y + 178, "Creative Build", state.config.creativeBuildMode, this::toggleCreativeBuildMode);
                 drawToggleRow(g, left, y + 230, "Editor Button", state.config.showMapEditorButton, this::toggleMapEditorButton);
                 drawToggleRow(g, left, y + 282, "Creative Crafting", state.config.creativeCraftingMode, this::toggleCreativeCraftingMode);
+                drawChoiceRow(g, left, y + 334, "Performance (F4)", performanceOverlay.modeLabel(),
+                        () -> cyclePerformanceOverlay(-1), this::cyclePerformanceOverlay);
             }
         }
 
@@ -9913,6 +10025,12 @@ public final class GamePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.BOLD, 18));
         g.setColor(new Color(230, 225, 206));
         g.drawString(label, x, y);
+    }
+
+    private void changeShopRestockDays(int delta) {
+        state.config.shopRestockDays = GameConfig.clampShopRestockDays(state.config.shopRestockDays + delta);
+        state.status = "Merchants restock every " + state.config.shopRestockDays + " in-game days.";
+        saveSettings();
     }
 
     private void drawToggleRow(Graphics2D g, int x, int y, String label, boolean enabled, Runnable toggle) {
@@ -10259,6 +10377,7 @@ public final class GamePanel extends JPanel {
     }
 
     private int tileSize() {
+        if (editorTileSize > 0) return editorTileSize;
         int size = Math.max(24, GameConfig.TILE * state.zoom / 100);
         if (!"overworld".equals(state.world.kind(state.currentMapId))) {
             int mapWidth = Math.max(1, state.world.width(state.currentMapId));
@@ -10817,7 +10936,8 @@ public final class GamePanel extends JPanel {
                 state.setPendingSaveName(nextDefaultSaveName());
             }
             String savedName = state.pendingSaveName;
-            saves.save(state, savedName);
+            saves.save(state, savedName, captureSaveSnapshot());
+            saveMenuRenderer.resetPreview();
             state.status = "Saved " + savedName + " for " + state.player.name + ".";
             state.setPendingSaveName(nextDefaultSaveName());
             saveListCurrentCharacterOnly = true;
@@ -10827,7 +10947,22 @@ public final class GamePanel extends JPanel {
         }
     }
 
+    private BufferedImage captureSaveSnapshot() {
+        int width = gameAreaWidth();
+        int height = worldViewportHeight();
+        BufferedImage snapshot = new BufferedImage(640, Math.max(1, 640 * height / width), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = snapshot.createGraphics();
+        try {
+            g.scale(640.0 / width, 640.0 / width);
+            g.setClip(0, 0, width, height);
+            applyRenderQualityHints(g);
+            drawWorld(g);
+        } finally { g.dispose(); }
+        return snapshot;
+    }
+
     void openSaveMenuForSaving() {
+        saveMenuRenderer.setCurrentSnapshot(captureSaveSnapshot());
         state.openSaveMenu(true);
         selectedLoadCharacterId = "";
         importingCharacter = false;
@@ -10837,6 +10972,7 @@ public final class GamePanel extends JPanel {
     }
 
     void openLoadMenu() {
+        saveMenuRenderer.resetPreview();
         state.openSaveMenu(false);
         selectedLoadCharacterId = "";
         importingCharacter = false;
@@ -10844,6 +10980,7 @@ public final class GamePanel extends JPanel {
     }
 
     void openImportMenu() {
+        saveMenuRenderer.resetPreview();
         state.openSaveMenu(false);
         selectedLoadCharacterId = "";
         importingCharacter = true;
@@ -10920,7 +11057,8 @@ public final class GamePanel extends JPanel {
                 state.setPendingSaveName(nextDefaultSaveName());
             }
             String overwrittenName = pendingOverwriteSaveName;
-            saves.overwrite(state, pendingOverwriteSaveId, state.pendingSaveName);
+            saves.overwrite(state, pendingOverwriteSaveId, state.pendingSaveName, captureSaveSnapshot());
+            saveMenuRenderer.resetPreview();
             state.status = "Overwrote " + overwrittenName + ".";
             cancelOverwrite();
             saveListCurrentCharacterOnly = true;
@@ -10945,31 +11083,36 @@ public final class GamePanel extends JPanel {
         return pendingOverwriteSaveId != null && !pendingOverwriteSaveId.isBlank();
     }
 
-    void loadGame() {
-        try {
-            if (!saves.load(state)) {
-                state.status = "No Java save found.";
-            } else {
-                state.resetNpcRuntime();
-                syncPlayerAnimationToState();
-            }
-        } catch (IOException ex) {
-            state.status = "Load failed: " + ex.getMessage();
-        }
-    }
+    void loadGame() { loadGame(null); }
 
     void loadGame(String saveId) {
-        try {
-            if (!saves.load(state, saveId)) {
-                state.status = "No Java save found.";
-            } else {
-                state.resetNpcRuntime();
-                syncPlayerAnimationToState();
-            }
-        } catch (IOException ex) {
-            state.status = "Load failed: " + ex.getMessage();
-        }
+        if(loadingSave)return;
+        loadingSave=true;boolean resume=timer.isRunning();timer.stop();
+        java.awt.Window owner=SwingUtilities.getWindowAncestor(this);
+        try{
+            LoadingScreen.run(owner,"Loading saved adventure",progress -> prepareSave(javaRoot,saves,saveId,assets,progress),prepared -> {
+                GamePanel next=new GamePanel(javaRoot,false,prepared);
+                try{
+                    next.syncPlayerAnimationToState();next.setReplacementHandler(replacementHandler);
+                    if(replacementHandler!=null)replacementHandler.accept(next);
+                    else if(owner instanceof javax.swing.JFrame frame){frame.setContentPane(next);frame.validate();frame.addWindowListener(new java.awt.event.WindowAdapter(){public void windowClosed(java.awt.event.WindowEvent e){next.shutdown();}});}
+                    else throw new IllegalStateException("No game window is available to show this save.");
+                    shutdown();next.timer.start();SwingUtilities.invokeLater(next::requestFocusInWindow);
+                }catch(RuntimeException ex){next.shutdown();throw ex;}
+            });
+        }catch(RuntimeException ex){state.status="Load failed: "+exceptionMessage(ex);if(resume)timer.start();repaint();}
+        finally{loadingSave=false;}
     }
+    static Prepared prepareSave(Path root,SaveSystem saves,String saveId,AssetStore assets,java.util.function.Consumer<String> progress)throws IOException{
+        String chosen=saveId;
+        if(chosen==null){progress.accept("Finding the latest saved adventure...");var available=saves.listSaves();if(available.isEmpty())throw new IOException("No Java save found.");chosen=available.get(0).saveId();}
+        progress.accept("Preparing a fresh world for the saved adventure...");
+        GameState restored=new GameState(GameConfig.loadWithSettings(root),progress);
+        if(!saves.load(restored,chosen,progress))throw new IOException("The selected save could not be found.");
+        progress.accept("Preparing character animations and the game interface...");
+        return new Prepared(restored,assets);
+    }
+    private boolean loadingSave;
 
     void loadOrImportGame(String saveId) {
         if (importingCharacter) {
@@ -11055,6 +11198,7 @@ public final class GamePanel extends JPanel {
             case "master" -> state.config.masterVolume = clamped;
             case "music" -> state.config.musicVolume = clamped;
             case "sfx" -> state.config.sfxVolume = clamped;
+            case "footsteps" -> state.config.footstepVolume = clamped;
             default -> {
                 return;
             }
@@ -11070,6 +11214,7 @@ public final class GamePanel extends JPanel {
             case "master" -> state.config.masterVolume;
             case "music" -> state.config.musicVolume;
             case "sfx" -> state.config.sfxVolume;
+            case "footsteps" -> state.config.footstepVolume;
             default -> 0;
         };
     }
@@ -11448,6 +11593,12 @@ public final class GamePanel extends JPanel {
     }
 
     private boolean openContextMenu(Point point) {
+        if(state.mode==GameMode.VILLAGE && !state.villageCatalogOpen && point!=null && point.x>=0 && point.y>=0 && point.x<gameAreaWidth() && point.y<worldViewportHeight() && (state.isManagedVillageMap() || state.isManagedVillageInterior() && !state.isMapEditorMap())) {
+            clearContextMenu();contextMenuPoint=new Point(point);hoverPoint=point;
+            villageContextX=lastCameraX+point.x/(double)tileSize();villageContextY=lastCameraY+point.y/(double)tileSize();
+            contextMenuTile=new TilePoint((int)Math.floor(villageContextX),(int)Math.floor(villageContextY));
+            villageContextProp=villagePropAtScreenPoint(point);return true;
+        }
         if (point == null) {
             clearContextMenu();
             return false;
@@ -11867,14 +12018,21 @@ public final class GamePanel extends JPanel {
         }
 
         private void clickVillageWorld(int x, int y) {
+            if(state.villageCatalogOpen || contextMenuPoint!=null)return;
             int tileSize = tileSize();
             int targetX = (int) Math.floor(lastCameraX + x / (double) tileSize);
             int targetY = (int) Math.floor(lastCameraY + y / (double) tileSize);
+            if(state.villageTab==4 || state.villageTab==5) {
+                CityBuilding clicked=buildingAtScreenPoint(new Point(x,y));
+                if(clicked!=null){targetX=clicked.x1();targetY=clicked.y1();}
+            }
             boolean interiorEdit = state.isManagedVillageInterior();
             String actionBefore = state.villageEditAction;
             boolean placingInterior = interiorEdit && "place".equals(actionBefore);
             boolean movingInteriorToTarget = interiorEdit && "move".equals(actionBefore) && state.pendingVillageMoveSource != null;
-            state.handleVillageWorldClick(targetX, targetY);
+            if(state.villageTab==2 || state.isManagedVillageInterior() && state.villageTab==3)
+                state.placeVillageAt(lastCameraX+x/(double)tileSize,lastCameraY+y/(double)tileSize);
+            else state.handleVillageWorldClick(targetX, targetY);
             if ((placingInterior || movingInteriorToTarget)
                     && ("Interior asset moved.".equals(state.status) || state.status.endsWith(" placed."))) {
                 triggerInteriorPlacementPulse(targetX, targetY);

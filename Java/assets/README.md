@@ -19,9 +19,11 @@ environments/
   terrain/biomes/<biome>/
   terrain/roads/
   settlements/city/
-    buildings/, props/, walls/, terrain/, landmarks/
-    regional/, folklore/, overworld/
+    buildings/<region>/          # sun, river, north, freehold, fen, hearth, shared
+    props/, walls/, terrain/, landmarks/, folklore/, overworld/
   settlements/player_village/
+    buildings/<style>/          # player construction and tier progression
+    buildings/shared/           # reference residential, workshop and hall tiers
   locations/quest/
   interiors/props/                # furniture, workstations, household decoration
   props/nature/                   # flora, ground detail, dungeon decoration
@@ -29,6 +31,10 @@ environments/
 effects/animations/
 effects/weather/
 items/
+  weapons/<type>/                # swords, staves, axes, bows, daggers, wands, etc.
+  armors/, helmets/, gloves/, belts/, leggings/, boots/, shoulders/
+  shields/, accessories/, consumables/, materials/, tools/, placeables/
+  icons/, atlases/
 music/
 sfx/
 source/                          # grandfathered originals; new originals use art-source/
@@ -53,3 +59,12 @@ Do not rename IDs or split shared animations without updating their consumers.
 The legacy cross-roster batches still contain source material; moving that out
 requires a separate source/provenance migration. New original art and prompts
 belong in repository-root `art-source/<topic>/<batch>/`, outside runtime lookup.
+
+### Runtime biome surface styles
+
+`LayeredTerrainRenderer` derives and caches dry/light and weathered/dark variants
+from the existing terrain sources. These styles have no standalone PNGs or new
+asset IDs. Existing files and regeneration inputs stay in place. Any future
+original biome sheets belong in root `art-source/<topic>/<dated-batch>`; new
+accepted terrain textures belong in `environments/terrain/biomes/<biome>`.
+See [continuous terrain](../docs/layered-terrain.md) for rendering and review.

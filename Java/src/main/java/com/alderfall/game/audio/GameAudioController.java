@@ -65,6 +65,13 @@ final class GameAudioController {
     private final GameState state;
     private final MusicManager music;
     private final SoundManager sounds;
+    private final BattleSoundTimeline battleSounds = new BattleSoundTimeline();
+    private final Map<String, FootstepTracker> footsteps = new java.util.HashMap<>();
+    private final Set<String> heardWalkers = new java.util.HashSet<>();
+    private String footstepMap = "";
+    private int footstepBudget;
+    private int ambientFootstepCooldown;
+    private String flightSound = "";
     private int lastBattleEffectTimer;
     private String lastBattleEffectSignature = "";
     private int lastGatherSoundCycle = -1;
@@ -160,6 +167,24 @@ final class GameAudioController {
 
     private void updateBattleSoundEffects() {
         sounds.setVolume(effectiveSfxVolume());
+        BattleActionAnimation action = state.battle == null ? null : state.battle.activeAnimation();
+        boolean playing = state.mode == GameMode.BATTLE;
+        String flight = playing ? BattleSoundTimeline.flight(action) : "";
+        if (!flight.equals(flightSound)) {
+            sounds.stop(flightSound);
+            flightSound = flight;
+        }
+        if (!flightSound.isEmpty()) sounds.playLoop(flightSound);
+        // Preserve the cursor while a battle is paused; resuming must not replay impacts.
+        if (playing || action == null) {
+            for (String release : battleSounds.releases(action)) sounds.play(release);
+            for (String impact : battleSounds.impacts(action)) sounds.play(impact);
+        }
+        if (action != null && !BattleSoundTimeline.family(action).isEmpty()) {
+            lastBattleEffectTimer = 0;
+            lastBattleEffectSignature = "";
+            return;
+        }
         if (state.mode != GameMode.BATTLE || state.battle == null || state.battle.effectTimer <= 0 || !state.battle.effectReleased()) {
             lastBattleEffectTimer = 0;
             lastBattleEffectSignature = "";
@@ -176,6 +201,35 @@ final class GameAudioController {
         lastBattleEffectTimer = battle.effectTimer;
         lastBattleEffectSignature = signature;
     }
+
+    void beginFootsteps() {
+        sounds.setFootstepVolume((state.config.masterVolume / 100f) * (state.config.footstepVolume / 100f));
+        if (!state.currentMapId.equals(footstepMap) || (state.mode != GameMode.EXPLORE && state.mode != GameMode.DEFENSE)) {
+            footsteps.clear();
+            footstepMap = state.currentMapId;
+        }
+        heardWalkers.clear();
+        footstepBudget = 2;
+        if (ambientFootstepCooldown > 0) ambientFootstepCooldown--;
+    }
+
+    void footstep(String id, double x, double y, float presence) {
+        heardWalkers.add(id);
+        FootstepTracker tracker = footsteps.computeIfAbsent(id, key -> new FootstepTracker());
+        if (tracker.advance(x, y, state.config.walkAnimationSpeed) && footstepBudget > 0) {
+            boolean ambient = !id.equals("player");
+            if (ambient && ambientFootstepCooldown > 0) return;
+            int tx = (int) Math.floor(x + .5), ty = (int) Math.floor(y + .5);
+            char tile = state.world.tileAt(state.currentMapId, tx, ty);
+            if (state.world.interiorRugAt(state.currentMapId, tx, ty)) tile = 'z';
+            else if (tile == 'e' && "interior".equals(state.world.kind(state.currentMapId))) tile = 'i';
+            sounds.playFootstep(tracker.sample(tile), presence * java.util.concurrent.ThreadLocalRandom.current().nextFloat(.85f, 1f));
+            if (ambient) ambientFootstepCooldown = Math.max(1, (100 + GameConfig.FPS_MS - 1) / GameConfig.FPS_MS);
+            footstepBudget--;
+        }
+    }
+
+    void endFootsteps() { footsteps.keySet().retainAll(heardWalkers); }
 
     private void updateGatherSoundEffects(int frame) {
         sounds.setVolume(effectiveSfxVolume());

@@ -18,20 +18,43 @@ import javax.swing.WindowConstants;
 
 public final class GameWindow {
     private final JFrame frame;
-    private final GamePanel panel;
+    private GamePanel panel;
     private final GraphicsDevice device;
     private Rectangle windowedBounds;
     private boolean windowedResizable;
     private boolean fullscreen;
 
-    private GameWindow(Path javaRoot) {
+    private GameWindow(Path javaRoot,GamePanel.Prepared prepared) {
         this.frame = new JFrame("Echoes of Alderfall - Java");
-        this.panel = new GamePanel(javaRoot);
+        this.panel = new GamePanel(javaRoot,true,prepared);
+        panel.setReplacementHandler(this::replacePanel);
         this.device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     }
 
     public static void launch(Path javaRoot) {
-        SwingUtilities.invokeLater(() -> new GameWindow(javaRoot).show());
+        SwingUtilities.invokeLater(() -> {try{openOnEventThread(javaRoot);}catch(RuntimeException ex){javax.swing.JOptionPane.showMessageDialog(null,ex.getMessage(),"Could not start Alderfall",javax.swing.JOptionPane.ERROR_MESSAGE);}});
+    }
+
+    public static void openOnEventThread(Path javaRoot) {
+        if (!SwingUtilities.isEventDispatchThread()) throw new IllegalStateException("Open game windows on the Swing event thread.");
+        LoadingScreen.run(null,"Starting Alderfall",progress -> GamePanel.prepare(javaRoot,progress),prepared -> new GameWindow(javaRoot,prepared).show());
+    }
+
+    public static void launchPlaytest(Path javaRoot, com.alderfall.game.editor.MapDocument document) {
+        SwingUtilities.invokeLater(() -> {
+            try{
+                LoadingScreen.run(null,"Opening map playtest",progress -> GamePanel.prepare(javaRoot,progress),prepared -> {
+                    GameWindow window=new GameWindow(javaRoot,prepared);
+                    try{window.panel.startEditorPlaytest(document);window.show();}
+                    catch(RuntimeException ex){window.panel.shutdown();window.frame.dispose();throw ex;}
+                });
+            }catch(RuntimeException ex){javax.swing.JOptionPane.showMessageDialog(null,ex.getMessage(),"Map import",javax.swing.JOptionPane.ERROR_MESSAGE);}
+        });
+    }
+
+    private void replacePanel(GamePanel next){
+        panel=next;panel.setReplacementHandler(this::replacePanel);panel.setFullscreenToggle(this::toggleFullscreen);
+        frame.setContentPane(panel);frame.validate();panel.requestFocusInWindow();
     }
 
     private void show() {
@@ -49,7 +72,7 @@ public final class GameWindow {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        panel.requestFocusInWindow();
+        SwingUtilities.invokeLater(panel::requestFocusInWindow);
     }
 
     private void installFullscreenKeys() {

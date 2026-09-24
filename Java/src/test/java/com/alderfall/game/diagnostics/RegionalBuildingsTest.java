@@ -19,7 +19,7 @@ public final class RegionalBuildingsTest {
         AssetStore assets = new AssetStore(Path.of("assets"));
         if (!List.of(args).contains("--logic-only")) for (var type : RegionalBuildingTypes.Type.values()) {
             require(assets.hasSprite(type.asset), "Missing building asset " + type.asset);
-            BufferedImage image = ImageIO.read(Path.of("assets/environments/settlements/city/regional", type.asset + ".png").toFile());
+            BufferedImage image = ImageIO.read(new AssetCatalog(Path.of("assets")).findAsset(type.asset).toFile());
             require(image.getColorModel().hasAlpha() && image.getRGB(0, 0) >>> 24 == 0, "Opaque background " + type.asset);
         }
         for (long seed : new long[]{0, 42}) {
@@ -32,12 +32,18 @@ public final class RegionalBuildingsTest {
                     var type = RegionalBuildingTypes.type(site.id(), building);
                     if (type == null) continue;
                     local++; buildings++; seen.add(type);
-                    require(RegionalSettlementIdentity.buildingAsset(site.id(), building).equals(type.asset), "Wrong exterior route");
+                    String expected = site.id().equals("village_foxbarrow") && type == RegionalBuildingTypes.Type.FERRY_LODGE
+                            ? "town_briarbridge_bridge_court" : site.id().equals("village_sunmere")
+                            && type == RegionalBuildingTypes.Type.CISTERN_HOUSE ? "town_embermarket_sun_court" : type.asset;
+                    require(RegionalSettlementIdentity.buildingAsset(site.id(), building).equals(expected), "Wrong exterior route");
                     TilePoint door = world.cityBuildingDoorTiles(building).get(0);
                     require(world.isPassable(site.id(), door.x(), door.y() + 1), "Blocked approach " + site.id());
                     String id = world.ensureHouseInterior(site.id(), building.x1(), building.y1(), door.x(), door.y() + 1);
                     require(world.label(id).equals(RegionalBuildingTypes.name(site.id(), building)), "Wrong interior name " + id);
-                    int layoutSeed = building.anchor().x() * 928371 + building.anchor().y() * 364479 + site.id().hashCode();
+                    // Town lots move, but interior IDs retain the original anchor and furniture seed.
+                    String[] identity = id.split("_");
+                    int layoutSeed = Integer.parseInt(identity[identity.length - 2]) * 928371
+                            + Integer.parseInt(identity[identity.length - 1]) * 364479 + site.id().hashCode();
                     InteriorLayout plan = InteriorLayout.compose(type.theme, layoutSeed, InteriorStyle.forMap(id));
                     require(world.props(id).equals(plan.props()), "Furniture rejected or removed in " + type + " " + site.id()
                             + "; missing=" + plan.props().stream().filter(p -> !world.props(id).contains(p)).toList());
@@ -61,7 +67,7 @@ public final class RegionalBuildingsTest {
         }
         GameState state = new GameState(GameConfig.load(Path.of("")));
         start(state);
-        Path saveChecks = Path.of("out-regional-buildings-check");
+        Path saveChecks = Path.of("temp/regional-buildings-check");
         Files.createDirectories(saveChecks);
         Path saveRoot = Files.createTempDirectory(saveChecks, "save-check-");
         SaveSystem saves = new SaveSystem(saveRoot);

@@ -25,8 +25,12 @@ public final class GameConfig {
     public int masterVolume = 80;
     public int musicVolume = 70;
     public int sfxVolume = 75;
+    public int footstepVolume = 55;
     public double combatAnimationSpeed = 1.0;
     public double walkAnimationSpeed = 1.0;
+    public int shopRestockDays = 3;
+
+    public static int clampShopRestockDays(int days) { return Math.max(1, Math.min(30, days)); }
 
     public static double clampWalkAnimationSpeed(double speed) {
         return Double.isFinite(speed) ? Math.max(0.5, Math.min(2.0, speed)) : 1.0;
@@ -69,13 +73,19 @@ public final class GameConfig {
         } catch (IOException ignored) {
             text = "";
         }
-        return new GameConfig(
+        GameConfig config = new GameConfig(
                 readChance(text, "wild", 0.12),
                 readChance(text, "dungeon", 0.18),
                 readChance(text, "dungeon_entrance", 0.40),
                 readChance(text, "two_monsters", 0.30),
                 readChance(text, "three_monsters", 0.10)
         );
+        Matcher restock = Pattern.compile("\"shop_restock_days\"\\s*:\\s*(-?[0-9]+)").matcher(text);
+        if (restock.find()) {
+            try { config.shopRestockDays = clampShopRestockDays(Integer.parseInt(restock.group(1))); }
+            catch (NumberFormatException ignored) { }
+        }
+        return config;
     }
 
     public static GameConfig loadWithSettings(Path javaRoot) {
@@ -96,6 +106,8 @@ public final class GameConfig {
             config.masterVolume = readInt(props, "masterVolume", config.masterVolume);
             config.musicVolume = readInt(props, "musicVolume", config.musicVolume);
             config.sfxVolume = readInt(props, "sfxVolume", config.sfxVolume);
+            config.footstepVolume = readInt(props, "footstepVolume", config.footstepVolume);
+            config.shopRestockDays = clampShopRestockDays(readInt(props, "shopRestockDays", config.shopRestockDays));
             try {
                 config.walkAnimationSpeed = clampWalkAnimationSpeed(Double.parseDouble(props.getProperty("walkAnimationSpeed", "1.0")));
             } catch (NumberFormatException ignored) {
@@ -133,6 +145,8 @@ public final class GameConfig {
         props.setProperty("masterVolume", Integer.toString(masterVolume));
         props.setProperty("musicVolume", Integer.toString(musicVolume));
         props.setProperty("sfxVolume", Integer.toString(sfxVolume));
+        props.setProperty("footstepVolume", Integer.toString(footstepVolume));
+        props.setProperty("shopRestockDays", Integer.toString(clampShopRestockDays(shopRestockDays)));
         props.setProperty("combatAnimationSpeed", Double.toString(clampCombatAnimationSpeed(combatAnimationSpeed)));
         props.setProperty("walkAnimationSpeed", Double.toString(clampWalkAnimationSpeed(walkAnimationSpeed)));
         props.setProperty("creativeCraftingMode", Boolean.toString(creativeCraftingMode));
@@ -218,6 +232,7 @@ public final class GameConfig {
             case "master" -> masterVolume = clampPercent(masterVolume + delta);
             case "music" -> musicVolume = clampPercent(musicVolume + delta);
             case "sfx" -> sfxVolume = clampPercent(sfxVolume + delta);
+            case "footsteps" -> footstepVolume = clampPercent(footstepVolume + delta);
             default -> {
             }
         }

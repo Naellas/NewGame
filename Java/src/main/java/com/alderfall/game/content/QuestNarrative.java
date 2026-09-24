@@ -210,6 +210,7 @@ public final class QuestNarrative {
         CompanionQuestContent.refine(result);
         MainStoryContent.refine(result);
         result.replaceAll((id, quest) -> NpcQuestStories.refine(quest));
+        result.put(FurnitureQuestContent.ID, FurnitureQuestContent.create());
         return Map.copyOf(result);
     }
 

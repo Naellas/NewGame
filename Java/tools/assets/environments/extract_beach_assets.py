@@ -5,6 +5,7 @@ from pathlib import Path as _BootstrapPath
 if not __package__:
     _bootstrap_sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[3]))
 from tools.project_paths import JAVA_ROOT, REPO_ROOT
+from tools.assets.shared.asset_paths import asset_file
 
 from pathlib import Path
 
@@ -96,7 +97,9 @@ def split_props() -> dict[str, Image.Image]:
 def write_item_icons(props: dict[str, Image.Image]) -> None:
     ITEMS_OUT.mkdir(parents=True, exist_ok=True)
     for icon, source in ITEM_ICON_SOURCES.items():
-        fit(props[source], 64, 64, bottom_align=False, margin=4).save(ITEMS_OUT / f"{icon}.png")
+        destination = asset_file(ROOT / "assets", f"items/{icon}.png")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        fit(props[source], 64, 64, bottom_align=False, margin=4).save(destination)
 
 
 def main() -> None:

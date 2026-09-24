@@ -1,0 +1,58 @@
+[
+  {
+    "id": "interior_joinery_storage",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: a workshop storage front: dark oak tall cupboard with upper open shelves of neatly sorted tools, plane, saw handles and timber offcuts, bottom two closed cabinet doors. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 1.3 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-b02dc3ed-1a44-4fbf-8c5c-4af4bedfc7b7.png",
+    "source": "interior_joinery_storage.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_joinery_storage.png"
+  },
+  {
+    "id": "interior_bakehouse_storage",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: a bakery storage front: warm oak tall cupboard with open upper shelves of bread loaves, flour jars and wicker proving baskets, bottom two closed cabinet doors. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 1.3 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-1af6c005-f150-460b-8d4e-3ede8e00b427.png",
+    "source": "interior_bakehouse_storage.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_bakehouse_storage.png"
+  },
+  {
+    "id": "interior_apothecary_storage",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: an alchemy shop storage front: dark oak tall cupboard with open upper shelves of amber, teal and violet potion bottles and herb jars, bottom small labeled drawers WITHOUT readable text. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 1.3 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-db78f67d-6305-4b7e-93ac-a366a999a666.png",
+    "source": "interior_apothecary_storage.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_apothecary_storage.png"
+  },
+  {
+    "id": "interior_archive_storage",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: a library storage front: dark oak tall bookcase with three upper shelves of muted burgundy, green and tan books and scroll cubbies, bottom two closed cabinet doors. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 1.3 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-d1724b49-cfa7-42ea-8338-849691cb4ea7.png",
+    "source": "interior_archive_storage.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_archive_storage.png"
+  },
+  {
+    "id": "interior_joinery_worktop",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: a carpenter workshop worktable bay: broad heavy oak flat worktop holding a small plane, mallet and short planks in its middle, lower enclosed oak cabinet with two square doors, no tall backboard. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 2.2 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-9c6553db-635c-4e00-a68f-3c12805a9561.png",
+    "source": "interior_joinery_worktop.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_joinery_worktop.png"
+  },
+  {
+    "id": "interior_bakehouse_worktop",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: a bakery preparation worktable bay: broad pale flour-dusted oak worktop holding dough, rolling pin and small mixing bowl in its middle, lower enclosed oak cabinet with two square doors, no tall backboard. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 2.2 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-23118823-ee69-4ed0-bc15-654184171326.png",
+    "source": "interior_bakehouse_worktop.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_bakehouse_worktop.png"
+  },
+  {
+    "id": "interior_apothecary_worktop",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: an alchemist worktable bay: broad dark oak worktop with muted green stone inset, small glass retort, mortar and two potion bottles in its middle, lower enclosed oak cabinet with two square doors, no tall backboard. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 2.2 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-2b6b05c3-da04-4161-a8fb-448c3d435d1c.png",
+    "source": "interior_apothecary_worktop.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_apothecary_worktop.png"
+  },
+  {
+    "id": "interior_archive_worktop",
+    "prompt": "One modular pixel-art furniture sprite for a medieval top-down RPG: a library reading and binding table bay: broad dark oak worktop holding one open book, inkpot and closed burgundy book in its middle, lower enclosed oak cabinet with two square doors, no tall backboard. Straight front view facing screen DOWN, orthographic camera slightly elevated so top surface visible. Horizontal edges exactly horizontal, vertical supports exactly vertical. NO isometric or three-quarter perspective, no visible left/right side faces. Width about 2.2 times height. Both side edges square and straight at equal heights to connect seamlessly to adjacent identical bays. Small plain end stiles only at outermost 5 percent of width; objects contained in central 80 percent. Detailed low-resolution pixel-art clusters, muted warm brown palette, upper-left lighting, matching classic rustic fantasy game sprites. Single complete isolated object with generous transparent margin, genuine transparent alpha including any gaps. NO checkerboard painted into image, ground, room, backdrop, text, interface, halo or shadow haze.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-db330d14-336d-4816-9424-613c4e53409c.png",
+    "source": "interior_archive_worktop.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_archive_worktop.png"
+  }
+]

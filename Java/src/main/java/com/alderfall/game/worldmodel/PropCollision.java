@@ -10,6 +10,9 @@ public final class PropCollision {
 
     public static Rectangle2D.Double footprint(WorldMap world, String mapId, WorldProp prop) {
         String asset = prop.asset();
+        if (TownGardenArt.fountain(asset)) return new Rectangle2D.Double(prop.x()+prop.offsetX()/48.0, prop.y()+prop.offsetY()/48.0, 2, 2);
+        if (ModularMarket.supports(asset)) return new Rectangle2D.Double(prop.x()+prop.offsetX()/48.0, prop.y()+prop.offsetY()/48.0, 2, 1);
+        if(world.worldPropBlocksMovement(asset))return new Rectangle2D.Double(prop.x()+prop.offsetX()/48.0,prop.y()+prop.offsetY()/48.0,1,1);
         if (!asset.startsWith("deco_") || prop.visualSlot() >= 0) return null;
         var placement = PropPlacement.at(world, mapId, prop);
         var kind = PropPlacement.kind(asset);
@@ -25,12 +28,12 @@ public final class PropCollision {
             width = 0.55;
             depth = 0.30;
         } else return null;
-        double size = Math.max(0.5, Math.min(2.0, prop.size() / 48.0)) * placement.scale();
+        double size = Math.max(1, prop.size()) / 48.0 * placement.scale();
         width *= size;
         depth *= size;
         // Sprite bottoms are ground anchors. Most of the base lies just above that anchor.
-        return new Rectangle2D.Double(prop.x() + placement.x() - width / 2,
-                prop.y() + placement.y() - depth * 0.8, width, depth);
+        return new Rectangle2D.Double(prop.x() + placement.x() + prop.offsetX()/48.0 - width / 2,
+                prop.y() + placement.y() + prop.offsetY()/48.0 - depth * 0.8, width, depth);
     }
 
     public static boolean clear(WorldMap world, String mapId, double x, double y) {
@@ -48,8 +51,9 @@ public final class PropCollision {
                 if (base.intersects(x - r, y - r, r * 2, r * 2)) return false;
             }
         }
-        for (WorldProp prop : world.propsInBounds(mapId, (int) Math.floor(x) - 2,
-                (int) Math.floor(y) - 2, (int) Math.floor(x) + 3, (int) Math.floor(y) + 3)) {
+        int reach=mapId.startsWith("editor_")?8:3;
+        for (WorldProp prop : world.propsInBounds(mapId, (int) Math.floor(x) - reach,
+                (int) Math.floor(y) - reach, (int) Math.floor(x) + reach+1, (int) Math.floor(y) + reach+1)) {
             var bounds = footprint(world, mapId, prop);
             if (bounds != null && bounds.intersects(x - r, y - r, r * 2, r * 2)) return false;
         }
@@ -59,6 +63,7 @@ public final class PropCollision {
     /** Swept player box: catches thin obstacles even when both endpoints are clear. */
     public static boolean canTravel(WorldMap world, String mapId, double x1, double y1, double x2, double y2) {
         if (!Double.isFinite(x1 + y1 + x2 + y2)) return false;
+        if (!world.elevation(mapId).canTravel(x1,y1,x2,y2)) return false;
         double r = PLAYER_RADIUS;
         int minX = (int) Math.floor(Math.min(x1, x2) - r), maxX = (int) Math.floor(Math.max(x1, x2) + r);
         int minY = (int) Math.floor(Math.min(y1, y2) - r), maxY = (int) Math.floor(Math.max(y1, y2) + r);
@@ -74,7 +79,8 @@ public final class PropCollision {
                         .intersectsLine(x1, y1, x2, y2)) return false;
             }
         }
-        for (WorldProp prop : world.propsInBounds(mapId, minX - 2, minY - 2, maxX + 3, maxY + 3)) {
+        int reach=mapId.startsWith("editor_")?8:3;
+        for (WorldProp prop : world.propsInBounds(mapId, minX - reach, minY - reach, maxX + reach+1, maxY + reach+1)) {
             var b = footprint(world, mapId, prop);
             if (b != null && new Rectangle2D.Double(b.x - r, b.y - r, b.width + r * 2, b.height + r * 2)
                     .intersectsLine(x1, y1, x2, y2)) return false;

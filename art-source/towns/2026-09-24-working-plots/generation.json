@@ -1,0 +1,23 @@
+[
+  {
+    "key": "town_service_barn_temperate",
+    "region": "shared",
+    "prompt": "Game asset: a single compact medieval combined feed barn and stable for a top-down 2D RPG. STRICT CARDINAL SOUTH FACING: front wall straight horizontal, roof ridge perfectly horizontal, vertical posts straight up, no isometric or diagonal footprint. Elevated orthographic camera sees roof and front facade, centered wide double barn doors at bottom, small open stable stall alongside with visible hay, no horses or people. Painterly pixel-art-adjacent detailed sprite consistent with Echoes of Alderfall medieval timber buildings, restrained realistic materials, strong readable silhouette. True transparent RGBA background, no terrain, no surrounding fence, no text, no labels, no cast ground shadow; entire isolated building fits with padding. Temperate river and coastal farm building: weathered oak boards, pale stone plinth, muted blue-gray slate roof, hayloft hatch, rope and grain sacks, no snow, no lush ivy.",
+    "original": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0d06e-5b25-71b0-9765-03d98e5a009d\\exec-7f615434-2b26-4b34-a927-1b9084307639.png",
+    "edited": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0d06e-5b25-71b0-9765-03d98e5a009d\\exec-3c0f725c-3b6c-4e41-a41c-69da43f40195.png"
+  },
+  {
+    "key": "town_service_barn_north",
+    "region": "north",
+    "prompt": "Game asset: a single compact medieval combined feed barn and stable for a top-down 2D RPG. STRICT CARDINAL SOUTH FACING: front wall straight horizontal, roof ridge perfectly horizontal, vertical posts straight up, no isometric or diagonal footprint. Elevated orthographic camera sees roof and front facade, centered wide double barn doors at bottom, small open stable stall alongside with visible hay, no horses or people. Painterly pixel-art-adjacent detailed sprite consistent with Echoes of Alderfall medieval timber buildings, restrained realistic materials, strong readable silhouette. True transparent RGBA background, no terrain, no surrounding fence, no text, no labels, no cast ground shadow; entire isolated building fits with padding. Northern alpine winter barn: heavy dark pine timbers, granite foundations, steep slate roof with a light dusting of snow along eaves, protected hay stores, sturdy insulated stable doors.",
+    "original": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0d06e-5b25-71b0-9765-03d98e5a009d\\exec-21bfb069-9c37-4801-bcb8-e3ee078fba19.png",
+    "edited": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0d06e-5b25-71b0-9765-03d98e5a009d\\exec-99fc11d6-fbad-4de0-ac2f-77d1349e8dea.png"
+  },
+  {
+    "key": "town_service_barn_sun",
+    "region": "sun",
+    "prompt": "Game asset: a single compact medieval combined feed barn and stable for a top-down 2D RPG. STRICT CARDINAL SOUTH FACING: front wall straight horizontal, roof ridge perfectly horizontal, vertical posts straight up, no isometric or diagonal footprint. Elevated orthographic camera sees roof and front facade, centered wide double barn doors at bottom, small open stable stall alongside with visible hay, no horses or people. Painterly pixel-art-adjacent detailed sprite consistent with Echoes of Alderfall medieval timber buildings, restrained realistic materials, strong readable silhouette. True transparent RGBA background, no terrain, no surrounding fence, no text, no labels, no cast ground shadow; entire isolated building fits with padding. Desert caravan-town stable: pale sandstone walls, ochre plaster, flat parapet roof, dark wood double door, shaded side stall with reed awning, clay water jar, dry straw, no grass and no snow.",
+    "original": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0d06e-5b25-71b0-9765-03d98e5a009d\\exec-93afd72e-9286-496d-af70-8e5c760dca2b.png",
+    "edited": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0d06e-5b25-71b0-9765-03d98e5a009d\\exec-94917929-de76-4c50-a032-1691e9110c79.png"
+  }
+]

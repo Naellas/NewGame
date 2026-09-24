@@ -77,23 +77,53 @@ not the length of the spoken line.
 `DialogueBodyMotion` defines the ground/pelvis/chest/neck/head hierarchy,
 foot nodes and footprint constraints. Full companion/story dialogues draw the
 whole rig. `drawPortrait` crops the same animated source to head and shoulders,
-and accepts the same speech/listening inputs for party banter. The party screen's
-selected detail portrait now uses it with continuous idle; this change does not
-add a new banter conversation UI. The other party list entries remain static.
+and accepts the same speech/listening inputs for party banter. `PartyPortraitRenderer`
+uses the actual dialogue sprite for the travel sidebar and party-screen portraits,
+bypassing `AssetStore.portrait`'s preference for a separate legacy portrait asset.
+Sprites without dialogue artwork retain the existing static fallback.
+
+Breathing, blinking and gentle motion continue while party cards are visible.
+Banter gives the matching speaker a bounded mouth/gesture window (1.5–12 seconds,
+based on line length), then returns to idle while response options remain visible.
+The banter text remains fully displayed; this is reading-duration animation, not
+text-reveal synchronization or audio lip sync. Animation instances are bounded
+and only the portrait viewport is deformed, using a cached 384x768 source fit.
+
+Travel prompts render after the sidebar and point sideways to the speaking
+actor's card. The card is highlighted, the sidebar follows its page, and paging
+is temporarily disabled while that actor's prompt is active. Reply actions and
+tooltips retain the existing banter logic. Prompts are hidden when their portrait
+is absent, the UI is hidden, or a blocking gameplay/menu mode is displayed.
+Bubble placement uses logical UI coordinates so resizing does not stretch the
+tail away from the card. `PartyPortraitHudTest` checks art selection, both speaker
+anchors, compact-HUD paging, response hit targets/actions, and prompt cleanup.
 
 The existing source images remain unchanged. Mouth/blink poses are cached.
-Body, head and attachment displacements are composed before the final cubic
-sample, avoiding a succession of whole-image transforms. Pixels outside the
+Body, head and attachment displacements are composed at adaptive mesh vertices.
+Java2D textures the resulting affine patches with native cubic interpolation;
+nearly affine quads use one draw, curved cells use two triangles. Cells subdivide
+where sampled mapping error exceeds 0.1 source pixel (subject to a minimum cell
+size), with mandatory finer coverage over calibrated attachment regions.
+This avoids a succession of whole-image transforms. Pixels outside the
 affected region are copied directly; authored foot regions remain pixel-identical.
 The lower body follows the ground-root weight shift, with a smooth falloff
 into each foot pin. Long garment chains move independently of the stance.
 The preview also retains the native 480x800 figure resolution.
 
-The full-body export measured about 29 ms per 480x800 figure on the development
-machine, including cold caches (2,496 frames). Empty source margins are skipped,
-but this software deformation is still costly. This is not an in-game FPS
-measurement; two larger figures plus scene rendering need a performance pass
-before treating the full rig as a finished performance baseline.
+The renderer skips deformation entirely when all body channels are disabled.
+Portraits only deform the visible crop; changing the viewport invalidates the
+rendered cache. Face poses retain their existing local eye/lip edits and cache.
+Both the native source texture resolution and per-repaint motion are preserved.
+
+The full-scene headless benchmark measured 60.11 ms per frame with the mesh
+versus 102.23 ms with the dense reference (1920x1080, world and dialogue UI,
+120 warm-up frames, 60 samples). This is about 41% less render time, but still
+above the game's 50 ms timer budget before updates/display presentation.
+The dense implementation is available for diagnostics with JVM flag
+`-Dalderfall.dialogueDenseReference=true`; the mesh is the default.
+
+The [framerate investigation and remediation](dialogue-animation-performance.md)
+record the original bottleneck, comparisons and remaining performance limits.
 
 Use `DialogueAnimationLayers.Settings` when constructing an animation instance
 to enable or disable channels. `STANDARD` enables the calibrated layers;
@@ -115,7 +145,7 @@ pose interpolation runs on every repaint. It is a sample, not a seamless
 physics loop. Use slow playback to inspect lip borders, wrists, hair edges and
 equipment roots; keep a full-figure view for foot contact.
 
-Tests: `DialogueAnimationLayersTest`, `DialoguePoseTrackTest`,
+Tests: `DialogueMeshTest`, `DialogueAnimationLayersTest`, `DialoguePoseTrackTest`,
 `DialogueAnimationTest`, and the `DialogueMotionReview` exporter. They check
 lip-curve anchors, continuous idle, bounded springs, pinned chain roots,
 fixed-step stability, reduced motion, unmodified source pixels, planted feet

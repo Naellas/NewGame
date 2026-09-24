@@ -1,0 +1,23 @@
+[
+  {
+    "id": "interior_smith_storage",
+    "prompt": "Single pixel-art furniture sprite for rustic medieval RPG: modular blacksmith storage front, dark oak and iron-reinforced cabinet, open shelves neatly holding steel ingots, tongs, hammers, horseshoes and two finished helmets, lower iron-bound cupboard doors; width 1.3 times height; narrow side posts and level shelves allow seamless side-by-side joins. Strict straight FRONT facing screen DOWN, slightly elevated orthographic camera, horizontal edges horizontal, vertical edges vertical, no diagonal isometric view, no visible side faces. Crisp small pixel clusters, muted brown iron-grey palette, upper-left light. Single whole object centered with transparent margins and genuine alpha background; no room, floor, checkerboard, text, diffuse haze, ground shadow or UI.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-242d22e3-2150-40c3-a651-73a75a941355.png",
+    "source": "interior_smith_storage.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_smith_storage.png"
+  },
+  {
+    "id": "interior_smith_worktop",
+    "prompt": "Single pixel-art furniture sprite for rustic medieval RPG: modular blacksmith finishing workbench, broad dark scorched oak flat worktop with iron edges, tongs and hammer and unfinished sword blade lying flat in center, lower cabinet with two iron-bound doors; width 2.2 times height, square level edges for seamless side-by-side joins. Strict straight FRONT facing screen DOWN, slightly elevated orthographic camera, horizontal edges horizontal, vertical edges vertical, no diagonal isometric view, no visible side faces. Crisp small pixel clusters, muted brown iron-grey palette, upper-left light. Single whole object centered with transparent margins and genuine alpha background; no room, floor, checkerboard, text, diffuse haze, ground shadow or UI.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-1eef5752-4ebd-44cb-8e31-fa23d58e1110.png",
+    "source": "interior_smith_worktop.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_smith_worktop.png"
+  },
+  {
+    "id": "interior_smith_hearth",
+    "prompt": "Single pixel-art furniture sprite for rustic medieval RPG: large medieval blacksmith forge hearth, soot-dark stone masonry chimney hood and broad glowing coal bed below with restrained orange coals, stone plinth and compact leather bellows to right, prominent professional forge rather than domestic fireplace, width 1.2 times height. Strict straight FRONT facing screen DOWN, slightly elevated orthographic camera, horizontal edges horizontal, vertical edges vertical, no diagonal isometric view, no visible side faces. Crisp small pixel clusters, muted brown iron-grey palette, upper-left light. Single whole object centered with transparent margins and genuine alpha background; no room, floor, checkerboard, text, diffuse haze, ground shadow or UI.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-94a50f25-6a0d-445f-a2e8-8738b6e26b58.png",
+    "source": "interior_smith_hearth.png",
+    "asset_file": "Java/assets/environments/interiors/props/trades/interior_smith_hearth.png"
+  }
+]

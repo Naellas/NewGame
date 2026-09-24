@@ -1,0 +1,3061 @@
+[
+  {
+    "path": "Java/assets/badlands/badlands.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/badlands.png",
+    "bytes": 3985,
+    "sha256": "a9fd445216865d8d84ddb73d5d9083a56cda6020344f746770b096e55951fe79"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_house_front_before_context_extract.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 56763,
+    "sha256": "069cd9d7c086e875c2b7245de2f60ca2f503d50133ee4c4108af267f9f2f9e50"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_house_front_candidate.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 80692,
+    "sha256": "c3a16f5bf004dbc645a0b39bb447c19ad84e2e090df9ddd8146744e9ca9a4d07"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_house_front_try.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 51141,
+    "sha256": "a6d85fcdfbde8fa56c5a565c0d55c46f4dfb9700d66ac81e0203fb40dc51534a"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_house_front_try_preview.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 31637,
+    "sha256": "d2791af66e653fcb05781f5d5d751958eaa4016514ffe2cbf21a0d5fb35114b0"
+  },
+  {
+    "path": "Java/assets/city/buildings/city/city_roof_detail_candidate.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 44106,
+    "sha256": "583ca1cd6757fef1e11c03091d8f0019651bcb81a0f0cbeb8181fa492a5d94d7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8335,
+    "sha256": "9eb44960812a54383c913ef05691d59146f3694140670d6cd624ed4d05a4ffd4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9283,
+    "sha256": "63ea04913328c63da1ac8dfa10b35f90a55994644a478d156696a6aa64d852be"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8988,
+    "sha256": "522c421f61ad3e1c4216dc4f897f3ff4244dfeb301e21aa3f0f2088fb90af1c9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8656,
+    "sha256": "551fb672f29fe56af79d14886048cbd0eb4e297b13ee9fa817d9a7fe3e053287"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8537,
+    "sha256": "31ed3ecd9c9138ce81699c9f5180f3b0a9883f1e9610ec7068f4aa0c18ff1861"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8359,
+    "sha256": "1ec08c03a4e59a1c68e3c5262e3af167e41d705d0d6e5d69a593a40a390dd21a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9075,
+    "sha256": "97bac892fc7cd15dd9c88eb31431547ca8c49423eaae2e2993ee2c1539b11e52"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8614,
+    "sha256": "02f617d46e0b5af524f867283fcab38da60f9be165a53c453c582ed34aa39785"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8808,
+    "sha256": "da1d8dcb904b2fe9278c84b1cc9f0bec87e3cb58869679aad2fb52390490c9d6"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8551,
+    "sha256": "c7c4162f16667757a7f7c9744ce5f1097d4d78b8e6e43c922618cf631988c564"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8858,
+    "sha256": "e3bd0a5c23b53a62a4e20fe8b36e8c261d8ce92e447a07a2d9de9def18bc3388"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7163,
+    "sha256": "0fd3d66b560d28270dd4e462279b8e54d822100094259b9cbd5cd120531843d5"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5711,
+    "sha256": "7363fcdc65220819a3d9ac74e63e837269e851633fae58eb17714df8409b3971"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6809,
+    "sha256": "b6f58a99a4bb3e0b6645f39ee0fe8544b3307fe19a48506257b5c8b316ae9f12"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6198,
+    "sha256": "f4e4c5dfdcc3fcda69a3f66ee67b849032eae6d76d17593e28c39df1d4326e42"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6672,
+    "sha256": "b42e2fbd7e6728e6fdf63b33abd08f54ec97ed0fce84061268fe4519cb397413"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7825,
+    "sha256": "c38538020e5f0aa1779e03ebafff0a3784342669c6013b55b7aa077f4dd923b3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6541,
+    "sha256": "389b9f1cdd5e4de42e07a16396cc56e75ded2e54908c9e9c5d3b0e9e7dae3070"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7000,
+    "sha256": "449cf8876fb301e9db3cd8e88a1a1c833cac24650c280af9cc39c39b95642686"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7013,
+    "sha256": "186b0a0fd7117e51d854e0c7aa11851b5e5e05c6a83429ced589e6b958cbf6b4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7475,
+    "sha256": "6d7a855706e8c5302e6b5682a94351b2ad5a2e988f4df94c70c2680f96ecbbec"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6833,
+    "sha256": "31c7349e57ffc61d81b0b504e67b6a88535922cf4f63fc0252a3802000a5f24a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5848,
+    "sha256": "ca43ad0338b81dcc3c1bf0fdd035b40ba27453894aa07cef1f8127469d331cc4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r00_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5379,
+    "sha256": "dbfb1e66cdd13fc8d978a13111d507126cc3894d1ecb57f4ac8a7a85255f8c9f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9722,
+    "sha256": "b2e7f70663e53529faf16526b64974221e087387ce3bd09acfdcf218b155d8d1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10856,
+    "sha256": "d92aafad14dd67fbdbd14fbaff86e7dc7ce4a0e514b2892e0f21c167c9d4dc18"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10787,
+    "sha256": "eefcde1270a8e3a2e70c188317bdcd570ed8322a08dee1c9b75df71c6a2163e1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10575,
+    "sha256": "e3c399a8e575dc581ef556d2ed047f17cf85e950153bf7b4bd59a846f84d0cb9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10043,
+    "sha256": "688350b5f8a118d97acb6298ff05952d756d15d263d7fe44939641494fb440c2"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9998,
+    "sha256": "1317f3cd6a3713634a941b00a6809f62eb6fede9abfdccfe8feb181007b7c463"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10351,
+    "sha256": "a11c29f1b28509b95c167f2c0bc6462746e689dc823890d27497494b33c243e3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9772,
+    "sha256": "4003e9f7bcbd8bd7641d3c9865eb5a7bc2340bfd233cf782a161c8652bf3bc0b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10506,
+    "sha256": "269a14a68451189f436dac119e32cccbadf7f92d732bb9ffcfc6f44bee3061da"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10508,
+    "sha256": "433f73f6a038f4aeb068e86c9432bc8d99767ff2de62d1460e8eb56debcdc1d4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10024,
+    "sha256": "d59840f9e92ebf9bd63c280ae508be96fcc1a3b5ecb0d2e992247e50cecf2986"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8742,
+    "sha256": "918896918763850ba4a189432043649726824bc6ed4e78ed67146d33391c48c5"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7530,
+    "sha256": "0ecf72e4a7247dcfc3d397f23a98124f5e0bd9c1484387b7fb1dfa7cd05c6721"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9287,
+    "sha256": "6131b003f17596a47b019f35617c5f01a1c5bcf374de58428be6603aab4d0677"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8553,
+    "sha256": "b173128ee5f7f1ae0e07190562c2cd99300bb1aa866baa3dd289fde96557c541"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8339,
+    "sha256": "fb3807180b66c933d72e61112b55db224f61f142bd7bf60d2430650652ab2247"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8534,
+    "sha256": "a50623ab7ef8f0557ebbc9537a52986389e95f02a46f1d828751ebaa80191f65"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8149,
+    "sha256": "66581c984d5855ad9ad1bc4472e295359640900a652c8b1e82ad7c3347b2d9a0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9410,
+    "sha256": "f824124669bec56cd9e3e09fbba3b2899cfc65d7bf6c74c6665861aaac7bc13c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8101,
+    "sha256": "30e33f377c120319fa68e9e435ea236853ca908bf63f2251ff0bbf81be28983c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9143,
+    "sha256": "571a914d40e89f428ff5e3aa27347e49042a180ca7f4612c76f017167536b4e6"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8349,
+    "sha256": "113232d6712b174a3bd3f847222f459db6d8efc0a8090a5acece2593515ef564"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8177,
+    "sha256": "ac3d7d64d7876bbe4fc134327f1ea52234d211a2621beb06ee9c5b5d9847535c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r01_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6770,
+    "sha256": "3355bd4cf603fad1c80b21852a97934d632bfbd9b338f200cfb3dfe58c3e03dc"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9595,
+    "sha256": "5f88d60eb1d84b9ffbe25140e5dc7d4cfe022a359909ed45339ca6a156c59172"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10608,
+    "sha256": "63bd5f196f3278f642ddf4884ba6c78f0d64dd1a1aea29e3e5ae76d66997b06b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10137,
+    "sha256": "33da343b4030756429a56f5dce890ff05bde1bcb1165adeaf3c4bfabea53fb5a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10160,
+    "sha256": "3c418b6ad94f67642423999e28b89273c9479549d3fe33fac91cac3a3eea6074"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9857,
+    "sha256": "812a4f08628ae0a010de9febf9b8df17c7f99e07547cfd0e106c94b008aeafc3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10189,
+    "sha256": "1da2a9a7c41be70d73ccabf6048409acd5e9b0dc517353e0cdfcf9e65f6900d3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10056,
+    "sha256": "008494a0395d5ff92ffb5f71296b812a0ec11e25a5c47d20c8aec2a280e613b2"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10202,
+    "sha256": "6faa23753145d8535d6ea54fb2cd1cdfa03c91b733c6ccf04791a2d08754e7e0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10322,
+    "sha256": "0053b25003cf6967c3c656b3087427d24a9a4fb65ca39ded0feb5cd61752893a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10106,
+    "sha256": "178d32a1b3bf974aa2a17ddf084922cb1d8891ae8fb95d1f217aaf16d554506a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9948,
+    "sha256": "577f03c033e679a7a663194f63132c0417dd599955fe574e0b12c594685533a5"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9208,
+    "sha256": "b15eaff3eb855e869cfdba15e1cf5cb840778e8243d0fe67988f89f9beb8fc4b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8030,
+    "sha256": "084951da6506009ac03e0326aa9e6612132e9f17dcdf353c2898f7dce24cd030"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7699,
+    "sha256": "a4426e09994ca3a30fb1a722201e91b39a9833bcf29aa8854adefd027c57e2ae"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10225,
+    "sha256": "1a90877ea02a0ae4a1531c11ca6c4002240bc709e0c69683aa50450f9f917adf"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8437,
+    "sha256": "a7698ead5728b1765b00d8a0932a3056feed6a04274e4f7c9a912ee6decb6a3c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9992,
+    "sha256": "8b59b526db0b3338ec91a8767daaa56178b98cb3ffc359d69c4c9d41379ab8f9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9662,
+    "sha256": "2e21ece99bf17f58f7d7f241c28f7617ddd677362c7ab59dd21c542cc080da0f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9882,
+    "sha256": "303fd3c3dae64e2d797c3dff736a58b5e00fde5a236a60433326bda981d533c0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9155,
+    "sha256": "bfd739276d8649fcd847633f1d9a035a88159701757694fdf986c914d9acf769"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9744,
+    "sha256": "b655c003fadd2a3b5b85bce9c6c7f2a5027c5a610b19fa7aff3ace6dcdcc1c7d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9453,
+    "sha256": "c16c1d20321580ba3d5aaf14287d5390be2c5b443eb0950c234373d8b340df1a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6216,
+    "sha256": "8f0b02bf2e3b9c300eefe4ade75978a2509197aa27eb162468c759619d84a016"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r02_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6415,
+    "sha256": "4a4aeca0ec90bf4c7e1ffac95ecaf35367cff91c0754e8ea182000f4fc16dc1c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8919,
+    "sha256": "f18451836ebf5c2279e5c3de91a4cc6ca18ae4d07feb7a8840c4505b3c8efba9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9761,
+    "sha256": "31593ae8ae042d7698116724ccc6daf61fc865562dcaf58ff63ec19b72a3aeae"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9701,
+    "sha256": "4fdcebf4910a0686af7b364c36a5560fe2e36110a709b0f1e03803b33f6154c1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9485,
+    "sha256": "e003bdc823b6c6775127cee9e4527eb8e149f4ad5bab49570e84d7b9bd3b8e13"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9092,
+    "sha256": "ee591b0dfefdec2b5796e501e6ab9cad15eea1115d59e88b9f0836f40bc767ad"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9354,
+    "sha256": "dd07ba91a132841a1558980660fd59486c61328c336b0d1f1e1e2192c16348d1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8997,
+    "sha256": "5dc258002320b47012454fcaeb6eb57287fe168244cc17c1a27252566f1a1cfa"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9223,
+    "sha256": "2a950b00e423c91dad99186805105f0869418c7ed83914dff9f6e6147eb531fc"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9642,
+    "sha256": "1dd9ab371f8c3f02ded772950591e7fad61cd542f823abf472750a307884f35c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9153,
+    "sha256": "f42e14e989c600a031871eaa69698de5d61cfcdc785bbc2c8b7fa8c6a5692f18"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9029,
+    "sha256": "fc8a1f922bc54639dc368467d9752bf55fead054149de37cb7e89e292b142c7f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7716,
+    "sha256": "533b4cf0b76a234ce888b2290081cf6ff781c33530675952f6227ed5cb754f7b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8055,
+    "sha256": "6e8d07c94ed475850d17c0adf4cc2780a4c80cdb4db638d7303f58b6ef1f8ab0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7721,
+    "sha256": "32843821ef63069d902c2dbf2e74e31fcd825d92354bf0168511cb50ced1df48"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8417,
+    "sha256": "7f28b1b09c480d13cb802baee10a795d962f1e6dfba41ba4bf8b293f9dd230e7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8571,
+    "sha256": "e36a04eee0beb8b311454832abff7c17d4700ff25c5451da44693f31d2acfa0d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10441,
+    "sha256": "943e3b97688271f156283b6624c46c53089d1dd2ceea5c2f383db5f238763f43"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10013,
+    "sha256": "f82e8c1447de8f9177600fc4c6d386bf4a0c0860ae3aae35b7b6c8891cc38d1a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10102,
+    "sha256": "3f40b4246d0c665b8c936d3d8eea93698c517bef7f9fc2fc5acb304a313c96b7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10423,
+    "sha256": "da9a5950112cbf6ed287483335df542ebb6fe7aeafc63e1521a047aa388accee"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9859,
+    "sha256": "806404d59be69c1a20673b5b907efc49325208da5f8a2481dfa483c796308342"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8957,
+    "sha256": "e600a05fe87dd2af52d65b0f1d3122fcf937453c48c9f6b2370776d216e541bf"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7413,
+    "sha256": "1d3169085ae82f3074f9dd3f0dd1d8fe5d9cc302a78e2f3be5d9ba19e347c0be"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r03_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6409,
+    "sha256": "90f240aa2a5e51f0ab888033bd094c75c7a77e26241270253343b6f2994ea1bd"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8476,
+    "sha256": "c3e0b057f8ee61dd509954a549b0b40c65a5086d2af37553c5eb874492d17207"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9201,
+    "sha256": "1e4fce442e786abd04f3d5fbe3d2e6f56a89465652b8ed144ded84ff3e5ffdb9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9021,
+    "sha256": "b4219eb8c6b6b5929ccc638bd8b84a571668a7418b4a4dbaa9a8b6b46986cffc"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9215,
+    "sha256": "eff92e64b764fd65df8a4a6f777d3611a23aa3d9745738e03a6a8a839a653ea0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9137,
+    "sha256": "2c13a47590ea5641f8434b3d7de906d072d2b15376e3752749b899a675731373"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9849,
+    "sha256": "7c3347d594ddd0c2bce8c3b93482bc9f845c11cb04cfb00eaedc67edeac755f2"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10102,
+    "sha256": "f2fa0bc529dd684f4c7483549d253cb486a6719ced33222f9fb61891f28cca57"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9869,
+    "sha256": "31673c07578acfcb9659fb35534ac6121e4874c968d43e2010623cedc2e1b008"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8614,
+    "sha256": "1216019189870b19dafecd16fa696b0870c1fee63c97e9355fa78836d3351864"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8350,
+    "sha256": "45023674457b4b94fa0864709364949757ee599fd6a28350c591bd343ffb06b7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7904,
+    "sha256": "2843ee4a4da44b0f2f0865fed15fcf5a32058caa488c8ac1cd271a6cc2876a5d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8595,
+    "sha256": "8c5b9cf240cd9e031bf9bb38790685eec1e2cd6bc2fde7f51fd710228d841f1f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8142,
+    "sha256": "d4d23eb632016890d38f73c4037f76fd1bfa265a0ad269a33dfb4b4fcf7efa31"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6959,
+    "sha256": "90c5e607eccdd2deaab05557b9560fbd9b6fa3d914b7698686658e05702dd5b7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7872,
+    "sha256": "2d6240b543c00c1e126f199b20f7556b68a1151b71cc0f5b00344924f1fec868"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6851,
+    "sha256": "b32f2d4e28896f5e480f1dc31a3f80e7f070be37557942a23f79549c667ea05e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8329,
+    "sha256": "ef743803d19d06d97161cce40fd63baade02fecfd12e1373ece8631e672e5e86"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6990,
+    "sha256": "00fbcca59df36132ae331b6fe6e165aaf4b289018ded23889aa88080cc79fe9b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6850,
+    "sha256": "a108681c16b316d27d5cb84510dbddc10399cf41ae0b7162089e4ded466d830f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8382,
+    "sha256": "18e79336dd3ebdb548297ac0a525d7b2e027700afae5acefc50ce3faba6c13b2"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8094,
+    "sha256": "2aaf8de7deec80de04dccac06d4fa0c588cc42117642c63d23fc847b9e05377d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7657,
+    "sha256": "7bdcb2de49d0f5867a1791271b76087b5f5d4f3e7d890b5c78eb60e70aa02e76"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6683,
+    "sha256": "dc3df9401fe68db0e09bc10919a33a6e79e77a9b346b4e9385cab39b683b5030"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r04_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5245,
+    "sha256": "4fb524f17eddc13c446e114c469499b0dac6f59397fc337d5e62de62d022f8ac"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8167,
+    "sha256": "18ab122f36bc3fc1f8dc3e74aa6c3569eca69b828959ac437698506082672c7b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8748,
+    "sha256": "1c537b23c87ded19e516027209aa77d1de5369fc2f8fa31c6e9188164695eb98"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9024,
+    "sha256": "29fe8a446329c1b38941a4cc80dd4825fff65c3c458194c1a54a11f5ddbf0662"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8788,
+    "sha256": "d6bcc80960e4f720cfd4876d48400dafa4eb7b7e7177f945bd64b256d9539c71"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9246,
+    "sha256": "fdbefa90745f70259b96aeedf601139ed2d2ce700ef1efccbd8ee8913876e7d7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8670,
+    "sha256": "d08e78bae3d10a5cb5c4fe28170df49941e879a213e5fbeb647b14dcb9f79e6a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8777,
+    "sha256": "4b08cd5f3b0fa5c650d01c82570c4a9cb839ec613b2213ed9af6413efac03f62"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8756,
+    "sha256": "25ba9cf78fb33d027f68ab5c8f917622cca7b7b3e7bd839a986d7d48e784f63f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9263,
+    "sha256": "92095c81a7e45616d102ae929c8fd53e72806a8c03936d2f4bbc209f6cd4bdb4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6132,
+    "sha256": "9bf396da2e520ac62fd1fbd6b07887ca8fb034f71b88465de20d6ad2f0ab9b71"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8738,
+    "sha256": "a0a24699aa8d96ae1916072a97f7196a1a75778a50143f175f06e6b3a6de6e7f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6812,
+    "sha256": "4794b6e8e704cf96f72f0154e969ec60db6f231830e2a9c424ad3b804950b1d4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5745,
+    "sha256": "b4236572bc6fe6741745f759c2ef2f622a115751949606969838007d1799b56f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8556,
+    "sha256": "5a30f651257f3acc6c6f656d9afee246cc6e8b79a1097c853f742974132ffed4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9375,
+    "sha256": "b39dd09d750b09afe1994eae4f1773f73ad1355d2aa7a391d3c29c2f0c8dc64d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8129,
+    "sha256": "794c32740d3c997fbc17a0be8c6a6191db1b9d248a3d61647d0cc73749c94c38"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9508,
+    "sha256": "26eaecf9efc0bf2cc62630fbd1fb0150c7fbe387f6395c8b882121d4c9e7a628"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7772,
+    "sha256": "c700dca8260cdc4c4da86d7aa534dd64633a581797e8bd25541ee1555b1a75f8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9594,
+    "sha256": "4393db84858cb18090f8c7bed707ca129da7517dbe9379c36f502ad69c22662a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9704,
+    "sha256": "443dc5078270e05c4f845cbbb88b6d2ec8ec91a81bb0053e38b6f64548e1603a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10154,
+    "sha256": "1b7f5a291d380b10a3bd2b99285a7f9d06138c9209a0bec70ec1eb09250c9ac6"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7032,
+    "sha256": "ec7de0a1beed02307a92b0854cf165b16e5b98467d6dbb0da95a44e9bff33889"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10550,
+    "sha256": "ca3dbbb302e1d4085f40bf97d7ca2c2c0fab76892efe340af00e3db1f7eab8c9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r05_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7518,
+    "sha256": "4b41fc2c00010c05de5ef63e1e185ac12fb5c7c5a1904007f40e011aa5748c36"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8924,
+    "sha256": "76adc5b82b350f5b4a853839cb985c2dd425310768a51968916dbeb11618878e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9952,
+    "sha256": "66b23b1622e4b3565d4af4e3c8c49ed0a1cd862f1ddfc1003ae520da9b22110d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10003,
+    "sha256": "666239c27cd1ba0f76d8e98973c8e863962078f2eed9f0923c62ac7fd7752678"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9785,
+    "sha256": "2d6ff360fbecb35f48dda97e6ebd9c4ef71c937191bb070bc8059871c65f22a3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9716,
+    "sha256": "e7145b6834232bf095c3ab0a1e1b3db6a93c391faf46f756743dd86ee3326aad"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10126,
+    "sha256": "39652dfce4b6cd939f7d93b0beb008f258329f8b46cbaac1c570e852ec4751da"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9645,
+    "sha256": "8ccc48cbdf2850ebf59d1485c3309d2cf9e8b04fccddb5bca8c23f0ebbadd3eb"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9582,
+    "sha256": "6e5cc3eb32e7f114e5403c14cb101640cafd040a9ee94b7580b8a5688816998c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9743,
+    "sha256": "987caa35ddb9c62e566d774013ed9084705d6ff3f5ea1999c86ade80cc0d9bb9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7490,
+    "sha256": "f0207f8b226975cc63187282b6adcc4208fa30c8f4d451df709124c90a008ee6"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6855,
+    "sha256": "0f340a5009c2cf485354e1c2ca06624986d97d7978a11a40615970f5946ddf65"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7349,
+    "sha256": "723a033e1f7092624bfeda4eb232b6e5ba7062dac4cd5467a434e46a26ba807e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6146,
+    "sha256": "b0f0f018f12836b196cdaa8290f0aed8e86a7e6d7cbd881ebaf59b9ed803f598"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9479,
+    "sha256": "7872d633543efbb60d8b1b045800c224fa197c748712dc950246c8f609483d15"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10894,
+    "sha256": "aa674194336caaef2bf461ed11b451c68688532822f58ce21b5efb3ec782676e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9454,
+    "sha256": "8e633d00b7a09f90cd7c797b5faded50ce44a70b20d4020868bb5a44bfddcf3a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10958,
+    "sha256": "4cd72878ab942c2da13aa0f049a14f545027f5d1645935078a731f47af4ae94e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9023,
+    "sha256": "ff56450ec3f9073fb19e8f3e1995c24dfdcdef8df1464fbf566ab4820fab90f1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 11062,
+    "sha256": "02afe401bd072426149a8b60a10110920a13a133c5f3a3333c00665c6df37766"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10481,
+    "sha256": "e1bb192705eaba1b6fa7d3eaa627aa79744d06bf1b2e001ad67e39270dd6a81b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10551,
+    "sha256": "fb379df4d3a4bf5a727f67784acd5bf06a20f3609eda9d8df8d2a6a537d896cb"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8616,
+    "sha256": "87acb66a4f12a6da5ec8b8728f3cf63ec7ed988e8abfb7a9510c183e0c76eb4a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10623,
+    "sha256": "94cdacc60561cf14567b59909e2f8b2c568c7010f29292d13bda7abc92c52179"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r06_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9089,
+    "sha256": "a3fadddad5804119d553f64f7e52dbc1efec7b6a0edd17fd2567593c29ffc8f9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9716,
+    "sha256": "3bd4b339b38a9e2ccad44d5629c64bcb1b15590516e2926add4d84c5372af1e5"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10675,
+    "sha256": "7fd4ecae62d19631c457122f5df8a9a6cfea9f9beca8a807d364e88be787efe7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10707,
+    "sha256": "2384b1cb978f1129794965e1e23afc98afc8ac365aa1d5c16bd213e68ab916fd"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10045,
+    "sha256": "82f46e0f99ac9581e48b07259d59fde471fc920cf66edadcea92dff9e7983c03"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10904,
+    "sha256": "6057eba48a303e1ffb3d2a2da8e5be4ee2a6df7ba8ad7b2cc6da72a8d6cae1e1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10094,
+    "sha256": "8609a0044a04ad1afc45d3d9ba62295549528c808b73d077f185d14b448933af"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10941,
+    "sha256": "83a123dd6fdd6686a90b59c7e2728dd5e3c6a08dbcbddc1522e5e5cdf1940b0e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10000,
+    "sha256": "4854d0c263e4872ebd5bb68f53d800c0f6c12662b56832ebee9cbacf9fd38ce6"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10861,
+    "sha256": "66787315897400c646bac5406bc534bc961c983fbc8df9eb328f260f7765a5aa"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9828,
+    "sha256": "43ea7ed3b95eea16f7c8a211a0eb605887a1480a685fd9bcdaa2c2a90078bae4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9703,
+    "sha256": "011ce51cfaa87f351ab811d9d785a78206489d7165b962018a96818ca937d73d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10402,
+    "sha256": "3fa27654abb12fda489650f69b4367cfea5aa65359229d9a7c732b4f4836cb52"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8929,
+    "sha256": "f70f822148c6eb7d3af9cad3fb4816f3afa2a6112441a5626dfb514c3fb658aa"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8438,
+    "sha256": "dd93ff1777a660b382095ef93d2e497f49815d15eb4674a2355cc957c7c2bb4d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10441,
+    "sha256": "43b73ad97fe295adda267fe5d984d3760e783d6df18b0380a0a539d3dd3a06b6"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8299,
+    "sha256": "64fc9680513edf012fb77652f8f3edb6517a53a0c57cca78df5b192fdc2d09ff"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8923,
+    "sha256": "f04a50d01b00a9236f68a44328bb2a2559a56eb2ca63c331901502d98eee917e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8308,
+    "sha256": "d3db93837c105f7fe20ce09cd8409ce727a49f0f5dbf2473a08a277bbd7d1dd1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9828,
+    "sha256": "39e471a7391b77a7c76f18fb93c19fe375ff9471dd1b88c8da8af70627888b38"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9810,
+    "sha256": "2b30187e93286f582eaa0b5b77358b6b34374733c887285c3aedca5cfd5a1329"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10005,
+    "sha256": "c79498060de26ec1e59cacecc5bedef4a49e4187ec1ebbb99bc9b0ed9305e11d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7068,
+    "sha256": "d659cb2a4e6a3d2ddb5a327bd385edc6e317761c192de8b6fa83ad6d442478d3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10054,
+    "sha256": "52841556351eb1210be0d6bb9ee325a3b925c6d8e837ee47feca781c6c83e905"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r07_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7973,
+    "sha256": "caba4c7e7e7d9ba79280065264413a26092ae8e3d59487fa24d39d794ff78d6b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9618,
+    "sha256": "b6179f2513bdb8371e8149859611728f569a85c394650d9b7cbf971bfe9b2546"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10399,
+    "sha256": "7232ae4170bb2c8a76ef467973f74e70e9f55c980017202eb02941c4441086f4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9446,
+    "sha256": "33dc62677a6a0ac30ede808b5a88bbb73d2710a4e769b90f04252549f4d35d8b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9293,
+    "sha256": "a031229685e221ee9d4fd0d2156cd9279c76564e5746a6475e13a66e553e1a5b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9837,
+    "sha256": "661da262b7051d8a8401a7b6381cd7a9e786892d44c9459737ed00c03870729c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9131,
+    "sha256": "e8a5212bf13f856d2b5046ec1de4a8ab00511f3074fcb090404ed3a781530b97"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9912,
+    "sha256": "00bf10cd05584c688cb035aa43afcdda537a1d8f88dc893ef45eab0807ca2834"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9320,
+    "sha256": "6f4cd31dffddccb361e56378168433c69b1c632ac86583a45b2b0c215969ba4e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9679,
+    "sha256": "d9b1a397c1b2596d297a7515212df1ad34f6fbd9b06a376b2cca2515e89204e7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8804,
+    "sha256": "4b13cade390255a37e78b9d89da7e5c8a58a05d8024c5ac259b15bf1a98033cf"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8823,
+    "sha256": "4d291034eddf6c81ea2c7e381da491ddab03a02478791b2c21388f43de37b204"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9324,
+    "sha256": "6bd525dc5f5bbfbb1a9c1707fe2df446b5f65d50b769314da3bec72d8a22d13a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7792,
+    "sha256": "6bf09e1a7f1dd9a9a28edc3195377a6db14f8247a3ae3c2d06d372227d916dff"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10080,
+    "sha256": "8fb42bf2e86d4ddd57a384f4f897cd78244f5a611c5864ffc8cd406692ae5203"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10417,
+    "sha256": "d3328b23be7c12a8c528a43f0c0252a39bc1eccdd879ebc1af7c4653c5f2cebc"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8745,
+    "sha256": "f94a0f1f97187a55a0bd190310274466962664056b6dc5802d77893309b99811"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10741,
+    "sha256": "0cfefa944d9ed1fe44f9587580ff181c57f61af8b17b52d21ba58db6bce7e511"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8646,
+    "sha256": "20248efc7b4b950396e957d62d5e19b9707cb15f606339c0a8e39b39d3f07507"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9941,
+    "sha256": "b916969a71ff513ad8f298b1deb685f8ffc9396cc6aafaa09630672baed2a12a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7550,
+    "sha256": "c4db525d09350d5dd0807b517291927dfe478ec95a36356af4e39191da63ae59"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8433,
+    "sha256": "dac7668e1fec9993457c6c68aaf1e5824e3886f04abfef68f4a242bf062397c1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7443,
+    "sha256": "2d533c918b9c7fbd771d2ef1a2069b0cff56f84310f383290e11040f653f3fa7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7712,
+    "sha256": "d2756616806b8ab2e4fa62593f3a88137f0ebc289e14aa0985f597fcdb2511f1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r08_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7125,
+    "sha256": "bcf2a5dae857463ddf9f7ef787c529e5027df8a9d79f965f17a66ef42d4df917"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9557,
+    "sha256": "12b18408dbfee02effdc1062dcfb48d70e5c7b0fccce21d603d154a3c605c24f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10649,
+    "sha256": "9397214367762737ffe262dc14c08eb270299686b71373c2f4428307f8763ec4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10852,
+    "sha256": "28c2b0162bab0a67c1c301d18971f6d96386c90004fd88aa9f6b5c28cf110488"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10238,
+    "sha256": "848e77578342006639907ac1bddeadc94e3a14d97aa7b39f234839f7550f2d97"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9398,
+    "sha256": "806fafaa006988793ef05b7ab33fe68a7a2d71ce0f12b34ef9c2264fdcd5464d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9494,
+    "sha256": "2eebf3d073608fc57ff110e6ee8c63a453202c4f2b6cb9e65b47672a8f18177b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8946,
+    "sha256": "02d08abd5cf08a32930514b167ab19659c854bf76fd7755ee2d6fa4e2b34f339"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10621,
+    "sha256": "50bd5048f6f336a68e826b424892402077b44145cf9ca4be0239ab5e85a0871e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8497,
+    "sha256": "325e2b98648f6cc29fefd525911cc6e783dd096acf06189172653b3acadcf337"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9204,
+    "sha256": "4aab3f60c99e61a7f21d9714d32880ed068d6fc9a63d1300f79eb11aa95ba5d3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8846,
+    "sha256": "630e3d3fbd5bca014696693be9c79198191ef6be74a9bb53a9a797882261e54f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9408,
+    "sha256": "6c91c3807c942ce9401fae7f656449913125e814b84a72d040187c5234fa6aa0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8699,
+    "sha256": "f10398065463a485df00cb5e6b890de724492faee6a440ff186049b6eb3c1710"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9081,
+    "sha256": "00bf4edb8eae89a07d535a3280bbc03a31def64c47556e3aab5332ee963efcbc"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10167,
+    "sha256": "47a9569f1898e0913b9c26aaa29b50a94ea3905de8a499805e560884f0a67bf1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8216,
+    "sha256": "bf4582f0f78f57ed29a83bae81748ed43d707efdb8b45561e77319321df7c883"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10112,
+    "sha256": "736aef3adfac7f1e6d8fcd988a23e9601e325cc568046716cd6cf7e5070245e4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9589,
+    "sha256": "148a16c53d3d0107c9039c18cedb7f7f1e4576f9fd2c7e90bf14c41629b91fc4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10968,
+    "sha256": "df4b4e5bfa031d8b6464f4b29db9b684e0d445d1a2a99d02d573a860c3c7b4f9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9689,
+    "sha256": "b07fd4936dd2a5feaf5a1dcf0cf712a433f9638a1c241a8c83d0f723e93ac942"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10601,
+    "sha256": "d7235ff0e6e00ac14d923ac5049b26a9a36c2ff021668d3b5a78055d09322e23"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10410,
+    "sha256": "103596738e4908c1ce176f64be7c049df7a05a6cee14dc33c130f08ccb868da7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10079,
+    "sha256": "6c2d3272935bfb56a7ff1219a24b3b295f194d997f24fc46873f36f3d96e18db"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r09_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9569,
+    "sha256": "8484bac006f1af3d0dca5fc933d444732ba376d79440b592686ec365a56a4eaf"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9287,
+    "sha256": "76cbc9dbc11a10633346e7b8f1ef2842f4c65d470c8e8773040c607b0056aefe"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10344,
+    "sha256": "14d44b86cc0d6fd35630a59904ab20bf040e360daa46800b56f15b0ca627d5d3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10236,
+    "sha256": "b752a3423493221874e3194e2160933c5511078776ade70c264d06824d615072"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10107,
+    "sha256": "bd0497a2cfe10ab4e10b0a5fc251da880cc0e1b2c1c438e6c1f83d8b1f1425cb"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9502,
+    "sha256": "8cbd295c06738c3c143c61c7b7e12c03b126556587db7f92ce8e05b96c76c40b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9536,
+    "sha256": "633b01b794271e70eca7d6f57b0c517ead538b5f18242bfa7cf14f19c50cb078"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8787,
+    "sha256": "a5f7b3ec5b9a6f6047642931e1ddadbedf5424065b1531ce91ce1c89822e7761"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10750,
+    "sha256": "53189a77eb962afeaff2e62a051a2fb8a50c9ef51a8b9d7ea9606a9338e3daf1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9087,
+    "sha256": "3b613c6f06c9382b7edfdf9b7d90f962796e6cd60927942c73ac9bd97ca4bd53"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9402,
+    "sha256": "6752e86d28615945f360215b5d12f17a5b98903c9daffa1225d6ad06dbac0819"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9231,
+    "sha256": "ea46f875e0a312feb51a407798fe475563328008bb71603ce4748e2e96a59c29"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9289,
+    "sha256": "be772eef5482b01b72f38b5f140468b27f23ecf4c58962cf32a83c5a339742ad"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9833,
+    "sha256": "e3caf6afb823a7a94155114bcf7bffaf1965944d951eed892ead003369a8cd23"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9311,
+    "sha256": "832272c0b1c1b943781c2b6eee7f488bed10662e6c54ef35fc8cd7ca8560b258"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10724,
+    "sha256": "784f9f5d05390c33af3c5b8c634a140574224f709b120c6a0257ddf778bf9150"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7886,
+    "sha256": "d3d930b61161371e01eba5b4d4ac7ec2cd395638d4c8e6be24b48d99ff9cd824"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10359,
+    "sha256": "89152f95c9ae7454bd13795ae2ddf50cc80ee74b4aa674da0fbfc7bab2cadbdd"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8752,
+    "sha256": "ad68ebc2e13ce947b104fcb8af5b443cedbe81452fad2075a7ecd86e1f002831"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10244,
+    "sha256": "96e0adac061067bb443088a85da1e6234d083e8ad979e5eeb92725ce11fa4d44"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8744,
+    "sha256": "61755b7bf3e2fae7d9e712d3f806f3edc8aafbf435f8f18a716e0c8d64619e0f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10004,
+    "sha256": "8cbd52dfab707dc33327f6f641e144473d2829119c9214c3fe1e92fca5b64c3b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9652,
+    "sha256": "0abb5407ef066b565694183a65871e3b9d2ba330459ad2839a2561b66a234ba0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9567,
+    "sha256": "63b931e2a947ffd10aba79ca5007ecc54ee11964c9afde07322cd3d05cb11748"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r10_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9046,
+    "sha256": "d19af9681c792b48350d5213a52c8bd59b893dc0cee48e08e777a4e817649151"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7538,
+    "sha256": "5a2a90781008afc90982b6e1068f54dae9beb1ccacfcb1ac51fa28dcda3d898b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7617,
+    "sha256": "a11a16055d0209f691d0c3e1b595db41f2dd115adce5e2b67ee94ff6651ec399"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7167,
+    "sha256": "f708985af215b22625e573cc8b29655cc60ff94db9a64ff9b1bea22239fa327a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7330,
+    "sha256": "9d0ef8049c79d469187e51523ee42f0a7350a74410b7b1c900134adfb431196c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8870,
+    "sha256": "ca3914cd61ea0edc8d72e54ca1b8c88b1e1ee544c91bcc7241dbe2679ec84d2f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8527,
+    "sha256": "92cd041bcbef251e2ea98d8a3c5ce5b0f4ea7c77e04dac64a5114d677679cf68"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8499,
+    "sha256": "9376ceca330cb94bf4021be799ff94f9bee5f6ae75b0ee3b2fccf2554e4ccc7e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9179,
+    "sha256": "97b448a9cb8440fc1f19f4faebc2fa07282673eb0ee35d3dd7a26abeadf30cc2"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8512,
+    "sha256": "252bccd048aace7dce8a977117e68130e9309ed213055f0eb65b0c5c5f50f13c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8715,
+    "sha256": "e4979727396da45c72679a3bb0ac65e97e9a2700a627f55ebc5ab2c94086d938"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8612,
+    "sha256": "61d4431b471052805e0c74de34a9a341b0c63b6d47cbfe187401e1454d6c883d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8781,
+    "sha256": "e0affbeda6a2924bde08625215be7fc6592c75e133305c802896d8c05acd23c3"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8518,
+    "sha256": "cf31b657b2709dcc773d56ab80516c9e0cc48ab213506be7c1f3293a8315f9fc"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7333,
+    "sha256": "a61ad260b5646dbf83f46fb1a95efe27c06a185f12c68d5f1b9714b3f4ca87a1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7119,
+    "sha256": "56da6b05ddd1bf5cb20ac165abbb54f32cf6dac06be7be79ba6496be4e3e42e8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7987,
+    "sha256": "153f121e5f89891ed2bf16e42bc46019ec9b8c49adf8192ec34bbb3e2b49f1da"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7518,
+    "sha256": "22f47e4093907d7203344276ebbde99015c298fa389957c7f37bb1a243c3d16d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7310,
+    "sha256": "6438a8d48c27a03888e088c04c6fbde58dd8524457cd368dfa82cdb23f2b09c8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7991,
+    "sha256": "30d964d02d19c926d3e40593b7fdeb4a1c667477e97ca0b4337c9e58e0520442"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7046,
+    "sha256": "fd3fd1737765454ff62a74e86f66c4b211f67505e83541d25c6922dae178d5f5"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8165,
+    "sha256": "18398cfff5c863ebda5e275c95f5858e454871496b7d825b7a1aaa9b8adaee10"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7857,
+    "sha256": "ee66fc8c15f0d87066785afbefc8bd952b7ea1853491598a5b924deaf69954ec"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8049,
+    "sha256": "48576a940e2f6de865f3989f74d343454b5ef8eec3e3ebcf965ea303c8fd713f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r11_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7605,
+    "sha256": "aac2356a1ba2a2d21da9fb994ab5c2fe09422b7685f19cd384a2731f1e81bc86"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8691,
+    "sha256": "c9bb0f4a8fc348b4826ec549add68f9ce89dc3a82427ff5829fb37c94ecd1a34"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9487,
+    "sha256": "6718f6816af2fd1864596d17431187f32d4b4acaa7845be11f717b2d05e57b19"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8657,
+    "sha256": "a190ff92746dfcb4691a511d0bd5d1e44c001e56435fd968dacfe3ecb8430c09"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9246,
+    "sha256": "ac77acebe10923125edb3df20857ab29c03aebbdafc5c91bfdcccc501a8741f9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7468,
+    "sha256": "175b022cfa539148727a1c92fcfc8a46ff92351c66994569c2a086a2e354ea39"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7961,
+    "sha256": "a714bc5ed0937d7adb1054e0b134af0473e5c8dc4abb29c90a25034979d6295d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8613,
+    "sha256": "e4bfa4d1191086b8548e0c651dad13fcc45b274617183d7b3874f9c0d93bfc57"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8743,
+    "sha256": "aa1512089e21c9d0ccaa4fcff7c1588a944b8914a358d8c2ac1efe4b8e28784d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8447,
+    "sha256": "3e91e7326ef097916a17c8ad87ade647e2f4093554c15e45f9444d3fedaa61ea"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9682,
+    "sha256": "c3d48705a14ae7bfd97d066e8181aaabee71127a5a501ccf9452e646d7e6711d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9614,
+    "sha256": "7f61bf92defd707ed28b0785feac02530f1319583106d1417342a53bd9889a8a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9670,
+    "sha256": "7da4e8a35866c18f1748bd2d1a77112a5d4d797259b87b714ff2412cf4bdd90a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10003,
+    "sha256": "350f66d555e6982e645a7570be16fb22562ecd9fa172f569c79d7bcc713edea4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8880,
+    "sha256": "1958bd55e980d3560f0445ca5a7cdcc127f6cef2680d07c56ed3865dce5ea37e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8930,
+    "sha256": "d59f2bf9c503752bb849cace9430632624c6ffc8b30200f308313e21a69914ba"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9497,
+    "sha256": "4250a4be857e43050d3ea680c0f71d27bd60e72ce7ceda35a2f7ccb769b4a474"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9118,
+    "sha256": "dd8845b53a9133abf077343bdde86412ad0e2e71dc16371cfeb5b3ed1bc3a350"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9278,
+    "sha256": "9631459502c01d2249b1bcb62f79b212cd7b1a60d11810b123258e71581787bb"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10627,
+    "sha256": "631bf615653e150c27ff83c5977b07a4925176e811a82f9a3ccfbd679c4c26c7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9056,
+    "sha256": "065005e0e07b4378d00bc5095b4e6da691928aebe6d81927bfafd5623ddb3d69"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9501,
+    "sha256": "76406a71d667e8f2cdd177f7e87118f61f034fd08b749e6ee75bb8287ac7a0f8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8740,
+    "sha256": "e7087cf877ea5eb6bf015d554089dd76dbf73c60058d7a09dbe969b3a588fc43"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9313,
+    "sha256": "032b79c4ab199f99e0544bb8e883b619f6b486c963424edace0bd33287fecf55"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r12_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9271,
+    "sha256": "114999ce45264a0714c6b8683817342c1f136882fa9d24e7235c27f46452e33b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7565,
+    "sha256": "44272fe336d4278faf6f457a7eeec33a4f5f2fe149b534f880591265573415c8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8111,
+    "sha256": "f45a7bc12baf3458d9eb18b35727a20dddc54da6fb00f2c2c27102fdfc9601f9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7756,
+    "sha256": "34ca9c37b99ad8ab8e42d6fed59d44cc822f00ab376f9fee1346a4e7907a50d5"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7810,
+    "sha256": "31be8da540f1ba373f2b7e5b3579ca64bf3afd39d670f97826e70c18a29b7298"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7638,
+    "sha256": "d775d38e96a87b082f4bd3d82ee3244664a440b4d64994585353a68ace06308e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7720,
+    "sha256": "02eb39f0bee7ec267e2226aa1ff90b99bfdf6a1d6182ed23dfd18c99356a1d4d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7515,
+    "sha256": "853d84dce52ce68273448ed0c24d8677a8770ad1e71c74274c481c367d45b443"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7534,
+    "sha256": "7b8bc677433d050e4d5aec95390c85b33eb0e36be95a40020c214242ffe29b76"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6956,
+    "sha256": "00ccd474549fd3c2b508976b86e11a90bae93d863d9962520e8083d5f8b5f76b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7796,
+    "sha256": "e776fa81034ee31486a04365394cf2a9cb8d59db3b9c0aa84f726e237b1ad0c2"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7282,
+    "sha256": "3f4193d1d947f1472e44ecb1699fb939b771703da66496642b31ad66fdbcf8ea"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7422,
+    "sha256": "f4af02281922f2a422337d5278f108af72cb9323536f6dafdbc548d5151908c4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6947,
+    "sha256": "8dc2bc885e58498f54e156a9be2f1ee1fe8eb6070eee8e2d4fad9d57a0fc2b34"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6837,
+    "sha256": "c768323531fba7d67786d47f7fff67415435db76a7cf61d860cdc94053efe247"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6791,
+    "sha256": "b07e6375cb611628155c6a66b81551b3974468fa3cbe7b0d6719cde115801e5e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 10869,
+    "sha256": "bb64f24712cb866753df65472e1008e6d832ec3621070bc95c0f581b9acf8444"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8185,
+    "sha256": "55053e119b56defba36859ffd326094c23d9d8df3363f2637ce9ca90ef8e935d"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8890,
+    "sha256": "01976239efed7693734d42e339df138957c438e2ecf05d24f3656fed59414de9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9789,
+    "sha256": "272047978ab48b87d35413653f90fac9983debd7b5ddd59a676528a5a808e24b"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8186,
+    "sha256": "7fc89e13a7e26babbae74f8431f3e7e87c281ce0ecc5e5c646e8a60460e23280"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8771,
+    "sha256": "ee65cd8c65db4e76edfbdceda11f4f3e1f127272934d90d6b5c9e3bb42f09864"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9226,
+    "sha256": "29ce75fb97c7a7173fb545dd90ae1740a3101c397d42e57ae88da28a5ac9699e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 9185,
+    "sha256": "aff45722ad4df9e83b0aeb4434e5e6cd10e1776057a45ecf9d19eaef1383a942"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r13_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8796,
+    "sha256": "2151eb576a05c7229cf33f760eca0e1be7475f251188f0ac119e190297f0374e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8702,
+    "sha256": "314013dfac649b1e88d86cefffdde842fc553aee14bc3e8700e2b02d9122575c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8984,
+    "sha256": "6544aef42e8b0f4ea1c9ce2159484189e39d7f861fff49c7ba58b2f0a0284a2c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7309,
+    "sha256": "f1acb4b02dda74db4fe78126cdf4e3287e09ff3d5bb1d22499d7bf840877dab8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7228,
+    "sha256": "8b16f466c6f4b8480048f1aed0c2875b8c22bbbe7d9685596551b88bb05f7569"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7396,
+    "sha256": "d4d62ef5521bd9067f54e39ec2458927fd7280008046878850b50b488170d5b1"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8567,
+    "sha256": "9737b9f1839d7d9bc6630187b7ddbb598ea9971b9010ab0faf136c77d7561ca4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8338,
+    "sha256": "b97f7aaed7bfc44ed6f94db4d5316d1dfb8ac090828a5dfa29db370294fa1232"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7743,
+    "sha256": "4b75a7ecee9a878734c6f5bba4b566874927d10cd10733c3ab16c9f967df31e4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7602,
+    "sha256": "b0cb701a8a2851cf4f198e7e1b004603ce2f26469481d3ff7055936d591c23e9"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6885,
+    "sha256": "ad40a4cd1e838e8e0a6003f2629f3e4d5ad26a9c70bbfc57a8b573e1773fc431"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7782,
+    "sha256": "39056f0606a6f99bc153d10d05c9679752ea6a1b175c6f5263ef94996e523c67"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7898,
+    "sha256": "c479c07f63d5fbaaf82701fce8cc97cb5c54544aee3d76af9f282bf1712216ed"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8839,
+    "sha256": "4c69af0f8fd3315d734f9fd36cf113ab24c9cd54649bd38aea7d30296398ffa8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7976,
+    "sha256": "849cbe5b1d60640926d0e10a9a82cfe53703ac48a8d722e2ead8c81b4e971973"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6583,
+    "sha256": "947a2b244d61c9cf33c698d22190f7cb02fef3f7e521a36d0f7bb82e296ca375"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6561,
+    "sha256": "83d2e0f53284dbf6a51dfd1284214e08d9b03d035f70de0242c6ad1cbda1c4f4"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6891,
+    "sha256": "31c8aa87ff5ab54fc9330816a7ca12b5b10b1e6f40c9ab058d77f0a1c75210ec"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7154,
+    "sha256": "beba8fa7cf03f145d4b987373bced6dc7d81375f3373b6cfcffcef01910f7366"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8177,
+    "sha256": "a77deaee0e7f6ad29463971e4722650c17670a07f630395b325b668a13e03e5c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7826,
+    "sha256": "10a56c53e1cd2e622f4682238674a5cc1e2382208395bc6a0f2abaaf605d5524"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7457,
+    "sha256": "5d5e03ab1aee2976b5505b8429757fa11bb46ad909e2bcfe24768c349e95ec37"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 8584,
+    "sha256": "9c044e03f4294847169b2c0cd0aeee29b2a638bbf0af92364254c3d67e2edf9f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7737,
+    "sha256": "90a2620f789e67a81f4bdfbb36518cb134902c0e9d51588e92992ebac33cc126"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r14_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7443,
+    "sha256": "19b3cf11f1d7866a23c61d8bd7747d94f6cbde9a8ca38d3b092648bf03e50d47"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c00.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7300,
+    "sha256": "9acf34455fc2c9c6a95412c906431eb27a53eadf81ef8c15a8890771f169786c"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c01.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7490,
+    "sha256": "4ad4908e4849a1ce7cd9ef132de13834f5adfd63c72c174c8425db79467cb39a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c02.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6975,
+    "sha256": "a493f8240b67d4e4c1e82d271df784fa74afb0df259aa40e6f3b7eebcfe639b5"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c03.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6443,
+    "sha256": "d72efb1a0a323ca7e20c1c9d965624dee248ce03f928e0e97711f305aa4790e7"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c04.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7028,
+    "sha256": "43fe1b9ee0658da2fb085c76d4c70ef7080206b8ab5420149f675989ac05d98e"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c05.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7095,
+    "sha256": "f5bcd070e8359ec7cdcaff2a5d3ae3616f4c105b5bd3f5aec1c326347d11d602"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c06.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 7786,
+    "sha256": "97b0bf5d67fb939187c07ddc383a93fa5b9948d63d3bad12448f43ad3d254252"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c07.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6357,
+    "sha256": "bda51b364255d2f73ce904c108eaabc056987b9ebaf19ddab6e2baa94a59c737"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c08.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6015,
+    "sha256": "67ab36f1b6e37352f944b6e48966de9e6d63f847b8476c73f1c995c90cfba637"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c09.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 4641,
+    "sha256": "0a6ecae32782bfe4b8b5cf1e6b061babf02c74846d8166e1749285d0443f41f8"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c10.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 4985,
+    "sha256": "d93153dcab9276f8e21252fd5d6c4dae6a02a68ceab9a88a822ab9869d3566c0"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c11.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5502,
+    "sha256": "870f821fafa78f2d5242dda49fd8221c9e12f3f61ba6fa66391aa4ec982ffd81"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c12.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 4065,
+    "sha256": "d14e50e5f204cdfd8533c027b5910d1114d12f2a6735ccd5fd91d4a12e3ce74f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c13.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5330,
+    "sha256": "9f9f1a239c3d958075caf0c36abaeeb8a0a94c73b0d23c284cfa9da9988d002f"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c14.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5435,
+    "sha256": "93c1ac75baf823b0876a045f7bcc83cdc2f4f10deb8b17babe75618b9d7ba84a"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c15.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5267,
+    "sha256": "130c06cf269ce5f59295756d21f5d77a4de77dad3d5799c894f4855e1919f091"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c16.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5371,
+    "sha256": "59149dadee71a31ad8e1cb377f29d12be39988626718c3c867a5c2a24a285541"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c17.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 5852,
+    "sha256": "bf8007a6239712f02f7bd6040e549c7981c3bd98d38e94d342cfb4f168b1fbca"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c18.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6252,
+    "sha256": "d7e3454ca377edad9f242392877bf510c6ac22952ae0e89edf495d5496a74224"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c19.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6219,
+    "sha256": "d210a61b107bcbfe12bc754765bbf5e7d67b36dd8242cf74a065b19d7fef42ec"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c20.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6120,
+    "sha256": "e602bc05f98440bb00f1b89ac02bd4ef2a12495f9f8999e0e43b1e6649822d63"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c21.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6998,
+    "sha256": "cad915dd255647219cfcce48affbe25c37b2945912e7c373a83b8a265814d533"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c22.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6166,
+    "sha256": "c7b1ff8a0c691a0155c3f37216dccdeb70c7f91d13218ed74e1720b229df60af"
+  },
+  {
+    "path": "Java/assets/city/split/city_tile_r15_c23.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6017,
+    "sha256": "c4757b1f95702c4e135a2532bd04c005adb41fc06a50f2edc106623f4fd39380"
+  },
+  {
+    "path": "Java/assets/city/structures/city_wall_block_before_context_extract.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 22900,
+    "sha256": "f81e9e3b212b657cc1f8af1f2acb0a2561552542b7fbe6906519f0cbb57af831"
+  },
+  {
+    "path": "Java/assets/city/structures/city_wall_gate_before_context_extract.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 63749,
+    "sha256": "533238f5025966a535d6a649eaa0093947173f25542c75d4f3e150f40f314321"
+  },
+  {
+    "path": "Java/assets/companions/npc_aria_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/aria/npc_aria_battle_sprite.png",
+    "bytes": 96077,
+    "sha256": "93afb0a3370dd2fb1513c4592ce2352e62483cc9b4cfdeb19c4d8f32bf4d2456"
+  },
+  {
+    "path": "Java/assets/companions/npc_calder_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/calder/npc_calder_battle_sprite.png",
+    "bytes": 82212,
+    "sha256": "4cdb03adf75f4e8905ca57c3f8e402e70a4773f8c060681e72ad447c508ca4a2"
+  },
+  {
+    "path": "Java/assets/companions/npc_cassia_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/cassia/npc_cassia_battle_sprite.png",
+    "bytes": 97140,
+    "sha256": "a2805788979a61d43567167d5b1a43244517cfae34b08a4f66c0a5fdbd19adcb"
+  },
+  {
+    "path": "Java/assets/companions/npc_lyra_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/lyra/npc_lyra_battle_sprite.png",
+    "bytes": 87556,
+    "sha256": "8bf3df5cf43ee92fdc10e9277bfb89803212d0395ddcd38ab22c6f12fabc7ea4"
+  },
+  {
+    "path": "Java/assets/companions/npc_maera_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/maera/npc_maera_battle_sprite.png",
+    "bytes": 89860,
+    "sha256": "5e29d0c1ccea029dea23933062ee4f5071679521feab794a33ded0f0b4d55e56"
+  },
+  {
+    "path": "Java/assets/companions/npc_rafiq_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/rafiq/npc_rafiq_battle_sprite.png",
+    "bytes": 92202,
+    "sha256": "3a5f495ce3d953d9a5ca74554046cae83f69969bb5b5a62f6f4500d65b9bbccd"
+  },
+  {
+    "path": "Java/assets/companions/npc_samir_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/samir/npc_samir_battle_sprite.png",
+    "bytes": 100008,
+    "sha256": "bf5993d86ebc4494f179c3246c20c7eda53e6a2efa8d259ed6523f7b9f11e6cb"
+  },
+  {
+    "path": "Java/assets/companions/npc_seraphine_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/seraphine/npc_seraphine_battle_sprite.png",
+    "bytes": 66453,
+    "sha256": "72894530c6a4843fe29d2485e0fa71fcf6db25eb5fcbe429c5d3ce86c7629173"
+  },
+  {
+    "path": "Java/assets/companions/npc_vesper_battle_sprite.png",
+    "reason": "identical flat copy; keep canonical companion folder",
+    "replacement": "Java/assets/companions/vesper/npc_vesper_battle_sprite.png",
+    "bytes": 108580,
+    "sha256": "008694c39d1d013b230200441ec0b5dc9b546b900669288b9a9e27333c24217b"
+  },
+  {
+    "path": "Java/assets/deco/deco_bog_grass.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/marsh/deco_bog_grass.png",
+    "bytes": 52647,
+    "sha256": "015981ab2859b6b141ecfc60e5956fe2c95dfcef808da4bccaa4f2b9f114f6a7"
+  },
+  {
+    "path": "Java/assets/deco/deco_bush.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/grass/deco_bush.png",
+    "bytes": 57178,
+    "sha256": "1bd18902b01f1623c2ccbced8e3f51544a0ab7771e6bb5ba9f226d3ea5804f72"
+  },
+  {
+    "path": "Java/assets/deco/deco_cactus.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/desert/deco_cactus.png",
+    "bytes": 2739,
+    "sha256": "7ece228f4befe2161baff79c673db0a8631b1a01d7a618efbeeefd0b0632a646"
+  },
+  {
+    "path": "Java/assets/deco/deco_dry_grass.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/desert/deco_dry_grass.png",
+    "bytes": 109241,
+    "sha256": "8312f9d805da512552235630fecfb88124a406eaa63b56999cf1b9722c6229a2"
+  },
+  {
+    "path": "Java/assets/deco/deco_flowers.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/grass/deco_flowers.png",
+    "bytes": 135279,
+    "sha256": "39601eceebda447cd19f27b484fbe0c0f5f87ec80ed38c6f86f6397188f6ddf8"
+  },
+  {
+    "path": "Java/assets/deco/deco_forest_cluster.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/forest/deco_forest_cluster.png",
+    "bytes": 51529,
+    "sha256": "33e13ffd85c4d68a02e9079d5a3baa69aac123e50c64d5ce3556d1c6005d0e97"
+  },
+  {
+    "path": "Java/assets/deco/deco_grass_clump.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/grass/deco_grass_clump.png",
+    "bytes": 46212,
+    "sha256": "6be23a55082cae9d0bf792ab66892814289ab414cb9623154722a4b8a3c44e85"
+  },
+  {
+    "path": "Java/assets/deco/deco_mushrooms.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/marsh/deco_mushrooms.png",
+    "bytes": 5439,
+    "sha256": "719131da321f76e852fef5d4a1c818007fb6009e5a727a06c3d3f4d738a0bb12"
+  },
+  {
+    "path": "Java/assets/deco/deco_pine_sapling.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/forest/deco_pine_sapling.png",
+    "bytes": 4025,
+    "sha256": "e55a96358c3336cd403ed5cd31bafa403a9778f5d2a7e3ea3017c099a68622ea"
+  },
+  {
+    "path": "Java/assets/deco/deco_reeds.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/marsh/deco_reeds.png",
+    "bytes": 63010,
+    "sha256": "9d5e4a291f917561f17b2b1fdf34af0157f8dcd70e8d01ec60ac9a784823a5ac"
+  },
+  {
+    "path": "Java/assets/deco/deco_rocks.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/mountain/deco_rocks.png",
+    "bytes": 5827,
+    "sha256": "1b14b005785372479dd554c05973d0078d5de3c193e46839fcdc69c8d30abd5d"
+  },
+  {
+    "path": "Java/assets/deco/deco_snow_mound.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/tundra/deco_snow_mound.png",
+    "bytes": 32146,
+    "sha256": "5ddcefbb2db1d728643840f2e9ad054ceac1254fe2d81a8d73d45804f3b57021"
+  },
+  {
+    "path": "Java/assets/deco/deco_snow_pine.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/tundra/deco_snow_pine.png",
+    "bytes": 4626,
+    "sha256": "3f6335a5442ef6a59dfd133446013947ceda1f79aab67b2ab59c3f4ef7f8799b"
+  },
+  {
+    "path": "Java/assets/deco/deco_stump.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/forest/deco_stump.png",
+    "bytes": 74476,
+    "sha256": "5b7f86dac7debb6fa727fc41951ced700f2189b7154084f6f8a5ceb60f3de969"
+  },
+  {
+    "path": "Java/assets/desert/desert.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/desert.png",
+    "bytes": 4147,
+    "sha256": "abd8b44ad59df5f8967669bfa755435ef1d4f14bd5262bdfd846a2bd5bad0ba7"
+  },
+  {
+    "path": "Java/assets/forest/forest.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/forest.png",
+    "bytes": 5844,
+    "sha256": "c23a26c1baccfc71ae913962d4552773b08292ef773d1b2af1d630cac05fde59"
+  },
+  {
+    "path": "Java/assets/grass/grass.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/grass.png",
+    "bytes": 6010,
+    "sha256": "9cdf5f7513550fd3033d0bf530069f2ba1403bf1e698e43653fecc8cad303c3c"
+  },
+  {
+    "path": "Java/assets/marsh/marsh.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/marsh.png",
+    "bytes": 3949,
+    "sha256": "407b720568e53187f419a88f675f307712b6e46dfe348eed8435f98fcdf37398"
+  },
+  {
+    "path": "Java/assets/mountain/mountain.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/mountain.png",
+    "bytes": 4376,
+    "sha256": "14bddce5c49f66be86b282412fd6bef5670a76891575514f56e88122f6c6984c"
+  },
+  {
+    "path": "Java/assets/mountain/mountain_peak.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/mountain_peak.png",
+    "bytes": 4341,
+    "sha256": "61d24ad2b04ed36693f2a978f68024a6709148db995fc4b10c6a7821f125216e"
+  },
+  {
+    "path": "Java/assets/road/road.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/road.png",
+    "bytes": 4243,
+    "sha256": "5cd52f995e2d85e7277ede7b4bc127f74e043da393694051a0d463e74708133a"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/badlands.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/badlands.png",
+    "bytes": 582,
+    "sha256": "c36914e4a52cedd418d514eaf5b8b65a66cad0705b822cfcd4405aec863374bf"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/desert.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/desert.png",
+    "bytes": 685,
+    "sha256": "cc04852b48ea0199bbe54e60d05bd97eb2cf2508f22a34f512a228aee2a44390"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/forest.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/forest.png",
+    "bytes": 680,
+    "sha256": "dd0357c212569ac594974f688bedb578bd3a3a84b8334b2550387a282b498aec"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/grass.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/grass.png",
+    "bytes": 930,
+    "sha256": "0f07854f351770eea6c7cbf802e3bc83dbebfc264ae3854fc6c706281fc12f68"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/marsh.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/marsh.png",
+    "bytes": 628,
+    "sha256": "66c793f0eae0684e735d555a776a5af7d0ac890a4d0a4bfc241550d8583c4e6c"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/mountain.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/mountain.png",
+    "bytes": 651,
+    "sha256": "a8c15cc76d2bc5f7d2fada14603e296f9149ef29d2d52f146f7b8c5b2c321d71"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/mountain_massif_tile.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/mountain_massif_tile.png",
+    "bytes": 6970,
+    "sha256": "bee75398fe7736784af53aed053b7f21e487d998cff84dbf7370096b49237ab5"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/road.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/road.png",
+    "bytes": 1311,
+    "sha256": "001d375ed98bc7155751a2e6f1e46021e0bad36e18e431696d844e69db3d5b93"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/tundra.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/tundra.png",
+    "bytes": 539,
+    "sha256": "783ec3edfa4ea1cd38788ffdd044a26c07918573ccadea42b2b1e67c4488cab0"
+  },
+  {
+    "path": "Java/assets/terrain/before_fidelity_refresh/water.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/water.png",
+    "bytes": 648,
+    "sha256": "9938d8a463c2e2dc352d82d2bdcfbca99f4b01a12b4f8802d45c28892afc8454"
+  },
+  {
+    "path": "Java/assets/terrain/mountain_massif.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/mountain/mountain_massif.png",
+    "bytes": 15015,
+    "sha256": "7f47fac8d46762a8d1fa099e7d81ec88be09c322731f20a29e42c163dcb3b7da"
+  },
+  {
+    "path": "Java/assets/terrain/mountain_massif_before_imagegen.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 2264,
+    "sha256": "7921ebc05f3e624a87f1512ba4ad025ab0e27aed5990173c688a0da3ea402ba8"
+  },
+  {
+    "path": "Java/assets/terrain/mountain_massif_tile_before_imagegen.png",
+    "reason": "unused extraction trial or backup",
+    "replacement": null,
+    "bytes": 6508,
+    "sha256": "f44321d66717484758031515b02800078991a7d4bd00ce4c8277830a8f5e303d"
+  },
+  {
+    "path": "Java/assets/tundra/tundra.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/tundra.png",
+    "bytes": 5048,
+    "sha256": "161779d19a9c015f8103f283a75ed4643eca8924cf61acf636f6cd5df1a3cf88"
+  },
+  {
+    "path": "Java/assets/water/water.png",
+    "reason": "shadowed duplicate",
+    "replacement": "Java/assets/terrain/water.png",
+    "bytes": 4095,
+    "sha256": "c887d62d9d22bc438904c2c8ba2a698fc77aa22bd7bac55903195dac3fe911f8"
+  }
+]

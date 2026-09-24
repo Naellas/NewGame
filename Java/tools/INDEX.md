@@ -1,11 +1,15 @@
 # Tool index
 
 Run Python commands from any directory with `python <path-to-Java>/tools/run.py NAME [arguments]`.
+`extract_interior_seamless_tiles --recipe <path>` also imports the four uploaded
+modular interior material sheets; inputs and output behavior are in [README.md](README.md).
 The runner selects `Java/` as its working directory; relative inputs are interpreted there.
 Use `--list` to list names. Importers/generators may overwrite their named outputs: inspect `--help` or source before regenerating.
 
 | Command | Canonical implementation |
 | --- | --- |
+| `import_animation_grid` | [assets/shared/import_animation_grid.py](assets/shared/import_animation_grid.py) |
+| `sfxgen` | [audio/sfxgen.py](audio/sfxgen.py) |
 | `asset_paths` | [assets/shared/asset_paths.py](assets/shared/asset_paths.py) |
 | `audit_flora_edges` | [checks/audit_flora_edges.py](checks/audit_flora_edges.py) |
 | `audit_resource_art` | [checks/audit_resource_art.py](checks/audit_resource_art.py) |

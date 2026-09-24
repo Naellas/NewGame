@@ -5,6 +5,7 @@ from pathlib import Path as _BootstrapPath
 if not __package__:
     _bootstrap_sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[3]))
 from tools.project_paths import JAVA_ROOT, REPO_ROOT
+from tools.assets.shared.asset_paths import asset_file
 
 from pathlib import Path
 
@@ -76,7 +77,9 @@ def split_sheet(path: Path, names: list[str]) -> None:
             cell,
             CutoutSettings(mode="magenta", padding=4, square=True, spill_passes=6),
         )
-        fit(cutout, 64, 64, bottom_align=False, margin=4).save(OUT / f"{name}.png")
+        destination = asset_file(ROOT / "assets", f"items/{name}.png")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        fit(cutout, 64, 64, bottom_align=False, margin=4).save(destination)
 
 
 def main() -> None:

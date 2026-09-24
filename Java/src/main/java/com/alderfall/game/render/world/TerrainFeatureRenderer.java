@@ -314,7 +314,7 @@ public final class TerrainFeatureRenderer {
         Stroke oldStroke = g.getStroke();
         Paint oldPaint = g.getPaint();
         Object oldAntialiasing = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-        waterTileRenderer.draw(g, wx, wy, px, py, tileSize, context.frame(), state.currentMapId, weather, effects.weatherQuality());
+        waterTileRenderer.draw(g, wx, wy, px, py, tileSize, context.frame() * RenderQuality.fromKey(state.config.renderQuality).terrainAnimationFrameStride, state.currentMapId, weather, effects.weatherQuality());
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         double rainIntensity = weather.rainIntensity();
@@ -1223,6 +1223,10 @@ public final class TerrainFeatureRenderer {
     }
 
     private boolean isMountainMassifAnchor(int wx, int wy) {
+        // Terraced foothills are traversable; retain sparse peak silhouettes only in solid cores.
+        if (state.world.elevation(state.currentMapId).active()
+                && (!state.world.elevation(state.currentMapId).summit(wx,wy)
+                || Math.floorMod(mountainAnchorHash(wx,wy),7)!=0)) return false;
         if (state.world.tileAt(state.currentMapId, wx, wy) != 'm') {
             return false;
         }

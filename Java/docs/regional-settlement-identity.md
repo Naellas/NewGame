@@ -13,11 +13,17 @@ This pass changes the ground, waterways, domestic architecture and daily activit
 
 Each settlement has two commons selected from accessible open ground. Their positions respond to the existing lots, important props and paths. Common workers have local dialogue, daytime work targets, evening gathering points and a southern midday rest. Severe-weather shelter behaviour still takes precedence. Approaching a common adds a one-time local observation to the travel log; settlement arrivals describe regional materials and land use.
 
-Three new house sprites and a timber-walk texture were generated with the built-in imagegen tool. Their subdued materials, overhead view and south-facing doors match the existing game art. Most ordinary northern, southern and Fenland homes use them; some older houses and all specialised businesses and story buildings retain their established appearances. Source prompts and provenance are in [prompts.md](../assets/environments/settlements/city/regional/prompts.md). The PNGs were copied unmodified, with scaling performed by the renderer.
+Three new house sprites and a timber-walk texture were generated with the built-in imagegen tool. Their subdued materials, overhead view and south-facing doors match the existing game art. Most ordinary northern, southern and Fenland homes use them; some older houses and all specialised businesses and story buildings retain their established appearances. Source prompts and provenance are in [prompts.md](../assets/environments/settlements/city/buildings/regional-prompts.md). The PNGs were copied unmodified, with scaling performed by the renderer.
 
 The overworld now uses the same authored-cutout approach as Archive City. Briarbridge, Ironvale, Reedwatch, Embermarket, Northwatch and Greyharbor each have a unique town silhouette. The twelve named villages resolve through six cultural silhouettes: Hearth, River, North, Sun, Fen and Freeholds. This keeps settlements within one region visually related while their interiors, names and story content remain individual. The exact asset mapping lives in `RegionalSettlementIdentity.overworldAsset`, and generation provenance is in [settlement-overworld-prompts.md](../assets/environments/settlements/city/overworld/settlement-overworld-prompts.md).
 
 ## Town interior programs
+
+The September 24 [district layout](town-architecture.md#districts-public-space-and-suburbs-2026-09-24)
+now relocates the seven towns' lots into functional quarters, reserves public
+squares and gardens, and adds suburbs outside an inset wall ring. The stable-lot
+descriptions below document the earlier regional pass; town keys and original
+interior identities remain stable, but exterior coordinates and footprints change.
 
 Towns no longer inherit only the capital's generic building mix. Each has a folklore-led civic program and two named quarters. Required institutions retain stable lot keys so their doors, generated interiors and saves remain compatible.
 

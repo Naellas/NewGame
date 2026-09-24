@@ -31,7 +31,7 @@ public final class ItemAppearanceTest {
         require(GameData.itemIcon(unique).equals(EquipmentCatalog.equipment(unique).icon()), "Unique keeps bespoke art");
         require(!GameData.itemIcon("iron_sword").equals(GameData.itemIcon("rusty_sword")), "Legacy material appearance");
         for (String atlasName : new String[]{"equipment_weapons_tiers.png", "equipment_gear_tiers.png"}) {
-            BufferedImage atlas = ImageIO.read(Path.of("assets/items", atlasName).toFile());
+            BufferedImage atlas = ImageIO.read(Path.of("assets/items/atlases", atlasName).toFile());
             require(atlas.getColorModel().hasAlpha(), atlasName + " requires alpha");
             long transparent = Arrays.stream(pixels(atlas)).filter(p -> (p >>> 24) == 0).count();
             require(transparent > atlas.getWidth() * atlas.getHeight() / 4, atlasName + " has no opaque icon background");

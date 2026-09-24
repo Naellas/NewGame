@@ -4,6 +4,7 @@ import com.alderfall.game.InteriorStyle;
 import com.alderfall.game.InteriorFurnishings;
 import com.alderfall.game.TilePoint;
 import com.alderfall.game.WorldProp;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -33,7 +34,7 @@ public final class InteriorLayout {
     public static InteriorLayout compose(String theme, int seed, InteriorStyle style, boolean variedFootprint) {
         int width = switch (theme) {
             case "blacksmith" -> 20; case "carpenter" -> 21;
-            case "bakery", "shop" -> 22; case "inn" -> 25;
+            case "bakery", "shop", "alchemy" -> 22; case "inn" -> 25;
             case "tavern" -> 24; case "study" -> 23;
             case "granary", "smokehouse", "ferry_lodge", "remembrance_hall", "cistern_house", "bellhouse", "reedworks" -> 22;
             case "caravanserai", "rescue_lodge" -> 25;
@@ -41,7 +42,7 @@ public final class InteriorLayout {
         };
         int height = switch (theme) {
             case "inn", "tavern" -> 15; case "shop" -> 13;
-            case "blacksmith", "carpenter", "bakery", "study" -> 14;
+            case "blacksmith", "carpenter", "bakery", "study", "alchemy" -> 14;
             case "granary", "smokehouse", "ferry_lodge", "remembrance_hall", "cistern_house", "bellhouse", "reedworks" -> 14;
             case "caravanserai", "rescue_lodge" -> 15;
             default -> Math.floorMod(seed / 7, 2) == 0 ? 11 : 12;
@@ -52,6 +53,7 @@ public final class InteriorLayout {
             case "bakery" -> plan.bakery();
             case "shop" -> plan.shop();
             case "study" -> plan.study();
+            case "alchemy" -> plan.alchemy();
             case "blacksmith", "carpenter" -> plan.workshop(theme.equals("blacksmith"));
             case "granary", "smokehouse" -> plan.provisionHouse(theme.equals("smokehouse"));
             case "ferry_lodge" -> plan.ferryLodge();
@@ -62,12 +64,16 @@ public final class InteriorLayout {
             case "rescue_lodge" -> plan.rescueLodge();
             default -> plan.home();
         }
-        plan.householdDetails(theme, seed);
-        plan.completeActivityGroups(theme);
-        return variedFootprint ? plan.withFootprint(theme, seed) : plan;
+        if (!Set.of("blacksmith", "carpenter", "bakery", "study", "alchemy", "shop").contains(theme)) {
+            plan.householdDetails(theme, seed);
+            plan.completeActivityGroups(theme);
+        }
+        if (variedFootprint) plan = plan.withFootprint(theme, seed);
+        plan.addRoomGraph(seed);
+        return plan;
     }
 
-    public static final List<String> THEMES = List.of("home", "inn", "tavern", "bakery", "shop", "study",
+    public static final List<String> THEMES = List.of("home", "inn", "tavern", "bakery", "shop", "study", "alchemy",
             "blacksmith", "carpenter", "granary", "smokehouse", "ferry_lodge", "remembrance_hall",
             "cistern_house", "bellhouse", "reedworks", "caravanserai", "rescue_lodge");
 
@@ -265,6 +271,9 @@ public final class InteriorLayout {
         String second;
         String detail;
         switch (theme) {
+            case "alchemy" -> {
+                role = "herb_reserve_annex"; first = "apothecary_storage"; second = "bottle_crate"; detail = "mortar_pestle";
+            }
             case "study", "remembrance_hall", "bellhouse" -> {
                 role = "records_annex"; first = "bookshelf"; second = "ironbound_chest"; detail = "tabletop_scrolls";
             }
@@ -292,6 +301,116 @@ public final class InteriorLayout {
         put(x, y + 3, "low_cupboard"); put(x, y + 3, detail);
         put(x + 2, y + 3, style == InteriorStyle.FENLANDS ? "floor_reed_pot" : "pottery_cluster");
         lamp(x, y - 1); put(x + 1, y - 1, "wall_window_wide");
+    }
+
+    /**
+     * Add room-to-room boundaries as connected runs, leaving authored furniture,
+     * residents, and the main circulation spine intact. Seeded layouts can read as
+     * one open hall, two linked rooms, or a small dungeon-like room graph.
+     */
+    private void addRoomGraph(int seed) {
+        int variant = Math.floorMod(seed, 3);
+        if (variant == 0) return;
+        int entry = width / 2 - 1;
+        int preferred = Math.max(3, height / 2 + Math.floorMod(seed, 3) - 1);
+        int partitionY = -1;
+        char[][] beforePartition = copyTiles();
+        for (int offset = 0; offset < height; offset++) {
+            int y = 2 + Math.floorMod(preferred - 2 + offset, height - 3);
+            if (y >= height - 2 || !clearHorizontalPartition(y, entry)) continue;
+            for (int x = 1; x < width - 1; x++) {
+                if (x == entry || x == entry + 1 || tiles[y][x] == 'e') {
+                    tiles[y][x] = 'e';
+                } else {
+                    tiles[y][x] = 'o';
+                }
+            }
+            partitionY = y;
+            break;
+        }
+        if (partitionY < 0) return;
+        if (!allFloorTilesReachable()) {
+            restoreTiles(beforePartition);
+            return;
+        }
+        if (variant == 1) return;
+
+        // A perpendicular upper branch forms a T junction when the selected run
+        // is clear. This changes the room graph while preserving a doorway through
+        // both connected boundaries.
+        for (int offset = 0; offset < width; offset++) {
+            int x = 2 + Math.floorMod(Math.floorMod(seed / 3, width - 4) + offset, width - 4);
+            if (x == entry || x == entry + 1) continue;
+            int doorY = Math.max(3, partitionY / 2);
+            if (!clearVerticalPartition(x, partitionY, doorY)) continue;
+            char[][] beforeBranch = copyTiles();
+            for (int y = 2; y < partitionY; y++) {
+                if (y == doorY || tiles[y][x] == 'e') tiles[y][x] = 'e';
+                else tiles[y][x] = 'o';
+            }
+            if (!allFloorTilesReachable()) restoreTiles(beforeBranch);
+            break;
+        }
+    }
+
+    private char[][] copyTiles() {
+        char[][] copy = new char[height][];
+        for (int y = 0; y < height; y++) copy[y] = tiles[y].clone();
+        return copy;
+    }
+
+    private void restoreTiles(char[][] source) {
+        for (int y = 0; y < height; y++) System.arraycopy(source[y], 0, tiles[y], 0, width);
+    }
+
+    private boolean allFloorTilesReachable() {
+        int entry = width / 2 - 1;
+        boolean[][] reached = new boolean[height][width];
+        ArrayDeque<TilePoint> queue = new ArrayDeque<>();
+        reached[height - 2][entry] = true;
+        queue.add(new TilePoint(entry, height - 2));
+        while (!queue.isEmpty()) {
+            TilePoint current = queue.removeFirst();
+            for (int[] direction : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+                int x = current.x() + direction[0], y = current.y() + direction[1];
+                if (x < 0 || y < 0 || x >= width || y >= height || reached[y][x]) continue;
+                if (tiles[y][x] == 'x' || tiles[y][x] == 'o') continue;
+                reached[y][x] = true;
+                queue.addLast(new TilePoint(x, y));
+            }
+        }
+        for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) {
+            if (tiles[y][x] != 'x' && tiles[y][x] != 'o' && !reached[y][x]) return false;
+        }
+        return true;
+    }
+
+    private boolean clearHorizontalPartition(int y, int entry) {
+        for (int x = 1; x < width - 1; x++) {
+            if (x == entry || x == entry + 1) continue;
+            if (occupiedByPlannedObject(x, y) || residents.contains(new TilePoint(x, y))) return false;
+            if (tiles[y][x] != 'i' && tiles[y][x] != 'z') return false;
+        }
+        return true;
+    }
+
+    private boolean clearVerticalPartition(int x, int endY, int doorY) {
+        for (int y = 2; y < endY; y++) {
+            if (y == doorY) continue;
+            if (occupiedByPlannedObject(x, y) || residents.contains(new TilePoint(x, y))) return false;
+            if (tiles[y][x] != 'i' && tiles[y][x] != 'z') return false;
+            if (circulation.contains(new TilePoint(x, y))) return false;
+        }
+        return true;
+    }
+
+    private boolean occupiedByPlannedObject(int x, int y) {
+        for (WorldProp prop : props) {
+            int[] footprint = WorldMap.interiorVisualFootprint(prop.asset());
+            if (x >= prop.x() && x < prop.x() + footprint[0]
+                    && y >= prop.y() && y < prop.y() + footprint[1]) return true;
+        }
+        return false;
     }
 
     private InteriorLayout(int width, int height, InteriorStyle style) {
@@ -384,68 +503,128 @@ public final class InteriorLayout {
         lamp(x + 1, y - 1);
     }
 
+    /** Purpose-built connected runs; aisles separate production, stock and customers. */
+    private void run(int x, int y, int bays, String asset) {
+        int step = WorldMap.interiorVisualFootprint("interior_" + asset)[0];
+        for (int i = 0; i < bays; i++) put(x + i * step, y, asset);
+    }
+
+    private void tradeWall(String accent, int windowX) {
+        lamp(2, 1); lamp(width - 3, 1);
+        put(4, 1, accent); put(windowX, 1, "wall_window_wide");
+    }
+
     private void bakery() {
-        zone("bakehouse", 2, 2, 7, 5);
-        put(3, 2, "bakery_oven"); put(5, 2, "bakery_counter");
-        put(8, 2, "grain_sacks_v"); put(5, 4, "cooking_station");
-        for (int x : new int[]{3, 5, 7}) put(x, 6, "bakery_counter");
-        zone("dining", 3, 8, 5, 3); banquet(4, 9);
-        zone("seed_stores", 14, 2, 6, 4);
-        put(14, 2, "grain_sacks_v"); put(17, 2, "storage_counter");
-        put(17, 2, "seed_bowl"); put(19, 2, "barrels");
-        zone("household_work", 14, 8, 6, 3); regionalWork(15, 9);
-        put(19, 8, "herb_drying_rack_v");
-        backWall(5, 14);
-        residents.add(new TilePoint(7, 5)); residents.add(new TilePoint(7, 7));
+        zone("oven_and_flour", 2, 2, 7, 3);
+        put(2, 2, "bakery_oven"); put(2, 4, "firewood_basket");
+        run(4, 2, 2, "bakehouse_storage"); put(8, 2, "grain_sacks_v");
+        zone("mixing_and_proving", 2, 5, 7, 2);
+        run(3, 5, 3, "bakehouse_worktop");
+        put(2, 5, "bucket"); put(2, 6, "broom");
+        zone("bread_service", 13, 2, 7, 6);
+        run(13, 2, 3, "bakehouse_storage");
+        run(13, 6, 3, "bakery_counter"); put(19, 4, "basket_empty");
+        zone("bakers_meal", 2, 8, 7, 3); banquet(4, 9);
+        rug(3, 8, 6, 10); put(7, 9, "crockery_cupboard");
+        zone("reserve_ingredients", 13, 9, 7, 2);
+        run(13, 9, 2, "low_cupboard");
+        put(17, 9, "produce_apples"); put(18, 9, "produce_corn");
+        tradeWall("wall_herb_rack", 14);
+        residents.add(new TilePoint(6, 4)); residents.add(new TilePoint(15, 5));
     }
 
     private void shop() {
-        zone("stockroom", 2, 2, 7, 4);
-        put(3, 2, "bookshelf"); put(5, 2, "storage_counter"); put(8, 2, "crates");
-        for (int x : new int[]{3, 5, 7}) put(x, 5, "shop_counter");
-        zone("display", 14, 2, 6, 5);
-        put(14, 2, "bookshelf"); put(17, 2, "bookshelf");
-        put(14, 5, "low_cupboard"); put(18, 5, "barrels");
-        zone("waiting", 2, 8, 6, 2); put(3, 9, "bench_h");
-        put(6, 9, "floor_leafy_plant");
-        zone("household_work", 14, 8, 6, 3); regionalWork(15, 8);
-        backWall(5, 14);
+        zone("stock_wall", 2, 2, 7, 3);
+        run(3, 2, 5, "supplies_shelf");
+        zone("service_counter", 2, 5, 7, 2); run(3, 5, 3, "shop_counter");
+        zone("household_goods", 13, 2, 7, 5);
+        run(13, 2, 3, "crockery_cupboard"); run(16, 2, 3, "pantry_shelf");
+        run(13, 5, 3, "low_cupboard");
+        put(13, 5, "tabletop_jug"); put(17, 5, "tabletop_fruit");
+        zone("packing", 13, 8, 7, 2);
+        run(13, 8, 2, "storage_counter"); put(18, 8, "handcart");
+        zone("waiting", 2, 8, 7, 2); put(3, 9, "bench_h"); put(6, 9, "floor_leafy_plant");
+        rug(2, 8, 7, 9); put(7, 8, "coat_stand");
+        tradeWall("wall_parcels", 14);
         residents.add(new TilePoint(6, 4));
     }
 
     private void study() {
-        zone("library", 2, 2, 7, 3);
-        for (int x : new int[]{3, 5, 7}) put(x, 2, "bookshelf");
-        zone("reading", 3, 5, 5, 6);
-        put(4, 6, "study_desk_h"); put(4, 7, "chair_south");
-        put(4, 9, "study_desk_h"); put(4, 10, "chair_south");
-        put(4, 6, "tabletop_candle"); put(4, 9, "tabletop_candle");
-        zone("records", 14, 2, 7, 3);
-        put(15, 2, "bookshelf"); put(18, 2, "bookshelf"); put(20, 2, "traveler_trunk");
-        zone("scribe", 14, 6, 7, 5);
-        rug(14, 6, 17, 9);
-        put(15, 7, "study_desk_h"); put(15, 8, "chair_south");
-        put(19, 7, "low_cupboard"); put(19, 7, "mortar_pestle");
-        backWall(4, 15);
-        residents.add(new TilePoint(17, 8));
+        zone("open_library", 2, 2, 7, 3);
+        run(2, 2, 3, "archive_storage"); put(8, 2, "stepladder");
+        put(8, 4, "archive_lectern");
+        zone("library_arcade", 9, 3, 1, 7);
+        put(9, 4, "oak_support_pillar"); put(9, 9, "oak_support_pillar");
+        zone("reading_tables", 2, 5, 7, 6);
+        for (int y : new int[]{5, 8}) {
+            run(3, y, 3, "archive_worktop");
+            for (int x : new int[]{3, 5, 7}) put(x, y + 1, "chair_south");
+        }
+        zone("catalogue_and_records", 13, 2, 8, 3);
+        run(13, 2, 3, "archive_storage"); put(19, 2, "ironbound_chest");
+        zone("binding_and_copying", 13, 5, 8, 6);
+        run(13, 6, 3, "archive_worktop");
+        put(14, 7, "chair_south"); put(18, 7, "chair_south");
+        run(13, 9, 2, "low_cupboard"); put(13, 9, "tabletop_scrolls");
+        put(18, 9, "armchair_green"); put(19, 9, "side_table"); put(19, 9, "tabletop_books");
+        rug(17, 8, 20, 10);
+        rug(2, 5, 8, 6); rug(2, 8, 8, 9);
+        put(13, 8, "room_screen");
+        tradeWall("wall_books", 14);
+        residents.add(new TilePoint(16, 7));
+    }
+
+    private void alchemy() {
+        zone("reagents", 2, 2, 7, 3);
+        run(2, 2, 3, "apothecary_storage"); put(8, 2, "herb_drying_rack_v");
+        zone("distillation", 2, 5, 7, 2);
+        run(3, 5, 3, "apothecary_worktop"); put(2, 5, "bucket");
+        zone("bottling_and_wash", 2, 8, 7, 3);
+        run(3, 8, 2, "apothecary_worktop"); put(7, 8, "washstand");
+        put(3, 10, "bottle_crate"); put(4, 10, "bottle_crate");
+        zone("dispensary", 13, 2, 7, 5);
+        run(13, 2, 3, "apothecary_storage"); run(13, 6, 3, "apothecary_worktop");
+        zone("consultation", 13, 8, 7, 3);
+        put(14, 9, "armchair_green"); put(15, 9, "side_table"); put(15, 9, "tabletop_books");
+        put(17, 9, "floor_leafy_plant"); put(18, 9, "crockery_cupboard");
+        rug(13, 8, 17, 10);
+        put(13, 8, "room_screen"); put(16, 10, "stool");
+        tradeWall("wall_herb_rack", 14);
+        residents.add(new TilePoint(6, 4)); residents.add(new TilePoint(15, 5));
     }
 
     private void workshop(boolean smith) {
-        zone("workshop", 2, 2, 6, 8);
-        put(3, 2, smith ? "forge" : "crates");
-        put(6, 2, smith ? "anvil_tool_rack" : "low_cupboard");
-        put(3, 5, smith ? "anvil" : "carpenter_workbench");
-        put(6, 5, smith ? "metal_crate" : "sawhorse_planks");
-        put(3, 8, smith ? "storage_counter" : "carpenter_workbench");
-        zone("service", 12, 2, width - 14, 5);
-        put(12, 2, smith ? "metal_crate" : "crates");
-        put(16, 2, smith ? "anvil_tool_rack" : "sawhorse_planks");
-        put(12, 6, "shop_counter"); put(14, 6, "shop_counter");
-        zone("stores", 12, 8, width - 14, 3);
-        put(13, 9, smith ? "metal_crate" : "sawhorse_planks");
-        put(16, 9, "barrels");
-        backWall(4, 12);
-        residents.add(new TilePoint(smith ? 4 : 5, 5)); residents.add(new TilePoint(13, 5));
+        zone(smith ? "forge_and_quench" : "cutting_and_assembly", 2, 2, 6, 5);
+        if (smith) {
+            put(2, 2, "smith_hearth");
+            put(2, 3, "coal_crate");
+            run(4, 2, 2, "smith_storage");
+            put(3, 4, "anvil"); put(2, 4, "bucket"); put(6, 4, "anvil_tool_rack");
+            put(2, 6, "metal_crate"); put(5, 6, "metal_crate");
+        } else {
+            run(2, 2, 3, "joinery_storage");
+            run(2, 5, 3, "joinery_worktop");
+        }
+        zone(smith ? "finishing_bench" : "timber_and_jigs", 2, 8, 6, 3);
+        run(2, 8, 3, smith ? "smith_worktop" : "joinery_worktop");
+        put(2, 10, smith ? "ironbound_chest" : "sawhorse_planks");
+        put(6, 10, "open_storage_bin");
+        zone("finished_goods", 12, 2, width - 14, 4);
+        run(12, 2, 2, smith ? "smith_storage" : "joinery_storage");
+        put(16, 2, smith ? "anvil_tool_rack" : "leaning_ladder");
+        put(16, 4, "ironbound_chest");
+        zone("customer_counter", 12, 6, width - 14, 1);
+        run(12, 6, 2, smith ? "smith_worktop" : "joinery_worktop");
+        zone("dispatch_and_orders", 12, 8, width - 14, 3);
+        run(12, 9, 2, "low_cupboard"); put(12, 9, "tabletop_scrolls");
+        put(16, 9, "stool"); put(16, 10, "broom");
+        rug(12, 9, 16, 10);
+        zone("service_threshold", 11, 7, 1, 1); put(11, 7, "oak_support_pillar");
+        // Separate noisy production from finishing and the order desk, preserving open thresholds.
+        wallH(1, 8, 7, 7); lamp(3, 7);
+        wallH(11, width - 2, 8, 16); lamp(13, 8);
+        tradeWall("wall_tools", 12);
+        residents.add(new TilePoint(4, 4)); residents.add(new TilePoint(13, 5));
     }
 
     private void provisionHouse(boolean smoke) {
@@ -482,7 +661,7 @@ public final class InteriorLayout {
 
     private void remembranceHall() {
         zone("family_records", 2, 2, 7, 3);
-        for (int x : new int[]{3, 5, 7}) put(x, 2, "bookshelf");
+        for (int x : new int[]{3, 4, 5}) put(x, 2, "bookshelf");
         zone("public_hearing", 2, 6, 7, 5);
         put(3, 7, "bench_h"); put(6, 10, "bench_h");
         zone("reading", 13, 2, 7, 5);
@@ -673,7 +852,11 @@ public final class InteriorLayout {
     }
 
     private void zone(String role, int x, int y, int w, int h) { zones.add(new Zone(role, x, y, w, h)); }
-    private void put(int x, int y, String asset) { props.add(new WorldProp(x, y, "interior_" + asset, 48)); }
+    private void put(int x, int y, String asset) {
+        if (asset.equals("wall_window_small")) asset = "wall_window_leaded";
+        if (asset.equals("wall_window_wide") && style == InteriorStyle.ARCHIVE) asset = "wall_window_curtained";
+        props.add(new WorldProp(x, y, "interior_" + asset, 48));
+    }
     private void lamp(int x, int y) { put(x, y, "wall_sconce_lamp"); }
     private void rug(int x1, int y1, int x2, int y2) {
         for (int y = y1; y <= y2; y++) for (int x = x1; x <= x2; x++) {

@@ -55,9 +55,9 @@ Validation: `AssemblyCraftingTest` covers material comparisons, workmanship, opt
 
 `CraftingCalculationTest` checks exact job/attribute arithmetic, difficulty, attribute caps, profession gates, refinement paths, and reverse coverage of the crafting material registry. `ItemAppearanceTest` verifies category/material/quality artwork.
 
-The right-hand preview uses the same appearance descriptor as the inventory item. Primary material colors the body, secondary material colors fittings/lining or the inset gem, and ornaments color gold-coded accents. The additional eight categories use `assets/items/crafting_slots_atlas.png`; atlas cells have neutral body, red secondary, and gold ornament channels. Paired gloves/boots/legs retain both disconnected silhouettes. `CraftingAppearanceTest` verifies independent body and secondary color changes for every added category.
+The right-hand preview uses the same appearance descriptor as the inventory item. Primary material colors the body, secondary material colors fittings/lining or the inset gem, and ornaments color gold-coded accents. The additional eight categories use `assets/items/atlases/crafting_slots_atlas.png`; atlas cells have neutral body, red secondary, and gold ornament channels. Paired gloves/boots/legs retain both disconnected silhouettes. `CraftingAppearanceTest` verifies independent body and secondary color changes for every added category.
 
-Review images: `../../asset-review/crafting/workshop-assemble.png`, `../../asset-review/crafting/workshop-types.png`, and `../../asset-review/crafting/material-colors.png`. The built-in imagegen asset and exact prompt are saved in [crafting_slots_atlas.png](../assets/items/crafting_slots_atlas.png) and [crafting-slots-prompt.md](../assets/items/crafting-slots-prompt.md).
+Review images: `../../asset-review/crafting/workshop-assemble.png`, `../../asset-review/crafting/workshop-types.png`, and `../../asset-review/crafting/material-colors.png`. The built-in imagegen asset and exact prompt are saved in [crafting_slots_atlas.png](../assets/items/atlases/crafting_slots_atlas.png) and [crafting-slots-prompt.md](../assets/items/atlases/crafting-slots-prompt.md).
 
 ## Creative Crafting (testing)
 

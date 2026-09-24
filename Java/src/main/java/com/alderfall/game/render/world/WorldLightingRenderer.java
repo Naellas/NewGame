@@ -322,7 +322,7 @@ public final class WorldLightingRenderer {
         for (WorldLight light : activeWorldLights) {
             double distance = Math.hypot(wx - light.x, wy - light.y);
             if (!light.affectsShadows || distance < context.tileSize() * 0.4 || distance >= light.radius * 1.8) continue;
-            if (!interiorLightField.visible(state.world, light.x, light.y, light.radius * 2, context.tileSize())
+            if (!interiorLightField.visible(state.world, light.sourceX, light.sourceY, light.radius * 2, context.tileSize())
                     .contains(wx, wy)) continue;
             double influence = light.alpha * (1 - distance / (light.radius * 1.8));
             if (influence > strength) { strength = influence; strongest = light; }
@@ -398,7 +398,15 @@ public final class WorldLightingRenderer {
                 if (prop.asset().contains("tabletop_candle")) cy = Math.round((prop.y() + 0.32f) * tileSize);
             }
             float pulse = propGlowPulse(prop);
-            addWorldLight(cx, cy, propGlowRadius(prop.asset()), glow, propGlowAlpha(prop.asset()) * lightVisibilityForAsset(prop.asset()) * pulse, true);
+            float alpha = propGlowAlpha(prop.asset()) * lightVisibilityForAsset(prop.asset()) * pulse;
+            if (isHouseInterior() && prop.asset().startsWith("interior_wall_")) {
+                var face = ConnectedInteriorWalls.bounds(state.world, state.currentMapId, prop.x(), prop.y(),
+                        prop.x() * tileSize, prop.y() * tileSize, tileSize);
+                face.width = state.world.interiorVisualFootprint(prop.asset())[0] * tileSize;
+                addWorldLight(new WorldLight(cx + prop.offsetX() * tileSize / 48.0,
+                        face.y + face.height * .43 + prop.offsetY() * tileSize / 48.0,
+                        propGlowRadius(prop.asset()), glow, alpha, true, cx, cy, face));
+            } else addWorldLight(cx, cy, propGlowRadius(prop.asset()), glow, alpha, true);
         }
 
         float visibility = lightVisibility();
@@ -569,10 +577,13 @@ public final class WorldLightingRenderer {
     }
 
     private void addWorldLight(double x, double y, int radius, Color color, float alpha, boolean affectsShadows) {
-        if (alpha <= 0.005f) {
+        addWorldLight(new WorldLight(x, y, Math.max(1, radius), color, Math.min(1.0f, alpha), affectsShadows));
+    }
+
+    private void addWorldLight(WorldLight candidate) {
+        if (candidate.alpha <= 0.005f) {
             return;
         }
-        WorldLight candidate = new WorldLight(x, y, Math.max(1, radius), color, Math.min(1.0f, alpha), affectsShadows);
         if (activeWorldLights.size() < maxActiveWorldLights) {
             activeWorldLights.add(candidate);
             return;
@@ -732,7 +743,18 @@ public final class WorldLightingRenderer {
 
     private void clipInteriorLight(Graphics2D g, WorldLight light, double ox, double oy, int tileSize) {
         if (!isHouseInterior()) return;
-        java.awt.Shape visible = interiorLightField.visible(state.world, light.x, light.y, light.radius * 2, tileSize);
+        java.awt.Shape visible = interiorLightField.visible(state.world, light.sourceX, light.sourceY, light.radius * 2, tileSize);
+        if (light.mountingFace != null) {
+            var combined = new java.awt.geom.Area(visible);
+            int row = (int) Math.floor(light.sourceY / tileSize);
+            for (int x = (int) Math.floor((light.x - light.radius) / tileSize);
+                 x <= (int) Math.floor((light.x + light.radius) / tileSize); x++) {
+                if (state.world.tileAt(state.currentMapId, x, row) == 'o')
+                    combined.add(new java.awt.geom.Area(ConnectedInteriorWalls.bounds(state.world, state.currentMapId,
+                            x, row, x * tileSize, row * tileSize, tileSize)));
+            }
+            visible = combined;
+        }
         g.clip(java.awt.geom.AffineTransform.getTranslateInstance(-ox, -oy).createTransformedShape(visible));
     }
 

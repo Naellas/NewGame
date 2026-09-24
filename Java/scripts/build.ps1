@@ -1,9 +1,28 @@
 param(
     [string]$OutputDirectory = 'out',
     [switch]$IncludeTests,
-    [switch]$IncludeReviews
+    [switch]$IncludeReviews,
+    [switch]$ConservativeJit
 )
 $ErrorActionPreference = "Stop"
+
+# Honor an explicit JDK; otherwise prefer the project's installed Java 21 over
+# Oracle's PATH shim, which may select a newer compiler. Keep this process-local.
+$jdkHome = $env:JAVA_HOME
+if (-not $jdkHome) {
+    $jdkHome = Get-ChildItem -Path (Join-Path $env:ProgramFiles 'Java/jdk-21*'),
+        (Join-Path $env:ProgramFiles 'Eclipse Adoptium/jdk-21*') -Directory -ErrorAction SilentlyContinue |
+        Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
+}
+if ($jdkHome) {
+    $jdkBin = Join-Path $jdkHome 'bin'
+    if (-not (Test-Path -LiteralPath (Join-Path $jdkBin 'javac.exe')) -or
+        -not (Test-Path -LiteralPath (Join-Path $jdkBin 'java.exe'))) {
+        throw "JAVA_HOME must point to a JDK containing java.exe and javac.exe: $jdkHome"
+    }
+    $env:PATH = $jdkBin + [IO.Path]::PathSeparator + $env:PATH
+}
+
 
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
@@ -78,7 +97,9 @@ if ($IncludeReviews) {
 $sourceList = Join-Path $outputPath 'sources.args'
 $sourceLines = $sources | ForEach-Object { '"' + $_.Replace('\', '/') + '"' }
 [System.IO.File]::WriteAllLines($sourceList, [string[]]$sourceLines, [System.Text.UTF8Encoding]::new($false))
-javac --release 21 -encoding UTF-8 -d $outputPath "@$sourceList"
+$compilerArguments = @()
+if ($ConservativeJit) { $compilerArguments += '-J-XX:TieredStopAtLevel=1' }
+javac @compilerArguments --release 21 -encoding UTF-8 -d $outputPath "@$sourceList"
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }

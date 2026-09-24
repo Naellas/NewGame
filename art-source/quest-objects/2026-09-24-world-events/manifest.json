@@ -1,0 +1,30 @@
+[
+  {
+    "asset_id": "event_lost_purse",
+    "original_generation": "exec-feff18fe-ec58-4332-a228-590c188ea6f3.png",
+    "source": "event_lost_purse.png",
+    "asset_file": "Java/assets/environments/locations/quest/events/event_lost_purse.png",
+    "brief": "Weathered russet drawstring coin purse, stitched seams, ownership tag and spilled coins."
+  },
+  {
+    "asset_id": "event_ambush_brush",
+    "original_generation": "exec-0a2f31d9-e4c4-4972-b9f9-afcbdd3eefa0.png",
+    "source": "event_ambush_brush.png",
+    "asset_file": "Java/assets/environments/locations/quest/events/event_ambush_brush.png",
+    "brief": "Low dense olive green branches dragged across road, broken branches and discreet red cloth; no visible people."
+  },
+  {
+    "asset_id": "event_supply_cache",
+    "original_generation": "exec-64403d06-1b16-4abc-8d19-207c871f2c74.png",
+    "source": "event_supply_cache.png",
+    "asset_file": "Java/assets/environments/locations/quest/events/event_supply_cache.png",
+    "brief": "Low weathered wooden crate, iron straps, olive canvas, linen parcel and red wax seal."
+  },
+  {
+    "asset_id": "event_evidence_bundle",
+    "original_generation": "exec-ddf9fda8-f5e5-4e62-99f5-c8edf656112d.png",
+    "source": "event_evidence_bundle.png",
+    "asset_file": "Java/assets/environments/locations/quest/events/event_evidence_bundle.png",
+    "brief": "Folded parchment letters, scroll and dark leather ledger tied with red cord and wax seal; edited to remove outer haze."
+  }
+]

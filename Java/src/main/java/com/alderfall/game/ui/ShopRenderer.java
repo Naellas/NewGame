@@ -33,7 +33,7 @@ public final class ShopRenderer {
     }
     private void trade(String key, boolean buying) {
         if (state.activeShop == null) return;
-        if (buying) state.buyShopItem(state.activeShop.availableStock(state.player.level).indexOf(key));
+        if (buying) state.buyShopItem(state.shopStock(state.activeShop).indexOf(key));
         else state.sellShopItem(new ArrayList<>(state.player.inventory.keySet()).indexOf(key));
     }
     public void press(Point point) {
@@ -106,7 +106,7 @@ public final class ShopRenderer {
         g.drawString(shop.name(), panelX + 44, panelY + 54);
         g.setFont(new Font("SansSerif", Font.PLAIN, 17));
         g.setColor(new Color(210, 213, 222));
-        g.drawString("Gold: " + state.player.gold, panelX + 44, panelY + 88);
+        g.drawString("Gold: " + state.player.gold + "    Restocks on day " + state.shopRestockDay(), panelX + 44, panelY + 88);
         g.setColor(new Color(96, 88, 72, 120));
         g.drawLine(panelX + 44, panelY + 122, panelX + panelW - 44, panelY + 122);
 
@@ -141,7 +141,7 @@ public final class ShopRenderer {
 
     private void drawGrid(Graphics2D g, int x, int y, int w, int h, boolean buying) {
         ItemBrowser browser = buying ? stockBrowser : packBrowser;
-        List<String> source = buying ? state.activeShop.availableStock(state.player.level)
+        List<String> source = buying ? state.shopStock(state.activeShop)
                 : new ArrayList<>(state.player.inventory.keySet());
         List<String> items = browser.items(source);
         drawTradeColumnHeader(g, x, y - 24, w, buying ? "Shop Stock / Buy" : "Shared Pack / Sell");
@@ -161,7 +161,8 @@ public final class ShopRenderer {
             String key = items.get(i); int local = i - browser.scroll;
             Rectangle rect = new Rectangle(x + (local % cols) * (cell + gap), gy + (local / cols) * (cell + gap), cell, cell);
             int price = buying ? GameData.itemCost(key) : Math.max(1, GameData.itemCost(key) / 2);
-            boolean enabled = !buying || price > 0 && state.player.gold >= price;
+            int remaining = buying ? state.shopQuantities(state.activeShop).getOrDefault(key, 0) : 0;
+            boolean enabled = !buying || remaining > 0 && price > 0 && state.player.gold >= price;
             g.setColor(enabled ? new Color(33, 40, 53) : new Color(37, 30, 35));
             g.fillRoundRect(rect.x, rect.y, cell, cell, 8, 8);
             g.setColor(!browser.query.isBlank() ? new Color(255, 216, 122) : rarityColorForItem(key));
@@ -173,7 +174,10 @@ public final class ShopRenderer {
             g.setColor(enabled ? new Color(246, 214, 134) : new Color(235, 126, 126));
             g.drawString((buying ? "Buy " : "Sell ") + price + "g", rect.x + 5, rect.y + 77);
             if (!buying) { g.setColor(Color.WHITE); g.drawString("x" + state.player.inventory.get(key), rect.x + 4, rect.y + 14); }
-            else if (local < 9) g.drawString(Integer.toString(local + 1), rect.x + 4, rect.y + 14);
+            else {
+                g.drawString(remaining == 0 ? "Sold out" : "x" + remaining, rect.x + 4, rect.y + 14);
+                if (local < 9) g.drawString(Integer.toString(local + 1), rect.x + cell - 12, rect.y + 14);
+            }
             tiles.add(new TradeTile(rect, key, buying));
             effects.buttons().add(new UiButton(rect, "trade:" + buying + ":" + key, () -> trade(key, buying)));
             Equipment gear = GameData.equipment(key);

@@ -1,0 +1,392 @@
+{
+  "sources": {
+    "timber": {
+      "file": "timber.png",
+      "sha256": "5a4bdfeab3650a75f7f237f085ef4ad9e7ead5e500636826f03a206f582e0ff6"
+    },
+    "paneled": {
+      "file": "paneled.png",
+      "sha256": "63d628ec314b7162aff731758db451b8c71f6e0d48c65c145502a627ac758837"
+    },
+    "eastern": {
+      "file": "eastern.png",
+      "sha256": "59f25fc271dc0b4ed0275342ccabf48a437e2db76e9a26d419fad4585076629f"
+    },
+    "stone": {
+      "file": "stone.png",
+      "sha256": "5f16772db4d4c5f43f6fed4b84b055dd98757e11334980ecfb8c9b108fb4edee"
+    }
+  },
+  "crops": [
+    {
+      "source": "timber",
+      "box": [
+        21,
+        44,
+        94,
+        120
+      ],
+      "size": [
+        48,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_timber_floor.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        34,
+        368,
+        120,
+        446
+      ],
+      "size": [
+        48,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_timber_face.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        1048,
+        345,
+        1230,
+        365
+      ],
+      "size": [
+        48,
+        8
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_timber_cap.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        1049,
+        497,
+        1230,
+        520
+      ],
+      "size": [
+        48,
+        7
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_timber_base.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        124,
+        367,
+        137,
+        447
+      ],
+      "size": [
+        6,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_timber_post.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        1048,
+        345,
+        1230,
+        365
+      ],
+      "rotate": 90,
+      "size": [
+        16,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_timber_side.png"
+    },
+    {
+      "source": "paneled",
+      "box": [
+        290,
+        41,
+        411,
+        161
+      ],
+      "size": [
+        48,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_paneled_floor.png"
+    },
+    {
+      "source": "paneled",
+      "box": [
+        441,
+        507,
+        537,
+        645
+      ],
+      "size": [
+        48,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_paneled_face.png"
+    },
+    {
+      "source": "paneled",
+      "box": [
+        246,
+        891,
+        379,
+        915
+      ],
+      "size": [
+        48,
+        8
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_paneled_cap.png"
+    },
+    {
+      "source": "paneled",
+      "box": [
+        242,
+        809,
+        328,
+        826
+      ],
+      "size": [
+        48,
+        7
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_paneled_base.png"
+    },
+    {
+      "source": "paneled",
+      "box": [
+        145,
+        508,
+        155,
+        643
+      ],
+      "size": [
+        6,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_paneled_post.png"
+    },
+    {
+      "source": "paneled",
+      "box": [
+        246,
+        891,
+        379,
+        915
+      ],
+      "rotate": 90,
+      "size": [
+        16,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_paneled_side.png"
+    },
+    {
+      "source": "eastern",
+      "box": [
+        397,
+        40,
+        469,
+        119
+      ],
+      "size": [
+        48,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_eastern_floor.png"
+    },
+    {
+      "source": "eastern",
+      "box": [
+        341,
+        526,
+        407,
+        697
+      ],
+      "size": [
+        48,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_eastern_face.png"
+    },
+    {
+      "source": "eastern",
+      "box": [
+        455,
+        758,
+        545,
+        778
+      ],
+      "size": [
+        48,
+        8
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_eastern_cap.png"
+    },
+    {
+      "source": "eastern",
+      "box": [
+        20,
+        1119,
+        173,
+        1148
+      ],
+      "size": [
+        48,
+        7
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_eastern_base.png"
+    },
+    {
+      "source": "eastern",
+      "box": [
+        411,
+        525,
+        422,
+        698
+      ],
+      "size": [
+        6,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_eastern_post.png"
+    },
+    {
+      "source": "eastern",
+      "box": [
+        455,
+        758,
+        545,
+        778
+      ],
+      "rotate": 90,
+      "size": [
+        16,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_eastern_side.png"
+    },
+    {
+      "source": "stone",
+      "box": [
+        19,
+        18,
+        126,
+        124
+      ],
+      "size": [
+        48,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_stone_floor.png"
+    },
+    {
+      "source": "stone",
+      "box": [
+        278,
+        318,
+        371,
+        402
+      ],
+      "size": [
+        48,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_stone_face.png"
+    },
+    {
+      "source": "stone",
+      "box": [
+        269,
+        278,
+        367,
+        299
+      ],
+      "size": [
+        48,
+        8
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_stone_cap.png"
+    },
+    {
+      "source": "stone",
+      "box": [
+        309,
+        1117,
+        458,
+        1142
+      ],
+      "size": [
+        48,
+        7
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_stone_base.png"
+    },
+    {
+      "source": "stone",
+      "box": [
+        261,
+        317,
+        274,
+        400
+      ],
+      "size": [
+        6,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_stone_post.png"
+    },
+    {
+      "source": "stone",
+      "box": [
+        269,
+        278,
+        367,
+        299
+      ],
+      "rotate": 90,
+      "size": [
+        16,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_stone_side.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        759,
+        386,
+        800,
+        439
+      ],
+      "size": [
+        48,
+        62
+      ],
+      "asset_file": "environments/interiors/modular/interior_wall_window_leaded.png",
+      "transparent_padding": 1
+    },
+    {
+      "source": "paneled",
+      "box": [
+        1108,
+        1053,
+        1234,
+        1214
+      ],
+      "size": [
+        96,
+        123
+      ],
+      "clear_navy_background": true,
+      "asset_file": "environments/interiors/modular/interior_wall_window_curtained.png"
+    }
+  ]
+}

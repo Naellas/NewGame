@@ -21,7 +21,22 @@ public final class InteriorFurnishings {
                     VillageManager.VillageCost.of(count * 3, Map.of(material, count)), category);
         }
     }
-    private static final List<Furnishing> ALL = List.of(
+    private static final List<Furnishing> ALL = withDirectionalSeating(List.of(
+            new Furnishing("interior_wall_window_leaded", "Leaded Window", "Wall-mounted", Placement.WALL, 1, 1, 1.25f),
+            new Furnishing("interior_wall_window_curtained", "Curtained Window", "Wall-mounted", Placement.WALL, 2, 1, 1.65f),
+            new Furnishing("interior_archive_lectern", "Library Lectern", "Workstations", Placement.FLOOR, 1, 1, 1.25f),
+            new Furnishing("interior_oak_support_pillar", "Oak Support Pillar", "Misc", Placement.FLOOR, 1, 1, 2f),
+            new Furnishing("interior_smith_storage", "Smith Storage Front", "Storage", Placement.FLOOR, 2, 1, 1.55f),
+            new Furnishing("interior_smith_worktop", "Smith Finishing Bench", "Workstations", Placement.SURFACE, 2, 1, 1f),
+            new Furnishing("interior_smith_hearth", "Smith Forge Hearth", "Workstations", Placement.FLOOR, 2, 1, 1.8f),
+            new Furnishing("interior_joinery_storage", "Joinery Storage Front", "Storage", Placement.FLOOR, 2, 1, 1.55f),
+            new Furnishing("interior_bakehouse_storage", "Bakehouse Storage Front", "Storage", Placement.FLOOR, 2, 1, 1.55f),
+            new Furnishing("interior_apothecary_storage", "Apothecary Storage Front", "Storage", Placement.FLOOR, 2, 1, 1.55f),
+            new Furnishing("interior_archive_storage", "Archive Storage Front", "Storage", Placement.FLOOR, 2, 1, 1.55f),
+            new Furnishing("interior_joinery_worktop", "Joinery Worktop", "Workstations", Placement.SURFACE, 2, 1, 1f),
+            new Furnishing("interior_bakehouse_worktop", "Bakehouse Preparation Table", "Workstations", Placement.SURFACE, 2, 1, 1f),
+            new Furnishing("interior_apothecary_worktop", "Apothecary Worktop", "Workstations", Placement.SURFACE, 2, 1, 1f),
+            new Furnishing("interior_archive_worktop", "Archive Reading Table", "Workstations", Placement.SURFACE, 2, 1, 1f),
             new Furnishing("interior_sofa_red", "Red Sofa", "Seating", Placement.FLOOR, 2, 1, 1.2f),
             new Furnishing("interior_armchair_green", "Green Armchair", "Seating", Placement.FLOOR, 1, 1, 1.2f),
             new Furnishing("interior_stool", "Stool", "Seating", Placement.FLOOR, 1, 1, 0.7f),
@@ -73,7 +88,18 @@ public final class InteriorFurnishings {
             new Furnishing("interior_open_storage_bin", "Open Storage Bin", "Storage", Placement.FLOOR, 1, 1, 0.8f),
             new Furnishing("interior_handcart", "Handcart", "Workstations", Placement.FLOOR, 2, 1, 1f),
             new Furnishing("interior_leaning_ladder", "Leaning Ladder", "Workstations", Placement.FLOOR, 1, 1, 1.6f)
-    );
+    ));
+    private static List<Furnishing> withDirectionalSeating(List<Furnishing> existing) {
+        var result = new java.util.ArrayList<>(existing);
+        for (String direction : DirectionalSeating.DIRECTIONS) {
+            result.add(new Furnishing("interior_armchair_green_" + direction, "Green Armchair " + direction,
+                    "Seating", Placement.FLOOR, 1, 1, 1.2f));
+            boolean horizontal = direction.equals("north") || direction.equals("south");
+            result.add(new Furnishing("interior_bench_" + direction, "Backless Bench " + direction,
+                    "Seating", Placement.FLOOR, horizontal ? 2 : 1, horizontal ? 1 : 2, horizontal ? .65f : 1.5f));
+        }
+        return List.copyOf(result);
+    }
     private static final Map<String, Furnishing> BY_ASSET = ALL.stream().collect(
             Collectors.toUnmodifiableMap(Furnishing::asset, Function.identity()));
     public static List<Furnishing> all() { return ALL; }

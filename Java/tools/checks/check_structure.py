@@ -48,6 +48,20 @@ def main() -> int:
     catalog = (JAVA_ROOT / 'src/main/java/com/alderfall/game/content/AssetCatalog.java').read_text(encoding='utf-8')
     folders = re.findall(r'"([^"]+)"', catalog.split('FOLDERS = {', 1)[1].split('};', 1)[0])
     assets = JAVA_ROOT / 'assets'
+    placements = json.loads((JAVA_ROOT / 'config/asset-placements.json').read_text(encoding='utf-8'))['paths']
+    for old, new in placements.items():
+        if (assets / old).is_file():
+            errors.append(f'Retired asset placement recreated: {old}; use {new}')
+        if not (assets / new).is_file():
+            errors.append(f'Missing canonical asset: {new}')
+    for path in (assets / 'items').glob('*.png'):
+        errors.append(f'Unsorted item asset: {path.name}; use an item category')
+    for retired in ('items/generated', 'environments/settlements/city/regional',
+                    'environments/settlements/city/buildings/city',
+                    'environments/settlements/city/buildings/village'):
+        if any((assets / retired).rglob('*.png')):
+            errors.append(f'Retired asset folder recreated: {retired}')
+
     stems = defaultdict(set)
     files = list(assets.glob('*.png'))
     for folder in folders:

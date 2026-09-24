@@ -10,6 +10,23 @@ public final class Main {
 
     public static void main(String[] args) {
         Path javaRoot = resolveJavaRoot();
+        if (args.length == 1 && "--launcher".equals(args[0])) {
+            LauncherWindow.launch(javaRoot);
+            return;
+        }
+        if (args.length > 0 && "--editor".equals(args[0])) {
+            com.alderfall.game.editor.MapEditorWindow.launch(javaRoot, args.length > 1 ? Path.of(args[1]) : null);
+            return;
+        }
+        if (args.length == 2 && "--playtest".equals(args[0])) {
+            try {
+                var document = com.alderfall.game.editor.MapDocumentIO.read(Path.of(args[1]));
+                GameWindow.launchPlaytest(javaRoot, document);
+            } catch (java.io.IOException ex) {
+                throw new IllegalArgumentException("Cannot import map: " + ex.getMessage(), ex);
+            }
+            return;
+        }
         GameWindow.launch(javaRoot);
     }
 

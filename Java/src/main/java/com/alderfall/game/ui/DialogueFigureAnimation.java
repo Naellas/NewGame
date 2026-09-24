@@ -10,6 +10,7 @@ import java.util.Map;
 /** Small, art-aligned facial poses and a foot-anchored idle for dialogue cutouts. */
 public final class DialogueFigureAnimation {
     private final DialogueAnimationLayers.Settings settings;
+    private final boolean denseReference=Boolean.getBoolean("alderfall.dialogueDenseReference");
     public DialogueFigureAnimation() { this(Boolean.getBoolean("alderfall.dialogueReducedMotion") ? DialogueAnimationLayers.Settings.REDUCED : DialogueAnimationLayers.Settings.STANDARD); }
     public DialogueFigureAnimation(DialogueAnimationLayers.Settings settings) {
         this.settings=java.util.Objects.requireNonNull(settings);
@@ -73,10 +74,12 @@ public final class DialogueFigureAnimation {
         DialogueRigProfile profile;
         DialogueAnimationLayers layers;
         DialoguePartMask mask;
+        Rectangle[] detailRegions;
         DialogueBodyMotion.Rig body;
         DialogueBodyMotion.Node[] skeleton;
         float[] footPin;
         int[] firstPixel,lastPixel;
+        Rectangle viewport;
         long frame = -1;
         final DialoguePoseTrack track = new DialoguePoseTrack();
         DialoguePoseTrack.Pose pose;
@@ -118,7 +121,7 @@ public final class DialogueFigureAnimation {
             Key key = new Key(source, sprite, blink, mouth);
             pose = poses.computeIfAbsent(key, ignored -> makePose(source, face, DialogueRigProfile.forSprite(sprite), blink, mouth));
         }
-        if (face != null) {
+        if (face != null && (settings.breathing() || settings.sway() || settings.gestures() || settings.hands() || settings.secondary() || settings.softTissue())) {
             Rig rig = rigs.computeIfAbsent(sprite + ":" + partnerDirection, ignored -> new Rig());
             if (rig.source != source) {
                 rig.source = source;
@@ -127,6 +130,14 @@ public final class DialogueFigureAnimation {
                 rig.layers=new DialogueAnimationLayers(sprite,rig.profile);
                 rig.mask=new DialoguePartMask(rig.profile,rig.bounds,source.getWidth(),source.getHeight());
                 double normalizedScale=rig.bounds.height/1000.0;
+                rig.detailRegions=new Rectangle[rig.profile.parts().size()];
+                for(int i=0;i<rig.detailRegions.length;i++) {
+                    double[] polygon=rig.profile.parts().get(i).polygon();
+                    double left=Double.POSITIVE_INFINITY,top=left,right=0,bottom=0;
+                    for(int point=0;point<polygon.length;point+=2){left=Math.min(left,polygon[point]);right=Math.max(right,polygon[point]);top=Math.min(top,polygon[point+1]);bottom=Math.max(bottom,polygon[point+1]);}
+                    rig.detailRegions[i]=new Rectangle((int)(rig.bounds.x+left*normalizedScale)-3,(int)(rig.bounds.y+top*normalizedScale)-3,
+                            (int)Math.ceil((right-left)*normalizedScale)+6,(int)Math.ceil((bottom-top)*normalizedScale)+6);
+                }
                 rig.body=DialogueBodyMotion.rig(sprite,(face.lx+face.rx)*.5,rig.bounds.width/normalizedScale);
                 rig.skeleton=DialogueBodyMotion.skeleton(rig.body,(face.lx+face.rx)*.5,(face.ly+face.ry)*.5,face.my);
                 rig.footPin=new float[source.getWidth()*source.getHeight()];
@@ -148,9 +159,13 @@ public final class DialogueFigureAnimation {
                 rig.frame = -1;
             }
             DialoguePoseTrack.Pose motion = rig.track.update(timeMs,speaking && settings.gestures(),listening && settings.gestures());
-            if (timeMs != rig.frame || !motion.equals(rig.pose) || mouth != rig.mouth || blink != rig.blink) {
+            Rectangle viewport=g.getClipBounds();
+            if(viewport==null)viewport=new Rectangle(0,0,source.getWidth(),source.getHeight());
+            else {viewport.translate(-x,-y);viewport=viewport.intersection(new Rectangle(0,0,source.getWidth(),source.getHeight()));}
+            if (!viewport.equals(rig.viewport) || timeMs != rig.frame || !motion.equals(rig.pose) || mouth != rig.mouth || blink != rig.blink) {
                 DialogueAnimationLayers.Idle idle=DialogueAnimationLayers.idle(sprite,timeMs/1000.0,settings);
                 double[] secondary=rig.layers.update(timeMs,motion.angle()+idle.sway()*2,speaking,settings);
+                rig.viewport=viewport;
                 articulate(pose, rig, face, motion, partnerDirection, timeMs,
                         idle,secondary,rig.layers.chainOffsets());
                 rig.frame = timeMs; rig.pose = motion; rig.mouth = mouth; rig.blink = blink;
@@ -253,7 +268,7 @@ public final class DialogueFigureAnimation {
     }
 
     /** Compose whole-body weight shift, local joints and attachments before one texture sample. */
-    private static void articulate(BufferedImage pose, Rig rig, Face face, DialoguePoseTrack.Pose motion, int direction, long timeMs, DialogueAnimationLayers.Idle idle, double[] secondary, double[][] chains) {
+    private void articulate(BufferedImage pose, Rig rig, Face face, DialoguePoseTrack.Pose motion, int direction, long timeMs, DialogueAnimationLayers.Idle idle, double[] secondary, double[][] chains) {
         Graphics2D g = rig.rendered.createGraphics();
         g.setComposite(AlphaComposite.Src); g.drawImage(pose,0,0,null); g.dispose();
         Rectangle b = rig.bounds;
@@ -279,12 +294,11 @@ public final class DialogueFigureAnimation {
             double[] polygon=rig.profile.parts().get(i).polygon();
             for(int point=1;point<polygon.length;point+=2)partBottom[i]=Math.max(partBottom[i],polygon[point]);
         }
-        for (int y = 0; y < height; y++) {
-            double torso = Math.max(0,1-(y-b.y)/(b.height*.52));
-            torso *= torso;
-            for (int x = rig.firstPixel[y]; x <= rig.lastPixel[y]; x++) {
-                double footPin=rig.footPin[y*width+x];
-                if(footPin>=1)continue; // Foot artwork stays exactly at its original contact.
+        DialogueDeformationMesh.Warp warp=(x,y,result,index)-> {
+                double torso=Math.max(0,1-(y-b.y)/(b.height*.52));torso*=torso;
+                double footPin=x>=0&&y>=0&&x<width&&y<height&&x==(int)x&&y==(int)y
+                        ? rig.footPin[(int)y*width+(int)x] : rig.body.pin((x-b.x)/scale,(y-b.y)/scale);
+                if(footPin>=1){result[index]=x;result[index+1]=y;return;}
                 double nx=(x-b.x)/scale,ny=(y-b.y)/scale;
                 double baseX=b.x+wholeBody.sourceX(nx,ny,footPin)*scale;
                 double baseY=b.y+wholeBody.sourceY(nx,ny,footPin)*scale;
@@ -333,9 +347,21 @@ public final class DialogueFigureAnimation {
                         }
                     }
                 }
-                if(Math.abs(sx-x)+Math.abs(sy-y)>1e-9)
-                    output[y*width+x] = sampleSharp(pixels,width,height,sx,sy);
-            }
+                result[index]=sx;result[index+1]=sy;
+        };
+        if(denseReference) {
+            double[] point=new double[2];
+            for(int y=rig.viewport.y;y<rig.viewport.y+rig.viewport.height;y++)
+                for(int x=Math.max(rig.viewport.x,rig.firstPixel[y]);x<Math.min(rig.viewport.x+rig.viewport.width,rig.lastPixel[y]+1);x++) {
+                    warp.map(x,y,point,0);
+                    if(Math.abs(point[0]-x)+Math.abs(point[1]-y)>1e-9)output[y*width+x]=sampleSharp(pixels,width,height,point[0],point[1]);
+                }
+        } else {
+            DialogueDeformationMesh.draw(pose,rig.rendered,rig.viewport,rig.firstPixel,rig.lastPixel,rig.detailRegions,warp,Math.max(12,(int)(24*scale)));
+            // Exact contact regions must not inherit interpolation from neighbouring cells.
+            for(int y=rig.viewport.y;y<rig.viewport.y+rig.viewport.height;y++)
+                for(int x=Math.max(rig.viewport.x,rig.firstPixel[y]);x<Math.min(rig.viewport.x+rig.viewport.width,rig.lastPixel[y]+1);x++)
+                    if(rig.footPin[y*width+x]>=1)output[y*width+x]=pixels[y*width+x];
         }
     }
 

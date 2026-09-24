@@ -1,0 +1,12 @@
+meadow: TilePoint[x=96, y=96]; riverside
+forest: TilePoint[x=182, y=78]; highwall
+mountains: TilePoint[x=88, y=230]; sanctum
+frost: TilePoint[x=222, y=62]; highwall
+sandstone: TilePoint[x=88, y=236]; sanctum
+badlands: TilePoint[x=192, y=254]; sanctum
+fen: TilePoint[x=366, y=92]; northroad
+coast: TilePoint[x=112, y=158]; crownlands
+mountain-route: [TilePoint[x=145, y=211], TilePoint[x=144, y=211], TilePoint[x=143, y=211], TilePoint[x=142, y=211], TilePoint[x=141, y=211], TilePoint[x=140, y=211], TilePoint[x=139, y=211], TilePoint[x=138, y=211], TilePoint[x=137, y=211], TilePoint[x=136, y=211], TilePoint[x=135, y=211], TilePoint[x=134, y=211], TilePoint[x=133, y=211], TilePoint[x=133, y=212], TilePoint[x=132, y=212], TilePoint[x=131, y=212], TilePoint[x=130, y=212]]
+city_highwall: TilePoint[x=8, y=8]
+city_sanctum: TilePoint[x=12, y=8]
+city_belltower: TilePoint[x=12, y=8]

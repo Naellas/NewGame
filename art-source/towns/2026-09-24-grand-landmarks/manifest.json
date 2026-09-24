@@ -1,0 +1,22 @@
+[
+  {
+    "source": "town_briarbridge_bridge_court_grand.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/river/town_briarbridge_bridge_court_grand.png",
+    "sha256": "96350A002D703C064779E0AABA512A7E0928BF76C5CAD844C456C2D1015AFFC6"
+  },
+  {
+    "source": "town_ironvale_forge_keep_grand.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_ironvale_forge_keep_grand.png",
+    "sha256": "FC4F081C748977000C166A48B750B5D8D5D5DAA208E70C0020D8A598B2F45B69"
+  },
+  {
+    "source": "town_embermarket_sun_court_grand.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_embermarket_sun_court_grand.png",
+    "sha256": "72FFC4F0E851F589C75BA2CEA39DBB83799133E4E5CF1CEFB99D1C491A69B8CF"
+  },
+  {
+    "source": "town_moonspire_botanical_glasshouse.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/hearth/town_moonspire_botanical_glasshouse.png",
+    "sha256": "4844C310D49A81AFE03856005AC2124B0EC5DBE7DBDE97E58743C6B5C62BD573"
+  }
+]

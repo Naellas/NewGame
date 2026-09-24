@@ -36,6 +36,16 @@ public final class RoadSurfaceTest {
                 }
             }
         }
+        state.currentMapId = "town_briarbridge";
+        MapArea town = state.world.area(state.currentMapId);
+        int[][] roadPixels = new int[3][];
+        char[] grades = {'K', 'T', '8'};
+        for (int i = 0; i < grades.length; i++) {
+            fill(town, 'g', grades[i]);
+            roadPixels[i] = pixels(renderer.tile(state, painter, 8, 8, 48).image());
+        }
+        require(!Arrays.equals(roadPixels[0], roadPixels[1]) && !Arrays.equals(roadPixels[1], roadPixels[2])
+                && !Arrays.equals(roadPixels[0], roadPixels[2]), "Town street hierarchy lost in rendering");
         state.currentMapId = outdoor;
         MapArea area = state.world.area(outdoor);
         area.fillTiles(0, 0, area.width() - 1, area.height() - 1, 's');

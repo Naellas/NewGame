@@ -402,12 +402,20 @@ final class EquipmentCatalog {
     }
 
     public static int itemCost(String key) {
+        if (key == null) return 0;
         Item item = ITEMS.get(key);
         if (item != null) {
             return item.cost();
         }
         Equipment equipment = equipment(key);
-        return equipment == null ? 0 : equipment.cost();
+        if (equipment != null) return equipment.cost();
+        MaterialCatalog.Material material = MaterialCatalog.get(key);
+        if (material != null) return 4 * material.tier() * material.tier();
+        return switch (key) {
+            case "iron_pickaxe" -> 60;
+            case "shell_lure" -> 12;
+            default -> 0;
+        };
     }
 
     public static boolean isEquipment(String key) {

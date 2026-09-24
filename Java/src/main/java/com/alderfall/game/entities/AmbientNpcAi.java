@@ -607,8 +607,9 @@ final class AmbientNpcAi {
             TilePoint door = doors.get((start + i) % doors.size());
             int[][] spots = {{0, 1}, {-1, 1}, {1, 1}, {0, 2}, {-1, 2}, {1, 2}};
             for (int[] spot : spots) {
-                int x = door.x() + spot[0];
-                int y = door.y() + spot[1];
+                TilePoint outside = building.outside(door, spot[0], spot[1]);
+                int x = outside.x();
+                int y = outside.y();
                 if (world.isPassable(mapId, x, y)) {
                     return new TilePoint(x, y);
                 }

@@ -11,6 +11,18 @@ from tools.assets.shared.asset_paths import asset_relative, player_dir, companio
 
 
 class ImageHelpersTest(unittest.TestCase):
+    def test_building_and_equipment_routes(self):
+        cases = {
+            'city/regional/regional_sun_cistern_house.png': 'environments/settlements/city/buildings/sun/regional_sun_cistern_house.png',
+            'items/generated/new_armor_mended_linen_hood.png': 'items/helmets/new_armor_mended_linen_hood.png',
+            'items/heartstone_crook.png': 'items/weapons/staves/heartstone_crook.png',
+            'items/material_oak_wood.png': 'items/materials/material_oak_wood.png',
+        }
+        for old, new in cases.items():
+            self.assertEqual(new, asset_relative(old))
+            self.assertEqual(new, asset_relative(new))
+
+
     def test_reparenting_preserves_legacy_importer_selection(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

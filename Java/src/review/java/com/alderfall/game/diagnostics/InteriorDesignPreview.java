@@ -33,6 +33,24 @@ public final class InteriorDesignPreview {
                 Method place = WorldMap.class.getDeclaredMethod("addFurniture", MapArea.class, int.class, int.class, String.class);
                 Method render = GamePanel.class.getDeclaredMethod("drawWorld", Graphics2D.class);
                 place.setAccessible(true); render.setAccessible(true);
+                if (args.length > 1 && args[1].equals("furniture-quest")) {
+                    Npc keeper = FurnitureQuestContent.keeper(state.world);
+                    if (keeper == null) throw new AssertionError("Missing Oakhaven inn");
+                    state.currentMapId = keeper.mapId();
+                    Quest quest = state.quests.get(FurnitureQuestContent.ID);
+                    quest.accepted = true;
+                    for (int stage : new int[]{1, 3, 4, 5}) {
+                        quest.stageIndex = Math.min(stage, quest.stages.size() - 1);
+                        quest.progress = stage == 5 ? 1 : 0;
+                        quest.observedStages.clear();
+                        for (int i = 0; i < stage; i++) quest.observedStages.add(quest.stages.get(i).id());
+                        Method invalidate = GameState.class.getDeclaredMethod("invalidateQuestObjectiveCache");
+                        invalidate.setAccessible(true); invalidate.invoke(state);
+                        capture(panel, state, render, output.resolve("furniture-quest-" + stage + ".png"));
+                    }
+                    System.out.println("Captured furniture quest: ledger, reserve parcel, carried parcel, delivered parcel.");
+                    return;
+                }
                 for (String theme : InteriorLayout.THEMES) {
                     if (args.length > 1 && !theme.equals(args[1])) continue;
                     String source = switch (theme) {
@@ -56,24 +74,43 @@ public final class InteriorDesignPreview {
                         for (WorldProp prop : plan.props()) place.invoke(state.world, area, prop.x(), prop.y(), prop.asset());
                         if (area.props.size() != plan.props().size()) throw new AssertionError("Incomplete preview: " + id);
                         state.currentMapId = id;
-                        TilePoint entry = state.world.interiorEntryPoint(id);
-                        state.playerX = entry.x(); state.playerY = entry.y();
-                        ((CameraController) field(GamePanel.class, "cameraController").get(panel)).resetToPlayer();
-                        int tile = (int) Math.ceil(GameConfig.HEIGHT / (double) area.height());
-                        int width = tile * area.width();
-                        // Set the review viewport to the map's aspect ratio, using the same terrain,
-                        // furniture, occlusion and lighting pipeline as interactive play.
-                        field(GamePanel.class, "renderWidth").setInt(panel, width);
-                        BufferedImage image = new BufferedImage(width, GameConfig.HEIGHT, BufferedImage.TYPE_INT_RGB);
-                        Graphics2D g = image.createGraphics();
-                        render.invoke(panel, g); g.dispose();
-                        ImageIO.write(image, "png", output.resolve(theme + "-" + seed + ".png").toFile());
+                        TilePoint viewpoint = null;
+                        if (args.length > 2) {
+                            String[] xy = args[2].split(",");
+                            viewpoint = new TilePoint(Integer.parseInt(xy[0]), Integer.parseInt(xy[1]));
+                        }
+                        capture(panel, state, render, output.resolve(theme + "-" + seed + ".png"), viewpoint);
                     }
                     System.out.println("Captured " + theme + ": four footprint seeds.");
                 }
             } catch (Exception ex) { throw new IllegalStateException(ex); }
             finally { panel.shutdown(); }
         });
+    }
+
+    private static void capture(GamePanel panel, GameState state, Method render, Path output) throws Exception {
+        capture(panel, state, render, output, null);
+    }
+
+    private static void capture(GamePanel panel, GameState state, Method render, Path output, TilePoint viewpoint) throws Exception {
+        MapArea area = state.world.area(state.currentMapId);
+        TilePoint entry = state.world.interiorEntryPoint(state.currentMapId);
+        if (viewpoint != null) entry = viewpoint;
+        state.playerX = entry.x(); state.playerY = entry.y();
+        ((CameraController) field(GamePanel.class, "cameraController").get(panel)).resetToPlayer();
+        // Leave a tile of headroom and a tile below the shell. The ordinary
+        // viewport uses ceil-to-fill sizing, which crops tall rear-wall caps.
+        int tile = GameConfig.HEIGHT / (area.height() + 2);
+        field(GamePanel.class, "editorTileSize").setInt(panel, tile);
+        int width = tile * area.width();
+        field(GamePanel.class, "renderWidth").setInt(panel, width);
+        BufferedImage image = new BufferedImage(width, GameConfig.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+        g.setColor(new java.awt.Color(12, 13, 18));
+        g.fillRect(0, 0, width, GameConfig.HEIGHT);
+        g.translate(0, tile);
+        render.invoke(panel, g); g.dispose();
+        ImageIO.write(image, "png", output.toFile());
     }
 
     private static Field field(Class<?> type, String name) throws Exception {

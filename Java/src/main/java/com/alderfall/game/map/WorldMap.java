@@ -1,7 +1,13 @@
 package com.alderfall.game.map;
 
+import com.alderfall.game.Shop;
+
 import com.alderfall.game.BuildingGeometry;
+import com.alderfall.game.ConnectedFurniture;
+import com.alderfall.game.TownGardenArt;
 import com.alderfall.game.PropCollision;
+import com.alderfall.game.ModularMarket;
+import com.alderfall.game.GroundCoverPattern;
 
 import com.alderfall.game.InteriorStyle;
 import com.alderfall.game.InteriorFurnishings;
@@ -17,6 +23,8 @@ import com.alderfall.game.RegionalSettlementIdentity;
 import com.alderfall.game.Npc;
 import com.alderfall.game.NpcJob;
 import com.alderfall.game.Terrain;
+import com.alderfall.game.WaterDepth;
+import com.alderfall.game.TerrainElevation;
 import com.alderfall.game.TilePoint;
 import com.alderfall.game.VillageManager;
 import com.alderfall.game.WorldProp;
@@ -70,12 +78,43 @@ public final class WorldMap {
     private final Map<String, List<CityBuilding>> cityBuildings = new HashMap<>();
     private final Map<String, Map<CityBuilding, List<java.awt.geom.Rectangle2D.Double>>> buildingFootprintCache = new HashMap<>();
     private final Map<String, List<Npc>> interiorNpcs = new HashMap<>();
+    private final Map<String, Map<String, TilePoint>> townInteriorAnchors = new HashMap<>();
     private final List<WorldProp> playerVillageProps = new ArrayList<>();
     private final Set<String> removedPlayerVillageProps = new HashSet<>();
     private final Map<String, List<WorldProp>> playerInteriorProps = new HashMap<>();
     private final Map<String, Map<TilePoint, Character>> playerInteriorTiles = new HashMap<>();
     private final Map<String, Integer> playerVillageBuildingLevels = new HashMap<>();
     private final Map<TilePoint, Character> playerVillageTiles = new LinkedHashMap<>();
+    private final Map<TilePoint, Double> playerVillageHeights = new LinkedHashMap<>();
+
+    public Map<TilePoint, Double> playerVillageHeights() { return Map.copyOf(playerVillageHeights); }
+
+    public boolean canEditVillageHeight(int x, int y) {
+        MapArea area = maps.get(PLAYER_VILLAGE_ID);
+        if (area == null || x < 2 || y < 2 || x >= area.width()-2 || y >= area.height()-2
+                || "gfnsbvPqAVUTrKpjlayCG78!$%&()".indexOf(area.tileAt(x,y)) < 0) return false;
+        for (int yy=y-2; yy<=y+2; yy++) for (int xx=x-2; xx<=x+2; xx++) {
+            if (cityBuildingAt(PLAYER_VILLAGE_ID,xx,yy)!=null || transitionAt(PLAYER_VILLAGE_ID,xx,yy)!=null
+                    || "w~B".indexOf(area.tileAt(xx,yy))>=0) return false;
+        }
+        return playerVillagePropAt(x,y)==null;
+    }
+
+    public boolean setPlayerVillageHeight(int x, int y, double height) {
+        if (!Double.isFinite(height) || !canEditVillageHeight(x,y)) return false;
+        double value = Math.round(Math.max(0,Math.min(4,height))*4)/4.0;
+        TilePoint point = new TilePoint(x,y);
+        if (Double.valueOf(value).equals(playerVillageHeights.get(point))) return false;
+        playerVillageHeights.put(point,value);
+        maps.get(PLAYER_VILLAGE_ID).markVisualChange();
+        return true;
+    }
+
+    public boolean resetPlayerVillageHeight(int x, int y) {
+        if (playerVillageHeights.remove(new TilePoint(x,y)) == null) return false;
+        maps.get(PLAYER_VILLAGE_ID).markVisualChange();
+        return true;
+    }
     private final List<LocationPatch> locationPatches = new ArrayList<>();
     private int legacyLocationPatchCount;
     private final List<AdventureSite> adventureSites = new ArrayList<>();
@@ -83,26 +122,42 @@ public final class WorldMap {
     private final List<SettlementSite> settlementSites = new ArrayList<>();
     private int playerVillageStage = 1;
     private final int groveSeed;
+    private TerrainElevation terrainElevation;
 
-    public WorldMap(long seed) {
+    public TerrainElevation.Field elevation(String mapId) {
+        return terrainElevation==null ? TerrainElevation.FLAT : terrainElevation.field(mapId);
+    }
+
+    public WorldMap(long seed) { this(seed,message -> {}); }
+    public WorldMap(long seed,java.util.function.Consumer<String> progress) {
+        progress.accept("Generating terrain and world locations...");
         groveSeed = (int) (seed ^ (seed >>> 32));
         build(seed);
+        progress.accept("Building towns, dungeons and interiors...");
         registerMaps();
         addStoryInvestigationSites();
         addCampaignPlaces();
         addWesternAbbeyGrounds();
+        progress.accept("Placing nature sites and scenery...");
         NatureSiteGenerator.populate(this, groveSeed);
         DestinationApproaches.populate(this, groveSeed);
         for (SettlementSite site : settlementSites) {
             MapArea settlement = area(site.id());
+            progress.accept("Populating "+settlement.label+"...");
             List<Npc> residents = RegionalSettlementGenerator.populate(this, settlement);
             SettlementDressing.refine(this, settlement);
+            TownLayout.finish(this, settlement);
+            RegionalSettlementGenerator.addTownResidents(this, settlement, residents);
             if (!residents.isEmpty()) {
                 List<Npc> combined = new ArrayList<>(npcs(site.id()));
                 combined.addAll(residents);
                 interiorNpcs.put(site.id(), combined);
             }
         }
+        progress.accept("Preparing terrain elevation and travel routes...");
+        terrainElevation=new TerrainElevation(this,seed);
+        // Plan fixed mountain access before save restoration or harvesting alters scenery.
+        terrainElevation.field(OVERWORLD_ID);
     }
 
     private void addWesternAbbeyGrounds() {
@@ -364,6 +419,27 @@ public final class WorldMap {
         return area == null ? 0L : area.visualRevision();
     }
 
+    public WaterDepth waterDepth(String mapId, int x, int y) {
+        var dry = WaterDepth.DRY;
+        MapArea area = area(mapId);
+        if (area == null || x < 0 || y < 0 || x >= area.width() || y >= area.height()) return dry;
+        char tile = area.tileAt(x, y);
+        if (tile != 'w' && tile != '~') return dry;
+        if (!area.kind.equals("overworld") && !area.kind.equals("village") && !area.kind.equals("city"))
+            return WaterDepth.DEEP;
+        if (tile == '~') return WaterDepth.SHALLOW;
+        int nearest = 99;
+        for (int dy = -2; dy <= 2; dy++) for (int dx = -2; dx <= 2; dx++) {
+            int nx = x + dx, ny = y + dy;
+            if (nx < 0 || ny < 0 || nx >= area.width() || ny >= area.height()) continue;
+            char neighbor = area.tileAt(nx, ny);
+            // Bridges and buildings are not banks: they must not create a walkable ocean.
+            if ("gfnsbvPq".indexOf(neighbor) >= 0) nearest = Math.min(nearest, dx * dx + dy * dy);
+        }
+        return nearest <= 2 ? WaterDepth.SHALLOW
+                : nearest <= 5 ? WaterDepth.WADING : WaterDepth.DEEP;
+    }
+
     public boolean isPassable(String mapId, int x, int y) {
         MapArea area = area(mapId);
         if (area == null) {
@@ -382,6 +458,8 @@ public final class WorldMap {
             return false;
         }
         char tile = area.tileAt(x, y);
+        if (tile == 'w' || tile == '~') return waterDepth(mapId, x, y).walkable();
+        if (tile == 'm' && elevation(mapId).mountainWalkable(x,y)) return true;
         if (Terrain.passable(tile) || tile == 'h' && cityBuildingAt(mapId, x, y) != null) {
             return true;
         }
@@ -696,6 +774,7 @@ public final class WorldMap {
         playerInteriorProps.clear();
         playerInteriorTiles.clear();
         playerVillageTiles.clear();
+        playerVillageHeights.clear();
         playerVillageBuildingLevels.clear();
         cityBuildings.put(PLAYER_VILLAGE_ID, new ArrayList<>());
         resetPlayerVillageToBase();
@@ -743,7 +822,7 @@ public final class WorldMap {
             shiftedArea.landmarks.put(new TilePoint(point.x() + margin, point.y() + margin), entry.getValue());
         }
         for (WorldProp prop : area.props) {
-            shiftedArea.addProp(new WorldProp(prop.x() + margin, prop.y() + margin, prop.asset(), prop.size()));
+            shiftedArea.addProp(new WorldProp(prop.x() + margin, prop.y() + margin, prop.asset(), prop.size(),prop.visualSlot(),prop.offsetX(),prop.offsetY()));
         }
         maps.put(PLAYER_VILLAGE_ID, shiftedArea);
 
@@ -756,14 +835,14 @@ public final class WorldMap {
                     building.x2() + margin,
                     building.y2() + margin,
                     building.style(),
-                    building.palette()
+                    building.palette(), building.facing()
             ));
         }
         cityBuildings.put(PLAYER_VILLAGE_ID, shiftedBuildings);
 
         List<WorldProp> shiftedPlayerProps = new ArrayList<>();
         for (WorldProp prop : playerVillageProps) {
-            shiftedPlayerProps.add(new WorldProp(prop.x() + margin, prop.y() + margin, prop.asset(), prop.size()));
+            shiftedPlayerProps.add(new WorldProp(prop.x() + margin, prop.y() + margin, prop.asset(), prop.size(),prop.visualSlot(),prop.offsetX(),prop.offsetY()));
         }
         playerVillageProps.clear();
         playerVillageProps.addAll(shiftedPlayerProps);
@@ -775,6 +854,10 @@ public final class WorldMap {
         }
         playerVillageTiles.clear();
         playerVillageTiles.putAll(shiftedTiles);
+        Map<TilePoint, Double> shiftedHeights = new LinkedHashMap<>();
+        playerVillageHeights.forEach((p,h) -> shiftedHeights.put(new TilePoint(p.x()+margin,p.y()+margin),h));
+        playerVillageHeights.clear();
+        playerVillageHeights.putAll(shiftedHeights);
 
         shiftPlayerVillageInteriors(margin);
         registerPlayerVillageTransitions();
@@ -908,6 +991,7 @@ public final class WorldMap {
         CityBuilding building = new CityBuilding(key, x, y, x + size[0] - 1, y + size[1] - 1, plan.style(), palette);
         buildings.add(building);
         playerVillageBuildingLevels.put(building.key(), 1);
+        maps.get(PLAYER_VILLAGE_ID).markVisualChange();
         connectPlayerVillageBuildingPath(building);
         return building;
     }
@@ -932,9 +1016,10 @@ public final class WorldMap {
         }
         int level = playerVillageBuildingLevel(building);
         removePlayerVillageBuilding(building);
-        CityBuilding moved = new CityBuilding(building.key(), x, y, x + building.width() - 1, y + building.depth() - 1, building.style(), building.palette());
+        CityBuilding moved = new CityBuilding(building.key(), x, y, x + building.width() - 1, y + building.depth() - 1, building.style(), building.palette(), building.facing());
         mutableCityBuildings(PLAYER_VILLAGE_ID).add(moved);
         playerVillageBuildingLevels.put(moved.key(), level);
+        maps.get(PLAYER_VILLAGE_ID).markVisualChange();
         connectPlayerVillageBuildingPath(moved);
         return true;
     }
@@ -951,6 +1036,7 @@ public final class WorldMap {
         boolean removed = buildings.remove(building);
         if (removed) {
             playerVillageBuildingLevels.remove(building.key());
+            maps.get(PLAYER_VILLAGE_ID).markVisualChange();
         }
         return removed;
     }
@@ -999,13 +1085,10 @@ public final class WorldMap {
             return false;
         }
         MapArea area = maps.get(PLAYER_VILLAGE_ID);
-        area.setTile(x, y, tile);
+        if (!area.setTile(x, y, tile)) return false;
         TilePoint point = new TilePoint(x, y);
-        if (tile == playerVillageGroundTile()) {
-            playerVillageTiles.remove(point);
-        } else {
-            playerVillageTiles.put(point, tile);
-        }
+        if (tile == 'w' || tile == '~' || tile == 'B') playerVillageHeights.remove(point);
+        playerVillageTiles.put(point, tile);
         return true;
     }
 
@@ -1014,12 +1097,18 @@ public final class WorldMap {
         if (area == null || x < 1 || y < 1 || x >= area.width() - 1 || y >= area.height() - 1) {
             return false;
         }
-        if (!Terrain.passable(tile) || tile == 'h' || tile == 'w' || tile == 'x' || tile == 'c' || tile == 'u'
+        if ((!Terrain.passable(tile) && tile != 'w' && tile != '~') || tile == 'h' || tile == 'x' || tile == 'c' || tile == 'u'
                 || tile == 'd' || tile == 'i' || tile == 'o') {
             return false;
         }
         if (transitionAt(PLAYER_VILLAGE_ID, x, y) != null || cityBuildingAt(PLAYER_VILLAGE_ID, x, y) != null) {
             return false;
+        }
+        if (tile == 'w' || tile == '~') {
+            for (int yy=y-2; yy<=y+2; yy++) for (int xx=x-2; xx<=x+2; xx++) {
+                if (cityBuildingAt(PLAYER_VILLAGE_ID,xx,yy)!=null || transitionAt(PLAYER_VILLAGE_ID,xx,yy)!=null
+                        || playerVillagePropAt(xx,yy)!=null) return false;
+            }
         }
         if (playerVillagePropAt(x, y) != null && Terrain.connectingRoad(tile)) {
             return false;
@@ -1036,17 +1125,33 @@ public final class WorldMap {
     }
 
     public boolean addPlayerVillageProp(int x, int y, String asset, int size) {
-        if (!canPlacePlayerVillageProp(x, y, null)) {
+        return addPlayerVillageProp(x,y,asset,size,0,0);
+    }
+
+    public boolean addPlayerVillageProp(int x, int y, String asset, int size, int offsetX, int offsetY) {
+        return addPlayerVillageProp(x,y,asset,size,offsetX,offsetY,true);
+    }
+
+    public boolean addPlayerVillageProp(int x, int y, String asset, int size, int offsetX, int offsetY, boolean collisions) {
+        if (!canPlacePlayerVillageProp(x, y, null,collisions) || ModularMarket.supports(asset) && !canPlacePlayerVillageProp(x + 1, y, null,collisions)) {
             return false;
         }
         MapArea area = maps.get(PLAYER_VILLAGE_ID);
-        WorldProp prop = new WorldProp(x, y, asset, size);
+        WorldProp prop = new WorldProp(x, y, asset, size, -1, offsetX, offsetY);
         playerVillageProps.add(prop);
         area.addProp(prop);
         return true;
     }
 
     public boolean canPlacePlayerVillageProp(int x, int y, WorldProp ignoredProp) {
+        return canPlacePlayerVillageProp(x,y,ignoredProp,true);
+    }
+    public boolean canPlacePlayerVillageProp(int x,int y,WorldProp ignoredProp,boolean collisions) {
+        if(!collisions) {
+            MapArea area=maps.get(PLAYER_VILLAGE_ID);
+            return area!=null && x>=1 && y>=1 && x<area.width()-1 && y<area.height()-1
+                    && Terrain.passable(area.tileAt(x,y)) && transitionAt(PLAYER_VILLAGE_ID,x,y)==null;
+        }
         MapArea area = maps.get(PLAYER_VILLAGE_ID);
         if (area == null || x < 1 || y < 1 || x >= area.width() - 1 || y >= area.height() - 1
                 || !Terrain.passable(area.tileAt(x, y)) || Terrain.connectingRoad(area.tileAt(x, y)) || area.tileAt(x, y) == 'h'
@@ -1073,7 +1178,7 @@ public final class WorldMap {
     public WorldProp playerVillagePropAt(int x, int y) {
         for (int i = playerVillageProps.size() - 1; i >= 0; i--) {
             WorldProp prop = playerVillageProps.get(i);
-            if (prop.x() == x && prop.y() == y) {
+            if (prop.y() == y && x >= prop.x() && x < prop.x() + (ModularMarket.supports(prop.asset()) ? 2 : 1)) {
                 return prop;
             }
         }
@@ -1081,7 +1186,7 @@ public final class WorldMap {
         if (area != null) {
             for (int i = area.props.size() - 1; i >= 0; i--) {
                 WorldProp prop = area.props.get(i);
-                if (prop.x() == x && prop.y() == y) {
+                if (prop.y() == y && x >= prop.x() && x < prop.x() + (ModularMarket.supports(prop.asset()) ? 2 : 1)) {
                     return prop;
                 }
             }
@@ -1123,12 +1228,31 @@ public final class WorldMap {
         return prop.x() + ":" + prop.y() + ":" + prop.asset();
     }
 
+    public boolean repositionSettlementProp(String mapId,WorldProp source,WorldProp target,boolean collisions) {
+        if(source==null || target==null)return false;
+        boolean outdoor=PLAYER_VILLAGE_ID.equals(mapId);
+        MapArea area=maps.get(mapId);
+        if(area==null || !area.props.contains(source))return false;
+        if(outdoor) {
+            if(!canPlacePlayerVillageProp(target.x(),target.y(),source,collisions)
+                    || ModularMarket.supports(target.asset()) && !canPlacePlayerVillageProp(target.x()+1,target.y(),source,collisions))return false;
+            if(!removePlayerVillageProp(source))return false;
+            return restorePlayerVillageProp(target);
+        }
+        if(!playerInteriorProps.getOrDefault(mapId,List.of()).contains(source))return false;
+        if(!removePlayerInteriorProp(mapId,source))return false;
+        if(!canPlacePlayerInteriorProp(mapId,target.x(),target.y(),target.asset(),collisions)) {
+            restorePlayerInteriorProp(mapId,source);return false;
+        }
+        return restorePlayerInteriorProp(mapId,target);
+    }
+
     public boolean movePlayerVillageProp(WorldProp prop, int x, int y) {
         if (prop == null) {
             return false;
         }
         removePlayerVillageProp(prop);
-        if (addPlayerVillageProp(x, y, prop.asset(), prop.size())) {
+        if (addPlayerVillageProp(x, y, prop.asset(), prop.size(),prop.offsetX(),prop.offsetY())) {
             return true;
         }
         restorePlayerVillageProp(prop);
@@ -1136,20 +1260,40 @@ public final class WorldMap {
     }
 
     public boolean addPlayerInteriorProp(String mapId, int x, int y, String asset, int size) {
-        if (!canPlacePlayerInteriorProp(mapId, x, y, asset)) {
+        return addPlayerInteriorProp(mapId,x,y,asset,size,0,0);
+    }
+
+    public boolean addPlayerInteriorProp(String mapId, int x, int y, String asset, int size, int offsetX, int offsetY) {
+        return addPlayerInteriorProp(mapId,x,y,asset,size,offsetX,offsetY,true);
+    }
+
+    public boolean addPlayerInteriorProp(String mapId, int x, int y, String asset, int size, int offsetX, int offsetY, boolean collisions) {
+        if (!canPlacePlayerInteriorProp(mapId, x, y, asset,collisions)) {
             return false;
         }
         MapArea area = maps.get(mapId);
-        WorldProp prop = new WorldProp(x, y, asset, size);
+        WorldProp prop = new WorldProp(x, y, asset, size, -1, offsetX, offsetY);
         playerInteriorProps.computeIfAbsent(mapId, ignored -> new ArrayList<>()).add(prop);
         applyInteriorProp(area, prop);
         return true;
     }
 
     public boolean canPlacePlayerInteriorProp(String mapId, int x, int y, String asset) {
+        return canPlacePlayerInteriorProp(mapId,x,y,asset,true);
+    }
+    public boolean canPlacePlayerInteriorProp(String mapId,int x,int y,String asset,boolean collisions) {
+        if(!collisions)return canPlaceInteriorOverlap(maps.get(mapId),x,y,asset);
         MapArea area = maps.get(mapId);
         return area != null && "interior".equals(area.kind) && canPlaceInteriorAsset(area, x, y, asset);
     }
+
+    private boolean canPlaceInteriorOverlap(MapArea area,int x,int y,String asset) {
+            int[] footprint=interiorHitboxFootprint(asset);
+            if(area==null || !"interior".equals(area.kind) || x<1 || y<1 || x+footprint[0]>=area.width()-1 || y+footprint[1]>=area.height()-1)return false;
+            for(int yy=y;yy<y+footprint[1];yy++)for(int xx=x;xx<x+footprint[0];xx++)
+                if("iozk".indexOf(area.tileAt(xx,yy))<0 || transitionAt(area.id,xx,yy)!=null)return false;
+            return true;
+        }
 
     public int[] interiorPlacementSize(String asset) {
         int[] footprint = interiorPlacementFootprint(asset);
@@ -1174,7 +1318,7 @@ public final class WorldMap {
         }
         playerInteriorProps.computeIfAbsent(mapId, ignored -> new ArrayList<>()).add(prop);
         MapArea area = maps.get(mapId);
-        if (area != null && "interior".equals(area.kind) && canPlaceInteriorAsset(area, prop.x(), prop.y(), prop.asset())) {
+        if (area != null && "interior".equals(area.kind) && (canPlaceInteriorAsset(area,prop.x(),prop.y(),prop.asset()) || canPlaceInteriorOverlap(area,prop.x(),prop.y(),prop.asset()))) {
             applyInteriorProp(area, prop);
         }
         return true;
@@ -1204,6 +1348,12 @@ public final class WorldMap {
         if (area != null) {
             area.removeProp(prop);
             clearInteriorFootprint(area, prop);
+            for(WorldProp remaining:area.props) {
+                if(!isInteriorOverlayAsset(remaining.asset()) && !isInteriorWallDecorAsset(remaining.asset()) && !isInteriorPassThroughAsset(remaining.asset())) {
+                    int[] fp=interiorPlacementFootprint(remaining.asset());
+                    area.fillTiles(remaining.x(),remaining.y(),remaining.x()+fp[0]-1,remaining.y()+fp[1]-1,'k');
+                }
+            }
         }
         return removed;
     }
@@ -1213,7 +1363,7 @@ public final class WorldMap {
             return false;
         }
         removePlayerInteriorProp(mapId, prop);
-        if (addPlayerInteriorProp(mapId, x, y, prop.asset(), prop.size())) {
+        if (addPlayerInteriorProp(mapId, x, y, prop.asset(), prop.size(),prop.offsetX(),prop.offsetY())) {
             return true;
         }
         restorePlayerInteriorProp(mapId, prop);
@@ -1354,6 +1504,17 @@ public final class WorldMap {
         return mapId != null && mapId.startsWith("editor_") && maps.containsKey(mapId);
     }
 
+    /** Installs a detached authoring document without touching generated maps or saves. */
+    public void installEditorMap(MapArea area, List<CityBuilding> buildings) {
+        if (!area.id.startsWith("editor_")) throw new IllegalArgumentException("Editor map IDs must start with editor_");
+        area.invalidateAfter(visualRevision(area.id));
+        maps.put(area.id, area);
+        cityBuildings.put(area.id, new ArrayList<>(buildings));
+        buildingFootprintCache.remove(area.id);
+        interiorNpcs.put(area.id, List.of());
+        transitions.entrySet().removeIf(entry -> entry.getKey().startsWith(area.id + ":"));
+    }
+
     public String createEditorMap(String mapId, String label, String kind, int width, int height) {
         String normalizedKind = switch (kind == null ? "" : kind) {
             case "city", "village", "interior" -> kind;
@@ -1446,7 +1607,7 @@ public final class WorldMap {
             return false;
         }
         removeEditorBuilding(mapId, building);
-        CityBuilding moved = new CityBuilding(building.key(), x, y, x + building.width() - 1, y + building.depth() - 1, building.style(), building.palette());
+        CityBuilding moved = new CityBuilding(building.key(), x, y, x + building.width() - 1, y + building.depth() - 1, building.style(), building.palette(), building.facing());
         mutableCityBuildings(mapId).add(moved);
         return true;
     }
@@ -1490,6 +1651,9 @@ public final class WorldMap {
                 || editorPropAt(mapId, x, y) != null) {
             return false;
         }
+        if (ModularMarket.supports(asset) && (x + 1 >= area.width() - 1
+                || !Terrain.passable(area.tileAt(x + 1, y)) || cityBuildingAt(mapId, x + 1, y) != null
+                || editorPropAt(mapId, x + 1, y) != null)) return false;
         area.addProp(new WorldProp(x, y, asset, size));
         return true;
     }
@@ -1499,7 +1663,10 @@ public final class WorldMap {
         if (area == null) {
             return null;
         }
-        return area.propAt(x, y);
+        WorldProp found = area.propAt(x, y);
+        if (found != null) return found;
+        for (WorldProp prop : area.propsAt(x - 1, y)) if (ModularMarket.supports(prop.asset())) return prop;
+        return null;
     }
 
     public boolean removeEditorProp(String mapId, WorldProp prop) {
@@ -1600,7 +1767,8 @@ public final class WorldMap {
     public String ensureHouseInterior(String sourceMapId, int wx, int wy, int returnX, int returnY) {
         CityBuilding building = cityBuildingAt(sourceMapId, wx, wy);
         if (building != null) {
-            TilePoint anchor = building.anchor();
+            TilePoint anchor = townInteriorAnchors.getOrDefault(sourceMapId, Map.of())
+                    .getOrDefault(building.key(), building.anchor());
             wx = anchor.x();
             wy = anchor.y();
         }
@@ -1638,7 +1806,7 @@ public final class WorldMap {
                 for (int i = 0; i < Math.min(2, residents.size()); i++) {
                     Npc resident = residents.get(i);
                     keepers.add(new Npc(mapId, i == 0 ? "Seed Keeper" : "Hearth Apprentice", resident.sprite(),
-                            resident.x(), resident.y(), HearthlandsFolklore.seedhouseDialogue(sourceMapId, i), null, null));
+                            resident.x(), resident.y(), HearthlandsFolklore.seedhouseDialogue(sourceMapId, i), null, i == 0 ? "farmstead" : null));
                 }
                 interiorNpcs.put(mapId, keepers);
             }
@@ -1648,7 +1816,8 @@ public final class WorldMap {
                 for (int i = 0; i < Math.min(2, residents.size()); i++) {
                     Npc resident = residents.get(i);
                     hosts.add(new Npc(mapId, WesternReachFolklore.residentName(sourceMapId, i), resident.sprite(),
-                            resident.x(), resident.y(), WesternReachFolklore.localDialogue(sourceMapId, i, resident.dialog()), null, null));
+                            resident.x(), resident.y(), WesternReachFolklore.localDialogue(sourceMapId, i, resident.dialog()), null,
+                            i == 0 ? (theme.equals("inn") ? "inn" : theme.equals("bakery") ? "farmstead" : null) : null));
                 }
                 interiorNpcs.put(mapId, hosts);
             }
@@ -1658,7 +1827,8 @@ public final class WorldMap {
                     TilePoint anchor = layout.residents().get(i);
                     hosts.add(new Npc(mapId, i == 0 ? regional.keeper : regional.keeper + "'s Apprentice",
                             i == 0 ? "npc_citizen_woman" : "npc_citizen_man", anchor.x(), anchor.y(),
-                            i == 0 ? regional.dialogue : List.of(regional.dialogue.get(1), regional.dialogue.get(0)), null, null));
+                            i == 0 ? regional.dialogue : List.of(regional.dialogue.get(1), regional.dialogue.get(0)), null,
+                            i == 0 ? Shop.regionalTrade(regional.theme) : null));
                 }
                 interiorNpcs.put(mapId, hosts);
             }
@@ -1846,8 +2016,9 @@ public final class WorldMap {
             TilePoint door = doors.get((start + i) % doors.size());
             int[][] spots = {{0, 1}, {-1, 1}, {1, 1}, {0, 2}, {-1, 2}, {1, 2}};
             for (int[] spot : spots) {
-                int x = door.x() + spot[0];
-                int y = door.y() + spot[1];
+                TilePoint outside = building.outside(door, spot[0], spot[1]);
+                int x = outside.x();
+                int y = outside.y();
                 if (isPassable(mapId, x, y)) {
                     return new TilePoint(x, y);
                 }
@@ -1928,6 +2099,12 @@ public final class WorldMap {
     }
 
     public List<TilePoint> cityBuildingDoorTiles(CityBuilding building) {
+        if (building.facing() != CityBuilding.Facing.SOUTH) return List.of(switch (building.facing()) {
+            case WEST -> new TilePoint(building.x1(), building.y2());
+            case EAST -> new TilePoint(building.x2(), building.y2());
+            case NORTH -> new TilePoint(building.x1() + building.width() / 2, building.y1());
+            default -> throw new IllegalStateException();
+        });
         List<Integer> centers = new ArrayList<>();
         if (building.key() != null && building.key().startsWith("player_")) {
             centers.add(building.x1() + building.width() / 2);
@@ -1958,7 +2135,7 @@ public final class WorldMap {
 
     public CityBuilding cityBuildingEntryAt(String mapId, int x, int y, int fromX, int fromY) {
         CityBuilding building = cityBuildingAt(mapId, x, y);
-        if (building == null || y != building.y2() || fromX != x || fromY != y + 1) {
+        if (building == null || fromX != x + building.facing().dx || fromY != y + building.facing().dy) {
             return null;
         }
         return cityBuildingDoorTiles(building).contains(new TilePoint(x, y)) ? building : null;
@@ -1968,17 +2145,28 @@ public final class WorldMap {
         return isPassable(OVERWORLD_ID, x, y);
     }
 
+    /** Prop-only query for planning terrain routes before their elevation field is published. */
+    public boolean hasBlockingGroundProp(String mapId,int x,int y) {
+        MapArea map=area(mapId);
+        return map!=null && worldPropBlocksMovementAt(map,x,y);
+    }
+
     private boolean worldPropBlocksMovementAt(MapArea area, int x, int y) {
-        for (WorldProp prop : area.propsAt(x, y)) {
-            if (worldPropBlocksMovement(prop.asset())) {
-                return true;
-            }
+        // Offsets move structural collision as well as artwork. Test the tile center
+        // against the real footprint so NPC navigation agrees with swept player movement.
+        // A structural prop is at most two tiles wide/deep plus a one-tile offset.
+        for (WorldProp prop : area.propsInBounds(x - 2, y - 2, x + 2, y + 2)) {
+            if (!worldPropBlocksMovement(prop.asset())) continue;
+            var footprint = PropCollision.footprint(this, area.id, prop);
+            if (footprint != null && footprint.contains(x + .5, y + .5)) return true;
         }
         return false;
     }
 
-    private boolean worldPropBlocksMovement(String asset) {
-        return asset.equals("location_camp_palisade")
+    public boolean worldPropBlocksMovement(String asset) {
+        return ModularMarket.supports(asset) || TownGardenArt.fountain(asset)
+                || ConnectedFurniture.boundary(asset) && !TownGardenArt.gate(asset)
+                || asset.equals("location_camp_palisade")
                 || asset.equals("location_camp_palisade_side")
                 || asset.equals("location_farmland_fence")
                 || asset.equals("location_farmland_fence_side")
@@ -2002,7 +2190,9 @@ public final class WorldMap {
         if (location != null) {
             return locationName(location);
         }
-        return Terrain.name(tileAt(mapId, x, y));
+        var depth = waterDepth(mapId, x, y);
+        if(tileAt(mapId,x,y)=='m' && elevation(mapId).mountainWalkable(x,y)) return "Mountain Foothills";
+        return depth == WaterDepth.DRY ? Terrain.name(tileAt(mapId, x, y)) : depth.label;
     }
 
     public String locationKindAt(String mapId, int x, int y) {
@@ -2173,7 +2363,7 @@ public final class WorldMap {
             return byY != 0 ? byY : Integer.compare(a.x(), b.x());
         });
         WorldProp prop = candidates.get(Math.floorMod(variant, candidates.size()));
-        if (worldPropBlocksMovement(prop.asset())) {
+        if (prop.offsetX()==0&&prop.offsetY()==0&&worldPropBlocksMovement(prop.asset())) {
             return closestPassableNear(OVERWORLD_ID, prop.x(), prop.y(), patch.cx, patch.cy, 3, variant + patch.salt);
         }
         return new TilePoint(prop.x(), prop.y());
@@ -2260,6 +2450,17 @@ public final class WorldMap {
             applyTownBuildingProgram(id, buildings);
         }
         buildings = splitOversizedSettlementBuildings(buildings);
+        if (town) {
+            Map<String, TilePoint> originalAnchors = new HashMap<>();
+            for (CityBuilding building : buildings) originalAnchors.put(building.key(), building.anchor());
+            townInteriorAnchors.put(id, originalAnchors);
+            TownLayout.Plan plan = TownLayout.arrange(id, buildings);
+            char[][] ground = new char[plan.height()][76];
+            for (char[] row : ground) java.util.Arrays.fill(row, cityExpansionGroundTile(variant));
+            area = new MapArea(id, label, "city", ground);
+            buildings = plan.buildings();
+            TownLayout.mark(area, plan);
+        }
         cityBuildings.put(id, buildings);
         removeLegacyCityWallChunks(area, variant);
         stampSettlementBuildingFoundations(area, buildings, variant);
@@ -2272,6 +2473,7 @@ public final class WorldMap {
         normalizeCityRoadsAndPaving(area, variant);
         addTownParks(area, variant, town ? 2 : 3);
         addOrthogonalCityWalls(area);
+        if (town) extendTownWallBay(area, variant);
         trimCityOutskirtPaving(area, variant);
         repairDisconnectedSettlementRoads(area, buildings,
                 new TilePoint(Math.min(area.width() - 4, 17), Math.min(area.height() - 4, 12)),
@@ -2317,10 +2519,13 @@ public final class WorldMap {
      * of being severed by the wall.
      */
     private void addOrthogonalCityWalls(MapArea area) {
-        int left = 1;
-        int top = 1;
-        int bottom = firstClearHorizontalWallRow(area, 22, area.height() - 2, left, area.width() - 2);
-        int right = firstClearVerticalWallColumn(area, 33, area.width() - 2, top, bottom);
+        boolean plannedTown = area.id.startsWith("town_");
+        int left = plannedTown ? 9 : 1;
+        int top = plannedTown ? 9 : 1;
+        int bottom = plannedTown ? area.height() - 11
+                : firstClearHorizontalWallRow(area, 22, area.height() - 2, left, area.width() - 2);
+        int right = plannedTown ? area.width() - 11
+                : firstClearVerticalWallColumn(area, 33, area.width() - 2, top, bottom);
         if (right - left < 8 || bottom - top < 8) {
             return;
         }
@@ -2346,6 +2551,38 @@ public final class WorldMap {
         openHorizontalCityGate(area, bottomGate, bottom);
         openVerticalCityGate(area, left, leftGate);
         openVerticalCityGate(area, right, rightGate);
+    }
+
+    /** Project one quarter beyond the main ring; roofs and suburban lots keep their clearance. */
+    private void extendTownWallBay(MapArea area, String variant) {
+        boolean north = area.id.equals("town_ironvale") || area.id.equals("town_northwatch")
+                || area.id.equals("town_moonspire");
+        int baseline = north ? 9 : area.width() - 11;
+        int outside = baseline + (north ? -4 : 4);
+        int start = north ? 23 : 21;
+        int end = north ? 49 : area.height() - 18;
+        if (area.tileAt(north ? start : baseline, north ? baseline : start) == Terrain.CITY_GATE) start -= 2;
+        if (area.tileAt(north ? end : baseline, north ? baseline : end) == Terrain.CITY_GATE) end += 2;
+        if (end <= start + 4) return;
+        char ground = cityExpansionGroundTile(variant);
+        int gate = -1;
+        for (int i = start + 1; i < end; i++) {
+            int x = north ? i : baseline, y = north ? baseline : i;
+            if (area.tileAt(x, y) == Terrain.CITY_GATE) gate = i;
+            area.tiles[y][x] = ground;
+        }
+        for (int i = start; i <= end; i++)
+            stampOrthogonalCityWallTile(area, north ? i : outside, north ? outside : i);
+        for (int d = Math.min(baseline, outside); d <= Math.max(baseline, outside); d++) {
+            stampOrthogonalCityWallTile(area, north ? start : d, north ? d : start);
+            stampOrthogonalCityWallTile(area, north ? end : d, north ? d : end);
+        }
+        if (gate >= 0) {
+            for (int d = Math.min(baseline, outside) - 1; d <= Math.max(baseline, outside) + 1; d++)
+                area.tiles[north ? d : gate][north ? gate : d] = Terrain.COBBLESTONE_ROAD;
+            if (north) openHorizontalCityGate(area, gate, outside);
+            else openVerticalCityGate(area, outside, gate);
+        }
     }
 
     private int nearestHorizontalWallGate(MapArea area, int y, int minimum, int maximum, int preferred) {
@@ -2377,14 +2614,16 @@ public final class WorldMap {
     }
 
     private boolean clearHorizontalGateSite(MapArea area, int x, int y) {
-        for (int cy = y - 2; cy <= y + 2; cy++) for (int cx = x - 2; cx <= x + 2; cx++) {
+        // Keep the passage clear across the wall without rejecting buildings
+        // two tiles along it; that displaced gates away from their road crossings.
+        for (int cy = y - 2; cy <= y + 2; cy++) for (int cx = x - 1; cx <= x + 1; cx++) {
             if (cityBuildingAt(area.id, cx, cy) != null || isCityWallBlockingTerrain(area.tileAt(cx, cy))) return false;
         }
         return true;
     }
 
     private boolean clearVerticalGateSite(MapArea area, int x, int y) {
-        for (int cy = y - 2; cy <= y + 2; cy++) for (int cx = x - 2; cx <= x + 2; cx++) {
+        for (int cy = y - 1; cy <= y + 1; cy++) for (int cx = x - 2; cx <= x + 2; cx++) {
             if (cityBuildingAt(area.id, cx, cy) != null || isCityWallBlockingTerrain(area.tileAt(cx, cy))) return false;
         }
         return true;
@@ -2588,8 +2827,9 @@ public final class WorldMap {
                 continue;
             }
             TilePoint door = doors.get(Math.floorMod(mapId.hashCode() + i, doors.size()));
-            int x = door.x();
-            int y = door.y() + 1;
+            TilePoint outside = building.outside(door, 0, 1);
+            int x = outside.x();
+            int y = outside.y();
             TilePoint point = new TilePoint(x, y);
             if (!isPassable(mapId, x, y) || !occupied.add(point)) {
                 continue;
@@ -2983,7 +3223,7 @@ public final class WorldMap {
         }
     }
 
-    private char dungeonExteriorBiome(int centerX, int centerY) {
+    public char dungeonExteriorBiome(int centerX, int centerY) {
         char[] biomes = {'g', 'f', 's', 'n', 'v', 'b', 'm', 'q', 'w', 'P', '~'};
         char best = 'g';
         int bestScore = -1;
@@ -3006,6 +3246,25 @@ public final class WorldMap {
     private String ascendingStairLabel(DungeonGenerator.SiteProfile profile, boolean forward) {
         boolean ascending = profile.verticality() == DungeonGenerator.Verticality.ASCENDING;
         return (ascending == forward) ? "Stairs Up" : "Stairs Down";
+    }
+
+    /** Nearest entrance whose stored surface biome matches the road's surrounding biome. */
+    public AdventureMarker nearestDungeonInBiome(int x, int y) {
+        char biome = dungeonExteriorBiome(x, y);
+        AdventureMarker best = null;
+        long bestDistance = Long.MAX_VALUE;
+        for (AdventureMarker marker : adventureMarkers()) {
+            DungeonContext context = dungeonContext(marker.mapId());
+            if (context == null || context.exterior() != biome) continue;
+            long dx = marker.x() - x, dy = marker.y() - y;
+            long distance = dx * dx + dy * dy;
+            if (distance < bestDistance || distance == bestDistance && best != null
+                    && marker.mapId().compareTo(best.mapId()) < 0) {
+                best = marker;
+                bestDistance = distance;
+            }
+        }
+        return best;
     }
 
     public DungeonContext dungeonContext(String mapId) {
@@ -3767,7 +4026,7 @@ public final class WorldMap {
                     building("bellfounder_manor", 23, 24, 30, 27, "hall", 1)
             };
             case "sanctum" -> new CityBuilding[]{
-                    building(town ? "embermarket_sun_court" : "sunspire_court", 28, 23, 36, 26, "sun_shrine", 2),
+                    building(town ? "embermarket_water_ledger_annex" : "sunspire_court", 28, 23, 36, 26, town ? "hall" : "sun_shrine", 2),
                     building("pilgrim_manor", 21, 29, 30, 32, "hall", 1)
             };
             default -> new CityBuilding[]{
@@ -4198,7 +4457,11 @@ public final class WorldMap {
         }
 
         int salt = area.id.hashCode() ^ variant.hashCode() ^ 0x4C31;
-        TilePoint hub = openSettlementPathAnchor(area, Math.min(width - 4, 17), Math.min(height - 4, 12), ground);
+        TilePoint civic = area.landmarks.entrySet().stream()
+                .filter(entry -> entry.getValue().equals("Civic Plaza"))
+                .map(Map.Entry::getKey).findFirst().orElse(new TilePoint(17, 12));
+        TilePoint hub = openSettlementPathAnchor(area, Math.min(width - 4, civic.x()),
+                Math.min(height - 4, civic.y()), ground);
         if (hub == null) {
             return;
         }
@@ -4229,6 +4492,15 @@ public final class WorldMap {
                     salt + index * 173, Terrain.COBBLESTONE_ROAD);
         }
 
+        if (town) {
+            for (var entry : area.landmarks.entrySet()) {
+                if (!entry.getValue().equals("Public Garden") && !entry.getValue().equals("Market Square")) continue;
+                TilePoint center = entry.getKey();
+                TilePoint elbow = new TilePoint((center.x() + hub.x()) / 2, center.y() + 2);
+                carveOrganicVillagePath(area, center, elbow, salt + 901, Terrain.COBBLESTONE_ROAD);
+                carveOrganicVillagePath(area, elbow, hub, salt + 902, Terrain.COBBLESTONE_ROAD);
+            }
+        }
         char court = town ? 'G' : 'a';
         for (int y = hub.y() - 2; y <= hub.y() + 2; y++) {
             for (int x = hub.x() - 2; x <= hub.x() + 2; x++) {
@@ -4292,6 +4564,8 @@ public final class WorldMap {
 
     private void repairDisconnectedSettlementRoads(MapArea area, List<CityBuilding> buildings,
                                                    TilePoint hub, int salt, char roadTile) {
+        hub = area.landmarks.entrySet().stream().filter(entry -> entry.getValue().equals("Civic Plaza"))
+                .map(Map.Entry::getKey).findFirst().orElse(hub);
         Set<TilePoint> mainRoads = connectedSettlementRoads(area, hub);
         if (mainRoads.isEmpty()) {
             return;
@@ -4299,7 +4573,7 @@ public final class WorldMap {
         int index = 0;
         for (CityBuilding building : buildings) {
             List<TilePoint> approaches = cityBuildingDoorTiles(building).stream()
-                    .map(door -> new TilePoint(door.x(), door.y() + 1))
+                    .map(door -> building.outside(door, 0, 1))
                     .filter(point -> point.x() >= 0 && point.y() >= 0
                             && point.x() < area.width() && point.y() < area.height())
                     .toList();
@@ -4555,8 +4829,10 @@ public final class WorldMap {
     }
 
     private TilePoint prepareSettlementDoorApproach(MapArea area, TilePoint door, char roadTile) {
-        int x = door.x();
-        int y = door.y() + 1;
+        CityBuilding building = cityBuildingAt(area.id, door.x(), door.y());
+        TilePoint outside = building == null ? new TilePoint(door.x(), door.y() + 1) : building.outside(door, 0, 1);
+        int x = outside.x();
+        int y = outside.y();
         if (x < 0 || y < 0 || x >= area.width() || y >= area.height()
                 || cityBuildingAt(area.id, x, y) != null) {
             return null;
@@ -4648,6 +4924,13 @@ public final class WorldMap {
     }
 
     private void stampBuildingFrontagePath(MapArea area, CityBuilding building, int salt, char roadTile) {
+        if (building.facing() != CityBuilding.Facing.SOUTH) {
+            for (TilePoint door : cityBuildingDoorTiles(building)) {
+                TilePoint p = building.outside(door, 0, 1);
+                stampSettlementPathTile(area, p.x(), p.y(), salt, roadTile);
+            }
+            return;
+        }
         int y = building.y2() + 1;
         if (y < 0 || y >= area.height()) {
             return;
@@ -5317,6 +5600,7 @@ public final class WorldMap {
         }
         String key = building.key();
         String style = building.style();
+        if (key.equals("town_service_barn")) return "granary";
         if (key.contains("inn") || key.contains("lodge") || "inn".equals(style) || "restaurant".equals(style)) {
             return "inn";
         }
@@ -5332,7 +5616,10 @@ public final class WorldMap {
                 || "carpenter".equals(style)) {
             return "carpenter";
         }
-        if (key.contains("apothecary") || key.contains("market") || key.contains("shop")
+        if (key.contains("apothecary") || key.contains("alchemy") || "apothecary".equals(style) || "alchemist".equals(style)) return "alchemy";
+        if ("bakery".equals(style) || key.contains("bakery") || key.contains("baker")) return "bakery";
+        if (key.contains("library") || key.contains("archive") || key.contains("scriptorium")) return "study";
+        if (key.contains("market") || key.contains("shop")
                 || "shop".equals(style) || "warehouse".equals(style) || "hunting_camp".equals(style)
                 || "apothecary".equals(style) || "alchemist".equals(style) || "fishing_hut".equals(style)) {
             return "shop";
@@ -5348,8 +5635,10 @@ public final class WorldMap {
 
     private String interiorLabel(String theme) {
         return switch (theme) {
+            case "granary" -> "Barn Feed Stores";
             case "blacksmith" -> "Blacksmith Workshop";
             case "carpenter" -> "Carpenter Workshop";
+            case "alchemy" -> "Alchemy Shop";
             case "bakery" -> "Bakery Interior";
             case "inn" -> "Inn Interior";
             case "tavern" -> "Tavern Interior";
@@ -5379,7 +5668,7 @@ public final class WorldMap {
 
     private void applyPlayerInteriorProps(MapArea area) {
         for (WorldProp prop : playerInteriorProps.getOrDefault(area.id, List.of())) {
-            if (canPlaceInteriorAsset(area, prop.x(), prop.y(), prop.asset())) {
+            if (canPlaceInteriorAsset(area,prop.x(),prop.y(),prop.asset()) || canPlaceInteriorOverlap(area,prop.x(),prop.y(),prop.asset())) {
                 applyInteriorProp(area, prop);
             }
         }
@@ -5844,10 +6133,10 @@ public final class WorldMap {
         }
         addResourceNodeProps(area, salt, occupiedProps, tallProps);
         addSoftBiomeProps(area, salt, occupiedProps);
-        addQuarterTileDetails(area, salt);
+        addGroundCoverDetails(area, salt);
     }
 
-    private void addQuarterTileDetails(MapArea area, int salt) {
+    private void addGroundCoverDetails(MapArea area, int salt) {
         if (!OVERWORLD_ID.equals(area.id) && !"village".equals(area.kind)) return;
         if (PLAYER_VILLAGE_ID.equals(area.id) || area.id.startsWith("editor_")) return;
         for (int y = 2; y < area.height() - 2; y++) for (int x = 2; x < area.width() - 2; x++) {
@@ -5859,41 +6148,31 @@ public final class WorldMap {
                 if (area.tileAt(x + dx, y + dy) != ground) clear = false;
             }
             if (!clear) continue;
-            // Overlapping, offset patches produce rounded clumps rather than visible square blocks.
-            double patchStrength = 0;
-            int patchSeed = hash(x / 6, y / 6, salt + 713 + area.id.hashCode());
-            for (int cy = y / 6 - 1; cy <= y / 6 + 1; cy++) {
-                for (int cx = x / 6 - 1; cx <= x / 6 + 1; cx++) {
-                    int seed = hash(cx, cy, salt + 713 + area.id.hashCode());
-                    if (Math.floorMod(seed, 100) < 35) continue;
-                    double centerX = cx * 6 + 1 + Math.floorMod(seed / 101, 400) / 100.0;
-                    double centerY = cy * 6 + 1 + Math.floorMod(seed / 401, 400) / 100.0;
-                    double radius = 3.0 + Math.floorMod(seed / 1601, 180) / 100.0;
-                    double stretch = 0.8 + Math.floorMod(seed / 3203, 40) / 100.0;
-                    double distance = Math.hypot(x + 0.5 - centerX, (y + 0.5 - centerY) / stretch);
-                    double t = Math.max(0, 1 - distance / radius);
-                    double strength = t * t * (3 - 2 * t);
-                    if (strength > patchStrength) {
-                        patchStrength = strength;
-                        patchSeed = seed;
-                    }
-                }
-            }
             String[] assets = new String[8];
             String biome = NatureSiteGenerator.biome(ground);
             for (int i = 0; i < 8; i++) assets[i] = "deco_ground_" + biome + "_" + (i + 1);
-            int baseline = switch (ground) { case 'g' -> 400; case 'f', 'v' -> 280; default -> 160; };
-            int chance = baseline + (int) (patchStrength * 570);
-            int dominantAsset = Math.floorMod(patchSeed, assets.length);
-            // Empty slots are intentional. Small ground details never acquire collision or resource identity.
+            int baseline = switch (ground) { case 'g' -> 45; case 'f', 'v' -> 30; default -> 15; };
+            // Slots are stable candidate IDs, not quadrants. Shared coverage supplies connected
+            // full centers, ragged edges and bare gaps instead of four repeated dots per tile.
             for (int slot = 0; slot < 4; slot++) {
+                var anchor = GroundCoverPattern.anchor(area.id, x, y, slot);
+                boolean crowded = false;
+                for (int previous = 0; previous < slot; previous++) {
+                    var other = GroundCoverPattern.anchor(area.id, x, y, previous);
+                    if (Math.hypot(anchor.x() - other.x(), anchor.y() - other.y()) < .24) crowded = true;
+                }
+                if (crowded) continue;
+                var patch = GroundCoverPattern.patch(x + anchor.x(), y + anchor.y(), salt + area.id.hashCode() + 713);
+                double patchStrength = patch.coverage();
+                int dominantAsset = Math.floorMod(patch.seed(), assets.length);
+                int chance = baseline + (int) (patchStrength * 930);
                 int roll = Math.floorMod(hash(x, y, salt + slot * 1709 + 937), 1000);
                 if (roll >= chance) continue;
                 int variety = Math.floorMod(hash(x, y, salt + slot * 2081 + 1237), 100);
                 int asset = patchStrength > 0.15 && variety < 55 ? dominantAsset : variety % assets.length;
                 // Leaf piles are occasional accents; the forest floor is mostly moss, fern and twigs.
                 if (ground == 'f' && asset < 4 && variety < 75) asset = 4 + variety % 4;
-                area.addProp(new WorldProp(x, y, assets[asset], 14 + roll % 9, slot));
+                area.addProp(new WorldProp(x, y, assets[asset], 12 + (int) (patchStrength * 12) + roll % 5, slot));
             }
         }
     }
@@ -5935,7 +6214,7 @@ public final class WorldMap {
     }
 
     private int resourceNodeChance(MapArea area, int x, int y, char tile) {
-        int waterDistance = distanceToAny(area, x, y, 3, new char[]{'w'});
+        int waterDistance = distanceToAny(area, x, y, 3, new char[]{'w', '~'});
         int mountainDistance = distanceToAny(area, x, y, 3, new char[]{'m'});
         int forestDistance = distanceToAny(area, x, y, 3, new char[]{'f'});
         int chance = switch (tile) {
@@ -6129,13 +6408,13 @@ public final class WorldMap {
     }
 
     private int softDecorationChance(MapArea area, int x, int y, char tile) {
-        int waterDistance = distanceToAny(area, x, y, 3, new char[]{'w'});
+        int waterDistance = distanceToAny(area, x, y, 3, new char[]{'w', '~'});
         int roadDistance = distanceToRoad(area, x, y, 3);
         int edgeDistance = distanceToDifferentNatural(area, x, y, tile, 2);
         int chance = switch (tile) {
             case 'g' -> 190;
             case 'f' -> 150;
-            case 'v' -> waterDistance <= 2 ? 230 : 170;
+            case 'v' -> waterDistance <= 2 ? 560 : 310;
             case 'P' -> waterDistance <= 2 ? 185 : 120;
             case 's' -> 125;
             case 'n' -> 145;
@@ -6154,11 +6433,11 @@ public final class WorldMap {
         if (roadDistance <= 1 && tile != 'm') {
             chance += 18;
         }
-        return Math.min(310, chance) * (tile == 'w' || tile == '~' ? 100 : 40) / 100;
+        return Math.min(tile == 'v' ? 620 : 310, chance) * (tile == 'w' || tile == '~' || tile == 'v' ? 100 : 40) / 100;
     }
 
     private String softDecorationFor(MapArea area, char tile, int x, int y, int roll, int patchSeed) {
-        boolean nearWater = distanceToAny(area, x, y, 3, new char[]{'w'}) <= 2;
+        boolean nearWater = distanceToAny(area, x, y, 3, new char[]{'w', '~'}) <= 2;
         boolean nearRock = distanceToAny(area, x, y, 3, new char[]{'m', 'q', 'b'}) <= 2;
         boolean waterShore = isShoreWater(area, x, y, tile);
         return switch (tile) {
@@ -6177,6 +6456,7 @@ public final class WorldMap {
                     option("deco_soft_mossy_rock", 8), option("deco_soft_purple_flowers", 5)
             });
             case 'v' -> weightedDecoration(roll, patchSeed, new DecorationOption[]{
+                    option("deco_marsh_sedge_clump", nearWater ? 48 : 20),
                     option("deco_soft_reeds", nearWater ? 36 : 12),
                     option("deco_soft_water_cattails", nearWater ? 24 : 6),
                     option("deco_soft_water_reeds_gold", nearWater ? 18 : 5),
@@ -6295,7 +6575,7 @@ public final class WorldMap {
             case 'f' -> 198;
             case 'm' -> 66;
             case 'q' -> 52;
-            case 'v' -> 74;
+            case 'v' -> 225;
             case 'P' -> 58;
             case 's', 'n', 'b' -> 42;
             case 'g' -> 58;
@@ -6307,6 +6587,7 @@ public final class WorldMap {
 
     private int decorationSize(char tile, int roll, String asset) {
         int jitter = Math.floorMod(roll / 11 + asset.hashCode(), 5);
+        if (asset.equals("deco_marsh_sedge_clump")) return 48 + jitter * 5;
         if (isForestTree(asset)) {
             int base = switch (asset) {
                 case "deco_tree_young" -> 58;
@@ -7355,7 +7636,7 @@ public final class WorldMap {
     private void addPlayerCampProps(MapArea area) {
         addManagedCampProp(area, new WorldProp(15, 13, "location_camp_fire", 38));
         addManagedCampProp(area, new WorldProp(18, 14, "location_camp_crates", 38));
-        addManagedCampProp(area, new WorldProp(16, 15, "player_village_quest_board", 42));
+        addManagedCampProp(area, new WorldProp(16, 15, "player_village_quest_board", 56));
         addManagedCampProp(area, new WorldProp(11, 15, "deco_road_signpost", 36));
         addManagedCampProp(area, new WorldProp(22, 17, "village_prop_woodpile", 40));
         addManagedCampProp(area, new WorldProp(20, 18, FolkloreContent.HEARTH, 82));
@@ -7690,7 +7971,7 @@ public final class WorldMap {
                 npcs.add(new Npc(mapId, "Blacksmith Garran", "npc_blacksmith", x - 1, y, List.of(
                         "Keep clear of the coals. Iron remembers careless hands.",
                         "If the road has teeth, bring me the metal to answer it."
-                ), null, "highwall"));
+                ), null, "blacksmith"));
                 npcs.add(new Npc(mapId, "Coal Runner Tavi", "npc_citizen_woman", x + 2, y + 1, List.of(
                         "The ingots are sorted by temper, price, and how loudly they complain.",
                         "Mind the metal crates. They bite ankles before they become swords."
@@ -7700,7 +7981,7 @@ public final class WorldMap {
                 npcs.add(new Npc(mapId, "Carpenter Elian", "npc_citizen_man", x - 1, y, List.of(
                         "Good wood tells you how it wants to hold weight.",
                         "Bring timber and hide, and a bench like this can turn travel into preparedness."
-                ), null, null));
+                ), null, "carpenter"));
                 npcs.add(new Npc(mapId, "Apprentice Noll", "npc_citizen_woman", x + 2, y + 1, List.of(
                         "I plane boards until they stop arguing with the square.",
                         "Elian says a good workbench is mostly patience with legs."
@@ -7710,7 +7991,7 @@ public final class WorldMap {
                 npcs.add(new Npc(mapId, "Baker Mera", "npc_baker", x - 1, y, List.of(
                         "Bread is settlement architecture you can eat.",
                         "The oven keeps better time than most town clocks."
-                ), null, "riverside"));
+                ), null, "bakery"));
                 npcs.add(new Npc(mapId, "Hungry Regular", "npc_citizen_man", x + 2, y + 1, List.of(
                         "I am here for bread, gossip, and the heroic avoidance of chores.",
                         "Fresh loaves make bad news briefly negotiate."
@@ -7720,7 +8001,7 @@ public final class WorldMap {
                 npcs.add(new Npc(mapId, "Innkeeper Senn", "npc_innkeeper", x - 1, y, List.of(
                         "Guest rooms through the side doors, stew by the hearth, trouble preferably outside.",
                         "Travelers talk in their sleep. The honest ones apologize."
-                ), null, "riverside"));
+                ), null, "inn"));
                 npcs.add(new Npc(mapId, "Road-Tired Traveler", "npc_citizen_woman", x + 2, y, List.of(
                         "I paid for a bed, a lock, and three hours where nobody says 'urgent'.",
                         "The trunk is mine. The dust on it belongs to three kingdoms."
@@ -7734,7 +8015,7 @@ public final class WorldMap {
                 npcs.add(new Npc(mapId, "Bartender Senn", "npc_bartender", x - 1, y, List.of(
                         "A warm room buys more courage than most speeches.",
                         "Travelers talk when the cups are full. Listen long enough and every road has a rumor."
-                ), null, "riverside"));
+                ), null, "inn"));
                 npcs.add(new Npc(mapId, "Corner Regular", "npc_citizen_man", x + 2, y + 1, List.of(
                         "I saw nothing, heard everything, and remember selectively.",
                         "The chair by the wall is mine unless someone interesting needs it."
@@ -7744,6 +8025,10 @@ public final class WorldMap {
                     "Everything useful has a price. Everything priceless is usually trouble.",
                     "Look around. The shelves are better organized than the world outside."
             ), null, "riverside"));
+            case "alchemy" -> npcs.add(new Npc(mapId, "Herbalist Mara", "npc_citizen_woman", x, y, List.of(
+                    "Fresh herbs, salves, and potions for the road.",
+                    "Good medicine starts with carefully gathered ingredients."
+            ), null, "apothecary"));
             case "study" -> npcs.add(new Npc(mapId, "Archivist's Aide", "npc_citizen_woman", x, y, List.of(
                     "Please mind the shelves. Some of these records survived worse than weather.",
                     "A city is only stone unless someone remembers what happened inside it."
@@ -8856,7 +9141,7 @@ public final class WorldMap {
 
     private String grassDecorationFor(MapArea area, int x, int y, int roll, int patchSeed) {
         boolean nearRoad = distanceToRoad(area, x, y, 2) <= 1;
-        boolean nearWater = distanceToAny(area, x, y, 3, new char[]{'w'}) <= 2;
+        boolean nearWater = distanceToAny(area, x, y, 3, new char[]{'w', '~'}) <= 2;
         return weightedDecoration(roll, patchSeed, new DecorationOption[]{
                 option("deco_grass_clump", 36),
                 option("deco_flowers", 18),
@@ -9008,7 +9293,10 @@ public final class WorldMap {
     }
 
     private String marshDecorationFor(MapArea area, int x, int y, int roll, int patchSeed) {
-        boolean nearWater = distanceToAny(area, x, y, 3, new char[]{'w'}) <= 2;
+        int treeRoll = Math.floorMod(hash(x, y, patchSeed + 16061), 100);
+        if (distanceToRoad(area, x, y, 2) > 1 && treeRoll < 32)
+            return treeRoll < 23 ? "deco_tree_cypress_harvestable" : "deco_tree_willow_harvestable";
+        boolean nearWater = distanceToAny(area, x, y, 3, new char[]{'w', '~'}) <= 2;
         boolean edge = distanceToDifferentNatural(area, x, y, 'v', 2) <= 1;
         return weightedDecoration(roll, patchSeed, new DecorationOption[]{
                 option("deco_reeds", nearWater ? 36 : 16),
@@ -9080,7 +9368,7 @@ public final class WorldMap {
                     option("deco_forest_log", 10, 520), option("deco_forest_ancient_roots", 4, 140)
             });
             case 'g' -> grassDecorationFor(area, x, y, roll, patchSeed);
-            case 'v' -> marshDecorationFor(area, x, y, roll, patchSeed);
+            case 'v' -> softDecorationFor(area, tile, x, y, roll, patchSeed);
             case 'P' -> pick(new String[]{"deco_beach_grass", "deco_beach_shells", "deco_beach_coconuts", "deco_beach_driftwood"}, roll + patchSeed);
             case 's' -> pick(new String[]{"deco_dry_grass", "deco_desert_rocks", "deco_desert_sun_bleached_bones"}, roll + patchSeed);
             case 'n' -> pick(new String[]{"deco_snow_mound", "deco_tundra_rocks", "deco_tundra_frost_bush"}, roll + patchSeed);
@@ -9406,6 +9694,7 @@ public final class WorldMap {
         paintWaterBody(shifted(304, 4, 215, seedSalt), shifted(232, 5, 216, seedSalt), 22, 24, seedSalt + 215, land);
         seedSmallLakes(seedSalt, land);
         seedRivers(seedSalt, land);
+        seedMarshPools(seedSalt);
 
         raiseLandOval(83, 62, 11, 8, 'n', land);
         raiseLandPath(List.of(new TilePoint(83, 62), new TilePoint(78, 83), new TilePoint(82, 105)), 2, 'n', land);
@@ -10229,6 +10518,26 @@ public final class WorldMap {
             for (int x = Math.max(0, cx - rx - 6); x <= Math.min(COLS - 1, cx + rx + 6); x++) {
                 if (organicMetric(x, y, cx, cy, rx, ry, salt) <= 0.92 && land[y][x]) {
                     tiles[y][x] = 'w';
+                }
+            }
+        }
+    }
+
+    /** Small wadeable pools; later roads and authored sites retain priority. */
+    private void seedMarshPools(int seedSalt) {
+        for (int gy = 8; gy < ROWS - 8; gy += 11) {
+            for (int gx = 8; gx < COLS - 8; gx += 11) {
+                int roll = Math.floorMod(hash(gx, gy, seedSalt + 16057), 1000);
+                if (roll > 650) continue;
+                int cx = gx + roll % 5 - 2, cy = gy + roll / 5 % 5 - 2;
+                if (tiles[cy][cx] != 'v') continue;
+                int rx = 2 + roll % 3, ry = 2 + roll / 7 % 2;
+                for (int y = cy - ry - 1; y <= cy + ry + 1; y++) {
+                    for (int x = cx - rx - 1; x <= cx + rx + 1; x++) {
+                        if (tiles[y][x] == 'v'
+                                && organicMetric(x, y, cx, cy, rx, ry, seedSalt + roll) < .83)
+                            tiles[y][x] = '~';
+                    }
                 }
             }
         }

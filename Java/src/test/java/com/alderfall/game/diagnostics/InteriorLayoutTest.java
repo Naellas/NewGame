@@ -18,6 +18,9 @@ public final class InteriorLayoutTest {
         place.setAccessible(true); repair.setAccessible(true);
         int checked = 0;
         Set<String> outlines = new HashSet<>();
+        Set<String> roomGraphs = new HashSet<>();
+        int partitionedPlans = 0;
+        int branchedPlans = 0;
         for (String theme : InteriorLayout.THEMES) {
             if (args.length > 0 && !theme.equals(args[0])) continue;
             for (InteriorStyle style : InteriorStyle.values()) {
@@ -35,6 +38,9 @@ public final class InteriorLayoutTest {
                     String context = theme + "/" + style + "/" + seed;
                     checkEnclosure(plan.tiles(), context);
                     outlines.add(outline(plan.tiles()));
+                    roomGraphs.add(roomGraph(plan.tiles()));
+                    if (hasConnectedPartition(plan.tiles())) partitionedPlans++;
+                    if (hasRoomBranch(plan.tiles())) branchedPlans++;
                     for (WorldProp prop : plan.props()) {
                         place.invoke(world, area, prop.x(), prop.y(), prop.asset());
                         require(area.props.contains(prop), "Rejected planned prop " + context + " " + prop);
@@ -82,8 +88,55 @@ public final class InteriorLayoutTest {
             }
         }
         require(outlines.size() >= 3, "Missing footprint variety");
+        require(roomGraphs.size() >= 3, "Missing room-graph variety");
+        require(partitionedPlans > 0, "Seeded room plans never create a connected partition");
+        require(branchedPlans > 0, "Seeded room plans never create a room junction");
         System.out.println("Composed layout checks passed: " + checked + " plans; enclosed shells, reachable rooms, intact activity groups; "
-                + outlines.size() + " outlines.");
+                + outlines.size() + " outlines and " + roomGraphs.size() + " room graphs (" + partitionedPlans
+                + " partitioned, " + branchedPlans + " branched plans).");
+    }
+
+    private static String roomGraph(char[][] tiles) {
+        StringBuilder result = new StringBuilder();
+        for (int y = 1; y < tiles.length - 1; y++) {
+            for (int x = 1; x < tiles[y].length - 1; x++) {
+                if (tiles[y][x] == 'o' || tiles[y][x] == 'e') result.append(x).append(',').append(y).append(tiles[y][x]).append(';');
+            }
+        }
+        return result.toString();
+    }
+
+    private static boolean hasConnectedPartition(char[][] tiles) {
+        int h = tiles.length, w = tiles[0].length;
+        for (int y = 2; y < h - 2; y++) {
+            boolean continuous = true;
+            int openings = 0;
+            for (int x = 2; x < w - 2; x++) {
+                if (tiles[y][x] == 'e') openings++;
+                else if (tiles[y][x] != 'o') continuous = false;
+            }
+            if (continuous && openings >= 2) return true;
+        }
+        return false;
+    }
+
+    private static boolean hasRoomBranch(char[][] tiles) {
+        int h = tiles.length, w = tiles[0].length;
+        for (int y = 2; y < h - 2; y++) {
+            int openings = 0;
+            boolean horizontal = true;
+            for (int x = 2; x < w - 2; x++) {
+                if (tiles[y][x] == 'e') openings++;
+                else if (tiles[y][x] != 'o') horizontal = false;
+            }
+            if (!horizontal || openings < 2) continue;
+            for (int x = 2; x < w - 2; x++) {
+                int vertical = 0;
+                for (int yy = 2; yy < y; yy++) if (tiles[yy][x] == 'o') vertical++;
+                if (vertical >= 3) return true;
+            }
+        }
+        return false;
     }
 
     private static String outline(char[][] tiles) {

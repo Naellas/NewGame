@@ -74,5 +74,7 @@
   "universal_cutout": "tools.assets.shared.universal_cutout",
   "verify_universal_cutout_assets": "tools.checks.verify_universal_cutout_assets",
   "check_structure": "tools.checks.check_structure",
-  "test_asset_helpers": "tools.tests.test_asset_helpers"
+  "test_asset_helpers": "tools.tests.test_asset_helpers",
+  "import_animation_grid": "tools.assets.shared.import_animation_grid",
+  "sfxgen": "tools.audio.sfxgen"
 }

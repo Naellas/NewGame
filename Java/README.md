@@ -6,6 +6,23 @@ The current port is intentionally dependency-free Java 21/Swing so it can compil
 
 ## Run
 
+Double-click [scripts/launch.cmd](scripts/launch.cmd) for the Alderfall start
+screen, then choose **Play Game** or **Map Editor**. The world loads only after
+you choose a mode. The launcher closes when the selected window opens. Game/editor startup and save
+restoration show an animated loading screen with the current stage and elapsed time;
+world preparation runs in the background so the screen stays responsive.
+Direct shortcuts are `scripts/run-game.cmd` and `scripts/run-map-editor.cmd`.
+These Windows launchers share the build/run implementation and enable the
+conservative-JIT workaround for the locally observed JVM crashes.
+
+A Windows executable is also available at `exports/windows-launcher/Alderfall.exe`.
+Rebuild it with `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-launcher.ps1`.
+It opens the same Game / Map Editor start screen without a console. Keep it inside
+this Java project: it uses the project files and installed JDK 21, and rebuilds
+Java through the shared script when launched. It is not a portable game bundle.
+
+To launch the game directly from PowerShell:
+
 ```powershell
 .\scripts\run.ps1
 ```
@@ -15,8 +32,27 @@ Select a retained walking renderer with `scripts/run.ps1 -Movement original`,
 The existing per-mode scripts delegate to this shared launcher. `-PrintCommand`
 prints the Java command without building or opening the game.
 
-Developer review: [characters and related subsites](tools/reviews/characters/index.html).
+Codebase reference: [folders, every production class, and where to make changes](docs/codebase-summary.md).
+
+Developer review: [Preview Workshop — all HTML previews](tools/reviews/index.html).
 Repository checks: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check.ps1`.
+
+## External map editor
+
+Double-click `scripts/run-map-editor.cmd` for the separate **Location Workshop**
+desktop app. This dedicated launcher builds through `run.ps1` and enables the
+conservative-JIT workaround. Command-line options such as `-Map <file>` and
+`-PrintCommand` are forwarded to the shared launcher.
+Create cities, villages, dungeons and interiors; paint terrain, search/place
+assets, move building lots, undo edits, save maps and stamp reusable prefabs.
+The library exposes every runtime image ID, including all regional building
+sprites, flora, fauna, characters, items, effects and animation poses. Search
+matches names, IDs, categories and source paths. Animals and characters are visual
+scenery; the **Buildings** category retains functional village building plans.
+Seeded starting layouts, spawn/landmark tools, collision validation and a game
+playtest window are included. `-Editor -Map <file>` opens a document;
+`-Map <file>` imports it directly into a game playtest.
+See [map editor guide](docs/map-editor.md) for controls, formats and current scope.
 
 ## Character movement
 
@@ -52,6 +88,10 @@ beneath `temp`; redirected output is never recursively cleared. Recognized
 OneDrive cloud placeholders are supported. Junctions, symbolic links, and unknown
 reparse points in the output tree or its ancestors stop the build before cleanup.
 
+The build honors `JAVA_HOME` when set; otherwise it prefers an installed Java 21
+JDK under the standard Windows Java/Adoptium folders before falling back to PATH.
+This selection applies only to the current process and its launcher.
+
 ## Smoke Test
 
 ```powershell
@@ -72,6 +112,10 @@ The renderer caches the viewport vignette until its size or day/night colors cha
 
 For live profiling, `scripts/run-profile.ps1` enables average and maximum timings, including simulation updates, terrain, scenery, props, and lighting. Maximum timings help expose loading or cache rebuild stalls that averages can hide.
 
+Press **F4** or use **Settings > Debug > Performance (F4)** to cycle live FPS,
+render/update timings, JVM heap stats, and a regional rendering-cost heatmap.
+See [performance overlay](docs/performance-overlay.md) for measurement scope.
+
 ## Generated Files
 
 Build products under `out/` and `out-*/`, local saves, local settings, map-editor exports, `temp/` scratch files, compiled `.class` files, Python `__pycache__` bytecode, and JVM profiling/crash output are ignored.
@@ -79,6 +123,12 @@ Build products under `out/` and `out-*/`, local saves, local settings, map-edito
 Build output and caches can be deleted when the game and development tools are closed; build scripts recreate them. Deleting `saves/` removes local play progress. Review exports and scratch files before clearing them. Keep source, assets, tools, and configuration defaults.
 
 ## Current Scope
+
+Generated outdoor maps now have biome- and region-dependent stepped elevation,
+walkable mountain foothills, blocked summit cores and varied bank materials.
+Roads, water crossings and building foundations retain safe level approaches.
+See [world elevation](docs/world-elevation.md) and the
+[regional preview gallery](tools/reviews/elevation/index.html).
 
 - Java window and fixed-step Swing game loop.
 - Class selection for Knight, Mage, and Ranger.
@@ -95,6 +145,7 @@ Build output and caches can be deleted when the game and development tools are c
 - Dialog, quest acceptance, quest progress, quest rewards, and quest log.
 - Recruitable quest allies and hireable village companions with party battle turns.
 - Consumable inventory, equipment slots, quick item use, shops, and shop purchases.
+- [Trade-specific merchant stock](docs/shop-stock.md) for workshops, food sellers, and working NPCs.
 - Migrated common/class skill trees with skill points, stat bonuses, ability unlocks, and respec.
 - Java-side named adventure save/load slots under `Java/saves/`.
 - Gameplay tuning loaded from `Java/config/gameplay.json`.
@@ -129,6 +180,10 @@ The remaining `com.alderfall.game` classes are grouped into responsibility folde
 - `minigames`: standalone minigame flows.
 
 ## Controls
+
+Oathstead's [settlement building tools](docs/settlement-building.md) include six
+building tiers through Metropolis, a searchable Manage panel, water and expanded
+ground palettes, and saved terrain-height brushes.
 
 - Move: click a visible map tile to path toward it, or use `WASD`/arrow keys
 - Talk/interact: click `Talk / Enter`, click your tile, or press `E`
@@ -172,3 +227,38 @@ Legacy movement modes retain their original timing.
 
 The character review page has a **Cloth & hair physics** tab with a switchable
 spring/capsule experiment. This secondary-motion simulation is preview-only.
+
+## Furniture quest interactions
+
+Innkeeper Senn at Oakhaven's inn offers **Missing Provisions**. Inspect counters,
+read a pantry ledger, and collect/return a parcel using E beside the highlighted
+furniture. Quest cargo and visible delivery results persist through saves.
+See [furniture quests](docs/furniture-quests.md) for the implemented scope and checks.
+
+## Roaming event objects
+
+Road ambushes appear as bushes and trigger on entry, using enemies from the nearest
+same-biome dungeon. Lost purses appear on the ground; shrine events highlight
+existing shrines with three color variants and particles. Purses/shrines show
+choices only when deliberately interacted with. See [roaming events](docs/roaming-events.md).
+
+## Save snapshots
+
+Saving with Save Adventure, Overwrite, or F5 includes a 640-pixel-wide PNG of
+the world viewport in the adventure file. The save/load screen has a side panel
+showing the selected save's snapshot, location, character, time, and progress.
+Click a row's details to preview it; Open, Load, and Overwrite keep their existing
+actions. Character folders preview their latest save. The saving screen initially
+shows the current adventure, with a button to return to it after browsing saves.
+Older saves and unreadable previews display a placeholder and remain loadable.
+Snapshots stay private with the ignored local saves; no runtime assets are added.
+
+Validation: `scripts/test.ps1 -Test com.alderfall.game.SaveSnapshotTest`.
+
+## Spell and footstep audio
+
+Elemental, weapon, support-magic and monster sounds follow VFX release/collision timing.
+Softer surface-based footsteps use eight variations for the player, companions
+and nearby NPCs. Adjust
+**Settings > Audio > Footsteps** independently of SFX. See [audio details](docs/audio-effects.md)
+and [listen to samples](tools/reviews/audio/index.html).

@@ -33,6 +33,10 @@ final class GameKeyboardController extends KeyAdapter {
                     || panel.shopRenderer.packBrowser.keyPressed(event))) { panel.repaint(); return; }
             int code = event.getKeyCode();
             boolean repeatedKeyPress = !pressedKeys.add(code);
+            if (code == KeyEvent.VK_F4) {
+                if (!repeatedKeyPress) panel.cyclePerformanceOverlay();
+                return;
+            }
             if (panel.state.mode == GameMode.MAIN_MENU) {
                 if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_N) {
                     panel.state.openClassSelect();
@@ -186,6 +190,9 @@ final class GameKeyboardController extends KeyAdapter {
             } else if (code == KeyEvent.VK_F9) {
                 panel.loadGame();
             } else if (code == KeyEvent.VK_ESCAPE) {
+                if(panel.dismissVillageContextMenu()){panel.repaint();return;}
+                if(panel.state.mode==GameMode.VILLAGE && panel.state.villageCatalogOpen){panel.state.villageCatalogOpen=false;panel.repaint();return;}
+                if(panel.state.mode==GameMode.VILLAGE && !panel.state.pendingWorkplaceAlly.isBlank()){panel.state.cancelWorkplaceSelection();panel.repaint();return;}
                 if (panel.state.mode == GameMode.EXPLORE || panel.state.mode == GameMode.BATTLE || panel.state.mode == GameMode.DIALOG || panel.state.mode == GameMode.DEFENSE) {
                     panel.state.openPauseMenu();
                 } else if (panel.state.mode != GameMode.EXPLORE && panel.state.mode != GameMode.BATTLE) {

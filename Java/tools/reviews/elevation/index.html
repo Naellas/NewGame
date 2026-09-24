@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alderfall ? geographic elevation</title>
+<style>
+body{margin:0;background:#141d19;color:#eae3cc;font:16px system-ui}main{max-width:1536px;margin:32px auto;padding:0 24px}p{line-height:1.6;color:#bcc8b4}a{color:#e0cc93}nav{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}button{padding:11px 16px;background:#2d4033;color:#eae3cc;border:1px solid #657554;border-radius:6px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#66744c}img{display:block;width:100%;height:auto;border-radius:8px}small{color:#a8b39f}
+</style><main>
+<h1>Elevation across Alderfall</h1>
+<p>Broad mountain terraces connect through small steps and planned hiking ramps. Steep summit cores remain blocked. Rolling meadows, rooted woodland banks, sandstone terraces and low wetlands follow the world's geography. Roads, crossings and building foundations keep their existing access.</p>
+<nav aria-label="Region and material previews"><button data-file="mountains.png" aria-pressed="true">Mountain terraces</button>
+<button data-file="mountain-route.png" aria-pressed="false">Hiking ramp</button>
+<button data-file="meadow.png" aria-pressed="false">Meadows</button>
+<button data-file="forest.png" aria-pressed="false">Woodland</button>
+<button data-file="frost.png" aria-pressed="false">Frostfields</button>
+<button data-file="sandstone.png" aria-pressed="false">Sunsteppe</button>
+<button data-file="badlands.png" aria-pressed="false">Badlands</button>
+<button data-file="fen.png" aria-pressed="false">Fenlands</button>
+<button data-file="coast.png" aria-pressed="false">Coast</button>
+<button data-file="city_highwall.png" aria-pressed="false">Highwall</button>
+<button data-file="city_sanctum.png" aria-pressed="false">Sanctum</button>
+<button data-file="city_belltower.png" aria-pressed="false">Belltower</button>
+<button data-file="materials.png" aria-pressed="false">Bank materials</button></nav>
+<img id="preview" src="../../../../asset-review/reviews/elevation/2026-09-24-world/mountains.png" alt="Actual gameplay showing terraced mountain foothills">
+<p>These are actual game renders. The material sheet shows the procedural textures used for banks. Restart the game to see elevation in generated outdoor maps.</p>
+<p><a href="../../../../asset-review/reviews/elevation/2026-09-24-world/README.md">Reproduce these captures</a> ? <a href="../../../docs/world-elevation.md">Behavior and validation</a> ? <a href="study.html">Earlier isolated study</a></p>
+<small>Interior floors and authored editor maps retain their existing geometry. The live renderer keeps actor/camera ground anchors stable and draws elevation as connected contour banks.</small>
+</main><script>
+const buttons=[...document.querySelectorAll('button')];
+buttons.forEach(button=>button.addEventListener('click',()=>{
+ buttons.forEach(other=>other.setAttribute('aria-pressed',String(other===button)));
+ const preview=document.getElementById('preview');
+ preview.src='../../../../asset-review/reviews/elevation/2026-09-24-world/'+button.dataset.file;
+ preview.alt=button.textContent+' ? actual game elevation preview';
+}));
+</script></html>

@@ -6,6 +6,9 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 $assetsRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../../assets'))
+$placements = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../../../config/asset-placements.json') -Raw | ConvertFrom-Json
+$route = $placements.paths.PSObject.Properties[$Asset.Replace('\', '/')]
+if ($null -ne $route) { $Asset = $route.Value }
 $destination = [IO.Path]::GetFullPath((Join-Path $assetsRoot $Asset))
 if (-not $destination.StartsWith($assetsRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'Asset path must stay inside Java/assets.'

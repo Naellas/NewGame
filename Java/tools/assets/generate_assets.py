@@ -5,6 +5,7 @@ from pathlib import Path as _BootstrapPath
 if not __package__:
     _bootstrap_sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[2]))
 from tools.project_paths import JAVA_ROOT, REPO_ROOT
+from tools.assets.shared.asset_paths import asset_file
 from tools.assets.shared.asset_paths import family_dir
 
 import math
@@ -59,7 +60,7 @@ def output_path(name: str) -> Path:
         folder = "terrain"
     else:
         folder = "monsters"
-    return family_dir(OUT, folder) / f"{name}.png"
+    return asset_file(OUT, f"{folder}/{name}.png")
 
 
 def canvas(size: int = SIZE, color: tuple[int, int, int, int] = (0, 0, 0, 0)) -> list[list[tuple[int, int, int, int]]]:

@@ -8,6 +8,8 @@ public final class RenderMetrics {
     private static final String REPORT_EVERY_PROPERTY = "alderfall.renderMetricsEvery";
 
     private final boolean enabled;
+    private boolean overlayEnabled;
+    private final Map<String, Long> overlayTimings = new LinkedHashMap<>();
     private final int reportEveryFrames;
     private final Map<String, Metric> metrics = new LinkedHashMap<>();
     private final Map<String, SampleMetric> samples = new LinkedHashMap<>();
@@ -24,18 +26,32 @@ public final class RenderMetrics {
     }
 
     public boolean enabled() {
-        return enabled;
+        return enabled || overlayEnabled;
     }
 
     public long start() {
-        return enabled ? System.nanoTime() : 0L;
+        return enabled() ? System.nanoTime() : 0L;
     }
 
     public void record(String name, long startedNanos) {
-        if (!enabled || startedNanos == 0L) {
+        if (!enabled() || startedNanos == 0L) {
             return;
         }
-        metrics.computeIfAbsent(name, ignored -> new Metric()).add(System.nanoTime() - startedNanos);
+        long elapsed = System.nanoTime() - startedNanos;
+        if (overlayEnabled) overlayTimings.merge(name, elapsed, Long::sum);
+        if (enabled) metrics.computeIfAbsent(name, ignored -> new Metric()).add(elapsed);
+    }
+
+    public void setOverlayEnabled(boolean active) {
+        overlayEnabled = active;
+        overlayTimings.clear();
+    }
+
+    public Map<String, Long> takeOverlayTimings() {
+        if (!overlayEnabled) return Map.of();
+        Map<String, Long> result = Map.copyOf(overlayTimings);
+        overlayTimings.clear();
+        return result;
     }
 
     public void sample(String name, long value) {

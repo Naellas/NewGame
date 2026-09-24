@@ -29,6 +29,10 @@ public final class DialogueRenderer {
     }
 
     public void drawDialog(Graphics2D g) {
+        if (state.roamingEventPromptActive()) {
+            drawWorldEventCard(g);
+            return;
+        }
         Npc npc = state.activeNpc;
         if (npc == null) {
             return;
@@ -77,6 +81,24 @@ public final class DialogueRenderer {
             g.setFont(new Font("SansSerif", Font.BOLD, 14));
             g.drawString("Travels with you", textX + listW + 18, optionsY + 22);
         }
+    }
+
+    private void drawWorldEventCard(Graphics2D g) {
+        GameState.RoamingEventPrompt event = state.roamingEventPrompt();
+        int width = Math.min(680, effects.gameAreaWidth() - 48);
+        int height = Math.min(440, effects.viewHeight() - 64);
+        int x = effects.gameAreaCenteredX(width), y = (effects.viewHeight() - height) / 2;
+        effects.drawOverlayBase(g, x, y, width, height);
+        g.setColor(new Color(236, 216, 165));
+        g.setFont(new Font("SansSerif", Font.BOLD, 23));
+        g.drawString(event.title(), x + 24, y + 39);
+        boolean objectArt = event.sprite().startsWith("event_");
+        if (objectArt) g.drawImage(assets.spriteFit(event.sprite(), 96, 96), x + width - 124, y + 54, null);
+        g.setColor(new Color(222, 222, 215));
+        g.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        effects.drawWrapped(g, state.revealedActiveNpcDialogLine(), x + 24, y + 72, width - (objectArt ? 156 : 48), 22, 5);
+        List<DialogOption> options = dialogOptions(state.activeNpc, null);
+        drawDialogOptionList(g, options, x + 24, y + 185, width - 48, height - 205);
     }
 
     private void drawCompanionDialog(Graphics2D g, Npc npc) {
@@ -691,10 +713,10 @@ public final class DialogueRenderer {
                 return itemList(spec.inventory(), 3);
             }
         }
-        if (npc.shopId() != null) {
-            Shop shop = GameData.SHOPS.get(npc.shopId());
+        if (Shop.forNpc(npc) != null) {
+            Shop shop = Shop.forNpc(npc);
             if (shop != null) {
-                List<String> stock = shop.availableStock(state.player.level);
+                List<String> stock = state.shopStock(shop);
                 if (!stock.isEmpty()) {
                     List<String> names = new ArrayList<>();
                     for (String key : stock) {

@@ -2002,7 +2002,7 @@ public final class SmokeTest {
         if (state.mode != GameMode.SHOP || state.activeShop == null) {
             throw new IllegalStateException("Shop transaction test requires an active shop.");
         }
-        List<String> stock = state.activeShop.availableStock(state.player.level);
+        List<String> stock = state.shopStock(state.activeShop);
         String itemKey = stock.stream()
                 .filter(key -> !CraftingSystem.isRecipeBookItem(key))
                 .filter(key -> GameData.itemCost(key) > 0)

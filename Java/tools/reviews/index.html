@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alderfall Preview Workshop</title>
+  <link rel="stylesheet" href="workshop.css">
+  <script src="workshop.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#viewer">Skip to preview</a>
+  <aside aria-label="Preview library">
+    <header><span class="eyebrow">ECHOES OF ALDERFALL</span><h1>Preview Workshop</h1><p>One place to explore every study.</p></header>
+    <label for="search">Find a preview</label>
+    <input id="search" type="search" placeholder="Movement, buildings, audio…" autocomplete="off">
+    <p id="count" class="muted" role="status"></p>
+    <nav aria-label="Preview modes">
+      <section><h2>Characters &amp; motion</h2>
+        <a data-mode="quest-editor" href="quest-story/index.html" target="preview">Quest, character &amp; dialogue editor</a>
+        <a data-mode="characters" href="characters/index.html" target="preview">Character &amp; monster animations</a>
+        <a data-mode="movement" href="movement-physics/index.html" target="preview">Movement physics simulator</a>
+        <a data-mode="calibration" href="movement-physics/calibration/index.html" target="preview">Full-roster movement calibration</a>
+        <a data-mode="dialogue" href="dialogue-motion/index.html" target="preview">Dialogue motion</a>
+        <a data-mode="grounded" href="grounded-movement/index.html" target="preview">Grounded movement study</a>
+        <a data-mode="cloth" href="cloth-physics/index.html" target="preview">Cloth &amp; hair physics</a>
+        <a data-mode="monster-attacks" href="monster-attacks-2026-09-23/index.html" target="preview">Monster attacks</a>
+      </section>
+      <section><h2>World &amp; settlements</h2>
+        <a data-mode="elevation" href="elevation/index.html" target="preview">Geographic elevation</a>
+        <a data-mode="elevation-study" href="elevation/study.html" target="preview">Elevation study</a>
+        <a data-mode="settlement" href="player-settlement/index.html" target="preview">Oathstead building progression</a>
+        <a data-mode="architecture" href="town-architecture/index.html" target="preview">Town architecture</a>
+        <a data-mode="landmarks" href="town-architecture/landmarks.html" target="preview">Grand landmarks</a>
+        <a data-mode="regional-buildings" href="../../../asset-review/regional-buildings/index.html" target="preview">Regional working buildings</a>
+        <a data-mode="caverns" href="../../../asset-review/regional-caverns/index.html" target="preview">Regional caverns</a>
+        <a data-mode="built-dungeons" href="../../../asset-review/built-dungeons/index.html" target="preview">Constructed dungeons</a>
+        <a data-mode="dungeon-exteriors" href="../../../asset-review/dungeon-exteriors/index.html" target="preview">Dungeon exteriors</a>
+        <a data-mode="modular-dungeons" href="../../../asset-review/modular-dungeons/index.html" target="preview">Modular dungeon assets</a>
+        <a data-mode="battle-environments" href="../../docs/battle-environments.html" target="preview">Battle environments</a>
+      </section>
+      <section><h2>Artwork &amp; effects</h2>
+        <a data-mode="resources" href="../../docs/resource-art-gallery.html" target="preview">Resource artwork</a>
+        <a data-mode="abilities" href="../../docs/ability-impact-review.html" target="preview">Ability impacts</a>
+        <a data-mode="furniture" href="../../../asset-review/household-expansion/index.html" target="preview">Household furniture</a>
+        <a data-mode="sprite-integrity" href="../../../asset-review/2026-09-22-sprite-integrity/gallery.html" target="preview">Sprite integrity</a>
+      </section>
+      <section><h2>Audio</h2>
+        <a data-mode="sounds" href="audio/index.html" target="preview">Sound samples &amp; footsteps</a>
+        <a data-mode="music" href="../../assets/music/encounter-music.html" target="preview">Combat &amp; dungeon music</a>
+      </section>
+    </nav>
+    <p id="empty" hidden>No previews match. Try another search.</p>
+    <footer>Switching modes restarts the preview.</footer>
+  </aside>
+  <main id="viewer" tabindex="-1">
+    <div class="toolbar">
+      <div><span class="eyebrow" id="category">PREVIEW</span><h2 id="current-title">Character &amp; monster animations</h2></div>
+      <div class="actions"><button id="reload" type="button">Restart</button><a id="open" href="characters/index.html" target="_blank" rel="noopener">Open separately ↗</a></div>
+    </div>
+    <iframe name="preview" id="preview" title="Character and monster animations" src="characters/index.html"></iframe>
+    <noscript>Choose a preview from the sidebar. Enable JavaScript for search and bookmarkable modes.</noscript>
+  </main>
+</body>
+</html>

@@ -1,0 +1,17 @@
+[
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_house_west.png",
+        "sha256":  "9461E2D8495020E0FD1035FF7A524EC718A8264C6F081F2D123C557F9C6E8D67",
+        "source":  "originals/town_northwatch_house_west.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_house_east.png",
+        "sha256":  "DC139EE805F569F6378ABE5A592FEEE9E350E2F4CB0D5794D0C7CA8B4801EA86",
+        "source":  "originals/town_northwatch_house_east.png"
+    },
+    {
+        "destination":  "Java/assets/environments/settlements/city/buildings/freehold/town_northwatch_house_north.png",
+        "sha256":  "9A2E79D8A5BF35591E72502A874296EADAF67724F153918D690C66C8F95C15D1",
+        "source":  "originals/town_northwatch_house_north.png"
+    }
+]

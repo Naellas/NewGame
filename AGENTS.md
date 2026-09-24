@@ -16,6 +16,11 @@ proposal, not permission to perform a wholesale migration during unrelated work.
   Put NEW original sheets, prompts, and import recipes in
   `art-source/<topic>/<batch>/`. Do not add source/sources folders inside runtime
   assets or extend the legacy root `assets/` tree.
+- Buildings belong in `Java/assets/environments/settlements/city/buildings/<region>`;
+  use `shared` for buildings used across regions. Items belong in their equipment
+  or purpose category under `Java/assets/items/`. Use `asset_file` and the placement
+  manifest when updating old import recipes. Do not recreate `items/generated`,
+  flat item icons, or the retired building folders.
 - Keep animation PNGs, `.frames`, and `.framebounds` together. Preserve logical
   asset names and dynamic direction/action lookup. Identical bytes alone never
   prove that an asset name or metadata sidecar can be removed.

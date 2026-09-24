@@ -10,6 +10,8 @@ from pathlib import Path, PurePosixPath
 import json
 
 _FAMILIES = json.loads((JAVA_ROOT / 'config/asset-layout.json').read_text(encoding='utf-8'))['legacy_families']
+_PLACEMENTS = json.loads((JAVA_ROOT / 'config/asset-placements.json').read_text(encoding='utf-8'))['paths']
+_ORIGINAL_PATHS = {new: old for old, new in _PLACEMENTS.items()}
 
 
 def asset_relative(path: str) -> str:
@@ -20,7 +22,13 @@ def asset_relative(path: str) -> str:
     parts = relative.parts
     if not parts:
         return '.'
-    return str(PurePosixPath(_FAMILIES.get(parts[0], parts[0]), *parts[1:]))
+    canonical = str(PurePosixPath(_FAMILIES.get(parts[0], parts[0]), *parts[1:]))
+    return _PLACEMENTS.get(canonical, canonical)
+
+
+def asset_file(assets_root: Path, relative_path: str) -> Path:
+    """Resolve a registered asset path for reads or writes without creating folders."""
+    return assets_root / asset_relative(relative_path)
 
 
 def family_dir(assets_root: Path, family: str) -> Path:
@@ -102,6 +110,7 @@ def find_asset(assets_root: Path, filename: str) -> Path:
         return direct
     def historical_order(path: Path) -> tuple[str, str]:
         relative = path.relative_to(assets_root).as_posix()
+        relative = _ORIGINAL_PATHS.get(relative, relative)
         # Preserve importer selection when a source sheet and runtime sprite share
         # a basename. Reparenting families must not silently change regeneration.
         for old, new in sorted(_FAMILIES.items(), key=lambda item: -len(item[1])):

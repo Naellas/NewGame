@@ -62,7 +62,7 @@ public final class SettlementDressing {
                 || world.cityBuildingAt(area.id, x, y) != null || area.propAt(x, y) != null
                 || world.transitionAt(area.id, x, y) != null || area.landmarks.containsKey(new TilePoint(x, y))) return false;
         for (var b : world.cityBuildings(area.id)) for (var door : world.cityBuildingDoorTiles(b))
-            if (Math.abs(door.x() - x) <= 1 && y >= door.y() && y <= door.y() + 2) return false;
+            if (b.approachContains(door, x, y, 2)) return false;
         return area.propsInBounds(x - 2, y - 2, x + 2, y + 2).stream()
                 .noneMatch(p -> p.asset().startsWith("town_portal_"));
     }

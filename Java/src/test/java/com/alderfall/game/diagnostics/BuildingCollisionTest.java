@@ -24,8 +24,10 @@ public final class BuildingCollisionTest {
                             base.getCenterX(), base.getMaxY() + 0.3), "Swept movement tunnels through base");
                 }
                 for (TilePoint door : world.cityBuildingDoorTiles(building)) {
-                    require(world.cityBuildingBlocksMovementAt(mapId, door.x(), door.y()), "Door must still stop movement");
-                    require(world.cityBuildingEntryAt(mapId, door.x(), door.y(), door.x(), door.y() + 1) == building,
+                    if (building.facing() == CityBuilding.Facing.SOUTH)
+                        require(world.cityBuildingBlocksMovementAt(mapId, door.x(), door.y()), "Door must still stop movement");
+                    TilePoint approach = building.outside(door, 0, 1);
+                    require(world.cityBuildingEntryAt(mapId, door.x(), door.y(), approach.x(), approach.y()) == building,
                             "Door entry lost");
                 }
 

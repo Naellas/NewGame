@@ -1,0 +1,182 @@
+[
+  [
+    "cooking_station",
+    "a warm oak kitchen preparation table with vegetables, ceramic jar, cutting board, small knife, teal cloth and a bowl underneath",
+    2
+  ],
+  [
+    "alchemy_station",
+    "a dark oak alchemy table with purple cloth, brass still, mortar, amber and blue glass flasks",
+    2
+  ],
+  [
+    "anvil",
+    "a dark steel anvil with clear horn and polished working face mounted on a thick round oak stump",
+    1
+  ],
+  [
+    "forge",
+    "a small soot-dark masonry forge with curved chimney and warm coal opening, preserve compact domestic-sized silhouette",
+    1
+  ],
+  [
+    "oven",
+    "a rustic red brick domed bread oven on a short stone base with visible fire and stacked logs",
+    1
+  ],
+  [
+    "stove",
+    "a square dark cast-iron stove with narrow upright stovepipe and small glowing front firebox",
+    1
+  ],
+  [
+    "round_table",
+    "a bare round oak dining table with circular plank top and sturdy wooden pedestal feet",
+    1
+  ],
+  [
+    "shop_counter",
+    "a broad oak shop counter with two lower cubbies, square cabinet door, blue cloth draped over top, tiny plant and ceramic jug",
+    2
+  ],
+  [
+    "side_table",
+    "a small square oak side table with one drawer and lower open shelf, bare level top",
+    1
+  ],
+  [
+    "tavern_bar",
+    "a broad straight oak tavern bar with simple paneled front, bare worktop, two red round stools in front",
+    2
+  ],
+  [
+    "seed_bowl",
+    "a small wooden bowl of seeds next to an upright cloth seed packet marked with a simple green leaf, no lettering",
+    1
+  ],
+  [
+    "sprout_planter",
+    "a rectangular dark wooden planter box with black soil and four young green sprouts, two small iron corner bands",
+    1
+  ],
+  [
+    "floor_bushy_planter",
+    "a broad low oak planter trough densely filled with green herbs and soft fern leaves",
+    2
+  ],
+  [
+    "floor_sapling_pot",
+    "a little terracotta flowerpot holding one young green sapling with a slim stem",
+    1
+  ],
+  [
+    "wall_crystal_ornament",
+    "a single purple faceted hanging crystal suspended by a brass wall bracket; purple belongs ONLY inside crystal silhouette",
+    1
+  ],
+  [
+    "wall_window_wide",
+    "a wide rectangular oak-framed window with four blue glass panes, green ivy on sill and small terracotta pot, whole frame included",
+    2
+  ],
+  [
+    "banquet_table_h",
+    "a rectangular oak dining table with cream runner and red trim, two plates, small candle and tankards, no chairs",
+    2
+  ],
+  [
+    "stool_table_h",
+    "a rectangular oak tavern table with bare horizontal plank top and two round red padded stools in front",
+    2
+  ],
+  [
+    "study_desk_h",
+    "a wide oak writing desk, open book, parchment, inkpot and feather quill, drawer and sturdy legs",
+    2
+  ],
+  [
+    "bakery_counter",
+    "a wide oak bakery sales counter filled with crisp bread loaves, wicker basket, little pale linen runner and flour jar",
+    2
+  ],
+  [
+    "bakery_oven",
+    "a tall narrow rustic red-brick bread oven with domed upper fire opening and wood store beneath",
+    0.7
+  ],
+  [
+    "carpenter_workbench",
+    "a broad sturdy carpentry workbench with hand saw, wooden plane, mallet, vise and plank offcuts; shelf beneath",
+    2
+  ],
+  [
+    "long_table_benches",
+    "a long oak dining table with two integrated benches, restrained blue linen runner and two tankards on top",
+    2
+  ],
+  [
+    "storage_counter",
+    "a broad oak supply counter with sacks and basket on top, crates and storage bins underneath",
+    2
+  ],
+  [
+    "tavern_counter",
+    "a wide oak tavern serving counter with blue runner, pewter jugs and green bottles, two red stools in front",
+    2
+  ],
+  [
+    "metal_crate",
+    "a broad iron-bound oak crate filled with neatly stacked steel bars and ingots; no loose ground debris",
+    2
+  ],
+  [
+    "grain_sacks_v",
+    "three burlap grain sacks stacked vertically on a narrow wooden pallet",
+    0.7
+  ],
+  [
+    "herb_drying_rack_v",
+    "a tall narrow oak freestanding drying rack with purple and green herbs hung from straight horizontal crossbar",
+    0.7
+  ],
+  [
+    "linen_shelf",
+    "a tall narrow oak shelf with folded cream linens, green blankets and a basket on lower shelf",
+    0.7
+  ],
+  [
+    "inn_screen_chest",
+    "a tall narrow oak privacy screen with an iron-bound chest at its foot, no cropped parts",
+    0.7
+  ],
+  [
+    "traveler_trunk",
+    "a tall narrow upright oak travel trunk with iron bands and brass locks, folded small bags secured on top",
+    0.7
+  ],
+  [
+    "aquarium_table",
+    "a broad oak cabinet supporting a clear glass rectangular aquarium with blue water, plants and small fish; all inside glass, no background",
+    2
+  ],
+  [
+    "chair_north",
+    "a simple warm oak wooden chair with plank seat, square backrest and four legs; front view, occupant faces DOWN on screen",
+    0.7
+  ],
+  [
+    "chair_south",
+    "a simple warm oak wooden chair with plank seat, square backrest and four legs; rear view, occupant faces UP on screen",
+    0.7
+  ],
+  [
+    "chair_east",
+    "a simple warm oak wooden chair with plank seat, square backrest and four legs; strict LEFT-facing side profile: backrest on RIGHT, seat extends LEFT",
+    0.7
+  ],
+  [
+    "chair_west",
+    "a simple warm oak wooden chair with plank seat, square backrest and four legs; strict RIGHT-facing side profile: backrest on LEFT, seat extends RIGHT",
+    0.7
+  ]
+]

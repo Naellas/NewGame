@@ -1,0 +1,17 @@
+[
+  {
+    "source": "originals/town_service_barn_temperate.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/shared/town_service_barn_temperate.png",
+    "sha256": "C319F4C779A49D347E1EDCDCFDCECCBF082B2F9C457AA1D55A3F84DAF2A78717"
+  },
+  {
+    "source": "originals/town_service_barn_north.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/north/town_service_barn_north.png",
+    "sha256": "82072335E8D78CE96B220720A7B71407CFD44E54BD14898FF9BABE029F1D316E"
+  },
+  {
+    "source": "originals/town_service_barn_sun.png",
+    "destination": "Java/assets/environments/settlements/city/buildings/sun/town_service_barn_sun.png",
+    "sha256": "CDE0CCBC1ECF128449432915ABB3A6C70B05E74E15A1E37FEC114A37771685D4"
+  }
+]

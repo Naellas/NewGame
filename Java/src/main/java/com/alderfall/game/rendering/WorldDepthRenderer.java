@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 /** Ground-contact ordering and local, feathered cutaways through foreground scenery. */
 public final class WorldDepthRenderer {
-    private record Entry(double depth, Rectangle bounds, boolean scenery, Consumer<Graphics2D> paint) { }
+    private record Entry(double depth, Rectangle bounds, boolean scenery, float revealScale, Consumer<Graphics2D> paint) { }
     private record Reveal(double depth, float x, float y, float radius) { }
     private final List<Entry> entries = new ArrayList<>();
     private final List<Reveal> reveals = new ArrayList<>();
@@ -21,6 +21,13 @@ public final class WorldDepthRenderer {
     private BufferedImage scratch;
     private boolean collecting;
     private int tileSize;
+    private PerformanceOverlay performanceOverlay;
+
+    void setPerformanceOverlay(PerformanceOverlay overlay) { performanceOverlay = overlay; }
+
+    private void recordRegion(Graphics2D g, Rectangle bounds, long started) {
+        if (performanceOverlay != null) performanceOverlay.endRegion(g, bounds, started);
+    }
 
     public void begin(int tileSize) {
         entries.clear();
@@ -34,13 +41,18 @@ public final class WorldDepthRenderer {
 
     public void scenery(Graphics2D g, double depth, Rectangle bounds, Consumer<Graphics2D> paint) {
         if (!collecting) { paint.accept(g); return; }
-        entries.add(new Entry(depth, new Rectangle(bounds), true, paint));
+        entries.add(new Entry(depth, new Rectangle(bounds), true, 1, paint));
+    }
+
+    public void wall(Graphics2D g, double depth, Rectangle bounds, Consumer<Graphics2D> paint) {
+        if (!collecting) { paint.accept(g); return; }
+        entries.add(new Entry(depth, new Rectangle(bounds), true, 1.6f, paint));
     }
 
     public void character(Graphics2D g, Rectangle bounds, Consumer<Graphics2D> paint) {
         if (!collecting) { paint.accept(g); return; }
         double depth = bounds.getMaxY();
-        entries.add(new Entry(depth, new Rectangle(bounds), false, paint));
+        entries.add(new Entry(depth, new Rectangle(bounds), false, 1, paint));
         reveals.add(new Reveal(depth, (float) bounds.getCenterX(),
                 bounds.y + bounds.height * 0.48f, Math.max(tileSize * 0.85f, bounds.height * 0.78f)));
     }
@@ -58,6 +70,7 @@ public final class WorldDepthRenderer {
             Rectangle clip = g.getClipBounds();
             if (clip != null) bounds = bounds.intersection(clip);
             if (bounds.isEmpty()) continue;
+            long started = performanceOverlay == null ? 0 : performanceOverlay.startRegion();
             boolean cutaway = false;
             if (entry.scenery) for (Reveal reveal : reveals) {
                 if (overlaps(entry, reveal)) { cutaway = true; break; }
@@ -66,6 +79,7 @@ public final class WorldDepthRenderer {
                 Graphics2D layer = (Graphics2D) g.create();
                 entry.paint.accept(layer);
                 layer.dispose();
+                recordRegion(g, bounds, started);
                 continue;
             }
             // Only overlapping scenery uses a reusable, viewport-clipped alpha surface.
@@ -88,18 +102,20 @@ public final class WorldDepthRenderer {
                 float amount = (float) Math.min(1, (entry.depth - reveal.depth) / Math.max(1, tileSize * 0.25));
                 amount = amount * amount * (3 - 2 * amount);
                 int alpha = Math.round(235 * amount);
-                layer.setPaint(new RadialGradientPaint(reveal.x, reveal.y, reveal.radius,
+                float radius = reveal.radius * entry.revealScale;
+                layer.setPaint(new RadialGradientPaint(reveal.x, reveal.y, radius,
                         new float[]{0, 0.35f, 0.7f, 1},
                         new Color[]{new Color(0, 0, 0, alpha), new Color(0, 0, 0, alpha),
                                 new Color(0, 0, 0, Math.round(alpha * 0.45f)), new Color(0, 0, 0, 0)}));
-                int left = (int) Math.floor(reveal.x - reveal.radius);
-                int top = (int) Math.floor(reveal.y - reveal.radius);
-                int diameter = (int) Math.ceil(reveal.radius * 2) + 2;
+                int left = (int) Math.floor(reveal.x - radius);
+                int top = (int) Math.floor(reveal.y - radius);
+                int diameter = (int) Math.ceil(radius * 2) + 2;
                 layer.fillRect(left, top, diameter, diameter);
             }
             layer.dispose();
             g.drawImage(scratch, bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height,
                     0, 0, bounds.width, bounds.height, null);
+            recordRegion(g, bounds, started);
         }
         for (Consumer<Graphics2D> overlay : overlays) {
             Graphics2D layer = (Graphics2D) g.create();
@@ -115,6 +131,6 @@ public final class WorldDepthRenderer {
         if (entry.depth <= reveal.depth) return false;
         double dx = Math.max(entry.bounds.x - reveal.x, Math.max(0, reveal.x - entry.bounds.getMaxX()));
         double dy = Math.max(entry.bounds.y - reveal.y, Math.max(0, reveal.y - entry.bounds.getMaxY()));
-        return dx * dx + dy * dy < reveal.radius * reveal.radius;
+        return dx * dx + dy * dy < reveal.radius * reveal.radius * entry.revealScale * entry.revealScale;
     }
 }

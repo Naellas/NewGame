@@ -25,9 +25,10 @@ public final class NaturalTerrainVariantTest {
         MapArea area = state.world.area(state.currentMapId);
         LayeredTerrainRenderer renderer = new LayeredTerrainRenderer(assets);
 
-        for (char material : new char[]{'g', 'f', 'n', 'v', 'b'}) {
+        for (char material : new char[]{'g', 'f', 'n', 'v', 'b', 's', 'P', 'm'}) {
             String base = Terrain.assetName(material);
-            int count = LayeredTerrainRenderer.naturalVariantCount(material);
+            int count = LayeredTerrainRenderer.authoredVariantCount(material);
+            require(LayeredTerrainRenderer.naturalVariantCount(material) == count * 3, "Missing surface styles");
             for (int i = 0; i < count; i++) {
                 String asset = i == 0 ? base : base + "_variant_" + i;
                 require(assets.hasSprite(asset), "Missing natural terrain variant: " + asset);
@@ -45,7 +46,7 @@ public final class NaturalTerrainVariantTest {
             require(signatures.size() >= 5, "Natural terrain still repeats visibly: " + base);
             require(worstSeam < 26, "Natural terrain has a hard tile seam: " + base + " delta=" + worstSeam);
         }
-        System.out.println("Natural terrain variants passed: five biomes use deterministic world-space meshes without hard tile seams.");
+        System.out.println("Natural terrain variants passed: all natural surfaces use deterministic world-space meshes without hard tile seams.");
     }
 
     private static int[] pixels(BufferedImage image) {

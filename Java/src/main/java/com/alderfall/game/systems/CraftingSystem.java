@@ -671,16 +671,18 @@ public final class CraftingSystem {
 
     public static Workstation workstationForAsset(String asset) {
         return switch (asset) {
-            case "interior_anvil", "interior_forge", "interior_anvil_tool_rack" -> Workstation.ANVIL;
-            case "interior_carpenter_table", "interior_carpenter_workbench", "interior_sawhorse_planks" -> Workstation.CARPENTER;
+            case "interior_anvil", "interior_forge", "interior_anvil_tool_rack", "interior_smith_hearth", "interior_smith_worktop" -> Workstation.ANVIL;
+            case "interior_carpenter_table", "interior_carpenter_workbench", "interior_sawhorse_planks", "interior_joinery_worktop" -> Workstation.CARPENTER;
             case "interior_oven", "interior_bakery_oven", "interior_bakery_counter", "interior_stove", "interior_hearth_pot",
-                    "interior_cooking_station", "interior_cookpot_stand" -> Workstation.OVEN;
-            case "interior_alchemy_station", "interior_mortar_pestle" -> Workstation.ALCHEMY;
+                    "interior_cooking_station", "interior_cookpot_stand", "interior_bakehouse_worktop" -> Workstation.OVEN;
+            case "interior_alchemy_station", "interior_mortar_pestle", "interior_apothecary_worktop" -> Workstation.ALCHEMY;
             default -> null;
         };
     }
 
     public static int[] workstationFootprint(String asset) {
+        InteriorFurnishings.Furnishing furnishing = InteriorFurnishings.find(asset);
+        if (furnishing != null) return new int[]{furnishing.width(), furnishing.depth()};
         return switch (asset) {
             case "interior_carpenter_table", "interior_carpenter_workbench", "interior_alchemy_station",
                     "interior_cooking_station", "interior_sawhorse_planks", "interior_bakery_counter" -> new int[]{2, 1};

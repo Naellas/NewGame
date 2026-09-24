@@ -16,10 +16,29 @@ For Java diagnostics mentioned below, first build from `Java/` with
 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1 -IncludeTests -IncludeReviews -OutputDirectory temp/checks/classes`.
 See [source-root instructions](../src/README.md).
 
+`InteriorAssetReview` compares two sprite directories through the runtime
+aspect-preserving furniture fitting path. From `Java/`, after the review build:
+`java -Djava.awt.headless=true -cp temp/checks/classes com.alderfall.game.InteriorAssetReview BEFORE AFTER temp/interior-comparison`.
+It requires Java 21 only, reads PNGs from BEFORE and matching logical IDs from
+AFTER, and writes/overwrites `comparison-N.png` sheets in the output directory.
+It never modifies input art. See the
+[interior quality review](../../asset-review/reviews/interior-quality/2026-09-24-cutouts-detail/README.md).
+
 ## Interactive review sites
 
-Open [characters/index.html](reviews/characters/index.html) for character/monster
-animations, movement, and dialogue. All related subsites and their exported
+Java `RenderBenchmark` also accepts `SAMPLES dialogue [CAPTURE.png]` for a
+1920x1080 Aria/Mage dialogue with the world visible. It uses the existing game
+assets and configuration, requires the review build above, prints render timings,
+and overwrites only the optional capture file. From `Java`, for example:
+`java -Djava.awt.headless=true -cp temp/checks/classes com.alderfall.game.RenderBenchmark 60 dialogue temp/dialogue-mesh/game.png`.
+Add JVM flag `-Dalderfall.dialogueDenseReference=true` to compare the dense
+reference against the default mesh. These timings exclude game updates and
+display presentation.
+
+Open the [Preview Workshop](reviews/index.html) to search and switch between all
+24 HTML previews: characters, movement, dialogue, world galleries, artwork, and
+audio. It opens directly in a browser, needs no dependencies or server, reads the
+existing preview pages, and writes no files. All related subsites and their exported
 frames live in [reviews/](reviews/README.md). Java exporters run from `Java/` and
 overwrite their named review outputs; browser checks require local Chrome and
 write disposable screenshots under `Java/temp/review-checks/`. Runtime assets
@@ -110,3 +129,61 @@ Open `assets/music/encounter-music.html` to audition and filter the 21 scores.
 The generator rebuilds this local listening page alongside the WAV files.
 Run `java -cp temp/checks/classes com.alderfall.game.CombatMusicTest` after compiling to verify
 tier classification, track coverage, repeat avoidance and stable encounter cues.
+
+Town architecture: [regional sprite and in-game review](reviews/town-architecture/index.html).
+
+
+### Water surface review (Java)
+
+`com.alderfall.game.WaterPreview` compares calm, wind and storm surface motion
+using the runtime renderer. Build with `scripts/build.ps1 -IncludeReviews`, then
+from Java run `java -Djava.awt.headless=true -cp out com.alderfall.game.WaterPreview temp/water/surface-frames`.
+Input: existing game configuration and fixed weather/depth review values.
+Output: 80 PNG frames (10 fps), overwriting matching filenames in the supplied
+directory. Dependencies: Java 21 standard libraries only. See
+[water documentation](../docs/water.md) for gameplay checks and curated evidence.
+
+### Transparent animation grids
+
+`python tools/run.py import_animation_grid SOURCE ASSET_RELATIVE_OUTPUT --columns 4 --rows 3 --width 192 --height 64`
+imports an RGBA grid into a horizontal animation strip. It uses shared project
+paths and asset routing, one common scale, and bottom registration. Alpha above
+`--alpha-threshold` (default 2/255) determines content bounds; retained alpha is
+preserved. Outputs are PNG plus `.frames` and `.framebounds` beside it; matching
+files are overwritten. Dependencies: Python and Pillow. Source may be anywhere;
+output must be asset-relative. Used by the [wave batch](../../art-source/water/2026-09-24-wave-crests/README.md).
+Tests: from Java, `python -m unittest discover -s tools/tests -p test_animation_grid.py`.
+
+## Original spell and footstep samples
+
+`python tools/run.py sfxgen [--output PATH]` synthesizes 144 deterministic WAVs:
+elemental flight/impact, weapon and monster actions, support magic, and eight
+soft footstep variants per surface.
+Inputs are the named recipes/seeds in `audio/sfxgen.py`; no external files or
+packages are required. It reuses the PCM writer in `audio/musicgen.py` and defaults
+to overwriting only its named files under `assets/sfx`. Use `--output temp/audio`
+for experiments. Listen in [audio review](reviews/audio/index.html). Tests:
+`python -m unittest tools.tests.test_sfxgen` from Java.
+
+## Interior architecture crop recipes
+
+`extract_interior_seamless_tiles --recipe <recipe.json> [--output-root <assets-root>]`
+imports explicit floor, wall face, cap, post and baseboard rectangles from hashed
+original atlases. Run with `python Java/tools/run.py extract_interior_seamless_tiles`
+from the repository root; recipe paths are interpreted from `Java/`. Python and
+Pillow are required. The recipe supplies source paths relative to itself,
+SHA-256 checksums, crop rectangles, optional 90-degree rotation, output sizes and
+canonical `asset_file` paths. It overwrites only the recipe's named PNG outputs;
+source images are never overwritten. Without `--recipe` the existing legacy
+sheet import remains available.
+
+Window crops can set `clear_navy_background` to remove border-connected dark navy
+atlas pixels while preserving enclosed dark details. `transparent_padding` adds
+an inset transparent margin within the requested output size. Both options are
+off by default; architectural material crops remain opaque.
+
+The [September modular-material batch](../../art-source/interiors/2026-09-24-modular-materials/README.md)
+records the current command, inputs, 24 outputs and review status. Use a scratch
+`--output-root temp/<task>/assets` to inspect regenerated output before replacing
+runtime art. Import checks: `python -m unittest tools.tests.test_interior_architecture_import`
+from `Java/`.

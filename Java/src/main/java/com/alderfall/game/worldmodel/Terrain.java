@@ -14,6 +14,7 @@ public final class Terrain {
     public static final char CITY_GATE = 'c';
 
     public static final Set<Character> PASSABLE = Set.of(
+            '!', '$', '%', '&', '(', ')',
             'g', 'f', 's', 'n', 'v', 'b', 'P', 'q', 'A', 'B', 'r', 'T', 'K', CITY_GATE, 'u', 'd', 'p', 'j', 'l', 'a', 'y', 't', 'i', 'e', 'z',
             'C', 'G', 'V', 'U', 'D', 'F', 'M', 'R', 'S', 'L', 'N', 'E', 'I', 'J', 'H', 'Q',
             '1', '2', '3', '4', '5', '6', PLANK_ROAD, PACKED_ROAD
@@ -26,6 +27,8 @@ public final class Terrain {
     );
 
     private static final Map<Character, String> NAMES = Map.ofEntries(
+            Map.entry('!', "Camp Soil"), Map.entry('$', "Small Village Earth"), Map.entry('%', "Village Fieldstone"),
+            Map.entry('&', "Small Town Cobbles"), Map.entry('(', "Large Town Brick"), Map.entry(')', "Metropolis Limestone"),
             Map.entry('g', "Meadow"),
             Map.entry('f', "Oldwood"),
             Map.entry('s', "Sunsteppe"),
@@ -90,6 +93,8 @@ public final class Terrain {
     );
 
     private static final Map<Character, String> ASSETS = Map.ofEntries(
+            Map.entry('!', "settlement_ground_tier1"), Map.entry('$', "settlement_ground_tier2"), Map.entry('%', "settlement_ground_tier3"),
+            Map.entry('&', "settlement_ground_tier4"), Map.entry('(', "settlement_ground_tier5"), Map.entry(')', "settlement_ground_tier6"),
             Map.entry('g', "grass"),
             Map.entry('f', "forest"),
             Map.entry('s', "desert_sand_wind"),
@@ -229,6 +234,7 @@ public final class Terrain {
     }
 
     public static Color color(char tile) {
+        if ("!$%&()".indexOf(tile)>=0) return new Color(132,119,96);
         return COLORS.getOrDefault(tile, Color.MAGENTA);
     }
 

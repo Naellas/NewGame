@@ -1,0 +1,8 @@
+[
+  {
+    "path": "Java/assets/environments/locations/quest/quest_supply_cache.png",
+    "bytes": 441,
+    "sha256": "bfac61f0d09b3c6e443afb53272d22c0501a4c469f9c6ee2e5cb15e5031fe8a5",
+    "reason": "User rejected blocky shared supply art; runtime ID retained with existing detailed camp supplies."
+  }
+]

@@ -29,9 +29,26 @@ public final class LayeredTerrainPreview {
                 while (state.timeOfDayMinutes() < 720) state.worldTick++;
                 state.currentMapId = WorldMap.OVERWORLD_ID;
                 panel.setSize(GameConfig.WIDTH, GameConfig.HEIGHT);
+                if (args.length > 0 && args[0].equals("--biomes")) {
+                    previewBiomes(state, output);
+                    return;
+                }
                 ArrayList<Scene> scenes = new ArrayList<>();
                 scenes.add(new Scene("shoreline", 123, 99));
                 scenes.add(new Scene("snow-edge", 123, 91));
+                if (args.length > 0 && args[0].equals("--water")) {
+                    Scene wading = null;
+                    int distance = Integer.MAX_VALUE;
+                    for (int y = 90; y < 110; y++) for (int x = 120; x < 140; x++) {
+                        int next = Math.abs(x - 125) + Math.abs(y - 99);
+                        if (state.world.waterDepth(state.currentMapId, x, y) == WaterDepth.WADING && next < distance) {
+                            wading = new Scene("wading", x, y);
+                            distance = next;
+                        }
+                    }
+                    if (wading == null) throw new IllegalStateException("No wading shelf in review scene");
+                    scenes.add(wading);
+                }
                 WorldMap.GroundRegion camp = state.world.groundRegions().stream()
                         .filter(r -> r.kind().equals("goblin_camp"))
                         .min(java.util.Comparator.comparingInt(r -> Math.abs(r.x() - 160) + Math.abs(r.y() - 145)))
@@ -42,6 +59,11 @@ public final class LayeredTerrainPreview {
                             Math.abs(p.x() - camp.x()) < 4 && Math.abs(p.y() - camp.y()) < 4)
                             .forEach(p -> System.out.printf("%d,%d %s coverage=%.2f%n", p.x(), p.y(), p.asset(),
                                     state.world.campGroundCoverage(p.x() + 0.5, p.y() + 0.5)));
+                }
+                if (args.length > 0 && args[0].equals("--swamp")) {
+                    scenes.clear();
+                    scenes.add(new Scene("swamp", 229, 175));
+                    scenes.add(new Scene("swamp-banks", 235, 163));
                 }
                 for (Scene scene : scenes) {
                     state.playerX = scene.x;
@@ -62,6 +84,33 @@ public final class LayeredTerrainPreview {
                 panel.shutdown();
             }
         });
+    }
+
+    private static void previewBiomes(GameState state, Path output) throws Exception {
+        var painter = (WorldRenderer.TerrainPainter) java.lang.reflect.Proxy.newProxyInstance(
+                WorldRenderer.TerrainPainter.class.getClassLoader(), new Class<?>[]{WorldRenderer.TerrainPainter.class},
+                (proxy, method, values) -> switch (method.getName()) {
+                    case "visibleTerrainTile" -> values[0];
+                    case "terrainImageName" -> Terrain.assetName((char) values[0]);
+                    default -> null;
+                });
+        var renderer = new LayeredTerrainRenderer(new AssetStore(Path.of("assets")));
+        state.currentMapId = state.world.createEditorMap("editor_surface_review", "Surface review", "overworld", 24, 24);
+        var area = state.world.area(state.currentMapId);
+        BufferedImage sheet = new BufferedImage(1536, 544, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = sheet.createGraphics();
+        char[] materials = "gfnsbvPm".toCharArray();
+        for (int i = 0; i < materials.length; i++) {
+            char material = materials[i];
+            area.fillTiles(0, 0, 23, 23, material);
+            int left = i % 4 * 384, top = i / 4 * 272;
+            for (int y = 0; y < 5; y++) for (int x = 0; x < 8; x++)
+                g.drawImage(renderer.tile(state, painter, x + 4, y + 5, 48).image(), left + x * 48, top + 32 + y * 48, null);
+            g.setColor(java.awt.Color.WHITE); g.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 16));
+            g.drawString(Terrain.assetName(material) + " / " + LayeredTerrainRenderer.naturalVariantCount(material) + " styles", left + 8, top + 22);
+        }
+        g.dispose();
+        ImageIO.write(sheet, "png", output.resolve("biome-surfaces.png").toFile());
     }
 
     private static Field field(String name) throws NoSuchFieldException {

@@ -33,7 +33,7 @@ Ordinary housing remains elsewhere in each settlement. Existing businesses, comp
 
 ## Art and review
 
-All nine assets live in `Java/assets/environments/settlements/city/regional/`, with filenames beginning `regional_` as listed in [building-prompts.md](../assets/environments/settlements/city/regional/building-prompts.md). They were generated with the built-in imagegen tool and copied unmodified, preserving alpha. Runtime rendering supplies scaling and lighting. The existing regional house sprites remain in use.
+All nine assets live in `Java/assets/environments/settlements/city/buildings/<region>/`, with filenames beginning `regional_` as listed in [building-prompts.md](../assets/environments/settlements/city/buildings/building-prompts.md). They were generated with the built-in imagegen tool and copied unmodified, preserving alpha. Runtime rendering supplies scaling and lighting. The existing regional house sprites remain in use.
 
 Open [the illustrated guide](../../asset-review/regional-buildings/index.html) to compare all nine sprites and their actual in-game exterior/interior captures. Captures are under `asset-review/regional-buildings/` at the workspace root.
 

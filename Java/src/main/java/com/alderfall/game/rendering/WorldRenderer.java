@@ -1,6 +1,7 @@
 package com.alderfall.game;
 
 import com.alderfall.game.render.world.WorldPropRenderer;
+import com.alderfall.game.render.world.ConnectedInteriorWalls;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -26,6 +27,10 @@ public final class WorldRenderer {
     private final WorldPropRenderer propRenderer;
     private final LightingPainter lightingPainter;
     private final LayeredTerrainRenderer layeredTerrain;
+    private final EditorTerrainRevisions editorTerrain=new EditorTerrainRevisions();
+    private long terrainBuildCount;
+    private boolean editorGroundVisible=true;
+    private boolean editorSceneActive;
     private final CavernTerrainRenderer cavernTerrain;
     private final List<WorldPropRenderer.PropRenderData> visiblePropRenders = new ArrayList<>();
     private com.alderfall.game.map.WorldMap terrainCacheWorld;
@@ -41,7 +46,7 @@ public final class WorldRenderer {
         this.terrainPainter = terrainPainter;
         this.propRenderer = propRenderer;
         this.lightingPainter = lightingPainter;
-        this.layeredTerrain = new LayeredTerrainRenderer(assets);
+        this.layeredTerrain = new LayeredTerrainRenderer(assets,editorTerrain);
         this.cavernTerrain = new CavernTerrainRenderer(assets);
     }
 
@@ -50,7 +55,15 @@ public final class WorldRenderer {
         drawSettlementWalls(g, context);
     }
 
+    void prepareEditorTerrain(GameState state,boolean props){editorSceneActive=true;editorGroundVisible=props;editorTerrain.prepare(state.world.area(state.currentMapId),props);}
+    void finishEditorTerrain(){editorSceneActive=false;editorTerrain.finish();editorGroundVisible=true;}
+    java.awt.Rectangle editorPropBounds(WorldProp prop,GameState state,int size){return propRenderer.prepare(prop,new PropContext(state,0,0,1,1,size,100,0)).bounds();}
+    long terrainBuildCount(){return terrainBuildCount;}
+
     void drawCachedTerrainBase(Graphics2D g, TerrainContext context) {
+        if ((!editorSceneActive || editorGroundVisible) && com.alderfall.game.map.WorldMap.PLAYER_VILLAGE_ID.equals(context.state().currentMapId))
+            editorTerrain.prepareVillage(context.state());
+        else if (!context.state().currentMapId.startsWith("editor_")) editorTerrain.finish();
         int firstChunkX = Math.floorDiv(context.camX(), TERRAIN_CHUNK_TILES);
         int firstChunkY = Math.floorDiv(context.camY(), TERRAIN_CHUNK_TILES);
         int lastChunkX = Math.floorDiv(context.camX() + context.visibleCols() - 1, TERRAIN_CHUNK_TILES);
@@ -99,7 +112,10 @@ public final class WorldRenderer {
     private void drawTerrainBase(Graphics2D g, TerrainContext context, boolean drawAnimations) {
         String mapId = context.state().currentMapId;
         var cavern = "dungeon".equals(context.mapKind()) ? context.state().world.dungeonContext(mapId) : null;
-        for (int sy = 0; sy < context.visibleRows(); sy++) {
+        // Rear interior faces extend upward. Include the next row so its upper
+        // half is painted into this chunk, rather than clipped at every fourth row.
+        int rows = context.visibleRows() + ("interior".equals(context.mapKind()) ? 1 : 0);
+        for (int sy = 0; sy < rows; sy++) {
             for (int sx = 0; sx < context.visibleCols(); sx++) {
                 int wx = context.camX() + sx;
                 int wy = context.camY() + sy;
@@ -183,7 +199,8 @@ public final class WorldRenderer {
     }
 
     /** Bake static plants into the existing terrain chunks: no extra per-frame images or depth sorting. */
-    private void drawQuarterTileDetails(Graphics2D g, TerrainContext context) {
+    void drawQuarterTileDetails(Graphics2D g, TerrainContext context) {
+        if(!editorGroundVisible)return;
         if (assets == null) return;
         var state = context.state();
         WorldPropRenderer painter = propRenderer == null ? new WorldPropRenderer(assets, state, null) : propRenderer;
@@ -243,6 +260,9 @@ public final class WorldRenderer {
                 chunkY
         );
         long visualRevision = context.state().world.visualRevision(context.state().currentMapId);
+        visualRevision=editorTerrain.revision(context.state().world.area(context.state().currentMapId),
+                originX,originY,TERRAIN_CHUNK_TILES,
+                TERRAIN_CHUNK_TILES + ("interior".equals(context.mapKind()) ? 1 : 0),visualRevision);
         TerrainChunk cached = terrainChunkCache.get(key);
         if (cached != null && cached.visualRevision == visualRevision) {
             return cached.image;
@@ -257,6 +277,7 @@ public final class WorldRenderer {
         }
 
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        terrainBuildCount++;
         Graphics2D chunkGraphics = image.createGraphics();
         drawTerrainBase(chunkGraphics, new TerrainContext(
                 context.state(),
@@ -404,6 +425,9 @@ public final class WorldRenderer {
     }
 
     void drawVisibleProps(Graphics2D g, PropContext context, List<WorldProp> nearbyProps, List<WorldProp> visibleProps, WorldDepthRenderer depth) {
+        // Exporters without an actor pass still use the same wall/prop ordering.
+        boolean localDepth = depth == null && "interior".equals(context.state().world.kind(context.state().currentMapId));
+        if (localDepth) { depth = new WorldDepthRenderer(); depth.begin(context.tileSize()); }
         visibleProps.clear();
         visiblePropRenders.clear();
         for (WorldProp prop : nearbyProps) {
@@ -423,6 +447,51 @@ public final class WorldRenderer {
                     .thenComparing(WorldPropRenderer.PropRenderData::asset)
                     .thenComparingInt(render -> render.prop().size()));
         }
+        if (depth != null && "interior".equals(context.state().world.kind(context.state().currentMapId))) {
+            var world = context.state().world;
+            String map = context.state().currentMapId;
+            int ts = context.tileSize();
+            for (int y = context.camY(); y <= context.camY() + context.visibleRows() + 1; y++) {
+                for (int x = context.camX(); x <= context.camX() + context.visibleCols(); x++) {
+                    if (world.tileAt(map, x, y) != 'o') continue;
+                    int wx = x, wy = y, px = (x - context.camX()) * ts, py = (y - context.camY()) * ts;
+                    var silhouette = ConnectedInteriorWalls.bounds(world, map, x, y, px, py, ts);
+                    // Restore the floor hidden by the cached upward projection.
+                    // Otherwise a faded foreground wall would expose its baked copy.
+                    char behind = world.tileAt(map, x, y - 1);
+                    if (silhouette.y < py && ConnectedInteriorWalls.floor(behind)) {
+                        Graphics2D under = (Graphics2D) g.create();
+                        under.clip(silhouette);
+                        terrainPainter.drawHouseTile(under, behind, x, y - 1, px, py - ts);
+                        under.dispose();
+                    }
+                    if (ConnectedInteriorWalls.floor(behind) || ConnectedInteriorWalls.side(world, map, x, y)) {
+                        Graphics2D under = (Graphics2D) g.create();
+                        under.clip(silhouette);
+                        terrainPainter.drawHouseTile(under, 'i', x, y, px, py);
+                        under.dispose();
+                    }
+                    double wallDepth = py + ts;
+                    if (ConnectedInteriorWalls.side(world, map, x, y)) {
+                        // Side rails occlude tall sprites across the room boundary,
+                        // while remaining scenery that the player's bubble can reveal.
+                        if (world.tileAt(map, x, y + 1) == 'o' && !ConnectedInteriorWalls.side(world, map, x, y + 1)) {
+                            var next = ConnectedInteriorWalls.bounds(world, map, x, y + 1, px, py + ts, ts);
+                            silhouette.height = Math.min(silhouette.height, Math.max(0, next.y - silhouette.y));
+                        }
+                        for (var prop : visiblePropRenders) {
+                            if (!prop.asset().startsWith("interior_wall_") && silhouette.intersects(prop.bounds()))
+                                wallDepth = Math.max(wallDepth, (prop.depthY() - context.camY()) * ts + .01);
+                        }
+                    }
+                    if (silhouette.isEmpty()) continue;
+                    depth.wall(g, wallDepth, silhouette, target -> {
+                        target.clip(silhouette);
+                        ConnectedInteriorWalls.draw(target, assets, world, map, wx, wy, px, py, ts);
+                    });
+                }
+            }
+        }
         for (WorldPropRenderer.PropRenderData render : visiblePropRenders) {
             visibleProps.add(render.prop());
             if (depth == null || render.placement().kind() == PropPlacement.Kind.COVER
@@ -435,6 +504,7 @@ public final class WorldRenderer {
                         target -> propRenderer.drawWorldProp(target, render, context));
             }
         }
+        if (localDepth) depth.draw(g);
     }
 
     int propRenderSize(String asset, int logicalSize, int tileSize) {
@@ -557,11 +627,11 @@ public final class WorldRenderer {
                 for (int offset = 0; offset < run; offset += 3) {
                     int span = Math.min(3, run - offset);
                     int drawWidth = Math.round((span + 0.36f) * tileSize);
-                    int drawHeight = Math.round(tileSize * 1.45f);
+                    int drawHeight = Math.round(tileSize * 2.5f);
                     double center = wx + offset + span / 2.0;
                     int drawX = (int) Math.round((center - context.camX()) * tileSize - drawWidth / 2.0);
                     int drawY = (wy - context.camY() + 1) * tileSize - drawHeight;
-                    g.drawImage(assets.spriteFit(prefix + "_horizontal_seamless", drawWidth, drawHeight), drawX, drawY, null);
+                    g.drawImage(assets.image(prefix + "_horizontal_seamless", drawWidth, drawHeight), drawX, drawY, null);
                 }
             }
         }
@@ -575,12 +645,12 @@ public final class WorldRenderer {
                 while (verticalCityWallTile(context, wx, wy + run)) run++;
                 for (int offset = 0; offset < run; offset += 3) {
                     int span = Math.min(3, run - offset);
-                    int drawWidth = Math.round(tileSize * 1.45f);
+                    int drawWidth = Math.round(tileSize * 1.5f);
                     int drawHeight = Math.round(Math.max(3.0f, span + 0.38f) * tileSize);
                     double center = wy + offset + span / 2.0;
                     int drawX = (int) Math.round((wx - context.camX() + 0.5) * tileSize - drawWidth / 2.0);
                     int drawY = (int) Math.round((center - context.camY()) * tileSize - drawHeight / 2.0);
-                    g.drawImage(assets.spriteFit(prefix + "_vertical_seamless", drawWidth, drawHeight), drawX, drawY, null);
+                    g.drawImage(assets.image(prefix + "_vertical_seamless", drawWidth, drawHeight), drawX, drawY, null);
                 }
             }
         }
@@ -604,9 +674,9 @@ public final class WorldRenderer {
                 boolean horizontal = cityWallNode(context, wx - 1, wy) || cityWallNode(context, wx + 1, wy);
                 boolean vertical = cityWallNode(context, wx, wy - 1) || cityWallNode(context, wx, wy + 1);
                 if (horizontal == vertical && horizontal) {
-                    drawWallTower(g, context, prefix + "_tower", wx, wy, 2.45f, 2.55f);
+                    drawWallTower(g, context, prefix + "_tower", wx, wy, 3.4f, 3.8f);
                 } else if (!horizontal && !vertical) {
-                    drawWallTower(g, context, prefix + "_end_tower", wx, wy, 2.05f, 2.55f);
+                    drawWallTower(g, context, prefix + "_end_tower", wx, wy, 3.0f, 3.8f);
                 }
             }
         }
@@ -651,9 +721,9 @@ public final class WorldRenderer {
             if (context.state().world.tileAt(mapId, wx, wy - 1) == Terrain.CITY_GATE) return;
             while (context.state().world.tileAt(mapId, wx, wy + run) == Terrain.CITY_GATE) run++;
         }
-        int drawWidth = horizontal ? Math.max(Math.round(tileSize * 4.6f), (run + 2) * tileSize)
-                : Math.round(tileSize * 2.45f);
-        int drawHeight = horizontal ? Math.round(tileSize * 2.35f) : Math.round(tileSize * 3.15f);
+        int drawWidth = horizontal ? Math.max(Math.round(tileSize * 5.2f), (run + 2) * tileSize)
+                : Math.round(tileSize * 3.2f);
+        int drawHeight = horizontal ? Math.round(tileSize * 3.4f) : Math.round(tileSize * 4.2f);
         int centerX = px + (horizontal ? run * tileSize / 2 : tileSize / 2);
         String module = horizontal ? "gate_horizontal_clean" : "gate_vertical_clean";
         int drawY = horizontal

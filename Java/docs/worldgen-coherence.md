@@ -1,5 +1,10 @@
 # Coherent crossings and woodland groves
 
+Generated outdoor maps also use [geographic elevation](world-elevation.md):
+walkable stepped foothills, blocked summit cores, regional banks and protected
+roads, crossings and settlement foundations. Existing crossing/grove rules below
+remain in effect.
+
 This generation pass follows `Story premise/world-framework.md`, especially sections 3, 5, 7, 8, and the Belltower Fenlands subsection of section 12.
 
 - Roads search for connected ground routes. A river crossing is one straight bank-to-bank step, capped at eight water tiles. Nearby routes favor existing crossings. Wide lakes get land detours; water waypoints move to a bank instead of creating artificial landing islands. Settlement gate foundations remain ground. Mountain passes retain their pass tiles when roads are reused or upgraded near cities.

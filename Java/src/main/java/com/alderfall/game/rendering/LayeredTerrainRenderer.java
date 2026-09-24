@@ -18,6 +18,7 @@ final class LayeredTerrainRenderer {
     private static final int TEXTURE_SIZE = 48;
     private static final int LARGE_TEXTURE_SIZE = TEXTURE_SIZE * 8;
     private final AssetStore assets;
+    private final EditorTerrainRevisions editorTerrain;
     private final Map<String, int[]> textures = new HashMap<>();
     private final Map<Character, int[][]> naturalTerrainVariants = new HashMap<>();
     private final Map<FamilyKey, Map<Integer, Variant>> surfaceVariants = new HashMap<>();
@@ -34,7 +35,11 @@ final class LayeredTerrainRenderer {
     private List<WorldMap.GroundRegion> regions = List.of();
 
     LayeredTerrainRenderer(AssetStore assets) {
+        this(assets,null);
+    }
+    LayeredTerrainRenderer(AssetStore assets,EditorTerrainRevisions editorTerrain) {
         this.assets = assets;
+        this.editorTerrain=editorTerrain;
     }
 
     public static boolean supports(String kind) {
@@ -50,6 +55,7 @@ final class LayeredTerrainRenderer {
         }
         tileSize = size;
         long revision = world.visualRevision(state.currentMapId);
+        if(editorTerrain!=null)revision=editorTerrain.revision(world.area(state.currentMapId),x,y,1,1,revision);
         Key key = new Key(state.currentMapId, x, y, size, revision);
         Surface cached = surfaces.get(key);
         if (cached != null) return cached;
@@ -61,6 +67,7 @@ final class LayeredTerrainRenderer {
             return scaled;
         }
         Surface result = compose(state, painter, x, y, size);
+        TerrainReliefRenderer.apply(result.image(),state.world.elevation(state.currentMapId),x,y,size);
         cacheSurface(key, family, result, false);
         return result;
     }
@@ -123,6 +130,15 @@ final class LayeredTerrainRenderer {
         boolean settlement = village || city;
         char settlementGround = villageGround(state.currentMapId);
         char[][] materials = new char[3][3];
+        double[][] depths = new double[3][3];
+        double[][] marsh = new double[3][3];
+        boolean nearbyWater = false;
+        for (int dy = 0; dy < 3; dy++) for (int dx = 0; dx < 3; dx++) {
+            depths[dy][dx] = world.waterDepth(state.currentMapId, tx + dx - 1, ty + dy - 1).level;
+            nearbyWater |= depths[dy][dx] > 0;
+        }
+        if (nearbyWater) for (int dy = 0; dy < 3; dy++) for (int dx = 0; dx < 3; dx++)
+            marsh[dy][dx] = marshInfluence(state.currentMapId, tx + dx - 1, ty + dy - 1);
         char[][] roadMaterials = new char[3][3];
         char[][] pavingMaterials = new char[3][3];
         Map<Character, int[]> materialTextures = new HashMap<>();
@@ -139,9 +155,15 @@ final class LayeredTerrainRenderer {
                 char material = settlement
                         ? settlementMaterial(raw, settlementGround, city)
                         : painter.visibleTerrainTile(raw, wx, wy);
+                boolean town = state.currentMapId.startsWith("town_");
+                boolean townSquare = town && com.alderfall.game.map.TownStreets.square(world.area(state.currentMapId), wx, wy)
+                        && Terrain.passable(raw) && "w~B".indexOf(raw) < 0;
+                if (town && "rTK8".indexOf(raw) >= 0)
+                    material = RoadSurface.townMaterial(raw, settlementGround);
+                if (townSquare) material = RoadSurface.townMaterial('K', settlementGround);
                 if (settlement && RoadSurface.isMaterial(material)) {
-                    if (settlementPaving(raw)) {
-                        if (visiblePaving(state.currentMapId, wx, wy)) {
+                    if (settlementPaving(raw) || townSquare) {
+                        if (townSquare || visiblePaving(state.currentMapId, wx, wy)) {
                             char paving = RoadSurface.paving(material);
                             pavingMaterials[y][x] = paving;
                             hasPavingSurface = true;
@@ -180,7 +202,7 @@ final class LayeredTerrainRenderer {
                 for (int x = 0; x < size; x++) {
                     double worldX = tx + (x + 0.5) / size;
                     int u = (int) Math.floor(worldX * TEXTURE_SIZE);
-                    pixels[y * size + x] = sampleTerrainMaterial(material, sample, u, v, worldX, worldY);
+                    pixels[y * size + x] = sampleTerrainMaterial(material, sample, u, v, worldX, worldY, depthAt(depths, worldX - tx, worldY - ty), depthAt(marsh, worldX - tx, worldY - ty));
                 }
             }
             image.setRGB(0, 0, size, size, pixels, 0, size);
@@ -236,7 +258,7 @@ final class LayeredTerrainRenderer {
                     double feather = shore ? 0.11 : types[i] == 'n' ? 0.23 : 0.38;
                     double coverage = Math.max(0, weights[i] - max + feather + grain * ((types[i] & 1) == 0 ? 1 : -1));
                     double w = coverage * coverage;
-                    int rgb = sampleTerrainMaterial(types[i], samples[i], u, v, x, y);
+                    int rgb = sampleTerrainMaterial(types[i], samples[i], u, v, x, y, depthAt(depths, x - tx, y - ty), depthAt(marsh, x - tx, y - ty));
                     red += ((rgb >> 16) & 255) * w;
                     green += ((rgb >> 8) & 255) * w;
                     blue += (rgb & 255) * w;
@@ -274,20 +296,24 @@ final class LayeredTerrainRenderer {
                         rgb = mix(rgb, gravel[uv], clearing * track * (dominant == 'n' ? 0.24 : 0.58));
                     }
                 }
+                double pavingCoverage = 0;
                 if (hasPavingSurface && waterAlpha < 0.55) {
                     RoadCoverage paving = pavementCoverage(pavingMaterials, tx, ty, x, y);
+                    pavingCoverage = paving.coverage;
                     if (paving.coverage > 0.001) {
                         int[] pavingTexture = materialTextures.get(paving.material);
                         int pavingRgb = pavingTexture[sampleIndex(pavingTexture, u, v)];
-                        rgb = mix(rgb, pavingRgb, paving.coverage * 0.72);
+                        rgb = mix(rgb, pavingRgb, paving.coverage * (state.currentMapId.startsWith("town_") ? 0.94 : 0.72));
                     }
                 }
                 if (hasRoadSurface && waterAlpha < 0.55) {
                     RoadCoverage road = roadCoverage(roadMaterials, pavingMaterials, tx, ty, x, y);
                     if (road.coverage > 0.001) {
                         int[] roadTexture = materialTextures.get(road.material);
-                        int roadRgb = roadTexture[sampleIndex(roadTexture, u, v)];
-                        rgb = mix(rgb, roadRgb, road.coverage * 0.98);
+                        int roadRgb = blendedRoadColor(roadMaterials, materialTextures, tx, ty, x, y, u, v,
+                                roadTexture[sampleIndex(roadTexture, u, v)]);
+                        double visibleRoad = state.currentMapId.startsWith("town_") ? 1 - pavingCoverage : 1;
+                        rgb = mix(rgb, roadRgb, road.coverage * visibleRoad * 0.98);
                     }
                 }
                 pixels[py * size + px] = 0xff000000 | rgb;
@@ -314,6 +340,7 @@ final class LayeredTerrainRenderer {
     }
 
     static char villageGround(String mapId) {
+        if (mapId.equals("town_greyharbor")) return 'g';
         return switch (RegionalSettlementIdentity.region(mapId)) {
             case SUN -> 's';
             case NORTH, FREEHOLDS -> 'n';
@@ -368,7 +395,7 @@ final class LayeredTerrainRenderer {
                 if (!hasRoadNeighbor(roads, gx, gy) && !touchesCourt) continue;
                 double cx = tx + gx - 0.5;
                 double cy = ty + gy - 0.5;
-                double radius = RoadSurface.stone(road) ? 0.41 : 0.36;
+                double radius = RoadSurface.worn(road) ? 0.41 : RoadSurface.stone(road) ? 0.49 : 0.34;
                 double distance = Math.hypot(x - cx, y - cy);
                 double coverage = roadEdgeCoverage(distance, radius, x, y);
                 if (gx < 2 && RoadSurface.isMaterial(roads[gy][gx + 1])) {
@@ -431,6 +458,22 @@ final class LayeredTerrainRenderer {
                 || y < 2 && RoadSurface.isMaterial(roads[y + 1][x]);
     }
 
+    private static int blendedRoadColor(char[][] roads, Map<Character,int[]> textures, int tx, int ty,
+                                       double x, double y, int u, int v, int fallback) {
+        double sx=x-.5, sy=y-.5;
+        int ix=(int)Math.floor(sx), iy=(int)Math.floor(sy);
+        double fx=smooth(sx-ix), fy=smooth(sy-iy), total=0, red=0, green=0, blue=0;
+        for(int i=0;i<4;i++) {
+            int ox=i&1, oy=i>>1;
+            char material=roads[iy-ty+1+oy][ix-tx+1+ox];
+            if(!RoadSurface.isMaterial(material))continue;
+            double weight=(ox==0?1-fx:fx)*(oy==0?1-fy:fy);
+            int[] texture=textures.get(material);int rgb=texture[sampleIndex(texture,u,v)];
+            red+=((rgb>>16)&255)*weight;green+=((rgb>>8)&255)*weight;blue+=(rgb&255)*weight;total+=weight;
+        }
+        return total<.001?fallback:((int)(red/total)<<16)|((int)(green/total)<<8)|(int)(blue/total);
+    }
+
     private static double roadEdgeCoverage(double distance, double radius, double x, double y) {
         double irregularity = (noise(x * 2.7, y * 2.7, 509) - 0.5) * 0.12
                 + (noise(x * 8.1, y * 8.1, 811) - 0.5) * 0.035;
@@ -484,6 +527,15 @@ final class LayeredTerrainRenderer {
                     : ground == 'v' ? (stone ? 0x72776d : 0x706b58)
                     : (stone ? 0x96958c : 0x907957);
             int[] pixels = proceduralRoadTexture(tint, stone, material);
+            if (RoadSurface.worn(material)) {
+                char dirtMaterial = RoadSurface.townMaterial('8', ground);
+                int dirtTint = ground == 'n' ? 0x847e70 : ground == 's' ? 0xa78351 : ground == 'v' ? 0x706b58 : 0x907957;
+                int[] dirt = proceduralRoadTexture(dirtTint, false, dirtMaterial);
+                for(int y=0;y<LARGE_TEXTURE_SIZE;y++)for(int x=0;x<LARGE_TEXTURE_SIZE;x++) {
+                    double wear=smoothRange(.28,.72,noise(x/22.0,y/22.0,3181));
+                    int i=y*LARGE_TEXTURE_SIZE+x;pixels[i]=mix(pixels[i],dirt[i],.28+wear*.68);
+                }
+            }
             textures.put(key, pixels);
             return pixels;
         }
@@ -494,41 +546,113 @@ final class LayeredTerrainRenderer {
      * Natural floors use a softly warped mesh of authored variants. The mesh lives in world space,
      * so camera movement, chunk caching and zoom changes cannot reshuffle the ground beneath actors.
      */
-    private int sampleTerrainMaterial(char material, int[] fallback, int u, int v, double worldX, double worldY) {
+    private int sampleTerrainMaterial(char material, int[] fallback, int u, int v, double worldX, double worldY, double depth, double marsh) {
+        if (water(material)) {
+            int clear = WaterTileRenderer.surfaceColor(worldX, worldY, depth);
+            // Peat-stained olive water retains the original depth and surface detail.
+            int peat = clear;
+            int r = (peat >> 16) & 255, g = (peat >> 8) & 255, b = peat & 255;
+            peat = 0xff000000 | Math.min(255, r + 15) << 16 | (int) (g * .78) << 8 | (int) (b * .43);
+            return mix(clear, peat, marsh);
+        }
         int variantCount = naturalVariantCount(material);
         if (variantCount < 2) return fallback[sampleIndex(fallback, u, v)];
         int[][] variants = naturalTerrainVariants.computeIfAbsent(material, this::loadNaturalTerrainVariants);
 
         int seed = 3109 + material * 47;
-        double patchSize = material == 'f' ? 2.15 : material == 'g' ? 2.45 : 2.75;
+        double patchSize = material == 'f' ? 3.15 : material == 'g' ? 3.75 : 4.25;
         double warpX = (noise(worldX / 5.7, worldY / 5.7, seed + 11) - 0.5) * 1.15;
         double warpY = (noise(worldX / 5.7, worldY / 5.7, seed + 29) - 0.5) * 1.15;
         double meshX = worldX / patchSize + warpX;
         double meshY = worldY / patchSize + warpY;
         int cellX = (int) Math.floor(meshX), cellY = (int) Math.floor(meshY);
-        double fx = smooth(meshX - cellX), fy = smooth(meshY - cellY);
+        double fx = smoothRange(.12, .88, meshX - cellX), fy = smoothRange(.12, .88, meshY - cellY);
 
         int topLeft = naturalVariantAt(cellX, cellY, material, variants.length);
         int topRight = naturalVariantAt(cellX + 1, cellY, material, variants.length);
         int bottomLeft = naturalVariantAt(cellX, cellY + 1, material, variants.length);
         int bottomRight = naturalVariantAt(cellX + 1, cellY + 1, material, variants.length);
-        int sampleIndex = sampleIndex(fallback, u, v);
-        int top = mix(variants[topLeft][sampleIndex], variants[topRight][sampleIndex], fx);
-        int bottom = mix(variants[bottomLeft][sampleIndex], variants[bottomRight][sampleIndex], fx);
-        int rgb = mix(top, bottom, fy);
+        u += (int) Math.round(warpX * TEXTURE_SIZE);
+        v += (int) Math.round(warpY * TEXTURE_SIZE);
+        // Every mesh corner has its own stable phase and orientation. A feature in a source
+        // tile can no longer repeat at the same pixel on every gameplay tile.
+        int top = mix(sampleNatural(variants[topLeft], u, v, cellX, cellY, material),
+                sampleNatural(variants[topRight], u, v, cellX + 1, cellY, material), fx);
+        int bottom = mix(sampleNatural(variants[bottomLeft], u, v, cellX, cellY + 1, material),
+                sampleNatural(variants[bottomRight], u, v, cellX + 1, cellY + 1, material), fx);
+        int result = mix(top, bottom, fy);
+        if (material == 'v') {
+            double mud = smoothRange(.43, .72, noise(worldX / 2.8, worldY / 2.8, 16063));
+            result = mix(result, 0x514b37, mud * .63);
+        }
+        return result;
+    }
 
-        // A very broad, restrained value shift prevents even blended variant patches reading as a stamp grid.
-        double tone = (noise(worldX / 4.8, worldY / 4.8, seed + 71) - 0.5) * 0.10;
-        return tone < 0 ? mix(rgb, 0x172015, -tone) : mix(rgb, 0xc0b87a, tone);
+    private double marshInfluence(String mapId, int x, int y) {
+        double influence = 0;
+        for (int dy = -6; dy <= 6; dy++) for (int dx = -6; dx <= 6; dx++) {
+            if (world.tileAt(mapId, x + dx, y + dy) == 'v')
+                influence = Math.max(influence, Math.max(0, 1 - Math.hypot(dx, dy) / 7));
+        }
+        return Math.min(1, influence * 1.5);
+    }
+
+    private static double depthAt(double[][] depths, double x, double y) {
+        double gx = x + 0.5, gy = y + 0.5;
+        int ix = Math.min(1, (int) gx), iy = Math.min(1, (int) gy);
+        double fx = smooth(gx - ix), fy = smooth(gy - iy);
+        return (depths[iy][ix] * (1 - fx) + depths[iy][ix + 1] * fx) * (1 - fy)
+                + (depths[iy + 1][ix] * (1 - fx) + depths[iy + 1][ix + 1] * fx) * fy;
+    }
+
+    private static int sampleNatural(int[] pixels, int u, int v, int cellX, int cellY, char material) {
+        int phase = (int) (random(cellX, cellY, 4139 + material) * 65535);
+        int size = pixels.length == TEXTURE_SIZE * TEXTURE_SIZE ? TEXTURE_SIZE : LARGE_TEXTURE_SIZE;
+        int x = (phase & 1) == 0 ? u : v;
+        int y = (phase & 1) == 0 ? v : u;
+        if ((phase & 2) != 0) x = -x;
+        if ((phase & 4) != 0) y = -y;
+        x += phase / 7; y += phase / 17;
+        // Authored small swatches already tile. Mirroring them produces conspicuous
+        // bilateral motifs in snow and grass; reserve it for non-tileable large sheets.
+        return size == TEXTURE_SIZE
+                ? pixels[Math.floorMod(y, size) * size + Math.floorMod(x, size)]
+                : pixels[mirror(y, size) * size + mirror(x, size)];
     }
 
     private int[][] loadNaturalTerrainVariants(char material) {
         String base = Terrain.assetName(material);
-        int count = naturalVariantCount(material);
-        int[][] variants = new int[count][];
-        variants[0] = texture(base, false);
-        for (int i = 1; i < count; i++) variants[i] = texture(base + "_variant_" + i, false);
+        int count = authoredVariantCount(material);
+        int[][] variants = new int[count * 3][];
+        for (int i = 0; i < count; i++) {
+            int[] source = i == 0 ? materialTexture(material) : texture(base + "_variant_" + i, false);
+            // Beach variants share the restrained palette of the existing beach underlay.
+            if (material == 'P' && i > 0) {
+                source = source.clone();
+                for (int p = 0; p < source.length; p++) source[p] = mix(source[p], 0xac9d7b, .55);
+            }
+            variants[i * 3] = source;
+            for (int style = 1; style <= 2; style++) {
+                int[] pixels = source.clone();
+                int tint = surfaceTint(material, style == 1);
+                for (int p = 0; p < pixels.length; p++) pixels[p] = mix(pixels[p], tint, style == 1 ? .22 : .18);
+                variants[i * 3 + style] = pixels;
+            }
+        }
         return variants;
+    }
+
+    private static int surfaceTint(char material, boolean dry) {
+        return switch (material) {
+            case 'g' -> dry ? 0xb8a167 : 0x304921;
+            case 'f' -> dry ? 0x96805a : 0x273b2e;
+            case 'n' -> dry ? 0xd4d9d8 : 0x6f8593;
+            case 'v' -> dry ? 0x92906b : 0x354b42;
+            case 'b' -> dry ? 0xc09574 : 0x66443b;
+            case 's', 'P' -> dry ? 0xd6bd8c : 0x99805d;
+            case 'm' -> dry ? 0xa7a49c : 0x5b6269;
+            default -> throw new IllegalArgumentException("Not a natural surface: " + material);
+        };
     }
 
     private static int naturalVariantAt(int x, int y, char material, int count) {
@@ -536,9 +660,14 @@ final class LayeredTerrainRenderer {
     }
 
     static int naturalVariantCount(char material) {
+        return "gfnsbvPm".indexOf(material) >= 0 ? authoredVariantCount(material) * 3 : 1;
+    }
+
+    static int authoredVariantCount(char material) {
         return switch (material) {
             case 'g', 'f', 'n' -> 8;
-            case 'v', 'b' -> 4;
+            case 'v', 'b', 'm' -> 4;
+            case 'P' -> 2;
             default -> 1;
         };
     }

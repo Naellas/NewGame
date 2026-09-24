@@ -2551,6 +2551,21 @@ public final class GameData {
     );
 
     public static final Map<String, Shop> SHOPS = Map.ofEntries(
+            Map.entry("tailor", Shop.forTrade("tailor", "Cloth and Leather")),
+            Map.entry("farmstead", Shop.forTrade("farmstead", "Farm Goods")),
+            Map.entry("fishing_hut", Shop.forTrade("fishing_hut", "Fishing Supplies")),
+            Map.entry("mine", Shop.forTrade("mine", "Mining Supplies")),
+            Map.entry("warehouse", Shop.forTrade("warehouse", "Household Supplies")),
+            Map.entry("shrine", Shop.forTrade("shrine", "Charms and Remedies")),
+            Map.entry("hunting_camp", Shop.forTrade("hunting_camp", "Hunting Supplies")),
+
+            Map.entry("blacksmith", Shop.forTrade("blacksmith", "Blacksmith")),
+            Map.entry("carpenter", Shop.forTrade("carpenter", "Carpenter")),
+            Map.entry("apothecary", Shop.forTrade("apothecary", "Herbal Remedies")),
+            Map.entry("bakery", Shop.forTrade("bakery", "Bakery")),
+            Map.entry("inn", Shop.forTrade("inn", "Food and Lodging")),
+            Map.entry("guild", Shop.forTrade("guild", "Books and Scrolls")),
+
             Map.entry("riverside", new Shop("riverside", "Riverside Market", withCraftedStock("riverside", List.of(
                     "potion_small", "ether", "guard_tonic", "escape_scroll", "traveler_cloak", "iron_sword", "iron_ring", "silver_mace",
                     "scout_hood", "road_belt", "trail_leggings",
@@ -2760,7 +2775,7 @@ public final class GameData {
                     "I was a field medic before Riverside had walls.",
                     "The marsh fever is back, and the slimes carry it along the herb road.",
                     "Clear the road and I will travel with you. Alderfall needs hands that can mend."
-            ), "slime_help", "riverside", "marla", 0),
+            ), "slime_help", "apothecary", "marla", 0),
             new Npc("city_riverside", "Peddler Nessa", "npc_merchant", 12, 14, List.of(
                     "I sell needles, soap, dried apples, and occasionally excellent rumors.",
                     "The market road is being squeezed by raiders. Clear it and my prices may stop twitching."
@@ -2781,7 +2796,7 @@ public final class GameData {
             new Npc("city_archive", "Map-Seller Dain", "npc_merchant", 12, 10, List.of(
                     "Every map is a promise made before the rain gets a vote.",
                     "I mark safe roads in ink and dangerous roads in very expensive ink."
-            ), null, "riverside"),
+            ), null, "guild"),
             new Npc("city_archive", "Apprentice Miri", "npc_citizen_woman", 20, 14, List.of(
                     "Ren says shelving is a sacred duty. I say the ladders are too tall.",
                     "If a book whispers, whisper back politely. That is the first Archive rule I believed."
@@ -2818,7 +2833,7 @@ public final class GameData {
             new Npc("city_belltower", "Bellkeeper Ilya", "npc_marla", 17, 9, List.of(
                     "The bell tower used to keep ships and spirits honest.",
                     "Quiet those wings and the city can sleep again."
-            ), "shadow_swarm", "highwall"),
+            ), "shadow_swarm", "shrine"),
             new Npc("city_belltower", "Net-Mender Corso", "npc_citizen_man", 21, 12, List.of(
                     "Bell ropes, fishing nets, spider silk; I mend what I can and swear at the rest.",
                     "Something is nesting in the rope loft. I would like the bells to stop twitching."
@@ -2846,7 +2861,7 @@ public final class GameData {
             new Npc("village_oakhaven", "Edda", "npc_baker", 13, 8, List.of(
                     "Oakhaven keeps the old road fed, even when the road bites back.",
                     "The near farm still has wheat standing. Bring me sheaves and I will open the market stores."
-            ), "bread_for_road", "riverside"),
+            ), "bread_for_road", "bakery"),
             new Npc("village_oakhaven", "Hedgewise Lin", "npc_citizen_woman", 22, 11, List.of(
                     "The green road used to smell like clover. Now it smells like angry roots.",
                     "Briar Thornlings are crowding the wagons. Cut them back before the hedges win an election."
@@ -2886,7 +2901,7 @@ public final class GameData {
             new Npc("village_snowrest", "Niva", "npc_ren", 14, 8, List.of(
                     "Snowrest is the last warm hearth before the pass.",
                     "I read tracks in snow like scripture. Hire me and I will read the road ahead."
-                ), null, "highwall", "niva", 90),
+                ), null, "hunting_camp", "niva", 90),
             new Npc("village_snowrest", "Garruk Ironwall", "npc_garruk", 9, 10, List.of(
                     "Snow makes cowards of hinges and heroes of shields.",
                     "Pay my rate and I will stand where the road gets narrow."
@@ -2906,7 +2921,7 @@ public final class GameData {
             new Npc("village_snowrest", "Furrier Pem", "npc_merchant", 16, 13, List.of(
                     "Good mittens are proof civilization deserves another chance.",
                     "I buy pelts, mend gloves, and refuse to discuss socks before noon."
-            ), null, "highwall"),
+            ), null, "tailor"),
             new Npc("village_snowrest", "Pass Guide Olin", "npc_citizen_man", 21, 13, List.of(
                     "Every pass marker has a story. Lately something large has been ending those stories early.",
                     "Find the Ice Golem before the whiteout makes the mountain look newly invented."
@@ -2930,7 +2945,7 @@ public final class GameData {
             new Npc("village_dunewick", "Spice Peddler Rafi", "npc_merchant", 24, 9, List.of(
                     "Cumin, salt, sun-pepper, and one jar I refuse to identify until it stops humming.",
                     "Buy something before the wind seasons it for free."
-            ), null, "riverside"),
+            ), null, "bakery"),
             new Npc("village_dunewick", "Kael", "npc_kael", 8, 12, List.of(
                     "Two blades means twice the upkeep, but half the boredom.",
                     "If your party needs a fighter who can move, I am listening."
@@ -2950,7 +2965,7 @@ public final class GameData {
             new Npc("village_mireford", "Fen", "npc_ren", 14, 8, List.of(
                     "Mireford is built on planks, patience, and listening to things under the water.",
                     "Pay for my charms and I will make the marsh answer to us for once."
-                ), null, "crypt_vendor", "fen", 100),
+                ), null, "shrine", "fen", 100),
             new Npc("village_mireford", "Reedcutter Vell", "npc_citizen_woman", 22, 12, List.of(
                     "If a walkway complains, I listen. Lately the planks are using language.",
                     "A Bog Beast is chewing the pilings. I want it persuaded with steel."
@@ -2962,7 +2977,7 @@ public final class GameData {
             new Npc("village_mireford", "Lantern Seller Pella", "npc_merchant", 17, 14, List.of(
                     "A lantern is just a little sun with better manners.",
                     "Mine keep burning in fog, rain, and most supernatural sulking."
-            ), null, "crypt_vendor"),
+            ), null, "warehouse"),
             new Npc("village_mireford", "Mira Sunwarden", "npc_mira_sunwarden", 9, 12, List.of(
                     "A lantern is a promise that darkness has edges.",
                     "I can guard your line and mend what gets through it."

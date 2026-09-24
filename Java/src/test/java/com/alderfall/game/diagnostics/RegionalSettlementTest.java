@@ -27,7 +27,7 @@ public final class RegionalSettlementTest {
         AssetStore assets = new AssetStore(Path.of("assets"));
         for (String name : List.of("regional_north_turf_house", "regional_sun_courtyard_house", "regional_fen_stilt_house")) {
             require(assets.hasSprite(name), "Missing house " + name);
-            BufferedImage image = ImageIO.read(Path.of("assets/environments/settlements/city/regional", name + ".png").toFile());
+            BufferedImage image = ImageIO.read(new AssetCatalog(Path.of("assets")).findAsset(name).toFile());
             require(image.getColorModel().hasAlpha() && image.getRGB(0, 0) >>> 24 == 0, "Opaque house " + name);
         }
         for (String style : List.of("hearth", "north", "sun", "fen", "freeholds")) {
@@ -126,7 +126,7 @@ public final class RegionalSettlementTest {
                 }
                 for (CityBuilding building : world.cityBuildings(id)) {
                     require(world.cityBuildingDoorTiles(building).stream()
-                            .anyMatch(p -> reached.contains(new TilePoint(p.x(), p.y() + 1))), "Inaccessible building " + id + " " + building.key());
+                            .anyMatch(p -> reached.contains(building.outside(p, 0, 1))), "Inaccessible building " + id + " " + building.key());
                 }
                 if ("Town".equals(site.kind())) {
                     RegionalSettlementIdentity.TownProfile profile = RegionalSettlementIdentity.townProfile(id);
@@ -151,11 +151,12 @@ public final class RegionalSettlementTest {
                         require(foundationTiles >= requiredFoundation,
                                 "Building lacks a coherent foundation " + id + " " + building.key());
                         require(world.cityBuildingDoorTiles(building).stream()
-                                        .map(door -> new TilePoint(door.x(), door.y() + 1))
+                                        .map(door -> building.outside(door, 0, 1))
                                         .anyMatch(point -> roadReachesBorder(world, id, point)),
                                 "Institution lacks a gate-connected street " + id + " " + building.key());
                     }
-                    require(longestStraightRoadRun(world, id) <= 28,
+                    // Avenues remain shorter than half the expanded map, including its suburbs.
+                    require(longestStraightRoadRun(world, id) <= Math.max(28, Math.min(area.width(), area.height()) / 2),
                             "Town restored a map-wide straight avenue " + id + ": " + longestStraightRoadRun(world, id));
                 }
                 if (region == RegionalSettlementIdentity.Region.FEN || region == RegionalSettlementIdentity.Region.SUN
@@ -203,6 +204,12 @@ public final class RegionalSettlementTest {
     }
 
     private static void assertContinuousCityWall(WorldMap world, String id, MapArea area) {
+        if ("town_reedwatch".equals(id)) {
+            int eastGates = 0;
+            for (int y = 0; y < area.height(); y++) for (int x = area.width() - 11; x <= area.width() - 7; x++)
+                if (area.tileAt(x, y) == Terrain.CITY_GATE) eastGates++;
+            require(eastGates == 1, "Reedwatch lost its east gate beside the suburbs");
+        }
         Set<TilePoint> nodes = new HashSet<>();
         int corners = 0;
         int gates = 0;
@@ -232,11 +239,12 @@ public final class RegionalSettlementTest {
         int maxX = nodes.stream().mapToInt(TilePoint::x).max().orElseThrow();
         int minY = nodes.stream().mapToInt(TilePoint::y).min().orElseThrow();
         int maxY = nodes.stream().mapToInt(TilePoint::y).max().orElseThrow();
-        require(nodes.stream().filter(p -> area.tileAt(p.x(), p.y()) == Terrain.CITY_GATE && p.y() == minY).count() == 1
-                        && nodes.stream().filter(p -> area.tileAt(p.x(), p.y()) == Terrain.CITY_GATE && p.y() == maxY).count() == 1
-                        && nodes.stream().filter(p -> area.tileAt(p.x(), p.y()) == Terrain.CITY_GATE && p.x() == minX).count() == 1
-                        && nodes.stream().filter(p -> area.tileAt(p.x(), p.y()) == Terrain.CITY_GATE && p.x() == maxX).count() == 1,
-                "City wall gates are not distributed one per side " + id);
+        int[] sides = new int[4];
+        for (TilePoint p : nodes) if (area.tileAt(p.x(), p.y()) == Terrain.CITY_GATE) {
+            boolean horizontal = nodes.contains(new TilePoint(p.x() - 1, p.y()));
+            sides[horizontal ? (p.y() < (minY + maxY) / 2 ? 0 : 1) : (p.x() < (minX + maxX) / 2 ? 2 : 3)]++;
+        }
+        require(Arrays.stream(sides).allMatch(count -> count == 1), "City wall lost a cardinal gate " + id);
         for (TilePoint node : nodes) {
             boolean horizontal = nodes.contains(new TilePoint(node.x() - 1, node.y()))
                     || nodes.contains(new TilePoint(node.x() + 1, node.y()));
@@ -252,7 +260,8 @@ public final class RegionalSettlementTest {
                     + area.tileAt(node.x(), node.y() - 1) + area.tileAt(node.x(), node.y() + 1));
             if (horizontal && vertical) corners++;
         }
-        require(corners == 4, "City wall is not one orthogonal rectangle " + id + ": corners=" + corners);
+        require(corners == (id.startsWith("town_") ? 8 : 4),
+                "Unexpected town perimeter shape " + id + ": corners=" + corners);
         Set<TilePoint> connected = new HashSet<>();
         ArrayDeque<TilePoint> queue = new ArrayDeque<>();
         TilePoint first = nodes.iterator().next();

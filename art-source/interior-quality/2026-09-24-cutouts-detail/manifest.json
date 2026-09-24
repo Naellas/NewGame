@@ -1,0 +1,1147 @@
+[
+  {
+    "id": "interior_cooking_station",
+    "asset_file": "Java/assets/environments/interiors/interior_cooking_station.png",
+    "input": "inputs/interior_cooking_station.png",
+    "sha256": "b2879de0dc775792aafe48df7315a137fd0b264f1322fcd3047547b8564ad490",
+    "subject": "a warm oak kitchen preparation table with vegetables, ceramic jar, cutting board, small knife, teal cloth and a bowl underneath",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a warm oak kitchen preparation table with vegetables, ceramic jar, cutting board, small knife, teal cloth and a bowl underneath. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-cf593902-23b4-4046-bcb5-146d3f25f09b.png",
+    "source": "interior_cooking_station.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "8828cd1a53fd30aa74fcea22483743f7d1d0333514d88fc9aa3c698e38ffe5fd",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3041,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_alchemy_station",
+    "asset_file": "Java/assets/environments/interiors/interior_alchemy_station.png",
+    "input": "inputs/interior_alchemy_station.png",
+    "sha256": "3ca64d6ff6d4138c31bf84d1489efe6a674f1244198a32760ec67d5bb1ad2efa",
+    "subject": "a dark oak alchemy table with purple cloth, brass still, mortar, amber and blue glass flasks",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a dark oak alchemy table with purple cloth, brass still, mortar, amber and blue glass flasks. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-2e1a22d2-d5dc-4b15-b417-ab0f5c227608.png",
+    "source": "interior_alchemy_station.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "18fcfda5f4e0bdad038fedebfbdf7855c7b5c5698e850b8212e1f657470ae9ae",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 9178,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_anvil",
+    "asset_file": "Java/assets/environments/interiors/interior_anvil.png",
+    "input": "inputs/interior_anvil.png",
+    "sha256": "f94fad2bcaf1a862669b16ea4c38d97b201e15936f3230a587936ee999e8ca61",
+    "subject": "a dark steel anvil with clear horn and polished working face mounted on a thick round oak stump",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a dark steel anvil with clear horn and polished working face mounted on a thick round oak stump. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-621ee08c-d0d6-4075-8eb0-709d3a5fe39d.png",
+    "source": "interior_anvil.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1254,
+      1254
+    ],
+    "output_sha256": "4882aac903e6020325d4c15a0b89b5c98173c2abe6aa0831d396d549e397ef55",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3878,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_forge",
+    "asset_file": "Java/assets/environments/interiors/interior_forge.png",
+    "input": "inputs/interior_forge.png",
+    "sha256": "a4610c14ca0cd684cd935d466e990e1d178551c876a667523f4566f2655db5d0",
+    "subject": "a small soot-dark masonry forge with curved chimney and warm coal opening, preserve compact domestic-sized silhouette",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a small soot-dark masonry forge with curved chimney and warm coal opening, preserve compact domestic-sized silhouette. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-0daf7515-f933-4a6d-b25d-b16e3d8706b3.png",
+    "source": "interior_forge.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1240,
+      1269
+    ],
+    "output_sha256": "0b03b79ac8372ee7fa4e3c6d67d0f67a16d34e3e40fc7c21a315d118634390ee",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4199,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_oven",
+    "asset_file": "Java/assets/environments/interiors/interior_oven.png",
+    "input": "inputs/interior_oven.png",
+    "sha256": "a7a09eb68743f9f5e502d74490cee05ba045c23df0ea45585d36c92543488033",
+    "subject": "a rustic red brick domed bread oven on a short stone base with visible fire and stacked logs",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a rustic red brick domed bread oven on a short stone base with visible fire and stacked logs. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-e878adac-8db2-430b-aa14-ab3a6305d8ee.png",
+    "source": "interior_oven.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1247,
+      1261
+    ],
+    "output_sha256": "a4223ad6ea39b57b82662c9756f5267242c73fe5321fe7bc7dc6c32bf19b5394",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3563,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_stove",
+    "asset_file": "Java/assets/environments/interiors/interior_stove.png",
+    "input": "inputs/interior_stove.png",
+    "sha256": "520581e40d05769c857493ef93bd18dcf06867b36e41a179479e05508f63719d",
+    "subject": "a square dark cast-iron stove with narrow upright stovepipe and small glowing front firebox",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a square dark cast-iron stove with narrow upright stovepipe and small glowing front firebox. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-2bb6bf14-e3d6-4ce6-81ea-50bd4da00081.png",
+    "source": "interior_stove.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1230,
+      1278
+    ],
+    "output_sha256": "4e002baef2428f3c36aaa9243d5e1411af25cad568ea12af4217c21a977dd206",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3642,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_round_table",
+    "asset_file": "Java/assets/environments/interiors/interior_round_table.png",
+    "input": "inputs/interior_round_table.png",
+    "sha256": "853e1f576b787e9b6ecad5e10c64d8a4712b667c76b3bf3a6941b01a94befadf",
+    "subject": "a bare round oak dining table with circular plank top and sturdy wooden pedestal feet",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a bare round oak dining table with circular plank top and sturdy wooden pedestal feet. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-4f2d352c-1740-4bd8-890c-e6f22faca4c1.png",
+    "source": "interior_round_table.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1254,
+      1254
+    ],
+    "output_sha256": "249d3277de9fe8f4e3fc3def9905bfdf1314b065e8d00413d626e858a5d97a75",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3894,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_shop_counter",
+    "asset_file": "Java/assets/environments/interiors/interior_shop_counter.png",
+    "input": "inputs/interior_shop_counter.png",
+    "sha256": "a9677b0bd9dc26a8a1965f32d6bc205ad13609e5ed5c8d22b9d54b133e2d4241",
+    "subject": "a broad oak shop counter with two lower cubbies, square cabinet door, blue cloth draped over top, tiny plant and ceramic jug",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a broad oak shop counter with two lower cubbies, square cabinet door, blue cloth draped over top, tiny plant and ceramic jug. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-f452fa4d-b5cb-4897-8d8b-3b428546597e.png",
+    "source": "interior_shop_counter.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "ad41f41e9ab1e17ca9730526d2163bdef88a0690de580ef999340ee1e6f8a1ec",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4179,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_side_table",
+    "asset_file": "Java/assets/environments/interiors/interior_side_table.png",
+    "input": "inputs/interior_side_table.png",
+    "sha256": "0488028b79b9bae01f1eb993c617c26ca394584fc8355aaf6d9077d249268491",
+    "subject": "a small square oak side table with one drawer and lower open shelf, bare level top",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a small square oak side table with one drawer and lower open shelf, bare level top. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-94d41e31-32e2-4547-b9c3-0e5db59cc3f9.png",
+    "source": "interior_side_table.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1237,
+      1272
+    ],
+    "output_sha256": "4784cbbbbf7c6e9b6a3b36b6e82216e59939ab3d6b498c63be8c2d18242f128c",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3830,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_tavern_bar",
+    "asset_file": "Java/assets/environments/interiors/interior_tavern_bar.png",
+    "input": "inputs/interior_tavern_bar.png",
+    "sha256": "03a1a9d139b623df9b8e9263cfa0b5d18233b4a0fbbd0ce4822fb14eee18b2db",
+    "subject": "a broad straight oak tavern bar with simple paneled front, bare worktop, two red round stools in front",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a broad straight oak tavern bar with simple paneled front, bare worktop, two red round stools in front. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-ffe07f6b-fb4d-4889-ba4c-6d639d3fc8ea.png",
+    "source": "interior_tavern_bar.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "5c624287819e812098a2a52fe9955281d58d131c95361f64242dcf56852d2bbe",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5006,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_seed_bowl",
+    "asset_file": "Java/assets/environments/interiors/interior_seed_bowl.png",
+    "input": "inputs/interior_seed_bowl.png",
+    "sha256": "94cd25ec2de7e5ea69a2d9f8acda37ad28f9505acd5c74d89d751462b0a9df7a",
+    "subject": "a small wooden bowl of seeds next to an upright cloth seed packet marked with a simple green leaf, no lettering",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a small wooden bowl of seeds next to an upright cloth seed packet marked with a simple green leaf, no lettering. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-d5795530-cd5a-48d0-96df-c31ed33cb6b5.png",
+    "source": "interior_seed_bowl.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1254,
+      1254
+    ],
+    "output_sha256": "a7e2aa9db5d41bf01dba34666743ef0eb02bd28a67a3c28781d18f202f8dfb22",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 2589,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_sprout_planter",
+    "asset_file": "Java/assets/environments/interiors/interior_sprout_planter.png",
+    "input": "inputs/interior_sprout_planter.png",
+    "sha256": "55b04d0e78bb6ea9ef243dcc2d2a0a61fe4e36ea0d7687d1aad0c9e353351e11",
+    "subject": "a rectangular dark wooden planter box with black soil and four young green sprouts, two small iron corner bands",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a rectangular dark wooden planter box with black soil and four young green sprouts, two small iron corner bands. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-d793654a-db4a-4d11-867c-94f6f699fafa.png",
+    "source": "interior_sprout_planter.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1254,
+      1254
+    ],
+    "output_sha256": "1ce69401aaa3ed2f748db0fd829a3c11eceb21aa2b5feb8bbe83e2880188486d",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 2561,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_floor_bushy_planter",
+    "asset_file": "Java/assets/environments/interiors/interior_floor_bushy_planter.png",
+    "input": "inputs/interior_floor_bushy_planter.png",
+    "sha256": "8b81eca6c53500c9925d089cbfef2ceb81315cce96524467e2eb8d1a1d427479",
+    "subject": "a broad low oak planter trough densely filled with green herbs and soft fern leaves",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a broad low oak planter trough densely filled with green herbs and soft fern leaves. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-37b6ffa1-f36a-4003-a3df-f7165f3515fd.png",
+    "source": "interior_floor_bushy_planter.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "9b9fa73ef3ad3c6d48a7acb2cf488a975190df8b1d10edf5c940e302196d56c0",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 10626,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_floor_sapling_pot",
+    "asset_file": "Java/assets/environments/interiors/interior_floor_sapling_pot.png",
+    "input": "inputs/interior_floor_sapling_pot.png",
+    "sha256": "d9d2dd71f59746f348a76ef365858d1ad0e3a059127254d5f8ac8ef8c56ef40c",
+    "subject": "a little terracotta flowerpot holding one young green sapling with a slim stem",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a little terracotta flowerpot holding one young green sapling with a slim stem. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-c97e7f71-7c5c-49e5-bda0-c8bdff87987c.png",
+    "source": "interior_floor_sapling_pot.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1230,
+      1278
+    ],
+    "output_sha256": "61a75bdc7f5bb65bb3368843cffeab5e7873e83f3369994df96c6371bb0edb61",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 2615,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_wall_crystal_ornament",
+    "asset_file": "Java/assets/environments/interiors/interior_wall_crystal_ornament.png",
+    "input": "inputs/interior_wall_crystal_ornament.png",
+    "sha256": "754d1cc5eab11adf616d82b838b80c60b3e71d136327aa54979c885870f5d176",
+    "subject": "a single purple faceted hanging crystal suspended by a brass wall bracket; purple belongs ONLY inside crystal silhouette",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a single purple faceted hanging crystal suspended by a brass wall bracket; purple belongs ONLY inside crystal silhouette. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 1 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-de07d9e3-c3dc-4817-87d6-2590797a66e1.png",
+    "source": "interior_wall_crystal_ornament.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1199,
+      1312
+    ],
+    "output_sha256": "39a2a38490f4f78e849922fc28b0dfb866955dd748c6a3fa7ad1a7ca3a936a24",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 9,
+    "edge_pixels": 3943,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_wall_window_wide",
+    "asset_file": "Java/assets/environments/interiors/interior_wall_window_wide.png",
+    "input": "inputs/interior_wall_window_wide.png",
+    "sha256": "43935d775b8ff40d2217007a70863d63353886a27c759407299f9b402d1982af",
+    "subject": "a wide rectangular oak-framed window with four blue glass panes, green ivy on sill and small terracotta pot, whole frame included",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a wide rectangular oak-framed window with four blue glass panes, green ivy on sill and small terracotta pot, whole frame included. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-7e9cdc27-d206-4553-bedd-0f2eb1b4206a.png",
+    "source": "interior_wall_window_wide.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "1b71019fd845b2a4c6c4dab48a4b21f69a56506ac73becb31c614902bb28da73",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4153,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_banquet_table_h",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_banquet_table_h.png",
+    "input": "inputs/interior_banquet_table_h.png",
+    "sha256": "78afae84775b50744a1ffb8e61bc910d5e7187f1ad7acfd900a3b3b758ff6de8",
+    "subject": "a rectangular oak dining table with cream runner and red trim, two plates, small candle and tankards, no chairs",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a rectangular oak dining table with cream runner and red trim, two plates, small candle and tankards, no chairs. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-268b1cd7-50c7-42cc-84e6-00106f059e93.png",
+    "source": "interior_banquet_table_h.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "e25eba060e2c5bc101ca2eb777521758424cd7f266a5ea73293d0cf9c63ae1f7",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5954,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_stool_table_h",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_stool_table_h.png",
+    "input": "inputs/interior_stool_table_h.png",
+    "sha256": "f85948295708e68c31a2ac921be4afa305c49419c6c86a83a9c137818c096bbb",
+    "subject": "a rectangular oak tavern table with bare horizontal plank top and two round red padded stools in front",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a rectangular oak tavern table with bare horizontal plank top and two round red padded stools in front. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-8c4e7b85-7360-448e-b525-39503d7300cc.png",
+    "source": "interior_stool_table_h.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "35adf6b42f4cccea7052825166886ba6f4460b02b1b7f9e81fd83dcf1e762725",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5348,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_study_desk_h",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_study_desk_h.png",
+    "input": "inputs/interior_study_desk_h.png",
+    "sha256": "105a5fd9970a3285093fd25604a3fcfd6a50131dafdbbff6d20457bb78665d82",
+    "subject": "a wide oak writing desk, open book, parchment, inkpot and feather quill, drawer and sturdy legs",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a wide oak writing desk, open book, parchment, inkpot and feather quill, drawer and sturdy legs. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-390b4d9c-6fd8-4984-844b-d38a8f4c15fa.png",
+    "source": "interior_study_desk_h.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "4b1a494305a991252193bb243e31a1d6508e5784943387b8f082859a48c5e3b2",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 6184,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_bakery_counter",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_bakery_counter.png",
+    "input": "inputs/interior_bakery_counter.png",
+    "sha256": "5aea2553e8b9023317451c654a3b5e74b28640f4778c66564dc7025618608dad",
+    "subject": "a wide oak bakery sales counter filled with crisp bread loaves, wicker basket, little pale linen runner and flour jar",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a wide oak bakery sales counter filled with crisp bread loaves, wicker basket, little pale linen runner and flour jar. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-9b57195f-26b3-435d-8cf0-940fecd18b7a.png",
+    "source": "interior_bakery_counter.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "b4a588488bfaca0b3aa92157177bb7ab6418b9f41bb0bd6d8dfc215988706322",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4728,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_bakery_oven",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_bakery_oven.png",
+    "input": "inputs/interior_bakery_oven.png",
+    "sha256": "a7be1f478f2b998b3060fec06a4f07b7e53ef87e3b6c427af16b5e3ae306fc87",
+    "subject": "a tall narrow rustic red-brick bread oven with domed upper fire opening and wood store beneath",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a tall narrow rustic red-brick bread oven with domed upper fire opening and wood store beneath. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-2c8d7752-a149-4618-8f81-9094feb19d11.png",
+    "source": "interior_bakery_oven.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1051,
+      1497
+    ],
+    "output_sha256": "3ae85f1931a889b96448c2e7967a8fbcad4322f0b2f4713bbbffe19f35ab3f7b",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3746,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_carpenter_workbench",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_carpenter_workbench.png",
+    "input": "inputs/interior_carpenter_workbench.png",
+    "sha256": "3f609fb950762f2265afb64bbe209c40513c53ff2e95e95f1ac4d75ae62e332f",
+    "subject": "a broad sturdy carpentry workbench with hand saw, wooden plane, mallet, vise and plank offcuts; shelf beneath",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a broad sturdy carpentry workbench with hand saw, wooden plane, mallet, vise and plank offcuts; shelf beneath. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-54f5e56e-bb7d-4da4-8002-edea6d1bccc0.png",
+    "source": "interior_carpenter_workbench.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "93c6624148ed338c1fb626b18da01a63413d21ac01f6725820ed42790b4c3d6a",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4501,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_long_table_benches",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_long_table_benches.png",
+    "input": "inputs/interior_long_table_benches.png",
+    "sha256": "b87f0a89f90f980124862c8dff0306a0f99861ada16e00ac2f298e194496628f",
+    "subject": "a long oak dining table with two integrated benches, restrained blue linen runner and two tankards on top",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a long oak dining table with two integrated benches, restrained blue linen runner and two tankards on top. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-c250bf0e-c84b-41fa-abca-23976ba65acb.png",
+    "source": "interior_long_table_benches.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "62c9268f56a5f3b770e9453ac3ff0065a31d105e19c94d5a8ac96ec05e6976c0",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 10184,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_storage_counter",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_storage_counter.png",
+    "input": "inputs/interior_storage_counter.png",
+    "sha256": "de4d322fa9702473637130024d529dc18756d03628861cc410b6cfcc47d3477a",
+    "subject": "a broad oak supply counter with sacks and basket on top, crates and storage bins underneath",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a broad oak supply counter with sacks and basket on top, crates and storage bins underneath. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-7dd2b21d-5c94-4047-a2ce-0633e9a1133c.png",
+    "source": "interior_storage_counter.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "9c3cf5589a1a403dfe47105fcf6f511308529b97294374ba32ad566f4e12ad76",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3748,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_tavern_counter",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_tavern_counter.png",
+    "input": "inputs/interior_tavern_counter.png",
+    "sha256": "1d6569fa7e7cc985cf9ad570778a6121735bd05f5f1839b65e96ee3477f5d7d3",
+    "subject": "a wide oak tavern serving counter with blue runner, pewter jugs and green bottles, two red stools in front",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a wide oak tavern serving counter with blue runner, pewter jugs and green bottles, two red stools in front. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-11d51944-a8e4-4f2c-b99d-ccfb70bb90a4.png",
+    "source": "interior_tavern_counter.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "130a7abc1258ecc8cc004e04436b3d0d95656a75033a0e21191a622a899c92e6",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5761,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_metal_crate",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_metal_crate.png",
+    "input": "inputs/interior_metal_crate.png",
+    "sha256": "6e507e0f7db68abfedbf833f78e2030250ff636458e020ddf25190d70df145a1",
+    "subject": "a broad iron-bound oak crate filled with neatly stacked steel bars and ingots; no loose ground debris",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a broad iron-bound oak crate filled with neatly stacked steel bars and ingots; no loose ground debris. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-f0064583-8c82-4d9b-920e-6256d1c184ab.png",
+    "source": "interior_metal_crate.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "6b9e3b72a998a4182f00300a89c85bd2cf4d8054b4c7f4e892b9b89af1117915",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3789,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_grain_sacks_v",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_grain_sacks_v.png",
+    "input": "inputs/interior_grain_sacks_v.png",
+    "sha256": "9831246723f979dc10f75b38687f74c02eaf881d4b99d6df6351ef6eb005dd44",
+    "subject": "three burlap grain sacks stacked vertically on a narrow wooden pallet",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: three burlap grain sacks stacked vertically on a narrow wooden pallet. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-c9f9dda1-e152-4f5d-a1d1-7879ef645b6e.png",
+    "source": "interior_grain_sacks_v.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1051,
+      1497
+    ],
+    "output_sha256": "735aec63fbcdbbd7d549c1554de4d376bc801f9dcd39dc6faa2fdee01734715d",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3480,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_herb_drying_rack_v",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_herb_drying_rack_v.png",
+    "input": "inputs/interior_herb_drying_rack_v.png",
+    "sha256": "a1ddc1a24871b0cdeb87f0a46b1234221618d83bac3a4bc04536eb8dcd210349",
+    "subject": "a tall narrow oak freestanding drying rack with purple and green herbs hung from straight horizontal crossbar",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a tall narrow oak freestanding drying rack with purple and green herbs hung from straight horizontal crossbar. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-7e400fb1-9556-42e1-868c-263f4ec81f72.png",
+    "source": "interior_herb_drying_rack_v.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "da8c9839534b8ef06f4875e432a365679915eb24c56a8b468c4226db23ddd127",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 9196,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_linen_shelf",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_linen_shelf.png",
+    "input": "inputs/interior_linen_shelf.png",
+    "sha256": "9f18e514f987415cff76e2088fd39e1264d25e4640adba7b7305957126300a72",
+    "subject": "a tall narrow oak shelf with folded cream linens, green blankets and a basket on lower shelf",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a tall narrow oak shelf with folded cream linens, green blankets and a basket on lower shelf. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-a4e976ca-b0e1-495f-8c35-648d8d1c5001.png",
+    "source": "interior_linen_shelf.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "9b39523f89576366b7a4bc4a16827c0f2adf78475503a492d78c3244d9481743",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3093,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_inn_screen_chest",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_inn_screen_chest.png",
+    "input": "inputs/interior_inn_screen_chest.png",
+    "sha256": "2e85dc5e20d264be200d6cdffb02405747a3da505ffa3056602212e2dfd05f8e",
+    "subject": "a tall narrow oak privacy screen with an iron-bound chest at its foot, no cropped parts",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a tall narrow oak privacy screen with an iron-bound chest at its foot, no cropped parts. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-33196bea-1d9f-4b99-8df0-3e107d921b37.png",
+    "source": "interior_inn_screen_chest.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "de828acf4703eed924335b42b3d73ec9d8f98497882104a2a94e7f7be6c3486b",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3723,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_traveler_trunk",
+    "asset_file": "Java/assets/environments/interiors/props/specialized/interior_traveler_trunk.png",
+    "input": "inputs/interior_traveler_trunk.png",
+    "sha256": "774bb27cd5bac21fbf2ed58441239f581a498403485cea587f9d889bf7148487",
+    "subject": "a tall narrow upright oak travel trunk with iron bands and brass locks, folded small bags secured on top",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a tall narrow upright oak travel trunk with iron bands and brass locks, folded small bags secured on top. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-9e9034f2-9cbd-415d-b1d0-68e29e43e09a.png",
+    "source": "interior_traveler_trunk.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1024,
+      1536
+    ],
+    "output_sha256": "cf745367341d5d5f325c88c40b7377aaf2f41ccf7eb9134a8ea184d128142be7",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 2977,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_aquarium_table",
+    "asset_file": "Java/assets/environments/interiors/interior_aquarium_table.png",
+    "input": "inputs/interior_aquarium_table.png",
+    "sha256": "7d3b19a2dd5e58f47e3810b203822385c1dea435bb237920434696e686c57c80",
+    "subject": "a broad oak cabinet supporting a clear glass rectangular aquarium with blue water, plants and small fish; all inside glass, no background",
+    "aspect": 2,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a broad oak cabinet supporting a clear glass rectangular aquarium with blue water, plants and small fish; all inside glass, no background. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Straight frontal orthographic view facing DOWN on screen, camera elevated roughly 35 degrees to show tops, all structural horizontal edges horizontal; no isometric diagonal side faces. Object visible bounding box width about 2 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-24757fac-d5e3-4d06-b724-b3a8b0c69f58.png",
+    "source": "interior_aquarium_table.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1774,
+      887
+    ],
+    "output_sha256": "95dcde0a3b592e28cb6df01c20504b2f4d57e43b52367f42eff3193cb31ca658",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3314,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_north",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_north.png",
+    "input": "inputs/interior_chair_north.png",
+    "sha256": "c3ad24a1dce548fa696a877e1c5dc21cd9edae5bb1f5b2def372527e37375296",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; front view, occupant faces DOWN on screen",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a simple warm oak wooden chair with plank seat, square backrest and four legs; front view, occupant faces DOWN on screen. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Follow the stated cardinal orientation exactly, no diagonal three-quarter view. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-3795efbb-8e5f-4134-994d-44b9de4eedf4.png",
+    "source": "interior_chair_north.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1058,
+      1487
+    ],
+    "output_sha256": "9088ed7cc440c172cdbabc36f1d90d314facb0e8fb1637df3c61a6b81232bcb6",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3663,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_south",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_south.png",
+    "input": "inputs/interior_chair_south.png",
+    "sha256": "cd3200a3d0db168bcd07ef3ce22394b944b0bcb2be63eaaa43ea89df79e46c1d",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; rear view, occupant faces UP on screen",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a simple warm oak wooden chair with plank seat, square backrest and four legs; rear view, occupant faces UP on screen. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Follow the stated cardinal orientation exactly, no diagonal three-quarter view. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-f7f408d8-4255-4e87-bc93-8bac2914174a.png",
+    "source": "interior_chair_south.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "c609c015f6651eff14116abdd9c491a71af11f0572921403e271df1dbec23d5e",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4102,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_east",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_east.png",
+    "input": "inputs/interior_chair_east.png",
+    "sha256": "6651f264829e6c18f9a6f8d9eba1dfaacbce420c741f9b8ad2110447acd8b7b7",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; strict LEFT-facing side profile: backrest on RIGHT, seat extends LEFT",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a simple warm oak wooden chair with plank seat, square backrest and four legs; strict LEFT-facing side profile: backrest on RIGHT, seat extends LEFT. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Follow the stated cardinal orientation exactly, no diagonal three-quarter view. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-785b4fe3-8b80-484e-adce-976db4418cc9.png",
+    "source": "interior_chair_east.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "6e2cb39383616b311afe6501a3f565d90cb0e857c32f2cbd1e0411e4f1845e0b",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5045,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_west",
+    "asset_file": "Java/assets/environments/interiors/interior_chair_west.png",
+    "input": "inputs/interior_chair_west.png",
+    "sha256": "62e28b88e1191e0bb86174c108f6f89f7e6f1bc06d8563cd9e88258a03380f36",
+    "subject": "a simple warm oak wooden chair with plank seat, square backrest and four legs; strict RIGHT-facing side profile: backrest on LEFT, seat extends RIGHT",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a simple warm oak wooden chair with plank seat, square backrest and four legs; strict RIGHT-facing side profile: backrest on LEFT, seat extends RIGHT. Match crisp hand-clustered pixel art of high-quality oak cabinets and workbenches, fine readable wood grain, restrained highlights, clear outlines and material separation. No blur, painterly smoothing or smeared details. Follow the stated cardinal orientation exactly, no diagonal three-quarter view. Object visible bounding box width about 0.7 times its height. Preserve whole object and feet. Square level edges on tables/counters suitable for connected modules. Warm brown oak, muted natural materials, upper-left light. SINGLE complete object isolated on truly transparent alpha-zero background with generous empty margins and all corners transparent. Absolutely NO magenta key background, magenta fringes, painted checkerboard, detached scraps, unrelated pixels, floor, ground patch, drop shadow, halos, text, labels or extra objects. Artwork must remain crisp and readable at roughly 96 pixels wide in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-40d8d99c-fb9d-481e-9cb7-021296d07bef.png",
+    "source": "interior_chair_west.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1064,
+      1478
+    ],
+    "output_sha256": "ee37fc2a0dac03760549b126195591e41a4cec2f6c67212389a66ef8c12fdd73",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3521,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_north_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_north_alt.png",
+    "input": "inputs/interior_chair_north_alt.png",
+    "sha256": "137bba125e34caf8f742b0d82b93939905eb57e82aa25cfb2d02ebd7022cebc1",
+    "subject": "a padded dark oak chair with worn tan leather seat; rear view, occupant faces UP, rear of backrest closest to viewer",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a padded dark oak chair with worn tan leather seat; rear view, occupant faces UP, rear of backrest closest to viewer. Crisp hand-clustered pixel art, readable wood grain and material separation, restrained highlights. No blur or painterly smoothing. Strict cardinal alignment; no diagonal isometric orientation. Elevated RPG camera showing tops unless a flat top-down rug. Object visible bounding box width about 0.7 times its height. Entire object and feet inside generous transparent margins. Warm muted natural materials, upper-left lighting. SINGLE complete isolated object on truly transparent alpha-zero background. NO magenta, painted checkerboard, detached scraps, floor, drop shadow, halo, text or unrelated objects. Readable at 96 pixels in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-957bed24-afc1-451e-9591-1bd6773508ef.png",
+    "source": "interior_chair_north_alt.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "56ae632106aefb1d1b3e7799245ac45f9099a534f7f258d2a5312ab4d98ada10",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 3606,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_south_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_south_alt.png",
+    "input": "inputs/interior_chair_south_alt.png",
+    "sha256": "d184a544bef93f3371aaf3dc1988e7b7c0f3f25e01e1df21fafa9a763c8465d2",
+    "subject": "a padded dark oak chair with worn tan leather seat; straight FRONT view, occupant faces DOWN",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a padded dark oak chair with worn tan leather seat; straight FRONT view, occupant faces DOWN. Crisp hand-clustered pixel art, readable wood grain and material separation, restrained highlights. No blur or painterly smoothing. Strict cardinal alignment; no diagonal isometric orientation. Elevated RPG camera showing tops unless a flat top-down rug. Object visible bounding box width about 0.7 times its height. Entire object and feet inside generous transparent margins. Warm muted natural materials, upper-left lighting. SINGLE complete isolated object on truly transparent alpha-zero background. NO magenta, painted checkerboard, detached scraps, floor, drop shadow, halo, text or unrelated objects. Readable at 96 pixels in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-529ad8de-4c17-4f01-881e-c3ec127704a8.png",
+    "source": "interior_chair_south_alt.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "fbdbfeb7771902309922d69d98f67432a4684df123465330391b23c28d9875e6",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5439,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_east_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_east_alt.png",
+    "input": "inputs/interior_chair_east_alt.png",
+    "sha256": "e7b744cb902a31c95056231273a86ee5e0e76ed748f240eeace80c2afa459c33",
+    "subject": "a padded dark oak chair with worn tan leather seat; strict RIGHT side profile, thin backrest on LEFT and seat projecting RIGHT, two visible legs only",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a padded dark oak chair with worn tan leather seat; strict RIGHT side profile, thin backrest on LEFT and seat projecting RIGHT, two visible legs only. Crisp hand-clustered pixel art, readable wood grain and material separation, restrained highlights. No blur or painterly smoothing. Strict cardinal alignment; no diagonal isometric orientation. Elevated RPG camera showing tops unless a flat top-down rug. Object visible bounding box width about 0.7 times its height. Entire object and feet inside generous transparent margins. Warm muted natural materials, upper-left lighting. SINGLE complete isolated object on truly transparent alpha-zero background. NO magenta, painted checkerboard, detached scraps, floor, drop shadow, halo, text or unrelated objects. Readable at 96 pixels in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-5bfdf384-d082-4f5a-bcfa-aece957b32ce.png",
+    "source": "interior_chair_east_alt.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1064,
+      1478
+    ],
+    "output_sha256": "cc918537341211be5ffe48454c4b73b838057ec7627c6b577a25066e77713913",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4322,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_chair_west_alt",
+    "asset_file": "Java/assets/environments/interiors/props/modular_seating/interior_chair_west_alt.png",
+    "input": "inputs/interior_chair_west_alt.png",
+    "sha256": "03677b50afefcfc30a7d99a59d2492b0b487dc63560ffa649431876550621a97",
+    "subject": "a padded dark oak chair with worn tan leather seat; strict LEFT side profile, thin backrest on RIGHT and seat projecting LEFT, two visible legs only",
+    "aspect": 0.7,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a padded dark oak chair with worn tan leather seat; strict LEFT side profile, thin backrest on RIGHT and seat projecting LEFT, two visible legs only. Crisp hand-clustered pixel art, readable wood grain and material separation, restrained highlights. No blur or painterly smoothing. Strict cardinal alignment; no diagonal isometric orientation. Elevated RPG camera showing tops unless a flat top-down rug. Object visible bounding box width about 0.7 times its height. Entire object and feet inside generous transparent margins. Warm muted natural materials, upper-left lighting. SINGLE complete isolated object on truly transparent alpha-zero background. NO magenta, painted checkerboard, detached scraps, floor, drop shadow, halo, text or unrelated objects. Readable at 96 pixels in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-5d1d338d-a3ac-48d0-bd83-524382e88940.png",
+    "source": "interior_chair_west_alt.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1049,
+      1499
+    ],
+    "output_sha256": "3d8dea4849e48f474671547d6862fd4f6ba1ecc4546a4af12aa2a43d2ad75ec1",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4659,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_rug_runner",
+    "asset_file": "Java/assets/environments/interiors/interior_rug_runner.png",
+    "input": "inputs/interior_rug_runner.png",
+    "sha256": "44e1df6f52677e2793589014bfdd072fb26d33ce16e46341fe9e5c089e8ee16d",
+    "subject": "a long narrow teal woven runner carpet with muted gold geometric border and small diamond medallions, FLAT top-down rectangle exactly aligned to image axes, no perspective",
+    "aspect": 0.4,
+    "prompt": "Edit this teal and gold pixel-art rug into a SHORTER, WIDER rectangular rug. Visible rug itself must be EXACTLY half as wide as tall (width:height 1:2), not the current roughly 1:4. Keep the same crisp teal fabric and muted gold border style, use just ONE central diamond medallion. Perfect flat top-down cardinal rectangle. Whole rug isolated on true transparent alpha-zero background. No shadows, magenta, stray plants, or detached pixels. This must fill a two-tile-long by one-tile-wide floor footprint. Generous even transparent margin.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-0d345e64-38ac-4b32-a2a5-28310804df90.png",
+    "source": "interior_rug_runner.png",
+    "rejected_source": "rug-runner-rejected-narrow.png",
+    "tool": "built-in image_gen",
+    "size": [
+      887,
+      1774
+    ],
+    "output_sha256": "3b221be78fceb8a70821874814337bef1225b3add3299cbf0ed90bb7eba814fa",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 4873,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_cookpot_stand",
+    "asset_file": "Java/assets/environments/interiors/interior_cookpot_stand.png",
+    "input": "inputs/interior_cookpot_stand.png",
+    "sha256": "509e175c33e20eb5e2574e7d2fe8cac59691ede2dae23d2870c5cd95a844bb66",
+    "subject": "a black iron cauldron of orange vegetable stew on a small iron tripod over contained red coals, visible handles and legs",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a black iron cauldron of orange vegetable stew on a small iron tripod over contained red coals, visible handles and legs. Crisp hand-clustered pixel art, readable wood grain and material separation, restrained highlights. No blur or painterly smoothing. Strict cardinal alignment; no diagonal isometric orientation. Elevated RPG camera showing tops unless a flat top-down rug. Object visible bounding box width about 1 times its height. Entire object and feet inside generous transparent margins. Warm muted natural materials, upper-left lighting. SINGLE complete isolated object on truly transparent alpha-zero background. NO magenta, painted checkerboard, detached scraps, floor, drop shadow, halo, text or unrelated objects. Readable at 96 pixels in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-48735a42-b1fb-4c83-b5ac-6a244398e367.png",
+    "source": "interior_cookpot_stand.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1242,
+      1266
+    ],
+    "output_sha256": "d11d98d67ab9577acb611e72858d61a139b995cc008486192b122d2fe2c4e2b9",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5009,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_herb_planter",
+    "asset_file": "Java/assets/environments/interiors/interior_herb_planter.png",
+    "input": "inputs/interior_herb_planter.png",
+    "sha256": "f87024570215e59f3e930c9766cf24837accd053327672fb5aa6c6a9ea62e1a8",
+    "subject": "a short rectangular oak herb planter with dense small green culinary herb leaves in dark soil, iron corner bands",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a short rectangular oak herb planter with dense small green culinary herb leaves in dark soil, iron corner bands. Crisp hand-clustered pixel art, readable wood grain and material separation, restrained highlights. No blur or painterly smoothing. Strict cardinal alignment; no diagonal isometric orientation. Elevated RPG camera showing tops unless a flat top-down rug. Object visible bounding box width about 1 times its height. Entire object and feet inside generous transparent margins. Warm muted natural materials, upper-left lighting. SINGLE complete isolated object on truly transparent alpha-zero background. NO magenta, painted checkerboard, detached scraps, floor, drop shadow, halo, text or unrelated objects. Readable at 96 pixels in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-f597e745-089e-406a-b1fc-403cdb2368bd.png",
+    "source": "interior_herb_planter.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1254,
+      1254
+    ],
+    "output_sha256": "b965f482d285cd9cbf82845b3d3e5aa39326cbfbb77f10200489627e09040388",
+    "corner_alpha": [
+      0,
+      0,
+      1,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 5733,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  },
+  {
+    "id": "interior_wall_window_small",
+    "asset_file": "Java/assets/environments/interiors/interior_wall_window_small.png",
+    "input": "inputs/interior_wall_window_small.png",
+    "sha256": "8b989abd5541953dc2888712f5369e12ba3eebc1e0b8c762c0b39aa5f909d507",
+    "subject": "a small square oak-framed window with four blue glass panes and modest ivy leaves along its sill",
+    "aspect": 1,
+    "prompt": "Generate a replacement furniture sprite for a detailed rustic medieval pixel-art RPG: a small square oak-framed window with four blue glass panes and modest ivy leaves along its sill. Crisp hand-clustered pixel art, readable wood grain and material separation, restrained highlights. No blur or painterly smoothing. Strict cardinal alignment; no diagonal isometric orientation. Elevated RPG camera showing tops unless a flat top-down rug. Object visible bounding box width about 1 times its height. Entire object and feet inside generous transparent margins. Warm muted natural materials, upper-left lighting. SINGLE complete isolated object on truly transparent alpha-zero background. NO magenta, painted checkerboard, detached scraps, floor, drop shadow, halo, text or unrelated objects. Readable at 96 pixels in game.",
+    "generated_file": "C:\\Users\\Maciej\\.codex\\generated_images\\01a0cfc8-9f29-7441-abbf-20cb63ef608a\\exec-25479b4a-3f6c-4134-8ebc-9a0454abe215.png",
+    "source": "interior_wall_window_small.png",
+    "tool": "built-in image_gen",
+    "size": [
+      1254,
+      1254
+    ],
+    "output_sha256": "b8daec658cda61fb3c1f199f3fdda55df2182951060a97de9ff9233a301151c7",
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "flagged_magenta_edge_pixels": 0,
+    "edge_pixels": 2804,
+    "review_status": "accepted: full-size generation, runtime fit comparison, alpha audit; home/bakery scene samples"
+  }
+]

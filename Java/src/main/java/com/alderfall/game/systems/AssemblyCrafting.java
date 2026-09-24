@@ -68,6 +68,25 @@ public final class AssemblyCrafting {
                 + primary + "~" + quality.name() + "+" + secondary + "~" + quality.name()
                 + "+" + ornament + "~" + quality.name() + "+-";
     }
+
+    /** Rotate every blueprint/quality using valid parts that can be sourced locally. */
+    public static List<String> regionalVendorStock(InteriorStyle region, long seed) {
+        List<String> stock = new ArrayList<>();
+        for (Blueprint blueprint : BLUEPRINTS) for (Quality quality : Quality.values()) {
+            Random random = new Random(seed ^ Objects.hash(blueprint.id(), quality.name()));
+            List<String> parts = new ArrayList<>();
+            for (Slot slot : blueprint.slots().subList(0, 3)) {
+                List<MaterialCatalog.Material> pool = MaterialCatalog.all().stream()
+                        .filter(slot::accepts).filter(m -> m.tier() <= quality.ordinal() + 1)
+                        .filter(m -> MerchantStock.local(m.key(), region))
+                        .sorted(Comparator.comparing(MaterialCatalog.Material::key)).toList();
+                if (pool.isEmpty()) break;
+                parts.add(pool.get(random.nextInt(pool.size())).key());
+            }
+            if (parts.size() == 3) stock.add(vendorGear(blueprint.id(), quality, parts.get(0), parts.get(1), parts.get(2)));
+        }
+        return List.copyOf(stock);
+    }
     public enum Slot {
         BLADE("Blade", Profession.SMITHING, 3, METAL, GLASS),
         HILT("Hilt", Profession.CARPENTRY, 1, WOOD, HIDE, MONSTER),

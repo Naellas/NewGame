@@ -4,6 +4,7 @@ from pathlib import Path as _BootstrapPath
 if not __package__:
     _bootstrap_sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[3]))
 from tools.project_paths import JAVA_ROOT, REPO_ROOT
+from tools.assets.shared.asset_paths import asset_file
 from pathlib import Path
 
 from PIL import Image
@@ -12,7 +13,7 @@ from PIL import Image
 ROOT = JAVA_ROOT
 SOURCE = ROOT / "assets" / "source"
 CITY = ROOT / "assets" / "environments/settlements/city"
-CITY_BUILDINGS = CITY / "buildings" / "city"
+CITY_BUILDINGS = CITY / "buildings"
 CITY_PROPS = CITY / "props" / "city"
 
 
@@ -40,7 +41,9 @@ def trim(image: Image.Image, padding: int = 12) -> Image.Image:
 
 def save_cutout(source_name: str, output_name: str) -> None:
     image = Image.open(SOURCE / source_name)
-    trim(green_key(image), padding=18).save(CITY_BUILDINGS / output_name)
+    destination = asset_file(ROOT / "assets", f"environments/settlements/city/buildings/city/{output_name}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    trim(green_key(image), padding=18).save(destination)
 
 
 def save_alley_props() -> None:

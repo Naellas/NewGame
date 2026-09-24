@@ -52,7 +52,21 @@ public final class AssetStore {
         return fitted;
     }
 
+    /**
+     * Aspect-preserving dimensions with a common visible bounding-box area.
+     * Uses the same cached alpha crop as spriteFit, so transparent canvas padding
+     * and export resolution cannot change apparent scale.
+     */
+    public int[] spriteAreaSize(String name, double equivalentSide) {
+        BufferedImage source = croppedSource(name);
+        double scale = equivalentSide / Math.sqrt((double) source.getWidth() * source.getHeight());
+        return new int[]{Math.max(1, (int) Math.round(source.getWidth() * scale)),
+                Math.max(1, (int) Math.round(source.getHeight() * scale))};
+    }
+
     public boolean hasSprite(String name) {
+        name = DirectionalSeating.source(name);
+        if (ModularMarket.supports(name)) return catalog.findAsset(ModularMarket.BASE) != null;
         if (TextileMaterialSprites.NAMES.contains(name))
             return catalog.findAsset(TextileMaterialSprites.ATLAS) != null;
         if (name.startsWith(ItemAppearance.PREFIX)) return catalog.findAsset(ItemAppearance.atlasName(name)) != null;
@@ -77,6 +91,46 @@ public final class AssetStore {
         Set<String> names = new java.util.HashSet<>(catalog.allAssetNames());
         if (catalog.findAsset(TextileMaterialSprites.ATLAS) != null) names.addAll(TextileMaterialSprites.NAMES);
         return Set.copyOf(names);
+    }
+
+    /** Canonical source family for browsing; follows the same aliases as runtime lookup. */
+    public String assetRelativePath(String name) {
+        name = DirectionalSeating.source(name);
+        if (ModularMarket.supports(name)) name = ModularMarket.BASE;
+        if (TextileMaterialSprites.NAMES.contains(name)) name = TextileMaterialSprites.ATLAS;
+        if (name.startsWith(ItemAppearance.PREFIX)) name = ItemAppearance.atlasName(name);
+        Path path = catalog.findAsset(name);
+        return path == null ? "" : assetsRoot.relativize(path).toString().replace('\\', '/');
+    }
+
+    /** Static placement pose for arbitrary library assets, including authored animation strips. */
+    public BufferedImage placementSpriteFit(String name, int width, int height) {
+        Path path = catalog.findAsset(name);
+        if (path == null) return spriteFit(name, width, height);
+        Integer authoredFrames = animationFrameCountFromMetadata(name);
+        if (authoredFrames == null && !name.endsWith("_anim")) return spriteFit(name, width, height);
+        String key = "placement-pose:" + name + ":" + width + "x" + height;
+        BufferedImage cached = cache.get(key);
+        if (cached != null) return cached;
+        // Decode just the first frame: browsing strips must not retain every full-resolution sheet.
+        try (var input = ImageIO.createImageInputStream(path.toFile())) {
+            var readers = ImageIO.getImageReaders(input);
+            if (!readers.hasNext()) return spriteFit(name, width, height);
+            var reader = readers.next();
+            try {
+                reader.setInput(input);
+                int sourceWidth = reader.getWidth(0), sourceHeight = reader.getHeight(0);
+                int count = authoredFrames != null ? authoredFrames : Math.max(1, sourceWidth / sourceHeight);
+                int frameWidth = Math.max(1, sourceWidth / Math.min(count, sourceWidth));
+                var parameters = reader.getDefaultReadParam();
+                parameters.setSourceRegion(new java.awt.Rectangle(0, 0, frameWidth, sourceHeight));
+                BufferedImage pose = fit(cropTransparent(reader.read(0, parameters)), width, height, pixelated(name));
+                cache.put(key, pose);
+                return pose;
+            } finally { reader.dispose(); }
+        } catch (IOException ex) {
+            return spriteFit(name, width, height);
+        }
     }
 
     public BufferedImage effectSprite(String name, int width, int height, int frame) {
@@ -314,9 +368,15 @@ public final class AssetStore {
     }
 
     private BufferedImage loadSource(String name) {
+        name = DirectionalSeating.source(name);
         BufferedImage cached = sourceCache.get(name);
         if (cached != null) {
             return cached;
+        }
+        if (ModularMarket.supports(name) && !name.equals(ModularMarket.BASE)) {
+            BufferedImage image = ModularMarket.tint(loadSource(ModularMarket.BASE), name);
+            sourceCache.put(name, image);
+            return image;
         }
         if (TextileMaterialSprites.NAMES.contains(name)) {
             BufferedImage image = TextileMaterialSprites.extract(name, loadSource(TextileMaterialSprites.ATLAS));

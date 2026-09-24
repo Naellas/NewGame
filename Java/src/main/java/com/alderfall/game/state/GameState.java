@@ -19,6 +19,7 @@ public final class GameState {
     public static final int MAX_ZOOM = 200;
     public static final int ZOOM_STEP = 5;
     public final ChestSystem chests = new ChestSystem();
+    public final ShopInventory shopInventory = new ShopInventory();
     public WorldProp activeChest;
 
     public record DialogueVideoPrompt(String key, String title, String caption, String assetPath) {
@@ -95,6 +96,11 @@ public final class GameState {
     public final Set<String> romancedCompanionIds = new HashSet<>();
     public final Set<String> marriedCompanionIds = new HashSet<>();
     public final Map<String, String> villageWorkerRoles = new LinkedHashMap<>();
+    public boolean villageCatalogOpen;
+    public String pendingWorkplaceAlly = "";
+    public int villagePropOffsetX, villagePropOffsetY;
+    public boolean villageGridSnap=true, villagePlacementCollisions=true;
+    public WorldProp pendingVillageProp;
     public final Map<String, String> villageBuildingAssignments = new LinkedHashMap<>();
     public final Map<String, List<String>> villageBuildingDecorations = new LinkedHashMap<>();
     public final Map<String, Integer> villageStorage = new LinkedHashMap<>();
@@ -139,6 +145,10 @@ public final class GameState {
     public String selectedVillageAsset = "city_prop_flower_pot";
     public String selectedVillagePropCategory = "Decor";
     public char selectedVillageTile = 'A';
+    private boolean returnToVillageManagement;
+    public String villageTerrainTool = "paint";
+    public int villageBrushRadius;
+    public double villageTargetHeight;
     public String selectedInteriorAsset = "interior_round_table";
     public String selectedInteriorAssetCategory = "All";
     public TilePoint pendingVillageMoveSource;
@@ -162,6 +172,7 @@ public final class GameState {
     private DialogueLibrary.DialogueSession activeDialogueSession;
     private DialogueVideoPrompt activeDialogueVideo;
     private RoamingEventPrompt activeRoamingEventPrompt;
+    private List<String> pendingRoadAmbushers = List.of();
     private String activeNpcIntroLine = "";
     private String activeQuestDialogueLine = "";
     private String activeShopDialogueBuildingKey = "";
@@ -208,9 +219,13 @@ public final class GameState {
     private static final int DIALOGUE_REVEAL_INITIAL_CHARS = 2;
     private EnvironmentSnapshot environmentSnapshot;
 
-    public GameState(GameConfig config) {
+    public final RoamingWorldEventLayer roamingEvents = new RoamingWorldEventLayer();
+
+    public GameState(GameConfig config) { this(config,message -> {}); }
+    public GameState(GameConfig config,java.util.function.Consumer<String> progress) {
         this.config = config;
-        this.world = new WorldMap(0);
+        this.world = new WorldMap(0,progress);
+        progress.accept("Preparing quests, weather and character systems...");
         this.weatherController = new WeatherController(world);
         for (Map.Entry<String, Quest> entry : GameData.QUESTS.entrySet()) {
             quests.put(entry.getKey(), entry.getValue().copy());
@@ -302,6 +317,7 @@ public final class GameState {
         villageBuildingDecorations.clear();
         villageStorage.clear();
         chests.clear();
+        shopInventory.clear();
         activeChest = null;
         partyScreenIndex = 0;
         resetVillageInterface();
@@ -545,7 +561,7 @@ public final class GameState {
         activeQuestDialogueLine = "";
         activeShopDialogueBuildingKey = "";
         activeNpc = npc;
-        activeShop = npc.shopId() == null ? null : GameData.SHOPS.get(npc.shopId());
+        activeShop = Shop.forNpc(npc);
         activeDialogueSession = startDialogueSessionFor(npc);
         dialogIndex = 0;
         mode = GameMode.DIALOG;
@@ -633,7 +649,6 @@ public final class GameState {
                 : List.copyOf(choices);
         activeRoamingEventPrompt = new RoamingEventPrompt(safeTitle, safeSprite, safeDescription, safeChoices);
         Npc npc = new Npc(currentMapId, safeTitle, safeSprite, playerX, playerY, List.of(safeDescription), null, null);
-        introducedNpcKeys.add(npcRelationshipKey(npc));
         activeNpc = npc;
         activePartyTalkActor = null;
         activeShop = null;
@@ -646,6 +661,8 @@ public final class GameState {
         status = "Encounter: " + safeTitle + ". Choose an approach.";
     }
 
+    public RoamingEventPrompt roamingEventPrompt() { return activeRoamingEventPrompt; }
+
     public boolean roamingEventPromptActive() {
         return activeRoamingEventPrompt != null;
     }
@@ -655,17 +672,43 @@ public final class GameState {
             return;
         }
         String title = activeRoamingEventPrompt.title();
-        activeRoamingEventPrompt = null;
+        activeRoamingEventPrompt = new RoamingEventPrompt(title, activeRoamingEventPrompt.sprite(),
+                resultLine == null || resultLine.isBlank() ? "The moment passes." : resultLine.strip(),
+                List.of(new RoamingEventChoice("Continue exploring", this::closeOverlay)));
         activeDialogueSession = null;
-        activeQuestDialogueLine = resultLine == null || resultLine.isBlank()
-                ? title + ": The moment passes."
-                : resultLine.strip();
-        activeShopDialogueBuildingKey = "";
+        activeQuestDialogueLine = "";
         dialogIndex = 0;
         status = statusText == null || statusText.isBlank() ? title + " resolved." : statusText.strip();
     }
 
+    public List<String> roadAmbushers(int x, int y, int seed) {
+        if (!WorldMap.OVERWORLD_ID.equals(currentMapId)) return List.of();
+        WorldMap.AdventureMarker dungeon = world.nearestDungeonInBiome(x, y);
+        if (dungeon == null) return List.of();
+        Random seeded = new Random(seed);
+        List<String> keys = new ArrayList<>();
+        int count = 2 + seeded.nextInt(2);
+        for (int i = 0; i < count; i++) keys.add(chooseDungeonRoamer(dungeon.mapId(), seeded));
+        return List.copyOf(keys);
+    }
+
+    public void openRoadAmbushPrompt(List<String> enemies) {
+        if (enemies == null || enemies.isEmpty()) return;
+        pendingRoadAmbushers = List.copyOf(enemies);
+        openRoamingEventPrompt("Roadside Ambush", "event_ambush_brush",
+                "The branches shift beneath your boots. Attackers burst from cover and block the road. Ready your weapons!",
+                List.of(new RoamingEventChoice("Fight", this::fightRoadAmbushers)));
+    }
+
+    private void fightRoadAmbushers() {
+        if (pendingRoadAmbushers.isEmpty()) return;
+        List<String> enemies = pendingRoadAmbushers;
+        pendingRoadAmbushers = List.of();
+        startRoamingEventBattle(enemies, "An ambush! Attackers burst from the brush across the road.");
+    }
+
     public void startRoamingEventBattle(List<String> monsterKeys, String statusText) {
+        pendingRoadAmbushers = List.of();
         List<String> keys = monsterKeys == null || monsterKeys.isEmpty() ? List.of("bandit_cutthroat") : monsterKeys;
         List<GameData.MonsterSpec> specs = monsterSpecsForKeys(keys);
         battle = createBattle(specs, world.tileAt(currentMapId, playerX, playerY), world.kind(currentMapId));
@@ -1166,7 +1209,7 @@ public final class GameState {
         }
         if (activeShop != null) {
             mode = GameMode.SHOP;
-            status = activeShop.name() + ". Press 1-" + activeShop.availableStock(player.level).size() + " to buy, Esc to leave.";
+            status = activeShop.name() + ". Press 1-" + shopStock(activeShop).size() + " to buy, Esc to leave.";
         } else {
             if (activeNpc.recruitId() != null && activeNpc.recruitCost() > 0 && !isRecruited(activeNpc.recruitId())) {
                 status = activeNpc.name() + "'s companion contract costs " + activeNpc.recruitCost() + " gold. Press H to hire.";
@@ -2655,7 +2698,7 @@ public final class GameState {
         }
         if (activeShop != null) {
             mode = GameMode.SHOP;
-            status = activeShop.name() + ". Press 1-" + activeShop.availableStock(player.level).size() + " to buy, Esc to leave.";
+            status = activeShop.name() + ". Press 1-" + shopStock(activeShop).size() + " to buy, Esc to leave.";
         }
     }
 
@@ -2674,7 +2717,7 @@ public final class GameState {
         activeQuestDialogueLine = "";
         activeShopDialogueBuildingKey = "";
         mode = GameMode.SHOP;
-        status = activeShop.name() + ". Press 1-" + activeShop.availableStock(player.level).size() + " to buy, Esc to leave.";
+        status = activeShop.name() + ". Press 1-" + shopStock(activeShop).size() + " to buy, Esc to leave.";
     }
 
     public boolean handleActiveNpcQuestAction() {
@@ -2952,6 +2995,7 @@ public final class GameState {
     }
 
     private boolean conversationObjectiveMatches(Quest quest, Npc npc) {
+        if (FurnitureQuestContent.ID.equals(quest.id)) return FurnitureQuestContent.isKeeper(world, npc);
         if (npc == null) return false;
         if (questForQuestNpc(npc) == quest) return true;
         if (quest.activeObjectiveKind() == Quest.ObjectiveKind.ASK_AROUND) {
@@ -3086,6 +3130,7 @@ public final class GameState {
     }
 
     private Quest authoredQuestForNpc(Npc npc) {
+        if (FurnitureQuestContent.isKeeper(world, npc)) return quests.get(FurnitureQuestContent.ID);
         if (npc.questId() == null) {
             return null;
         }
@@ -3222,6 +3267,7 @@ public final class GameState {
     }
 
     private Npc questGiver(String questId) {
+        if (FurnitureQuestContent.ID.equals(questId)) return FurnitureQuestContent.keeper(world);
         for (Npc npc : GameData.NPCS) {
             Quest authored = authoredQuestForNpc(npc);
             if (authored != null && questId.equals(authored.id)) {
@@ -3235,6 +3281,11 @@ public final class GameState {
     }
 
     public void closeOverlay() {
+        boolean returnToManagement = mode == GameMode.BUILDING_ASSIGNMENT && returnToVillageManagement;
+        if (!pendingRoadAmbushers.isEmpty()) {
+            fightRoadAmbushers();
+            return;
+        }
         activeChest = null;
         if (mode == GameMode.DEFENSE) {
             closeDefenseRaid();
@@ -3258,7 +3309,9 @@ public final class GameState {
         dialogIndex = 0;
         pendingVillageMoveSource = null;
         pendingVillageMoveMapId = null;
-        mode = GameMode.EXPLORE;
+        mode = returnToManagement ? GameMode.VILLAGE : GameMode.EXPLORE;
+        if (returnToManagement) setVillageTab(5);
+        returnToVillageManagement = false;
     }
 
     public void startDefenseRaid() {
@@ -4059,6 +4112,7 @@ public final class GameState {
     }
 
     public void resetVillageInterface() {
+        villageCatalogOpen=false;pendingWorkplaceAlly="";villagePropOffsetX=0;villagePropOffsetY=0;villageGridSnap=true;villagePlacementCollisions=true;pendingVillageProp=null;
         villageTab = 0;
         villageEditMode = false;
         villageEditAction = "place";
@@ -4184,12 +4238,16 @@ public final class GameState {
     }
 
     public void setVillageTab(int tab) {
-        villageTab = Math.max(0, Math.min(4, tab));
+        pendingVillageProp=null;
+        villageCatalogOpen=false;
+        pendingWorkplaceAlly="";
+        villageTab = Math.max(0, Math.min(6, tab));
         pendingVillageMoveSource = null;
         pendingVillageMoveMapId = null;
     }
 
     public void setVillageEditAction(String action) {
+        pendingVillageProp=null;
         villageEditAction = action == null ? "place" : action;
         villageEditMode = !"place".equals(villageEditAction);
         if (villageEditMode) {
@@ -4254,6 +4312,21 @@ public final class GameState {
 
     public void handleVillageWorldClick(int x, int y) {
         if (mode != GameMode.VILLAGE) {
+            return;
+        }
+        if(villageCatalogOpen)return;
+        if(villageTab==4) {
+            if(!pendingWorkplaceAlly.isBlank()) {
+                CityBuilding selected=world.cityBuildingAt(WorldMap.PLAYER_VILLAGE_ID,x,y);
+                if(selected==null){status="Click a workplace building.";return;}
+                activeVillageBuilding=selected;
+                assignAllyToActiveBuilding(pendingWorkplaceAlly);
+            }
+            return;
+        }
+        if(villageTab==6)return;
+        if (villageTab == 5) {
+            openBuildingAssignment(world.cityBuildingAt(WorldMap.PLAYER_VILLAGE_ID, x, y));
             return;
         }
         if (isMapEditorMap()) {
@@ -4437,6 +4510,7 @@ public final class GameState {
                 }
                 pendingVillageMoveSource = new TilePoint(x, y);
                 pendingVillageMoveMapId = currentMapId;
+                pendingVillageProp=prop;
                 status = "Choose the new interior location.";
                 return;
             }
@@ -4458,7 +4532,7 @@ public final class GameState {
         CityBuilding building = world.cityBuildingAt(WorldMap.PLAYER_VILLAGE_ID, x, y);
         if ("delete".equals(villageEditAction)) {
             if (world.removePlayerVillageBuilding(building)) {
-                villageBuildingAssignments.remove(building.key());
+                villageBuildingAssignments.keySet().removeIf(k -> assignmentBaseKey(k).equals(building.key()));
                 villageBuildingDecorations.remove(building.key());
                 resetNpcRuntime();
                 status = "Building removed.";
@@ -4535,8 +4609,8 @@ public final class GameState {
             status = "Upgrade needs " + VillageManager.costLabel(cost) + ".";
             return;
         }
-        spendVillageCost(cost);
         if (world.upgradePlayerVillageBuilding(building)) {
+            spendVillageCost(cost);
             if (!refreshPlayerVillageGrowth()) {
                 status = plan.label() + " upgraded to level " + (level + 1) + ".";
             }
@@ -4550,11 +4624,19 @@ public final class GameState {
     }
 
     private void handleVillageTileClick(int x, int y) {
+        if (!"paint".equals(villageTerrainTool)) {
+            editVillageHeight(x,y);
+            return;
+        }
         if ("move".equals(villageEditAction)) {
             status = "Tiles can be placed or deleted directly.";
             return;
         }
         char tile = "delete".equals(villageEditAction) ? 'g' : selectedVillageTile;
+        if ((tile == 'w' || tile == '~') && Math.abs(x-playerX)<=2 && Math.abs(y-playerY)<=2) {
+            status = "Move away before changing water near your feet.";
+            return;
+        }
         VillageManager.TilePlan plan = VillageManager.tilePlan(tile);
         if (!"delete".equals(villageEditAction) && !canAffordVillageCost(plan.cost())) {
             status = "You need " + VillageManager.costLabel(plan.cost()) + " for " + plan.label() + ".";
@@ -4569,6 +4651,39 @@ public final class GameState {
         } else if (!refreshPlayerVillageGrowth()) {
             status = plan.label() + " set at " + x + ", " + y + ".";
         }
+    }
+
+    private void editVillageHeight(int x, int y) {
+        TerrainElevation.Field field = world.elevation(WorldMap.PLAYER_VILLAGE_ID);
+        Map<TilePoint, Double> changes = new LinkedHashMap<>();
+        int radius = Math.max(0, Math.min(2, villageBrushRadius));
+        for (int yy=y-radius; yy<=y+radius; yy++) for (int xx=x-radius; xx<=x+radius; xx++) {
+            if (Math.abs(xx-playerX)<=1 && Math.abs(yy-playerY)<=1 || !world.canEditVillageHeight(xx,yy)) continue;
+            double old = field.heightAt(xx+.5,yy+.5);
+            double next = switch (villageTerrainTool) {
+                case "raise" -> old + .25;
+                case "lower" -> old - .25;
+                case "level" -> villageTargetHeight;
+                case "smooth" -> (old + field.heightAt(xx-.5,yy+.5) + field.heightAt(xx+1.5,yy+.5)
+                        + field.heightAt(xx+.5,yy-.5) + field.heightAt(xx+.5,yy+1.5))/5;
+                default -> old;
+            };
+            changes.put(new TilePoint(xx,yy),next);
+        }
+        int count = 0;
+        for (var entry : changes.entrySet()) {
+            TilePoint p = entry.getKey();
+            boolean changed = "restore".equals(villageTerrainTool) ? world.resetPlayerVillageHeight(p.x(),p.y())
+                    : world.setPlayerVillageHeight(p.x(),p.y(),entry.getValue());
+            if (changed) count++;
+        }
+        status = count == 0 ? "No change. Keep clear of water, foundations, entrances and your feet."
+                : "Terrain " + villageTerrainTool + ": " + count + " tiles. Height range 0-4; steps 0.25.";
+    }
+
+    public void upgradeManagedBuilding(CityBuilding building) {
+        if (building != null && WorldMap.PLAYER_VILLAGE_ID.equals(currentMapId))
+            upgradeVillageBuildingAt(building.anchor().x(),building.anchor().y());
     }
 
     private void handleInteriorTileClick(int x, int y) {
@@ -4594,6 +4709,51 @@ public final class GameState {
         status = placed ? plan.label() + " set at " + x + ", " + y + "." : "That interior tile cannot be changed.";
     }
 
+    private boolean moveVillageEditorProp(WorldProp source,int x,int y) {
+        if(source==null)return false;
+        WorldProp target=new WorldProp(x,y,source.asset(),source.size(),source.visualSlot(),
+                villageGridSnap?source.offsetX():villagePropOffsetX,villageGridSnap?source.offsetY():villagePropOffsetY);
+        boolean moved=world.repositionSettlementProp(currentMapId,source,target,villagePlacementCollisions);
+        pendingVillageProp=null;return moved;
+    }
+
+    public void placeVillageAt(double wx,double wy) {
+        String placingAsset = pendingVillageProp != null && "move".equals(villageEditAction)
+                ? pendingVillageProp.asset() : selectedInteriorAsset;
+        if (isManagedVillageInterior() && placingAsset != null && placingAsset.startsWith("interior_wall_")
+                && ("place".equals(villageEditAction) || "move".equals(villageEditAction) && pendingVillageMoveSource != null)) {
+            TilePoint mount = com.alderfall.game.render.world.ConnectedInteriorWalls.mountAt(world, currentMapId, wx, wy);
+            handleVillageWorldClick(mount.x(), mount.y());
+            return;
+        }
+        int x=(int)Math.floor(wx),y=(int)Math.floor(wy);
+        int oldX=villagePropOffsetX,oldY=villagePropOffsetY;
+        if(!villageGridSnap && (villageTab==2 || isManagedVillageInterior() && villageTab==3)) {
+            villagePropOffsetX=(int)Math.round((wx-x-.5)*48);
+            villagePropOffsetY=(int)Math.round((wy-y-1)*48);
+        }
+        try { handleVillageWorldClick(x,y); } finally {villagePropOffsetX=oldX;villagePropOffsetY=oldY;}
+    }
+
+    public void selectVillagePropForMove(WorldProp prop) {
+        if(prop==null)return;
+        setVillageTab(isManagedVillageInterior()?3:2);setVillageEditAction("move");
+        pendingVillageProp=prop;pendingVillageMoveSource=new TilePoint(prop.x(),prop.y());pendingVillageMoveMapId=currentMapId;
+        status="Click the new prop position.";
+    }
+
+    public void removeVillageEditorProp(WorldProp prop) {
+        boolean removed=isManagedVillageInterior()?world.removePlayerInteriorProp(currentMapId,prop):world.removePlayerVillageProp(prop);
+        status=removed?"Prop removed.":"This prop cannot be removed.";
+    }
+
+    public WorldProp nudgeVillageEditorProp(WorldProp prop,int dx,int dy) {
+        if(prop==null)return null;
+        WorldProp target=prop.shifted(dx,dy);
+        if(world.repositionSettlementProp(currentMapId,prop,target,villagePlacementCollisions)){status="Prop offset adjusted.";return target;}
+        status="That position is blocked.";return prop;
+    }
+
     private void handleVillageAssetClick(int x, int y) {
         WorldProp prop = world.playerVillagePropAt(x, y);
         if ("delete".equals(villageEditAction)) {
@@ -4606,13 +4766,14 @@ public final class GameState {
                     status = "Select a village asset first.";
                     return;
                 }
+                pendingVillageProp=prop;
                 pendingVillageMoveSource = new TilePoint(x, y);
                 pendingVillageMoveMapId = currentMapId;
                 status = "Choose the new asset location.";
                 return;
             }
-            WorldProp source = world.playerVillagePropAt(pendingVillageMoveSource.x(), pendingVillageMoveSource.y());
-            if (world.movePlayerVillageProp(source, x, y)) {
+            WorldProp source = pendingVillageProp!=null?pendingVillageProp:world.playerVillagePropAt(pendingVillageMoveSource.x(), pendingVillageMoveSource.y());
+            if (moveVillageEditorProp(source,x,y)) {
                 status = "Village asset moved.";
             } else {
                 status = "That asset will not fit there.";
@@ -4626,7 +4787,7 @@ public final class GameState {
             status = "You need " + VillageManager.costLabel(asset.cost()) + " for " + asset.label() + ".";
             return;
         }
-        boolean placed = world.addPlayerVillageProp(x, y, asset.asset(), asset.size());
+        boolean placed = world.addPlayerVillageProp(x, y, asset.asset(), asset.size(),villagePropOffsetX,villagePropOffsetY,villagePlacementCollisions);
         if (placed) {
             spendVillageCost(asset.cost());
         }
@@ -4655,13 +4816,14 @@ public final class GameState {
                 }
                 pendingVillageMoveSource = new TilePoint(x, y);
                 pendingVillageMoveMapId = currentMapId;
+                pendingVillageProp=prop;
                 status = "Choose the new interior location.";
                 return;
             }
             WorldProp source = currentMapId.equals(pendingVillageMoveMapId)
                     ? world.playerInteriorPropAt(currentMapId, pendingVillageMoveSource.x(), pendingVillageMoveSource.y())
                     : null;
-            if (world.movePlayerInteriorProp(currentMapId, source, x, y)) {
+            if (moveVillageEditorProp(pendingVillageProp!=null?pendingVillageProp:source,x,y)) {
                 status = "Interior asset moved.";
             } else {
                 status = "That interior asset will not fit there.";
@@ -4675,7 +4837,7 @@ public final class GameState {
             status = "You need " + VillageManager.costLabel(asset.cost()) + " for " + asset.label() + ".";
             return;
         }
-        boolean placed = world.addPlayerInteriorProp(currentMapId, x, y, asset.asset(), asset.size());
+        boolean placed = world.addPlayerInteriorProp(currentMapId, x, y, asset.asset(), asset.size(),villagePropOffsetX,villagePropOffsetY,villagePlacementCollisions);
         if (placed) {
             spendVillageCost(asset.cost());
         }
@@ -4716,8 +4878,44 @@ public final class GameState {
         setZoom(zoom + delta);
     }
 
+    private String merchantKey(Shop shop) {
+        if (shop.id().startsWith("village_")) return shop.id();
+        return (activeNpc == null ? currentMapId : npcRelationshipKey(activeNpc)) + ":" + shop.id();
+    }
+
+    public InteriorStyle shopRegion() {
+        String map = currentMapId;
+        if (map.startsWith("house_")) map = sourceMapForInterior(map);
+        if (WorldMap.OVERWORLD_ID.equals(map) || WorldMap.PLAYER_VILLAGE_ID.equals(map)) {
+            // Overworld workers use the local settlement's climate, including northern freeholds.
+            TilePoint location = WorldMap.PLAYER_VILLAGE_ID.equals(map)
+                    ? WorldMap.START_POSITION : new TilePoint(playerX, playerY);
+            map = world.settlementSites().stream().min(java.util.Comparator.comparingLong(site ->
+                    (long) (site.x() - location.x()) * (site.x() - location.x())
+                            + (long) (site.y() - location.y()) * (site.y() - location.y())))
+                    .map(WorldMap.SettlementSite::id).orElse("village_oakhaven");
+        }
+        return InteriorStyle.forMap(map);
+    }
+
+    public Map<String, Integer> shopQuantities(Shop shop) {
+        if (shop == null) return Map.of();
+        return shopInventory.stock(merchantKey(shop), shop, shopRegion(), dayNumber(), config.shopRestockDays);
+    }
+
+    public List<String> shopStock(Shop shop) {
+        // Keep sold-out rows visible so keyboard indices remain stable after a purchase.
+        return shopQuantities(shop).keySet().stream().filter(k -> Shop.availableAt(k, player.level)).toList();
+    }
+
+    public int shopRestockDay() {
+        if (activeShop == null) return dayNumber();
+        shopQuantities(activeShop);
+        return shopInventory.nextDay(merchantKey(activeShop), config.shopRestockDays);
+    }
+
     public void buyShopItem(int index) {
-        List<String> stock = activeShop == null ? List.of() : activeShop.availableStock(player.level);
+        List<String> stock = activeShop == null ? List.of() : shopStock(activeShop);
         if (mode != GameMode.SHOP || activeShop == null || index < 0 || index >= stock.size()) {
             return;
         }
@@ -4728,6 +4926,10 @@ public final class GameState {
         }
         if (player.gold < cost) {
             status = "Not enough gold for " + GameData.itemName(itemKey) + ".";
+            return;
+        }
+        if (!shopInventory.purchase(merchantKey(activeShop), itemKey)) {
+            status = GameData.itemName(itemKey) + " is sold out. Next delivery: day " + shopRestockDay() + ".";
             return;
         }
         player.gold -= cost;
@@ -5015,6 +5217,7 @@ public final class GameState {
         if (building == null || !WorldMap.PLAYER_VILLAGE_ID.equals(currentMapId)) {
             return;
         }
+        returnToVillageManagement = mode == GameMode.VILLAGE;
         activeNpc = null;
         activeShop = null;
         activeDialogueSession = null;
@@ -5039,8 +5242,8 @@ public final class GameState {
             return;
         }
         String assigned = assignedAllyForBuilding(activeVillageBuilding.key());
-        if (assigned.isBlank()) {
-            status = "Assign a city-attendance worker before opening a shop.";
+        if (assigned.isBlank() || stationedAllies().stream().noneMatch(a -> canProduce(a,activeVillageBuilding))) {
+            status = "Assign a housed worker before opening a shop.";
             return;
         }
         activeNpc = null;
@@ -5050,57 +5253,16 @@ public final class GameState {
     }
 
     private Shop shopForVillageBuilding(CityBuilding building) {
-        List<String> stock = new ArrayList<>(baseBuildingShopStock(building.style()));
+        List<String> stock = new ArrayList<>(Shop.baseStock(building.style()));
         int quality = buildingToolScore(building);
-        List<String> upgrades = upgradedBuildingShopStock(building.style());
+        List<String> upgrades = Shop.upgradedStock(building.style());
         for (int i = 0; i < Math.min(quality, upgrades.size()); i++) {
             String item = upgrades.get(i);
             if (!stock.contains(item)) {
                 stock.add(item);
             }
         }
-        return new Shop("village_" + building.key(), VillageManager.buildingLabel(building.style()) + " Shop", stock);
-    }
-
-    private List<String> baseBuildingShopStock(String style) {
-        return switch (style) {
-            case "blacksmith" -> List.of("iron_sword", "steel_sword", "riveted_mail", "guard_cuirass", "iron_kite_shield");
-            case "shop" -> List.of("stone_axe", "woodcutter_axe", "river_buckler", "oaken_roundshield", "recipe_book_oak_bow");
-            case "apothecary" -> List.of("potion_small", "potion_large", "ether", "guard_tonic", "recipe_book_apothecary_salve");
-            case "inn" -> List.of("trail_rations", "potion_small", "ether", "recipe_book_camp_cookery");
-            case "bakery" -> List.of("trail_rations", "potion_small", "recipe_book_camp_cookery");
-            case "warehouse", "granary" -> List.of("trail_rations", "escape_scroll", "guard_tonic");
-            case "forestry_hut" -> List.of("stone_axe", "woodcutter_axe", "oaken_roundshield", "recipe_book_oak_bow");
-            case "mine" -> List.of("stone_pickaxe", "iron_pickaxe", "riveted_mail", "recipe_book_iron_mail");
-            case "hunting_camp" -> List.of("potion_small", "scout_hood", "ranger_jerkin", "recipe_book_fisher_knots");
-            case "farmstead", "garden" -> List.of("trail_rations", "potion_small", "recipe_book_camp_cookery");
-            case "fishing_hut" -> List.of("trail_rations", "shell_lure", "recipe_book_fisher_knots");
-            case "guild" -> List.of("ether", "archive_lens", "recipe_book_escape_scrolls");
-            case "shrine" -> List.of("potion_small", "ether", "sunward_medallion");
-            case "watchtower" -> List.of("iron_sword", "river_buckler", "guard_tonic");
-            case "house", "row" -> List.of("potion_small", "trail_rations", "traveler_cloak");
-            default -> List.of("potion_small", "trail_rations");
-        };
-    }
-
-    private List<String> upgradedBuildingShopStock(String style) {
-        return switch (style) {
-            case "blacksmith" -> List.of("steel_bastion_plate", "mountain_plate", "emberforged_plate", "starforged_plate");
-            case "shop" -> List.of("towerguard_shield", "frostguard_aegis", "heartstone_bulwark");
-            case "apothecary" -> List.of("battle_kit", "phoenix_feather", "heartstone_locket");
-            case "inn", "bakery" -> List.of("battle_kit", "phoenix_feather");
-            case "warehouse", "granary" -> List.of("battle_kit", "escape_scroll", "royal_wardplate");
-            case "forestry_hut" -> List.of("heartwood_vest", "thornwall_shield", "heartstone_bulwark");
-            case "mine" -> List.of("steel_bastion_plate", "mountain_plate", "frostbound_plate");
-            case "hunting_camp" -> List.of("stormhide_jacket", "thornsilk_armor", "obsidian_fang");
-            case "farmstead", "garden" -> List.of("guard_tonic", "phoenix_feather");
-            case "fishing_hut" -> List.of("marshrunner_mantle", "marshlight_seal");
-            case "guild" -> List.of("starweave_robes", "starrelic_ring", "voidglass_staff");
-            case "shrine" -> List.of("suncloth_mantle", "sunwarden_plate", "phoenix_crown_pin");
-            case "watchtower" -> List.of("towerguard_shield", "royal_heater", "stormguard_plate");
-            case "house", "row" -> List.of("river_pearl_charm", "thornroot_charm");
-            default -> List.of("battle_kit");
-        };
+        return new Shop("village_" + building.key(), VillageManager.buildingLabel(building.style()) + " Shop", stock, building.style());
     }
 
     public String buildingInteriorSummary(CityBuilding building) {
@@ -5131,7 +5293,7 @@ public final class GameState {
     }
 
     public int buildingToolScore(CityBuilding building) {
-        int score = 0;
+        int score = VillageManager.tierTools(world.playerVillageBuildingLevel(building));
         for (String asset : buildingDecorAssets(building)) {
             if (asset.contains("anvil") || asset.contains("forge") || asset.contains("workbench")
                     || asset.contains("carpenter") || asset.contains("alchemy") || asset.contains("cooking")
@@ -5174,26 +5336,55 @@ public final class GameState {
     }
 
     public String assignedAllyForBuilding(String buildingKey) {
-        return villageBuildingAssignments.getOrDefault(buildingKey, "");
+        return String.join(", ", workersForBuilding(buildingKey));
+    }
+
+    public static String assignmentBaseKey(String key) {
+        int slot=key.indexOf('#'); return slot<0?key:key.substring(0,slot);
+    }
+
+    public List<String> workersForBuilding(String key) {
+        return villageBuildingAssignments.entrySet().stream()
+                .filter(e -> assignmentBaseKey(e.getKey()).equals(key) && villageAllies.contains(e.getValue()))
+                .map(Map.Entry::getValue).distinct().toList();
     }
 
     public String buildingAssignmentForAlly(String allyName) {
-        for (Map.Entry<String, String> entry : villageBuildingAssignments.entrySet()) {
-            if (entry.getValue().equals(allyName)) {
-                return entry.getKey();
-            }
-        }
-        return "";
+        return villageBuildingAssignments.entrySet().stream().filter(e -> e.getValue().equals(allyName))
+                .map(e -> assignmentBaseKey(e.getKey())).findFirst().orElse("");
     }
 
     public CityBuilding playerVillageBuildingByKey(String buildingKey) {
-        for (CityBuilding building : world.playerVillageBuildings()) {
-            if (building.key().equals(buildingKey)) {
-                return building;
-            }
+        String key=assignmentBaseKey(buildingKey);
+        return world.playerVillageBuildings().stream().filter(b -> b.key().equals(key)).findFirst().orElse(null);
+    }
+
+    public int villageHousingCapacity() {
+        return world.playerVillageBuildings().stream().mapToInt(b -> SettlementEconomy.housing(b.style(),world.playerVillageBuildingLevel(b))).sum();
+    }
+
+    /** Stable roster order assigns beds automatically; loss of housing pauses surplus workers. */
+    public CityBuilding housingForAlly(String name) {
+        List<Actor> residents=stationedAllies();
+        int index=-1;
+        for(int i=0;i<residents.size();i++) if(residents.get(i).name.equals(name)){index=i;break;}
+        if(index<0)return null;
+        for(CityBuilding b:world.playerVillageBuildings()) {
+            int beds=SettlementEconomy.housing(b.style(),world.playerVillageBuildingLevel(b));
+            if(index<beds)return b;
+            index-=beds;
         }
         return null;
     }
+
+    public void beginWorkplaceSelection(String name) {
+        if(!villageAllies.contains(name)) stationAlly(name);
+        if(!villageAllies.contains(name))return;
+        setVillageTab(4); pendingWorkplaceAlly=name;
+        status="Select a workplace on the map for "+name+". Housing is required.";
+    }
+
+    public void cancelWorkplaceSelection() { pendingWorkplaceAlly=""; status="Workplace selection cancelled."; }
 
     public void assignAllyToActiveBuilding(String allyName) {
         if (activeVillageBuilding == null) {
@@ -5205,8 +5396,16 @@ public final class GameState {
             status = "Set that companion to city attendance before assigning a building.";
             return;
         }
+        if(housingForAlly(ally.name)==null) { status="Build housing first: "+ally.name+" has no bed."; return; }
+        int slots=SettlementEconomy.slots(activeVillageBuilding.style(),world.playerVillageBuildingLevel(activeVillageBuilding));
+        List<String> occupants=workersForBuilding(activeVillageBuilding.key());
+        if(slots==0) { status="This is housing. Beds are assigned automatically to residents."; return; }
+        if(occupants.size()>=slots && !occupants.contains(ally.name)) { status="All "+slots+" worker slots are occupied. Upgrade or clear a slot."; return; }
         villageBuildingAssignments.entrySet().removeIf(entry -> entry.getValue().equals(ally.name));
-        villageBuildingAssignments.put(activeVillageBuilding.key(), ally.name);
+        String slotKey=activeVillageBuilding.key();
+        for(int slot=1;villageBuildingAssignments.containsKey(slotKey);slot++)slotKey=activeVillageBuilding.key()+"#"+slot;
+        villageBuildingAssignments.put(slotKey, ally.name);
+        pendingWorkplaceAlly="";
         String roleId = VillageManager.buildingPlan(activeVillageBuilding.style()).workerRole();
         if (!roleId.isBlank()) {
             villageWorkerRoles.put(ally.name, VillageManager.workerRole(roleId).id());
@@ -5225,11 +5424,17 @@ public final class GameState {
                 + " gives me work with edges. Good. I trust useful edges.");
     }
 
+    public void unassignVillageWorker(String name) {
+        villageBuildingAssignments.values().removeIf(name::equals);
+        invalidateNpcListCache();resetNpcRuntime();status=name+" is no longer assigned to a workplace.";
+    }
+
     public void clearActiveBuildingAssignment() {
         if (activeVillageBuilding == null) {
             return;
         }
-        String removed = villageBuildingAssignments.remove(activeVillageBuilding.key());
+        String removed = assignedAllyForBuilding(activeVillageBuilding.key());
+        villageBuildingAssignments.keySet().removeIf(k -> assignmentBaseKey(k).equals(activeVillageBuilding.key()));
         status = removed == null || removed.isBlank()
                 ? "No one was assigned there."
                 : removed + " is no longer assigned to that building.";
@@ -5794,6 +5999,12 @@ public final class GameState {
     private boolean moveExploreTo(int nx, int ny, boolean continuous) {
         WorldTransition currentTransition = world.transitionAt(currentMapId, playerX, playerY);
         WorldTransition targetTransition = world.transitionAt(currentMapId, nx, ny);
+        CityBuilding directionalEntry = world.cityBuildingEntryAt(currentMapId, nx, ny, playerX, playerY);
+        if (directionalEntry != null && directionalEntry.facing() != CityBuilding.Facing.SOUTH
+                && isSettlementMap(currentMapId)) {
+            enterBuildingAt(nx, ny);
+            return true;
+        }
         if (!continuous && Math.abs(nx - playerX) == 1 && Math.abs(ny - playerY) == 1
                 && (!world.isPassable(currentMapId, nx, playerY)
                 || !world.isPassable(currentMapId, playerX, ny))
@@ -5866,7 +6077,7 @@ public final class GameState {
         tickWorldAbilityTimers();
         String discovery = landmarkDiscoveryLog.discover(this);
         status = discovery.isBlank() ? world.describe(currentMapId, playerX, playerY) : discovery;
-        maybeStartEncounter();
+        if (!roamingEvents.triggerEnteredEvent(this)) maybeStartEncounter();
     }
 
     private boolean moveDuringDefense(int dx, int dy) {
@@ -5916,55 +6127,62 @@ public final class GameState {
         updateAmbientTownConversation();
     }
 
+    public String villageLastProduction="No production yet.";
+
+    public record VillageForecast(Map<String,Double> resources, int gold) {}
+
+    public VillageForecast villageForecast(CityBuilding only) {
+        Map<String,Double> resources=new LinkedHashMap<>(); int gold=0;
+        for(Actor ally:stationedAllies()) {
+            CityBuilding b=playerVillageBuildingByKey(buildingAssignmentForAlly(ally.name));
+            if(!canProduce(ally,b) || only!=null && !b.key().equals(only.key()))continue;
+            int tier=world.playerVillageBuildingLevel(b),tools=buildingToolScore(b);
+            SettlementEconomy.Output output=SettlementEconomy.output(b.style());
+            int skill=SettlementEconomy.skill(ally,output);
+            int amount=SettlementEconomy.amount(output,tier,skill,tools);
+            if(amount>0)resources.merge(output.resource(),amount*8.0,Double::sum);
+            if(!output.rare().isBlank())resources.merge(SettlementEconomy.rareResource(b.style(),tier,skill,tools),8*SettlementEconomy.rareChance(tier,skill,tools),Double::sum);
+            gold+=8*(SettlementEconomy.income(b.style(),tier)+Math.max(0,buildingRevenueBonus(b))/2);
+        }
+        return new VillageForecast(Map.copyOf(resources),gold);
+    }
+
+    public String villageForecastLabel(CityBuilding building) {
+        VillageForecast f=villageForecast(building);
+        String items=f.resources().entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .map(e -> String.format(java.util.Locale.ROOT,"%.1f %s",e.getValue(),e.getKey().replace('_',' ')))
+                .collect(java.util.stream.Collectors.joining(", "));
+        return f.gold()+"g/day"+(items.isBlank()?"": " | ~"+items)+(villageStorageUsed()>=villageStorageCapacity()?" (stores full)":"");
+    }
+
+    private boolean canProduce(Actor ally,CityBuilding b) {
+        return b!=null && housingForAlly(ally.name)!=null
+                && workersForBuilding(b.key()).indexOf(ally.name)>=0
+                && workersForBuilding(b.key()).indexOf(ally.name)<SettlementEconomy.slots(b.style(),world.playerVillageBuildingLevel(b));
+    }
+
     private void tickVillageProduction() {
-        if (villageAllies.isEmpty() || villageStorageUsed() >= villageStorageCapacity()) {
-            return;
-        }
-        Map<String, Integer> produced = new LinkedHashMap<>();
-        Map<String, Integer> levelSummary = world.playerVillageBuildingRoleLevels();
-        int goldRevenue = 0;
-        for (Actor ally : stationedAllies()) {
-            String buildingKey = buildingAssignmentForAlly(ally.name);
-            CityBuilding assignedBuilding = buildingKey.isBlank() ? null : playerVillageBuildingByKey(buildingKey);
-            if (assignedBuilding == null) {
-                continue;
-            }
-            goldRevenue += Math.max(0, buildingRevenueBonus(assignedBuilding)) / 2;
-            VillageManager.WorkerRole role = VillageManager.workerRole(villageRoleFor(ally.name));
-            if ("idle".equals(role.id()) || role.resource().isBlank()) {
-                continue;
-            }
-            if (!role.requiredBuildingStyle().isBlank() && world.playerVillageBuildingCount(role.requiredBuildingStyle()) <= 0) {
-                continue;
-            }
-            int assignedLevel = world.playerVillageBuildingLevel(assignedBuilding);
-            int levelBonus = Math.max(VillageManager.productionLevelBonus(role.id(), levelSummary), assignedLevel - 1);
-            int tileBonus = role.preferredTile() == 'q'
-                    ? 0
-                    : Math.min(2, countVillageTiles(role.preferredTile()) / 8);
-            int professionLevel = role.profession().isBlank() ? 1
-                    : ally.professionLevel(role.profession()) + ally.professionPracticeBonus(role.profession());
-            int amount = Math.max(1, role.baseAmount() + ally.level / 4 + levelBonus + tileBonus + (professionLevel - 1) / 2);
-            int stored = addVillageStorage(role.resource(), amount);
-            if (stored > 0) {
-                produced.merge(role.resource(), stored, Integer::sum);
-            }
-            if (!role.profession().isBlank()) {
-                ally.gainProfessionXp(role.profession(), 8 + amount);
-            }
-            addSecondaryVillageYield(role.id(), levelBonus, professionLevel, produced);
-            addBuildingUpgradeYield(assignedBuilding.style(), assignedLevel, role.id(), professionLevel, produced);
-            if (villageStorageUsed() >= villageStorageCapacity()) {
-                break;
+        Map<String,Integer> produced=new LinkedHashMap<>(); int gold=0;
+        for(Actor ally:stationedAllies()) {
+            CityBuilding b=playerVillageBuildingByKey(buildingAssignmentForAlly(ally.name));
+            if(!canProduce(ally,b))continue;
+            int tier=world.playerVillageBuildingLevel(b),tools=buildingToolScore(b);
+            SettlementEconomy.Output output=SettlementEconomy.output(b.style());
+            int skill=SettlementEconomy.skill(ally,output);
+            gold+=SettlementEconomy.income(b.style(),tier)+Math.max(0,buildingRevenueBonus(b))/2;
+            int amount=SettlementEconomy.amount(output,tier,skill,tools);
+            if(amount>0) {
+                int stored=addVillageStorage(output.resource(),amount);
+                if(stored>0){produced.merge(output.resource(),stored,Integer::sum);ally.gainProfessionXp(output.profession(),8+stored);}
+                if(random.nextDouble()<SettlementEconomy.rareChance(tier,skill,tools)) {
+                    String rareItem=SettlementEconomy.rareResource(b.style(),tier,skill,tools);
+                    int rare=addVillageStorage(rareItem,1);
+                    if(rare>0)produced.merge(rareItem,rare,Integer::sum);
+                }
             }
         }
-        if (!produced.isEmpty()) {
-            status = "Village stores gained " + resourceList(produced) + ".";
-        }
-        if (goldRevenue > 0) {
-            player.gold += goldRevenue;
-            status = (produced.isEmpty() ? "" : status + " ") + "Village businesses earned " + goldRevenue + "g.";
-        }
+        player.gold+=gold;
+        if(!produced.isEmpty()||gold>0) {villageLastProduction=resourceList(produced)+"; +"+gold+"g"; status="Settlement production: "+villageLastProduction+".";}
     }
 
     private void updateTravelBanter() {
@@ -6752,6 +6970,8 @@ public final class GameState {
     }
 
     public void resetDungeonMonsterRuntime() {
+        pendingRoadAmbushers = List.of();
+        roamingEvents.reset();
         dungeonMonsterRuntime.clear();
         defeatedDungeonMonsters.clear();
         activeDungeonMonster = null;
@@ -7201,6 +7421,16 @@ public final class GameState {
             if (quest.ready()) {
                 addQuestReturnObjective(objectives, quest);
                 continue;
+            }
+            if (FurnitureQuestContent.ID.equals(quest.id)) {
+                FurnitureQuestContent.Binding binding = FurnitureQuestContent.binding(quest.activeStage().id());
+                if (binding != null) {
+                    Npc keeper = FurnitureQuestContent.keeper(world);
+                    WorldProp prop = keeper == null ? null : FurnitureQuestContent.furniture(world, keeper.mapId(), binding);
+                    if (prop != null) objectives.add(questObjective(quest, quest.id, binding.action(), quest.activeTarget(),
+                            keeper.mapId(), prop.x(), prop.y(), prop.asset(), quest.activeObjectiveKind(), "", false, false));
+                    continue;
+                }
             }
             if (quest.activeObjectiveKind().conversationObjective()) {
                 addConversationQuestObjectives(objectives, quest);
@@ -8501,7 +8731,8 @@ public final class GameState {
             return false;
         }
         for (TilePoint door : world.cityBuildingDoorTiles(building)) {
-            if (playerX == door.x() && playerY == door.y() + 1) {
+            TilePoint approach = building.outside(door, 0, 1);
+            if (playerX == approach.x() && playerY == approach.y()) {
                 enterBuildingAt(door.x(), door.y());
                 return true;
             }
@@ -8563,7 +8794,7 @@ public final class GameState {
             return null;
         }
         CityBuilding building = playerVillageBuildingByKey(buildingKey);
-        if (building == null || !activeNpc.name().equals(assignedAllyForBuilding(building.key()))) {
+        if (building == null || !workersForBuilding(building.key()).contains(activeNpc.name())) {
             return null;
         }
         return building;
@@ -8574,7 +8805,7 @@ public final class GameState {
             return null;
         }
         CityBuilding building = playerVillageBuildingByKey(activeShopDialogueBuildingKey);
-        if (building == null || !activeNpc.name().equals(assignedAllyForBuilding(building.key()))) {
+        if (building == null || !workersForBuilding(building.key()).contains(activeNpc.name())) {
             return null;
         }
         return building;
@@ -8611,7 +8842,7 @@ public final class GameState {
 
     private String assignedShopDialogue(CityBuilding building) {
         Shop shop = shopForVillageBuilding(building);
-        int stockCount = shop.availableStock(player.level).size();
+        int stockCount = shopStock(shop).size();
         String label = VillageManager.buildingLabel(building.style()).toLowerCase();
         String focus = switch (building.style()) {
             case "blacksmith" -> "I stock blades, shields, and plate. More forge tools inside let me offer stronger armor.";
@@ -8621,7 +8852,7 @@ public final class GameState {
             case "bakery" -> "I keep food and camp cookery ready. Ovens, counters, and tidy tables make the trade better.";
             case "warehouse", "granary" -> "I move stored goods and useful supplies. Better shelves and counters make storage work pay.";
             case "forestry_hut" -> "I sell axes, woodcraft, bows, and shields. Carpenter tools inside improve what I can carry.";
-            case "mine" -> "I stock picks, mail, and mining gear. Proper tools inside help me bring in stronger equipment.";
+            case "mine" -> "I stock picks, stone, coal, and ores. Proper tools inside help me bring in rarer metals.";
             case "hunting_camp" -> "I trade hunting gear, leathers, and scouting supplies. Racks and worktables improve the stock.";
             case "farmstead", "garden" -> "I sell food, herbs, and simple supplies. Plants and tidy counters make people linger.";
             case "fishing_hut" -> "I sell food, lures, and waterside gear. Nets, counters, and worktables improve the trade.";
@@ -8706,9 +8937,10 @@ public final class GameState {
 
     private TilePoint adjacentBuildingEntry() {
         if (isSettlementMap(currentMapId)) {
-            CityBuilding building = world.cityBuildingEntryAt(currentMapId, playerX, playerY - 1, playerX, playerY);
-            if (building != null) {
-                return new TilePoint(playerX, playerY - 1);
+            for (CityBuilding.Facing side : CityBuilding.Facing.values()) {
+                int x = playerX - side.dx, y = playerY - side.dy;
+                if (world.cityBuildingEntryAt(currentMapId, x, y, playerX, playerY) != null)
+                    return new TilePoint(x, y);
             }
             return null;
         }
@@ -8726,6 +8958,15 @@ public final class GameState {
         status = knowledgeMessage.isBlank() ? "You step inside." : "You step inside. " + knowledgeMessage;
     }
 
+    /** Reach all exposed sides of a multi-tile furniture footprint. */
+    public int questObjectiveDistance(QuestObjective objective, int x, int y) {
+        int[] footprint = FurnitureQuestContent.isFurniture(objective)
+                ? WorldMap.interiorVisualFootprint(objective.asset()) : new int[]{1, 1};
+        int dx = Math.max(objective.x() - x, Math.max(0, x - (objective.x() + footprint[0] - 1)));
+        int dy = Math.max(objective.y() - y, Math.max(0, y - (objective.y() + footprint[1] - 1)));
+        return dx + dy;
+    }
+
     private QuestObjective questObjectiveNearPlayer() {
         QuestObjective best = null;
         int bestScore = Integer.MAX_VALUE;
@@ -8736,7 +8977,7 @@ public final class GameState {
             if (!objective.mapId().equals(currentMapId)) {
                 continue;
             }
-            int distance = Math.abs(objective.x() - playerX) + Math.abs(objective.y() - playerY);
+            int distance = questObjectiveDistance(objective, playerX, playerY);
             int reach = 1;
             if (distance > reach) {
                 continue;
@@ -8797,6 +9038,18 @@ public final class GameState {
                 || !quest.activeStage().id().equals(objective.stageId())
                 || quest.activeObjectiveKind() != objective.kind()) {
             return;
+        }
+        if (FurnitureQuestContent.isFurniture(objective)) {
+            FurnitureQuestContent.Binding binding = FurnitureQuestContent.binding(objective.stageId());
+            Npc keeper = FurnitureQuestContent.keeper(world);
+            WorldProp prop = keeper == null ? null : FurnitureQuestContent.furniture(world, keeper.mapId(), binding);
+            if (prop == null || !currentMapId.equals(keeper.mapId()) || !objective.mapId().equals(keeper.mapId())
+                    || prop.x() != objective.x() || prop.y() != objective.y()
+                    || !prop.asset().equals(objective.asset()) || questObjectiveDistance(objective, playerX, playerY) > 1) return;
+            if (!FurnitureQuestContent.canUse(quest, binding)) {
+                status = "You need the reserve parcel before placing it on the counter.";
+                return;
+            }
         }
         if (objective.kind().gatherObjective()) {
             recordMarkedObjective(quest, objective, "Gathered");
@@ -9843,6 +10096,8 @@ public final class GameState {
             quest.recordVisit(objective.target());
         }
         if (quest.progress > oldProgress) {
+            if (FurnitureQuestContent.isFurniture(objective))
+                FurnitureQuestContent.apply(quest, FurnitureQuestContent.binding(objective.stageId()));
             harvestedQuestResources.add(resourceKey);
             markGatheredResourcesAt(quest, objective.mapId(), objective.x(), objective.y());
             invalidateQuestObjectiveCache();
@@ -10706,7 +10961,7 @@ public final class GameState {
             if (building == null || ally == null || !villageAllies.contains(ally.name)) {
                 continue;
             }
-            if (traveling.contains(ally)) {
+            if (traveling.contains(ally) || !canProduce(ally,building)) {
                 continue;
             }
             TilePoint home = buildingNpcHome(building);
@@ -10722,15 +10977,13 @@ public final class GameState {
         if (building == null) {
             return;
         }
-        Actor ally = allyByName(villageBuildingAssignments.getOrDefault(building.key(), ""));
-        if (ally == null || !villageAllies.contains(ally.name)) {
-            return;
+        int slot=0;
+        for(Actor ally:stationedAllies()) {
+            CityBuilding house=housingForAlly(ally.name);
+            if(house==null || !house.key().equals(building.key()) || activeAllies().contains(ally))continue;
+            TilePoint home=world.interiorEntryPoint(mapId);
+            npcs.add(assignedCompanionNpc(ally,mapId,home.x()+slot%2,Math.max(1,home.y()-2-slot/2),building,true));slot++;
         }
-        if (activeAllies().contains(ally)) {
-            return;
-        }
-        TilePoint home = world.interiorEntryPoint(mapId);
-        npcs.add(assignedCompanionNpc(ally, mapId, home.x(), Math.max(1, home.y() - 2), building, true));
     }
 
     private Npc assignedCompanionNpc(Actor ally, String mapId, int x, int y, CityBuilding building, boolean inside) {
@@ -10768,8 +11021,9 @@ public final class GameState {
         for (TilePoint door : doors) {
             int[][] spots = {{0, 1}, {-1, 1}, {1, 1}, {-1, 0}, {1, 0}, {0, 2}};
             for (int[] spot : spots) {
-                int x = door.x() + spot[0];
-                int y = door.y() + spot[1];
+                TilePoint outside = building.outside(door, spot[0], spot[1]);
+                int x = outside.x();
+                int y = outside.y();
                 if (world.isPassable(WorldMap.PLAYER_VILLAGE_ID, x, y)) {
                     return new TilePoint(x, y);
                 }

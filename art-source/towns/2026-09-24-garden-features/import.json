@@ -1,0 +1,8 @@
+[
+  {"name":"town_garden_gate_arbor","x":0,"y":0,"width":504,"height":480},
+  {"name":"town_garden_gate_iron","x":504,"y":0,"width":531,"height":480},
+  {"name":"town_garden_gate_hedge","x":1035,"y":0,"width":501,"height":480},
+  {"name":"town_fountain_civic","x":0,"y":480,"width":504,"height":544},
+  {"name":"town_fountain_north","x":504,"y":480,"width":531,"height":544},
+  {"name":"town_fountain_sun","x":1035,"y":480,"width":501,"height":544}
+]
