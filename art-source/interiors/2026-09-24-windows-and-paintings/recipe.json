@@ -1,0 +1,82 @@
+{
+  "sources": {
+    "window_oak_segment": {
+      "file": "window_oak_segment.png",
+      "sha256": "0a6f3696c1ab85a6ff0fe3950342902d3e0db10e71954120678fe4f276baa8bd"
+    },
+    "window_gothic": {
+      "file": "window_gothic.png",
+      "sha256": "9b742bfbb1988580e00ff204b50a7b371669ec5a2c1281241fcf6ee7a8e77845"
+    },
+    "painting_river": {
+      "file": "painting_river.png",
+      "sha256": "8de180f2f22dcb15e8dc300b1c611f1936d7e93b36b5216805f183751cc747b6"
+    },
+    "painting_harvest": {
+      "file": "painting_harvest.png",
+      "sha256": "f9f98fdc8b2275ee95cc3c28d706c3a93cce965d21479a4b72a3054a8ba1695d"
+    }
+  },
+  "crops": [
+    {
+      "source": "window_oak_segment",
+      "box": [
+        127,
+        180,
+        959,
+        1269
+      ],
+      "size": [
+        96,
+        128
+      ],
+      "transparent_padding": 2,
+      "asset_file": "environments/interiors/props/wall-decor/interior_wall_window_oak_segment.png"
+    },
+    {
+      "source": "window_gothic",
+      "box": [
+        223,
+        16,
+        801,
+        1406
+      ],
+      "size": [
+        72,
+        160
+      ],
+      "transparent_padding": 2,
+      "asset_file": "environments/interiors/props/wall-decor/interior_wall_window_gothic.png"
+    },
+    {
+      "source": "painting_river",
+      "box": [
+        84,
+        139,
+        1452,
+        877
+      ],
+      "size": [
+        160,
+        88
+      ],
+      "transparent_padding": 2,
+      "asset_file": "environments/interiors/props/wall-decor/interior_wall_painting_river.png"
+    },
+    {
+      "source": "painting_harvest",
+      "box": [
+        155,
+        154,
+        1099,
+        1093
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "transparent_padding": 2,
+      "asset_file": "environments/interiors/props/wall-decor/interior_wall_painting_harvest.png"
+    }
+  ]
+}

@@ -1789,6 +1789,7 @@ public final class WorldMap {
                     !PLAYER_VILLAGE_ID.equals(sourceMapId));
             MapArea house = new MapArea(mapId, houseLabel,
                     "interior", layout.tiles());
+            InteriorFlooring.apply(house, layout);
             if (!isEmptyPlayerVillageInterior(sourceMapId, building)) {
                 for (WorldProp prop : layout.props()) {
                     addFurniture(house, prop.x(), prop.y(), prop.asset());

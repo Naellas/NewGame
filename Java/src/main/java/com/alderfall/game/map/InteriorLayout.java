@@ -796,6 +796,7 @@ public final class InteriorLayout {
             case "shop", "granary" -> "wall_parcels";
             case "blacksmith", "carpenter", "ferry_lodge", "bellhouse", "reedworks" -> "wall_tools";
             case "rescue_lodge" -> "wall_antlers";
+            case "home" -> "wall_painting_harvest";
             default -> style == InteriorStyle.ARCHIVE ? "wall_clock" : "wall_landscape";
         };
         InteriorFurnishings.Furnishing decoration = InteriorFurnishings.find("interior_" + wall);
@@ -853,8 +854,17 @@ public final class InteriorLayout {
 
     private void zone(String role, int x, int y, int w, int h) { zones.add(new Zone(role, x, y, w, h)); }
     private void put(int x, int y, String asset) {
-        if (asset.equals("wall_window_small")) asset = "wall_window_leaded";
-        if (asset.equals("wall_window_wide") && style == InteriorStyle.ARCHIVE) asset = "wall_window_curtained";
+        if (asset.equals("wall_window_small")) asset = style == InteriorStyle.STORMBOUND
+                ? "wall_window_gothic" : "wall_window_oak_segment";
+        if (asset.equals("wall_landscape")) asset = "wall_painting_river";
+        if (asset.equals("wall_window_wide")) {
+            if (style == InteriorStyle.ARCHIVE) asset = "wall_window_curtained";
+            else {
+                put(x, y, "wall_window_oak_segment");
+                put(x + 1, y, "wall_window_oak_segment");
+                return;
+            }
+        }
         props.add(new WorldProp(x, y, "interior_" + asset, 48));
     }
     private void lamp(int x, int y) { put(x, y, "wall_sconce_lamp"); }

@@ -387,6 +387,50 @@
       ],
       "clear_navy_background": true,
       "asset_file": "environments/interiors/modular/interior_wall_window_curtained.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        386,
+        509,
+        480,
+        557
+      ],
+      "size": [
+        48,
+        96
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_rustic_face.png"
+    },
+    {
+      "source": "timber",
+      "box": [
+        711,
+        45,
+        782,
+        119
+      ],
+      "size": [
+        48,
+        48
+      ],
+      "asset_file": "environments/interiors/modular/interior_module_rustic_floor.png"
+    },
+    {
+      "source": "stone",
+      "box": [
+        285,
+        583,
+        355,
+        772
+      ],
+      "size": [
+        48,
+        130
+      ],
+      "clear_navy_background": true,
+      "transparent_padding": 1,
+      "asset_file": "environments/interiors/modular/interior_stone_support_column.png"
     }
   ]
 }

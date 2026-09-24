@@ -192,6 +192,7 @@ public final class WorldPropRenderer {
                     (prop.x() - camX) * tileSize, (prop.y() - camY) * tileSize, tileSize);
             int available = Math.max(1, Math.round(face.height * .78f));
             if (height > available) { width = Math.max(1, width * available / height); height = available; }
+            if (ConnectedFurniture.window(asset) && furnitureConnections(prop) != 0) width = footprint[0] * tileSize;
             // Center on plaster above the dado; the saved anchor stays on the wall cell.
             int centerY = face.y + Math.round(face.height * .43f);
             return new java.awt.Rectangle((prop.x() - camX) * tileSize + (footprint[0] * tileSize - width) / 2,

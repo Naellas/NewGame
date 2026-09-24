@@ -42,6 +42,8 @@ public final class MapArea {
         markVisualChange();
     }
     public final Set<TilePoint> interiorRugs = new RevisionSet<>();
+    /** Derived from the composed room plan on generation/load; independent of furniture collision. */
+    public final Map<TilePoint, String> interiorFloorMaterials = new RevisionMap<>();
     public final Map<TilePoint, String> landmarks = new RevisionMap<>();
     public final List<WorldProp> props = new IndexedPropList();
     public final List<District> districts = new ArrayList<>();

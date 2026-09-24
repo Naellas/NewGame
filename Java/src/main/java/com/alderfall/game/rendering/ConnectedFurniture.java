@@ -11,7 +11,7 @@ import java.util.Set;
 /** Horizontal furniture runs. Bit 0 joins the left edge; bit 1 joins the right. */
 public final class ConnectedFurniture {
     private ConnectedFurniture() {}
-    private static final Set<String> ASSETS = Set.of("interior_storage_counter", "interior_shop_counter",
+    private static final Set<String> ASSETS = Set.of("interior_wall_window_oak_segment", "interior_storage_counter", "interior_shop_counter",
             "interior_bakery_counter", "interior_tavern_counter", "interior_tavern_bar",
             "interior_bookshelf", "interior_pantry_shelf", "interior_tools_shelf", "interior_supplies_shelf",
             "interior_joinery_storage", "interior_bakehouse_storage", "interior_apothecary_storage", "interior_archive_storage",
@@ -35,12 +35,15 @@ public final class ConnectedFurniture {
         int width = connectionWidth(prop.asset());
         int mask = 0;
         for (WorldProp neighbor : props) {
+            if (window(prop.asset()) && (neighbor.offsetX() != prop.offsetX() || neighbor.offsetY() != prop.offsetY())) continue;
             if (neighbor.y() != prop.y() || !(neighbor.asset().equals(prop.asset()) || ModularMarket.supports(prop.asset()) && ModularMarket.supports(neighbor.asset()))) continue;
             if (neighbor.x() + width == prop.x()) mask |= 1;
             if (prop.x() + width == neighbor.x()) mask |= 2;
         }
         return mask;
     }
+
+    public static boolean window(String asset) { return "interior_wall_window_oak_segment".equals(asset); }
 
     /** Cache belongs to the renderer so artwork cannot leak between asset stores. */
     public static final class Sprites {

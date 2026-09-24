@@ -22,9 +22,10 @@ public final class ConnectedInteriorWallsTest {
         for (int y = 8; y < 48; y++)
             require((doorway.getRGB(47, y) >>> 24) == 0 && (doorway.getRGB(48, y) >>> 24) == 0,
                     "Paired door cells must share an opening without a middle jamb");
-        for (String material : new String[]{"timber", "paneled", "eastern", "stone"}) {
+        for (String material : new String[]{"timber", "paneled", "eastern", "stone", "rustic"}) {
             for (String piece : new String[]{"floor", "face", "cap", "side", "base", "post"})
-                require(assets.hasSprite("interior_module_" + material + "_" + piece), "Missing material piece");
+                require(assets.hasSprite("interior_module_" + (material.equals("rustic")
+                        && !piece.equals("floor") && !piece.equals("face") ? "timber" : material) + "_" + piece), "Missing material piece");
             for (int size : new int[]{24, 48, 73}) {
                 BufferedImage image = new BufferedImage(size * 2, size * 2, BufferedImage.TYPE_INT_RGB);
                 Graphics2D g = image.createGraphics();
@@ -48,6 +49,7 @@ public final class ConnectedInteriorWallsTest {
                 for (char[] row : area.tiles) Arrays.fill(row, 'i');
                 for (int x = 0; x < 12; x++) { area.setTile(x, 4, 'o'); area.setTile(x, 8, 'o'); }
                 for (int y = 0; y < 12; y++) area.setTile(2, y, 'o');
+                for (int x = 3; x <= 5; x++) area.interiorFloorMaterials.put(new TilePoint(x, 5), "stone");
                 for (int size : new int[]{24, 48, 73}) {
                     field("editorTileSize").setInt(panel, size);
                     compareTerrain(renderer, state, size);
@@ -56,6 +58,7 @@ public final class ConnectedInteriorWallsTest {
                 field("editorTileSize").setInt(panel, 48);
                 compareTerrain(renderer, state, 48);
                 checkMountsAndOcclusion(renderer, state, assets);
+                checkSlimJunctions(state, assets);
                 System.out.println("Connected interior materials, floor seams, chunk boundaries and edited doors passed.");
             } catch (Exception e) { throw new IllegalStateException(e); }
             finally { panel.shutdown(); }
@@ -77,6 +80,35 @@ public final class ConnectedInteriorWallsTest {
 
     private static Field field(String name) throws Exception {
         Field field = GamePanel.class.getDeclaredField(name); field.setAccessible(true); return field;
+    }
+
+    private static void checkSlimJunctions(GameState state, AssetStore assets) {
+        var area = state.world.area(state.currentMapId);
+        for (int ts : new int[]{24, 48, 73}) {
+            require(ConnectedInteriorWalls.sideWidth(ts) <= ts / 5.0, "Side wall must be slimmer than a fifth of a tile");
+            // Left/right turns, T and cross junctions share their south rail's
+            // exact edge pixels; this catches width, grain and double-post seams.
+            for (int mask = 1; mask <= 7; mask++) {
+                if ((mask & 3) == 0) continue;
+                for (char[] row : area.tiles) Arrays.fill(row, 'i');
+                area.setTile(4, 4, 'o'); area.setTile(4, 5, 'o'); area.setTile(4, 6, 'o');
+                if ((mask & 1) != 0) area.setTile(3, 4, 'o');
+                if ((mask & 2) != 0) area.setTile(5, 4, 'o');
+                if ((mask & 4) != 0) area.setTile(4, 3, 'o');
+                BufferedImage image = new BufferedImage(ts * 3, ts * 3, BufferedImage.TYPE_INT_RGB);
+                Graphics2D g = image.createGraphics();
+                ConnectedInteriorWalls.draw(g, assets, state.world, state.currentMapId, 4, 4, ts, ts, ts);
+                ConnectedInteriorWalls.draw(g, assets, state.world, state.currentMapId, 4, 5, ts, ts * 2, ts);
+                g.dispose();
+                int width = ConnectedInteriorWalls.sideWidth(ts), left = ts + (ts - width) / 2;
+                for (int x = left; x < left + width; x++)
+                    require(image.getRGB(x, ts * 2 - 1) == image.getRGB(x, ts * 2), "Junction/side seam at scale " + ts + ", mask " + mask);
+                var face = ConnectedInteriorWalls.bounds(state.world, state.currentMapId, 4, 4, ts, ts, ts);
+                if ((mask & 1) == 0) require(face.x == left, "Left corner edge must align with rail");
+                if ((mask & 2) == 0) require(face.x + face.width == left + width, "Right corner edge must align with rail");
+            }
+        }
+        System.out.println("Slim side walls and continuous corner/T/cross junctions passed at three scales.");
     }
 
     private static void checkMountsAndOcclusion(WorldRenderer renderer, GameState state, AssetStore assets) {

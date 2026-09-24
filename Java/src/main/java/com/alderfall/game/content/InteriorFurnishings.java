@@ -22,7 +22,12 @@ public final class InteriorFurnishings {
         }
     }
     private static final List<Furnishing> ALL = withDirectionalSeating(List.of(
+            new Furnishing("interior_stone_support_column", "Stone Support Column", "Misc", Placement.FLOOR, 1, 1, 2.1f),
             new Furnishing("interior_wall_window_leaded", "Leaded Window", "Wall-mounted", Placement.WALL, 1, 1, 1.25f),
+            new Furnishing("interior_wall_window_oak_segment", "Joining Oak Casement", "Wall-mounted", Placement.WALL, 1, 1, 1.5f),
+            new Furnishing("interior_wall_window_gothic", "Gothic Tracery Window", "Wall-mounted", Placement.WALL, 1, 1, 1.7f),
+            new Furnishing("interior_wall_painting_river", "Lantern Bridge Painting", "Wall-mounted", Placement.WALL, 2, 1, 1.15f),
+            new Furnishing("interior_wall_painting_harvest", "Hearth and Harvest Painting", "Wall-mounted", Placement.WALL, 1, 1, 1.2f),
             new Furnishing("interior_wall_window_curtained", "Curtained Window", "Wall-mounted", Placement.WALL, 2, 1, 1.65f),
             new Furnishing("interior_archive_lectern", "Library Lectern", "Workstations", Placement.FLOOR, 1, 1, 1.25f),
             new Furnishing("interior_oak_support_pillar", "Oak Support Pillar", "Misc", Placement.FLOOR, 1, 1, 2f),

@@ -41,6 +41,15 @@ visible seams. Timber is the default, Archive interiors use paneled material,
 cistern houses use stone, and an `interior_eastern` map ID previews the eastern
 profile. Material changes leave movement collision on the existing tile grid.
 
+Side walls render at one-sixth of a tile (8 pixels at the 48-pixel reference scale).
+Straight runs, corner posts, T/cross junctions and vertical doorway ends share that
+width. Junctions use a single post; the same shaft texture continues through the
+join, without repeating the original panel's header and dado bands. Caps and bases
+cross terminating posts, while through-posts continue into the next rail.
+Floor shadows occur at the visible rail, not at an empty collision-cell edge.
+This is a visual thickness change; pathfinding and placement still reserve the
+existing wall cells. See the [slim side-wall review](../../asset-review/reviews/interiors/2026-09-24-side-joins/README.md).
+
 ### Wall mounts and occlusion
 
 Wall silhouettes also participate in the world depth pass. Furniture north of a
@@ -86,6 +95,20 @@ Fire uses the flames already painted into the assets with small animated embers 
 
 ## Checks and captures
 
+### Regional material proposals
+
+`InteriorDesignPreview <output> regional` renders seven review samples across all
+six current regional styles. Village cottages, refuges and workshops use a rustic
+wooden face and worn plank floor from the supplied timber sheet; city rooms use
+timber/plaster or paneled joinery; the Highwall castle records hall and Sanctum
+water hall use the masonry sheet. Highwall also uses its imported stone columns.
+The sample map IDs explicitly select materials; automatic assignment to existing
+settlement buildings is not part of this review pass. Building purpose and stature
+should choose the material before regional furnishings and customs are applied.
+
+Browse the [regional sample gallery](../tools/reviews/interiors/index.html) and
+[design notes](../../asset-review/reviews/interiors/2026-09-24-regional-samples/README.md).
+
 From `Java/`, compile all Java sources into a separate output folder, then run:
 
 ```powershell
@@ -107,6 +130,50 @@ Composition checks cover 1,530 plans across 17 building uses, six regional style
 The September 22 validation passed the full compilation, both interior checks, render cache checks, and Western Reach checks. Broader validation encountered a road-sign objective count assertion in `SmokeTest` and an Elderford outdoor prop-count assertion in `HearthlandsWorldTest`; these suites were not green. Interior software-render medians in the local capture run were approximately 28–33 ms, with p95 approximately 37–48 ms.
 
 ## Connected furniture
+
+### Room floor finishes and new wall art
+
+`InteriorFlooring` derives a per-cell finish from composed activity zones:
+forge/quench, finishing benches, ovens, kitchens, distillation/wash areas and water
+maintenance use stone. Bedrooms and bunks use timber (worn timber in rustic
+shells). Other cells keep the building's floor material. Rear wall faces above
+stone floor areas now use the existing masonry sheet, including their caps and
+baseboards. The remainder retains the building's wall style. Outer turns extend
+the adjoining masonry face; structural spines retain the side rail's material,
+and masonry owns a narrow dressed edge at a timber junction. Furnishing collision
+tiles and rugs do not erase these finishes.
+Narrow side-wall cutaways continue the neighboring finish on each side.
+
+Stone-to-wood floor changes have an inset timber border, one eighth of a tile
+wide, derived from the existing timber cap sprite. Only the stone tile owns the
+strip; matching stone tiles and wall boundaries receive none. Rotated strips
+follow all four edge directions, including recessed corners. Rugs remain above
+the border. Rear-wall selection and bordering share the same floor lookup, so
+equipment edits update both without changing wall collision or mounting anchors.
+Updated [smithy and home samples](../../asset-review/reviews/interiors/2026-09-24-room-borders/README.md)
+show the combined treatment.
+
+Anvils and heat appliances also produce a one-cell stone surround. This covers
+equipment placed by the player and loaded custom furniture. Removing equipment
+removes that surround; a room designated as a workshop still retains its stone
+floor. Editor terrain caches invalidate when floor-affecting equipment changes.
+Generated house finishes are reconstructed from the same room plan on load;
+the save format is unchanged. External hand-authored maps have equipment pads,
+but do not store generated room-purpose zones or expose a new floor-paint tool.
+
+The wall-mounted catalog includes Joining Oak Casement, Gothic Tracery Window,
+Lantern Bridge Painting and Hearth and Harvest Painting. Adjacent oak modules
+on the same row with matching offsets join using the existing furniture sprite
+cache. Windows keep their wall-face anchor, height clamp and occlusion behavior.
+Generated small windows vary by regional style; wide oak windows become a pair
+of modules, while Archive curtains remain available. Homes gain harvest art;
+landscape accents use the river painting. Existing saved decoration IDs still work.
+
+`InteriorDesignPreview <output> wall-art` renders all four new assets and a
+three-module window bank. `home` and `blacksmith` demonstrate room finishes.
+`InteriorFlooringTest` checks purpose selection, reconstruction, equipment pads,
+cache invalidation, window placement/removal, offset exclusion and three scales.
+See the [flooring and decor samples](../tools/reviews/interiors/flooring-and-decor.html).
 
 `ConnectedFurniture` selects standalone, left-end, middle, and right-end visuals
 from neighboring furniture footprints. Matching counters or shelves on the same

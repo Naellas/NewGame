@@ -168,6 +168,10 @@ for experiments. Listen in [audio review](reviews/audio/index.html). Tests:
 ## Interior architecture crop recipes
 
 `extract_interior_seamless_tiles --recipe <recipe.json> [--output-root <assets-root>]`
+also imports the generated window/painting batch at
+`../art-source/interiors/2026-09-24-windows-and-paintings/recipe.json`, preserving
+alpha while cropping and resizing to the four declared wall-decor runtime paths.
+The same command
 imports explicit floor, wall face, cap, post and baseboard rectangles from hashed
 original atlases. Run with `python Java/tools/run.py extract_interior_seamless_tiles`
 from the repository root; recipe paths are interpreted from `Java/`. Python and

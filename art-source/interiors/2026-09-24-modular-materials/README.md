@@ -23,10 +23,15 @@ Run from repository root (Python and Pillow required):
 python Java/tools/run.py extract_interior_seamless_tiles --recipe ../art-source/interiors/2026-09-24-modular-materials/recipe.json
 ```
 
-This overwrites the 26 named outputs under
+This overwrites the 29 named outputs under
 `Java/assets/environments/interiors/modular/`. Each material has IDs
 `interior_module_<material>_floor`, `_face`, `_cap`, `_side`, `_base`, `_post`.
 The window IDs are `interior_wall_window_leaded` and `interior_wall_window_curtained`.
+The regional sample extension adds `interior_module_rustic_face` (wood panel field),
+`interior_module_rustic_floor` (worn planks), and `interior_stone_support_column`
+(round masonry column). The rustic profile reuses timber trim and posts. The column
+uses border-connected navy removal and a transparent margin. These crops were
+inspected in the [regional samples](../../../asset-review/reviews/interiors/2026-09-24-regional-samples/README.md).
 They are placeable wall decorations; generated small windows use the leaded frame,
 and Archive wide windows use the curtained frame. Window crops and in-game mounts
 have been visually inspected; player acceptance remains pending.

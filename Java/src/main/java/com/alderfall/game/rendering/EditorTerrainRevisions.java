@@ -13,6 +13,7 @@ final class EditorTerrainRevisions {
     private boolean active,showGround=true;
     private Map<TilePoint,String> landmarks=Map.of();
     private Set<TilePoint> rugs=Set.of();
+    private Map<TilePoint,String> interiorFloors=Map.of();
     private List<WorldProp> groundProps=List.of();
     private TerrainElevation.Field villageField;
     private long[][] villageHeights;
@@ -67,15 +68,20 @@ final class EditorTerrainRevisions {
             for(var p:next.landmarks.keySet())if(!Objects.equals(landmarks.get(p),next.landmarks.get(p)))dirty(p.x(),p.y(),1,revision);
             landmarks=new HashMap<>(next.landmarks);
         }
-        List<WorldProp> ground=next.props.stream().filter(p -> p.visualSlot()>=0).toList();
+        List<WorldProp> ground=next.props.stream().filter(p -> p.visualSlot()>=0
+                || com.alderfall.game.map.InteriorFlooring.affectsFloor(p.asset())).toList();
         if(!groundProps.equals(ground)){
             long revision=++serial;Set<WorldProp> old=new HashSet<>(groundProps),current=new HashSet<>(ground);
-            for(WorldProp p:old)if(!current.contains(p))dirty(p.x(),p.y(),2,revision);
-            for(WorldProp p:current)if(!old.contains(p))dirty(p.x(),p.y(),2,revision);
+            for(WorldProp p:old)if(!current.contains(p))dirty(p.x(),p.y(),4,revision);
+            for(WorldProp p:current)if(!old.contains(p))dirty(p.x(),p.y(),4,revision);
             groundProps=ground;
         }
         if(!rugs.equals(next.interiorRugs)){
             rugs=Set.copyOf(next.interiorRugs);long revision=++serial;for(long[] row:revisions)Arrays.fill(row,revision);
+        }
+        if(!interiorFloors.equals(next.interiorFloorMaterials)){
+            interiorFloors=Map.copyOf(next.interiorFloorMaterials);
+            long revision=++serial;for(long[] row:revisions)Arrays.fill(row,revision);
         }
     }
     private void dirty(int x,int y,int radius,long revision){

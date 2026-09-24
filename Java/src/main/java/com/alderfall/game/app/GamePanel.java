@@ -6101,17 +6101,24 @@ public final class GamePanel extends JPanel {
     private void drawHouseFloorTile(Graphics2D g, char tile, int wx, int wy, int px, int py) {
         int ts = tileSize();
         int seed = Math.abs(wx * 928371 + wy * 364479 + tile * 71);
-        ConnectedInteriorWalls.floor(g, assets, ConnectedInteriorWalls.material(state.currentMapId), wx, wy, px, py, ts);
+        String finish = com.alderfall.game.map.InteriorFlooring.material(state.world, state.currentMapId, wx, wy,
+                ConnectedInteriorWalls.material(state.currentMapId));
+        ConnectedInteriorWalls.floor(g, assets, finish, wx, wy, px, py, ts);
         drawInteriorFloorDepth(g, px, py, ts, seed);
+        ConnectedInteriorWalls.floorBorders(g, assets, state.world, state.currentMapId, wx, wy, px, py, ts, finish);
         g.setColor(InteriorStyle.forMap(state.currentMapId).materialTint);
         g.fillRect(px, py, ts, ts);
         // Contact occlusion belongs to the floor tile so chunk draw order cannot erase it.
         int depth = Math.max(2, ts / 5);
+        Rectangle northWall = state.world.tileAt(state.currentMapId, wx, wy - 1) == 'o'
+                ? ConnectedInteriorWalls.bounds(state.world, state.currentMapId, wx, wy - 1, px, py - ts, ts) : null;
+        boolean shadowLeft = ConnectedInteriorWalls.touchesSideEdge(state.world, state.currentMapId, wx - 1, wy, true);
+        boolean shadowRight = ConnectedInteriorWalls.touchesSideEdge(state.world, state.currentMapId, wx + 1, wy, false);
         for (int d = depth; d > 0; d--) {
             g.setColor(new Color(20, 15, 21, 4 + (depth - d) * 2));
-            if (state.world.tileAt(state.currentMapId, wx, wy - 1) == 'o') g.fillRect(px, py, ts, d);
-            if (state.world.tileAt(state.currentMapId, wx - 1, wy) == 'o') g.fillRect(px, py, d, ts);
-            if (state.world.tileAt(state.currentMapId, wx + 1, wy) == 'o') g.fillRect(px + ts - d, py, d, ts);
+            if (northWall != null) g.fillRect(northWall.x, py, northWall.width, d);
+            if (shadowLeft) g.fillRect(px, py, d, ts);
+            if (shadowRight) g.fillRect(px + ts - d, py, d, ts);
         }
         if (state.world.interiorRugAt(state.currentMapId, wx, wy)) {
             InteriorStyle style = InteriorStyle.forMap(state.currentMapId);

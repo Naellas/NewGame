@@ -33,6 +33,27 @@ public final class InteriorDesignPreview {
                 Method place = WorldMap.class.getDeclaredMethod("addFurniture", MapArea.class, int.class, int.class, String.class);
                 Method render = GamePanel.class.getDeclaredMethod("drawWorld", Graphics2D.class);
                 place.setAccessible(true); render.setAccessible(true);
+                if (args.length > 1 && args[1].equals("wall-art")) {
+                    String id = state.world.createEditorMap("house_city_oakhaven_wall_art", "Window and painting samples", "interior", 20, 10);
+                    MapArea area = state.world.area(id);
+                    for (int y = 0; y < area.height(); y++) for (int x = 0; x < area.width(); x++)
+                        area.tiles[y][x] = y == 0 || x == 0 || x == 19 ? 'x' : y == 1 || y == 9 || x == 1 || x == 18 ? 'o' : 'i';
+                    area.tiles[9][10] = 'e';
+                    for (int x : new int[]{3, 4, 5}) place.invoke(state.world, area, x, 1, "interior_wall_window_oak_segment");
+                    place.invoke(state.world, area, 8, 1, "interior_wall_window_gothic");
+                    place.invoke(state.world, area, 11, 1, "interior_wall_painting_river");
+                    place.invoke(state.world, area, 15, 1, "interior_wall_painting_harvest");
+                    place.invoke(state.world, area, 3, 2, "interior_low_cupboard");
+                    place.invoke(state.world, area, 11, 3, "interior_study_desk_h");
+                    state.currentMapId = id;
+                    capture(panel, state, render, output.resolve("wall-art.png"));
+                    System.out.println("Captured joined oak casements, Gothic tracery, river and harvest paintings.");
+                    return;
+                }
+                if (args.length > 1 && args[1].equals("regional")) {
+                    regionalSamples(panel, state, place, render, output);
+                    return;
+                }
                 if (args.length > 1 && args[1].equals("furniture-quest")) {
                     Npc keeper = FurnitureQuestContent.keeper(state.world);
                     if (keeper == null) throw new AssertionError("Missing Oakhaven inn");
@@ -67,10 +88,12 @@ public final class InteriorDesignPreview {
                         state.world.createEditorMap(id, theme, "interior", plan.tiles()[0].length, plan.tiles().length);
                         MapArea area = state.world.area(id);
                         area.interiorRugs.clear();
+
                         for (int y = 0; y < area.height(); y++) {
                             area.tiles[y] = plan.tiles()[y].clone();
                             for (int x = 0; x < area.width(); x++) if (area.tiles[y][x] == 'z') area.interiorRugs.add(new TilePoint(x, y));
                         }
+                        com.alderfall.game.map.InteriorFlooring.apply(area, plan);
                         for (WorldProp prop : plan.props()) place.invoke(state.world, area, prop.x(), prop.y(), prop.asset());
                         if (area.props.size() != plan.props().size()) throw new AssertionError("Incomplete preview: " + id);
                         state.currentMapId = id;
@@ -90,6 +113,47 @@ public final class InteriorDesignPreview {
 
     private static void capture(GamePanel panel, GameState state, Method render, Path output) throws Exception {
         capture(panel, state, render, output, null);
+    }
+
+    private record RegionalSample(String file, String source, String theme, String material, int seed) { }
+
+    /** Review proposals use the real layout, placement and renderer without editing a save. */
+    private static void regionalSamples(GamePanel panel, GameState state, Method place, Method render, Path output) throws Exception {
+        var samples = java.util.List.of(
+                new RegionalSample("01-oakhaven-cottage", "village_oakhaven", "home", "rustic", 1),
+                new RegionalSample("02-snowrest-refuge", "village_snowrest", "rescue_lodge", "rustic", 1),
+                new RegionalSample("03-riverside-charter-hall", "city_riverside", "ferry_lodge", "timber", 2),
+                new RegionalSample("04-archive-reading-room", "city_archive", "study", "paneled", 0),
+                new RegionalSample("05-highwall-castle-hall", "city_highwall", "remembrance_hall", "stone", 0),
+                new RegionalSample("06-sanctum-water-hall", "city_sanctum", "cistern_house", "stone", 2),
+                new RegionalSample("07-mireford-bellkeeper", "village_mireford", "bellhouse", "rustic", 1));
+        for (var sample : samples) {
+            String id = "house_" + sample.source + "_sample_interior_" + sample.material + "_" + sample.theme;
+            InteriorLayout plan = InteriorLayout.compose(sample.theme, sample.seed, InteriorStyle.forMap(id));
+            state.world.createEditorMap(id, sample.file, "interior", plan.tiles()[0].length, plan.tiles().length);
+            MapArea area = state.world.area(id);
+            area.interiorRugs.clear();
+
+            for (int y = 0; y < area.height(); y++) {
+                area.tiles[y] = plan.tiles()[y].clone();
+                for (int x = 0; x < area.width(); x++) if (area.tiles[y][x] == 'z') area.interiorRugs.add(new TilePoint(x, y));
+            }
+            com.alderfall.game.map.InteriorFlooring.apply(area, plan);
+            for (WorldProp prop : plan.props()) {
+                String asset = prop.asset();
+                if (sample.source.equals("city_highwall") && asset.equals("interior_wall_herb_rack")) asset = "interior_wall_banner_lion";
+                place.invoke(state.world, area, prop.x(), prop.y(), asset);
+            }
+            int expected = plan.props().size();
+            if (sample.source.equals("city_highwall")) {
+                for (int y : new int[]{3, 8}) place.invoke(state.world, area, 10, y, "interior_stone_support_column");
+                expected += 2;
+            }
+            if (area.props.size() != expected) throw new AssertionError("Incomplete regional sample: " + id);
+            state.currentMapId = id;
+            capture(panel, state, render, output.resolve(sample.file + ".png"));
+            System.out.println("Captured " + sample.file + ": " + InteriorStyle.forMap(id).label + ", " + sample.material);
+        }
     }
 
     private static void capture(GamePanel panel, GameState state, Method render, Path output, TilePoint viewpoint) throws Exception {
